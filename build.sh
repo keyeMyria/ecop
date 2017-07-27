@@ -44,3 +44,4 @@ sencha app build production
 cd ..
 cp client/build/production/app.js build/asset/ecop
 cp -r client/build/production/resources build/asset/ecop
+cp -r client/lib build/asset/ecop

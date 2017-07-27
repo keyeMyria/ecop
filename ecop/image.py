@@ -117,7 +117,7 @@ class ImageJSON(RpcBase):
 
             w, h = int(img.width * ratio), int(img.height * ratio)
             if w != out_size or h != out_size:
-                img = img.resize((w , h), PIL.Image.LANCZOS)
+                img = img.resize((w, h), PIL.Image.LANCZOS)
                 out_img = PIL.Image.new('RGB', (out_size, out_size), 'white')
                 out_img.paste(img, ((out_size - w) // 2, (out_size - h) // 2))
                 modified = True
@@ -215,6 +215,7 @@ upload_template = """
 <script type="text/javascript">
     window.parent.CKEDITOR.tools.callFunction("{funcNum}", "{fileUrl}", "{data}");
 </script>"""
+
 
 @view_config(route_name='upload', renderer='upload.pt')
 def uploadImage(request):

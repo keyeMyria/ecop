@@ -17,7 +17,8 @@ Ext.define('Ecop.widget.CKEditor', {
         me.editor = CKEDITOR.replace(me.inputEl.dom, {
             filebrowserUploadUrl: '/upload',
             language: 'zh-cn',
-            extraAllowedContent: 'map[!name]; area[title,!href,shape,coords]; img[usemap]'
+            extraAllowedContent: 'map[!name]; area[title,!href,shape,coords]; img[usemap]',
+            removeButtons: 'h4,h5,h6,Strike'
         });
         // the delay is necessary so that when the widget is first intialized
         // the ckeditor will have enough time to be full initialized so that
