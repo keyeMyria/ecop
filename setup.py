@@ -19,7 +19,9 @@ requires = [
     'z3c.rml',
     'zope.sqlalchemy',
 
-    # 'hm.lib',
+    'hm.lib',
+    'weblibs',
+    'webmodel',
 
     # for development, this is required
     # 'Paste'
