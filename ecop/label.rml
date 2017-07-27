@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE document SYSTEM "rml.dtd">
+
+<?python
+  OX = 1.35
+  OY = 1.5
+?>
+<document
+    xmlns:doc="http://namespaces.zope.org/rml/doc"
+    xmlns:py="http://genshi.edgewall.org/" title="大管家商品标签">
+
+  <docinit displayDocTitle="true">
+    <registerTTFont faceName="simsun" fileName="[ecop]/resources/simsun.ttc" />
+    <registerTTFont faceName="simhei" fileName="[ecop]/resources/simhei.ttf" />
+    <addMapping faceName="times" bold="0" italic="0" psName="simsun" />
+    <addMapping faceName="times" bold="1" italic="0" psName="simhei" />
+  </docinit>
+
+  <template pagesize="a4 landscape">
+    <pageTemplate id="first">
+      <pageGraphics>
+        <lineMode width="0.5" dash="5 3 1 3" />
+        <lines>
+          <py:for each="i in range(4)">
+            ${OX}cm ${OY+i*6}cm ${29.7-OX}cm ${OY+i*6}cm
+            ${OX+i*9}cm ${OY}cm ${OX+i*9}cm ${21-OY}cm
+          </py:for>
+        </lines>
+        <py:for each="i in range(len(items))" py:with="item=items[i]; ox=(i%3)*9+OX; oy=(2-i//3)*6+OY; p=item['price']">
+          <barCode code="qr" x="${ox}cm" y="${oy}cm" width="2.5cm" height="2.5cm">${item['url']}</barCode>
+          <setFont name="Helvetica-BoldOblique" size="55" />
+          <drawRightString x="${ox+7}cm" y="${oy+0.5}cm">${int(p)}</drawRightString>
+          <setFont name="Helvetica-BoldOblique" size="35" />
+          <drawString x="${ox+7}cm" y="${oy+1}cm">${('%.2f' % p)[-3:]}</drawString>
+        </py:for>
+      </pageGraphics>
+
+      <frame py:for="i in range(len(items))" x1="${(i%3)*9+OX}cm" y1="${(2-i//3)*6+OY+2}cm"
+        width="9cm" height="3.8cm" leftPadding="2mm" rightPadding="2mm"/>
+    </pageTemplate>
+  </template>
+
+  <stylesheet>
+    <paraStyle name="itemName" fontName="simhei" fontSize="18" leading="25"
+      spaceBefore="1" spaceAfter="3" wordWrap="CJK" />
+    <paraStyle name="specModel" fontName="simhei" fontSize="12" leading="15"
+      spaceBefore="1" spaceAfter="1" wordWrap="CJK" />
+  </stylesheet>
+
+  <story>
+    <py:for each="i in range(len(items))" py:with="item=items[i]">
+      <para style="itemName">${item['itemName']}</para>
+      <para py:if="item['specification']" style="specModel">规格: ${item['specification']}</para>
+      <para py:if="item['model']" style="specModel">型号: ${item['model']}</para>
+      <nextFrame />
+    </py:for>
+  </story>
+</document>

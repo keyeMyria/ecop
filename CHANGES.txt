@@ -1,0 +1,53 @@
+Build 6 (2017-4-19)
+
+ * Introduce resource versioning like website for easier app update
+ * Support the distinction between in-stock items and non-stock items
+ * Automatic version upgrade notification
+ * Display shipments and generate shipment document for printing
+ * Integrate cainiao electronic shipping document generation and cloud print
+ * Upgrade to ExtJS 6.2.1
+ * Implement wechat client mecop for shipment package scanning
+
+
+Build (2017-8-)
+
+ * Support internal memo field on order
+ * Allow order status to be changed manually
+
+ * Split ecop into own git repository with server and client code
+ * Allow manual customer creation
+ * Allow adding item without item id to order
+ * Refund of appointment amount, both alipay and wepay
+
+
+Build (2017-)
+
+ * Seperate js-common into its own package to be shared between various
+   javascript projects
+ * Use the same jsonrpc protection mechanism for website and ecop
+ * Sepatate code / repository from web
+ * Separate deployment of erp from website
+ * Consider integrate online markdown editor like
+   https://markdown-it.github.io/ for article authoring
+
+
+Future
+------
+
+ * Support freight calculation from shipper code and weight
+ * Merge item group management into a tab in item manage
+ * Perform all party related functions in weblister and reverse-replicate
+   to homelister
+ * Add invoice info to order
+ * Allow one company user to have multiple accounts
+ * Cancellation of paid orders with payment refund
+ * Merge UI of item group management into item management
+ * Do not require user to re-login every time browser is refreshed
+ * Refresh item data from server whenever the item edit form is opened
+ * Allow staff to modify order memo of customer order, or add internal order
+   memo
+ * Staff should be able to close orders that are created by staff
+ * Accept COD (Cash on Delivery) as payment method
+ * Web and ecoop, shall they use the same database or not?
+ * Export item list into excel or allow user to select and copy content from
+   ItemGrid

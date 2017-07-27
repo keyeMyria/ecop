@@ -1,0 +1,94 @@
+Ext.define('Ecop.view.order.OrderManagerController', {
+    extend: 'Ext.app.ViewController',
+    alias: 'controller.order-manager',
+
+    requires: [
+        'Ecop.view.order.OrderPanel'
+    ],
+
+    onSearchOrder: function () {
+        var me = this, view = me.getView(),
+            daterange = view.down('daterange').getValue();
+
+        Web.data.JsonRPC.request({
+            method: 'order.search',
+            params: [{
+                dateType: view.down('#dateType').getValue().dateType,
+                startDate: Ext.util.Format.date(daterange.start, 'Y-m-d'),
+                endDate: Ext.util.Format.date(daterange.end, 'Y-m-d'),
+                orderStatus: view.down('#orderstatus').getValue(),
+                customerId: view.down('#customerId').getValue()
+            }],
+            success: function (orders) {
+                var grid = view.lookup('orders-list');
+                grid.store.loadData(orders);
+                if (grid.store.getCount() === 0) {
+                    Ecop.util.Util.showInfo('该时间段内没有找到符合条件的订单。');
+                }
+            }
+        });
+    },
+
+    onOpenOrder: function (view, td, cellIndex, order) {
+        var view = this.getView(), oid = order.get('orderId'),
+            tab = view.down('#order-' + oid);
+
+        if (tab) {
+            view.setActiveTab(tab);
+        } else {
+            var p = Ext.widget('orderpanel', {
+                itemId: 'order-' + oid,
+                viewModel: {
+                    data: {
+                        currentOrder: order,
+                        originalStatus: order.get('orderStatus')
+                    }
+                }
+            });
+            view.add(p);
+            view.setActiveTab(p);
+        }
+    },
+
+    onNewOrder: function() {
+        var view = this.getView(), p;
+
+        p = Ext.widget('orderpanel', {
+            viewModel: {
+                data: {
+                    currentOrder: Ext.create('Web.model.Order', {
+                        orderStatus: 1
+                    }),
+                    originalStatus: 1
+                }
+            }
+        });
+        view.add(p);
+        view.setActiveTab(p);
+    },
+
+    onItemSelect: function (table, record) {
+        var me = this, items = [record], oController;
+
+        if (!me.activeOPanel) {
+            Ecop.util.Util.showError('没有打开的订单可以添加商品。');
+            return;
+        }
+
+        oController = me.activeOPanel.getController();
+        if (!oController.isOrderEditable()) {
+            Ecop.util.Util.showError('只允许添加商品到待付款的订单。');
+            return;
+        }
+
+        oController.doAddItems(items);
+        me.getView().setActiveTab(me.activeOPanel);
+    },
+
+    onTabChange: function (tabPanel, newTab) {
+        if (newTab.xtype === 'orderpanel') {
+            this.activeOPanel = newTab;
+        }
+    }
+
+});

@@ -1,0 +1,53 @@
+{
+  "name": "mecop",
+  "version": "1.0.0",
+  "author": "Hong Yuan",
+  "license": "Business Internal",
+  "devDependencies": {
+    "autoprefixer": "^6.5.1",
+    "babel-core": "^6.18.0",
+    "babel-eslint": "^7.1.0",
+    "babel-loader": "^6.2.7",
+    "babel-plugin-transform-object-assign": "^6.8.0",
+    "babel-preset-env": "^1.4.0",
+    "babel-preset-es2015": "^6.18.0",
+    "babel-preset-react": "^6.16.0",
+    "babel-preset-react-app": "^1.0.0",
+    "babel-preset-stage-1": "^6.16.0",
+    "css-loader": "^0.25.0",
+    "eslint": "^3.9.0",
+    "eslint-config-react-app": "^0.3.0",
+    "eslint-loader": "^1.6.0",
+    "eslint-plugin-flowtype": "^2.25.0",
+    "eslint-plugin-import": "^2.0.1",
+    "eslint-plugin-jsx-a11y": "^2.2.3",
+    "eslint-plugin-react": "^6.4.1",
+    "extract-text-webpack-plugin": "^1.0.1",
+    "file-loader": "^0.9.0",
+    "image-webpack-loader": "^3.0.0",
+    "less": "^2.7.1",
+    "less-loader": "^2.2.3",
+    "postcss-loader": "^1.1.1",
+    "sass-loader": "^4.0.2",
+    "url-loader": "^0.5.7",
+    "webpack": "^1.13.3"
+  },
+  "dependencies": {
+    "core-js": "^2.4.1",
+    "jquery": "^3.1.1",
+    "lodash": "^4.16.6",
+    "material-ui": "^0.17.4",
+    "react": "^15.5.4",
+    "react-dom": "^15.5.4",
+    "react-router": "^4.1.1",
+    "react-router-dom": "^4.1.1",
+    "react-tap-event-plugin": "^2.0.1",
+    "react-widgets": "file:///home/hong/Sencha/web/react-widgets",
+    "superagent": "^3.5.2"
+  },
+  "scripts": {
+    "build": "webpack --config webpack.config.prod.js",
+    "watch": "webpack --config webpack.config.dev.js --watch",
+    "build-dev": "webpack --config webpack.config.dev.js"
+  }
+}

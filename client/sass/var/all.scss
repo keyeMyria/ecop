@@ -1,0 +1,11 @@
+// override default Extjs scss variables
+
+$grid-cell-inner-padding: 3px;
+
+// Global styles
+$red-color: rgb(231,0,18);
+$light-grey: #efefef;
+$dark-grey: darken($light-grey, 60%);
+$medium-grey: darken($light-grey, 30%);
+
+$enable-font-awesome: dynamic(true);

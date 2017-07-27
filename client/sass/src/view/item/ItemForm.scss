@@ -1,0 +1,16 @@
+.dataview-item-image {
+    float: left;
+    margin: 5px 15px;
+
+    img {
+        width: 160px;
+        height: 160px;
+    }
+
+    .caption {
+        text-align: center;
+        p {
+            margin: 0.2em 0;
+        }
+    }
+}

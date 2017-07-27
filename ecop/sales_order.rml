@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE document SYSTEM "rml.dtd">
+
+<?python
+    from hm.lib.numformat import numberword, quantityfmt
+    from datetime import date
+    from webmodel import GetParamByKey
+    from webmodel.consts import ORDER_STATUS
+?>
+
+<document
+    xmlns:doc="http://namespaces.zope.org/rml/doc"
+    xmlns:py="http://genshi.edgewall.org/" title="大管家家居销售订单${order.orderId}">
+
+  <docinit displayDocTitle="true">
+    <registerTTFont faceName="VeraBoldItalic" fileName="[reportlab]/fonts/VeraBI.ttf"/>
+    <registerTTFont faceName="simsun" fileName="[ecop]/resources/simsun.ttc" />
+    <registerTTFont faceName="simhei" fileName="[ecop]/resources/simhei.ttf" />
+    <addMapping faceName="times" bold="0" italic="0" psName="simsun" />
+    <addMapping faceName="times" bold="1" italic="0" psName="simhei" />
+  </docinit>
+
+  <template pagesize="a4" allowSplitting="1" >
+    <pageTemplate id="first">
+      <pageGraphics>
+        <setFont name="simsun" size="8" />
+        <drawCentredString x="297.5" y="1cm">
+          上海好买得商贸有限公司  地址：宜山路439号七建大厦1112室  电话：(021)34240987  网址：http://www.homemaster.cn
+        </drawCentredString>
+        <drawCentredString x="297.5" y="0.6cm">
+          开户银行：浙江泰隆商业银行上海市徐汇支行  帐号：3101180120100010241  微信公众号：大管家家居
+        </drawCentredString>
+        <image file="[ecop]/resources/logo.png" x="1cm" y="28cm" width="4.65cm" height="1.24cm" />
+        <setFont name="VeraBoldItalic" size="16" />
+        <drawString x="16cm" y="28.8cm">021-34240987</drawString>
+        <setFont name="simhei" size="10" />
+        <barCode x="18cm" y="25cm" code="qr" height="2cm" width="2cm">${view.siteUrl}/order/${order.orderId}?t=1</barCode>
+      </pageGraphics>
+      <frame id="main" x1="1cm" y1="1.5cm" width="19cm" height="26cm"/>
+    </pageTemplate>
+  </template>
+
+  <stylesheet>
+    <paraStyle name="base" fontName="simsun" fontSize="12" leading="15" />
+    <paraStyle name="normal" parent="base" fontName="simhei"
+               spaceBefore="3" spaceAfter="3" wordWrap="CJK" />
+    <paraStyle name="detail" fontName="simhei" fontSize="10" leading="12"
+               spaceBefore="1" spaceAfter="1" wordWrap="CJK" />
+  </stylesheet>
+
+  <story>
+    <para fontSize="18" fontName="simhei" alignment="center">
+      大管家家居销售单
+    </para>
+
+    <spacer length="20" />
+    <blockTable colWidths="60% 40%">
+      <blockTableStyle id="dummy">
+        <blockValign value="top" />
+      </blockTableStyle>
+      <tr>
+        <td>
+          <para style="normal" py:if="order.customer.partyName">客户名称：$order.customer.partyName</para>
+          <para style="normal" leftIndent="60" firstLineIndent="-60">送货地址：$order.streetAddress</para>
+          <para style="normal"
+                py:if="order.customer.partyName != order.recipientName">
+            收货人: $order.recipientName
+          </para>
+          <para style="normal">联系电话：$view.mobileAndPhone</para>
+        </td>
+        <td>
+          <para style="normal">订单编号：$order.orderId</para>
+          <para style="normal">订单日期：${date.today().strftime('%Y/%m/%d')}</para>
+        </td>
+      </tr>
+    </blockTable>
+
+    <para style="base" spaceBefore="10" spaceAfter="10" fontSize="14" >
+      <b>商品明细</b>
+    </para>
+
+    <blockTable colWidths="40%, 20%, 12%, 13%, 15%" repeatRows="1">
+      <blockTableStyle id="detail">
+        <blockFont name="simhei" size="11" leading="13" start="0,0" stop="-1,0" />
+        <blockFont name="simhei" size="10" leading="12" start="0,1" stop="-1,-1" />
+        <blockTextColor colorName="white" start="0,0" stop="-1,0" />
+        <blockBackground colorName="black" start="0,0" stop="-1,0" />
+        <blockValign value="middle" />
+        <blockAlignment value="center" start="0,0" stop="-1,0" />
+        <blockAlignment value="center" start="2,1" stop="2,-2" />
+        <blockAlignment value="decimal" start="3,1" stop="-1,-2" />
+        <blockAlignment value="decimal" start="-1,-1" stop="-1,-1" />
+        <blockRightPadding length="0.7cm" start="3,1" stop="-1,-2" />
+        <blockRightPadding length="0.7cm" start="-1,-1" stop="-1,-1" />
+        <!-- blockBackground colorsByRow="white lightgrey" start="0,1" stop="-1,-2" -->
+        <!-- due to a reportlab bug, we can not use -1 to indicat last row for span -->
+<?python
+  lastline = len(order.items) + 1 + (1 if order.freight else 0) + (1 if order.rebate else 0)
+?>
+        <blockSpan start="${'0,%d'%lastline}" stop="${'-2,%d'%lastline}" />
+        <lineStyle kind="grid" colorName="white" thickness="0.7" start="0,0" stop="-1,0" />
+        <lineStyle kind="grid" colorName="black" thickness="0.7" start="0,1" stop="-1,-1" />
+        <lineStyle kind="lineabove" colorName="black" thickness="1.5" start="0,-1" stop="-1,-1"/>
+        <lineStyle kind="outline" colorName="black" thickness="2" />
+      </blockTableStyle>
+      <tr>
+        <td>商品名称</td>
+        <td>规格/型号</td>
+        <td>数量/单位</td>
+        <td>单 价</td>
+        <td>金 额</td>
+      </tr>
+      <tr py:for="oi in order.items">
+        <td>
+          <para style="detail">
+            $oi.itemName
+          </para>
+        </td>
+        <td>
+          <para style="detail">${(oi.specification or '')+ (oi.specification and oi.model and ',' or '') + (oi.model or '')}</para>
+        </td>
+        <td>${quantityfmt(oi.quantity)}${GetParamByKey('unit', oi.unitId)}</td>
+        <td>${'{:,.2f}'.format(oi.sellingPrice)}</td>
+        <td>${'{:,.2f}'.format(oi.amount)}</td>
+      </tr>
+      <tr py:if="order.freight">
+        <td>运费</td>
+        <td />
+        <td>1</td>
+        <td>${'{:,.2f}'.format(order.freight)}</td>
+        <td>${'{:,.2f}'.format(order.freight)}</td>
+      </tr>
+      <tr py:if="order.rebate">
+        <td>折扣</td>
+        <td />
+        <td>1</td>
+        <td>${'{:,.2f}'.format(-order.rebate)}</td>
+        <td>${'{:,.2f}'.format(-order.rebate)}</td>
+      </tr>
+      <tr>
+        <td>
+          <para style="base" spaceAfter="15" fontSize="14" leading="18">
+            <b>总金额：人民币${numberword(order.amount)}</b>
+          </para>
+        </td>
+        <td /><td /><td />
+        <td>￥${'{:,.2f}'.format(order.amount)}</td>
+      </tr>
+    </blockTable>
+
+    <?python
+      hasMemo = order.memo and len(order.memo.replace(' ', '').replace('\n', ''))
+      if hasMemo: memoLines = order.memo.split('\n')
+    ?>
+    <py:if test="hasMemo">
+      <para style="normal" spaceBefore="10" spaceAfter="5" fontSize="14">
+        订单备注：
+      </para>
+      <para style="normal" leftIndent="10">
+        <py:for each="i,line in enumerate(memoLines)">
+          $line<br py:if="i&lt;len(memoLines)" />
+        </py:for>
+      </para>
+    </py:if>
+  </story>
+</document>
