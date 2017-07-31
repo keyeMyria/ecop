@@ -268,6 +268,9 @@ Ext.define('Ecop.view.order.OrderPanel', {
                 menuDisabled: true,
                 widget: {
                     xtype: 'button',
+                    bind: {
+                        disabled: '{!orderEditable}'
+                    },
                     iconCls: 'x-fa fa-times-circle',
                     tooltip: '从当前订单中删除该商品',
                     handler: 'onOrderItemDelete'
