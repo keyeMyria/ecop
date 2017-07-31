@@ -29,6 +29,7 @@ Ext.define('Ecop.view.main.Main', {
             permission: 'item.manage'
         }, {
             title: '订单管理',
+            itemId: 'order-manager',
             xtype: 'order-manager',
             permission: 'order.manage'
         }, {
@@ -59,7 +60,7 @@ Ext.define('Ecop.view.main.Main', {
 
         me.callParent();
         tp = me.down('tabpanel');
-        tp.setActiveTab(tp.down('#item-manager') ? 'item-manager' : 0);
+        tp.setActiveTab(tp.down('#order-manager') ? 'order-manager' : 0);
     }
 
 });
