@@ -29,7 +29,7 @@ Ext.define('Ecop.view.order.PaymentWindow', {
             reference: 'paymentMethod',
             store: 'paymentmethod',
             valueField: 'id',
-            value: 1,
+            value: 2,
             displayField: 'text',
             bind: {
                 disabled: '{creditSales}'
