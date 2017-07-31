@@ -21,6 +21,10 @@ Ext.define('Ecop.view.order.OrderController', {
         }
     },
 
+    isOrderEditable: function () {
+        return this.getCurrentOrder().get('orderStatus') == 1;
+    },
+
     loadOrder: function () {
         var me = this, order = me.getCurrentOrder(),
             itemStore = me.lookup('orderitems').getStore();
@@ -52,10 +56,9 @@ Ext.define('Ecop.view.order.OrderController', {
      *
      */
     setEditStatus: function () {
-        var me = this, view = me.getView(), grid= me.lookup('orderitems'),
-            status = me.getCurrentOrder().get('orderStatus');
+        var me = this, grid= me.lookup('orderitems');
 
-        if (status == 1) {
+        if (me.isOrderEditable()) {
             grid.getView().plugins[0].enable();
             grid.getPlugin('edit').enable();
         } else {
