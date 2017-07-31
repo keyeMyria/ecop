@@ -11,6 +11,7 @@ Ext.define('Ecop.view.order.OrderPanel', {
 
         'Web.model.Order',
         'Web.model.OrderItem',
+        'Web.model.OrderPayment',
         'Web.model.Coupon',
 
         'Ecop.widget.CustomerPicker',
@@ -350,30 +351,84 @@ Ext.define('Ecop.view.order.OrderPanel', {
         }]
     }, {
         xtype: 'container',
-        height: 70,
+        height: 160,
         layout: {
-            type:'hbox',
+            type: 'hbox',
             align: 'stretch'
         },
+
         defaults: {
-            xtype: 'textarea',
-            flex: 1,
-            labelWidth: 60
+            flex: 1
         },
+
         items: [{
-            bind: {
-                value: '{currentOrder.internalMemo}',
-                readOnly: '{saveButtonDisabled}'
+            xtype: 'grid',
+            reference: 'payment-grid',
+
+            store: {
+                model: 'Web.model.OrderPayment',
+                proxy: {type: 'memory', reader: 'array'}
             },
-            fieldLabel: '内部备注',
-            padding: '0 10 0 0'
-        }, {
-            fieldLabel: '订单备注',
-            bind: {
-                value: '{currentOrder.memo}',
-                readOnly: '{!orderEditable}'
+            enableColumnMove: false,
+            flex: 1,
+            plugins: ['headeralign'],
+            padding: '0 10 0 0',
+
+            columns: {
+                defaults: {
+                    menuDisabled: true,
+                    sortable: false,
+                    headerAlign: 'center'
+                },
+
+                items: [{
+                    text: '收款时间',
+                    width: 160,
+                    dataIndex: 'payTime',
+                    renderer: Ext.util.Format.dateRenderer('Y-m-d H:i:s')
+                }, {
+                    text: '收款渠道',
+                    width: 160,
+                    dataIndex: 'paymentMethod',
+                    renderer: Ext.util.Format.storeRenderer('paymentmethod', 'id', 'text')
+                }, {
+                    text: '金额',
+                    width: 70,
+                    align: 'center',
+                    formatter: 'number("0,000.00")',
+                    dataIndex: 'amount'
+                }, {
+                    text: '收款人',
+                    align: 'center',
+                    dataIndex: 'receiverName'
+                }]
             }
+        }, {
+            xtype: 'container',
+            layout: {
+                type: 'vbox',
+                align: 'stretch'
+            },
+            defaults: {
+                xtype: 'textarea',
+                flex: 1,
+                labelWidth: 60
+            },
+            items: [{
+                fieldLabel: '内部备注',
+                bind: {
+                    value: '{currentOrder.internalMemo}',
+                    readOnly: '{saveButtonDisabled}'
+                }
+            }, {
+                fieldLabel: '订单备注',
+                bind: {
+                    value: '{currentOrder.memo}',
+                    readOnly: '{!orderEditable}'
+                }
+            }]
         }]
+
     }],
 
     buttonAlign: 'center',

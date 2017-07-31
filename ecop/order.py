@@ -84,12 +84,20 @@ class OrderJSON(RpcBase):
                 order.shippingDocId
             )
 
-        fields = ['orderItemId', 'itemId', 'itemName', 'specification',
-                  'model', 'quantity', 'unitName', 'sellingPrice',
-                  'purchasePrice', 'pos']
+        oi_fields = ['orderItemId', 'itemId', 'itemName', 'specification',
+            'model', 'quantity', 'unitName', 'sellingPrice', 'purchasePrice',
+            'pos']
+
         return {
             'header': header,
-            'items': [marshall(oi, fields) for oi in order.items]
+            'items': [marshall(oi, oi_fields) for oi in order.items],
+            'payments': [{
+                'paymentId': op.paymentId,
+                'amount': op.amount,
+                'paymentMethod': op.payment.paymentMethod,
+                'payTime': op.payment.payTime,
+                'receiverName': op.payment.receiver.partyName if op.payment.receiver else None
+            } for op in order.payments]
         }
 
     @jsonrpc_method(endpoint='rpc', method='order.modify')

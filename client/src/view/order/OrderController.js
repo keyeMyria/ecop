@@ -26,8 +26,10 @@ Ext.define('Ecop.view.order.OrderController', {
     },
 
     loadOrder: function () {
-        var me = this, order = me.getCurrentOrder(),
-            itemStore = me.lookup('orderitems').getStore();
+        var me = this
+        , order = me.getCurrentOrder()
+        , itemStore = me.lookup('orderitems').getStore()
+        , paymentStore = me.lookup('payment-grid').getStore();
 
         Web.data.JsonRPC.request({
             method: 'order.data',
@@ -46,6 +48,8 @@ Ext.define('Ecop.view.order.OrderController', {
 
                 itemStore.loadData(ret.items);
                 itemStore.commitChanges();
+                paymentStore.loadData(ret.payments);
+
                 me.setEditStatus();
             }
         });

@@ -13,15 +13,21 @@ Build (2017-8-)
 
  * Support internal memo field on order
  * Allow order status to be changed manually
-
  * Split ecop into own git repository with server and client code
+ * Show payment information in order panel
+
  * Allow manual customer creation
+ * Publish artiles to wechat open platform
  * Allow adding item without item id to order
  * Refund of appointment amount, both alipay and wepay
+ * Do not create and render all the management panels at once during startup
 
+Mecop
 
-Build (2017-)
+ * Push / share an order to a friend via wechat message
 
+Future
+------
  * Seperate js-common into its own package to be shared between various
    javascript projects
  * Use the same jsonrpc protection mechanism for website and ecop
@@ -30,9 +36,6 @@ Build (2017-)
  * Consider integrate online markdown editor like
    https://markdown-it.github.io/ for article authoring
 
-
-Future
-------
 
  * Support freight calculation from shipper code and weight
  * Merge item group management into a tab in item manage
@@ -44,10 +47,6 @@ Future
  * Merge UI of item group management into item management
  * Do not require user to re-login every time browser is refreshed
  * Refresh item data from server whenever the item edit form is opened
- * Allow staff to modify order memo of customer order, or add internal order
-   memo
- * Staff should be able to close orders that are created by staff
  * Accept COD (Cash on Delivery) as payment method
- * Web and ecoop, shall they use the same database or not?
  * Export item list into excel or allow user to select and copy content from
    ItemGrid
