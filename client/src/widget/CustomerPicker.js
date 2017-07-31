@@ -5,6 +5,7 @@ Ext.define('Ecop.widget.CustomerPicker', {
         'Web.ux.Util' // for gbkLength
     ],
     xtype: 'customerpicker',
+    cls: 'customer-picker',
 
     queryMode: 'remote',
     store: {
@@ -16,10 +17,26 @@ Ext.define('Ecop.widget.CustomerPicker', {
     },
 
     minChars: 0,
-    hideTrigger: true,
     matchFieldWidth: false,
     forceSelection: true,
-    triggerAction: 'query',
+
+    /*
+     * The combination of `hidderTrigger`, `hideOnReadOnly` and `hidden` ensures
+     * that the default picker trigger is always hidden, while the add trigger
+     * will be only shown when the field is not readonly.
+     */
+    triggers: {
+        add: {
+            cls: 'x-fa fa-plus-circle',
+            hideOnReadOnly: true,
+            hidden: false,
+            tooltip: '添加新顾客',
+            handler: function () {
+                console.log('Add customer');
+            }
+        }
+    },
+    hideTrigger: true,
 
     valueField: 'partyId',
 
