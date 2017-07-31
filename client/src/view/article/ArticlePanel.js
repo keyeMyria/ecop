@@ -1,5 +1,5 @@
 Ext.define('Ecop.view.article.ArticlePanel', {
-    extend: 'Ext.FormPanel',
+    extend: 'Ext.form.Panel',
     xtype: 'articlepanel',
 
     requires: [

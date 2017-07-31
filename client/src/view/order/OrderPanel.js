@@ -1,5 +1,5 @@
 Ext.define('Ecop.view.order.OrderPanel', {
-    extend: 'Ext.FormPanel',
+    extend: 'Ext.form.Panel',
     xtype: 'orderpanel',
 
     requires: [
@@ -140,7 +140,7 @@ Ext.define('Ecop.view.order.OrderPanel', {
         }]
     }, {
         xtype: 'grid',
-        reference: 'orderitems',
+        reference: 'items-grid',
         store: {
             model: 'Web.model.OrderItem',
             proxy: {type: 'memory', reader: 'array'}
@@ -485,7 +485,7 @@ Ext.define('Ecop.view.order.OrderPanel', {
 
         me.callParent();
 
-        me.lookup('orderitems').getStore().on({
+        me.lookup('items-grid').getStore().on({
             datachanged: 'refreshAmount',
             update: 'onOrderItemChange',
             scope: controller

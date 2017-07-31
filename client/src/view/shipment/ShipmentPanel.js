@@ -1,5 +1,5 @@
 Ext.define('Ecop.view.shipment.ShipmentPanel', {
-    extend: 'Ext.FormPanel',
+    extend: 'Ext.form.Panel',
     xtype: 'shipmentpanel',
 
     requires: [

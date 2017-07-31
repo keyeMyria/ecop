@@ -1,5 +1,5 @@
 /*
- * This override is intended for hide columns without sufficient permission
+ * This override is intended to prevent columns without sufficient permission
  * from being rendered
  */
 Ext.define('Ecop.overrides.panel.Table', {

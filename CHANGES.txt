@@ -17,6 +17,7 @@ Build (2017-8-)
  * Show payment information in order panel
 
  * Allow manual customer creation
+ * Allow multiple order payments for a single order
  * Publish artiles to wechat open platform
  * Allow adding item without item id to order
  * Refund of appointment amount, both alipay and wepay
@@ -25,6 +26,7 @@ Build (2017-8-)
 Mecop
 
  * Push / share an order to a friend via wechat message
+
 
 Future
 ------

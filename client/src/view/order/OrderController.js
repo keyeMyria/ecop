@@ -28,7 +28,7 @@ Ext.define('Ecop.view.order.OrderController', {
     loadOrder: function () {
         var me = this
         , order = me.getCurrentOrder()
-        , itemStore = me.lookup('orderitems').getStore()
+        , itemStore = me.lookup('items-grid').getStore()
         , paymentStore = me.lookup('payment-grid').getStore();
 
         Web.data.JsonRPC.request({
@@ -58,7 +58,7 @@ Ext.define('Ecop.view.order.OrderController', {
      * plugins to be readonly
      */
     onOrderEditableChange: function (editable) {
-        var me = this, grid= me.lookup('orderitems');
+        var me = this, grid= me.lookup('items-grid');
 
         if (editable) {
             grid.getView().plugins[0].enable();
@@ -74,7 +74,7 @@ Ext.define('Ecop.view.order.OrderController', {
      */
     refreshAmount: function () {
         var me = this, order = me.getCurrentOrder(),
-            itemStore = me.lookup('orderitems').getStore();
+            itemStore = me.lookup('items-grid').getStore();
         order.set('amount',
             itemStore.sum('amount') + order.get('freight') - order.get('rebate'));
         order.set('cost',
@@ -84,12 +84,12 @@ Ext.define('Ecop.view.order.OrderController', {
     onOrderItemDelete: function (btn) {
         btn.getWidgetRecord().drop();
         // refresh the row number
-        this.lookup('orderitems').getView().refresh();
+        this.lookup('items-grid').getView().refresh();
     },
 
     doAddItems: function (items) {
         var me = this, oi, i,
-            itemStore = me.lookup('orderitems').getStore(),
+            itemStore = me.lookup('items-grid').getStore(),
             fields = ['itemId', 'itemName', 'specification', 'purchasePrice',
                 'model', 'unitName', 'sellingPrice'];
 
@@ -114,7 +114,7 @@ Ext.define('Ecop.view.order.OrderController', {
     saveOrder: function (callback) {
         var me = this, f = me.getView().getForm(), formValid = f.isValid(),
             order = me.getCurrentOrder(), headers = order.getChanges(),
-            itemStore = me.lookup('orderitems').getStore()
+            itemStore = me.lookup('items-grid').getStore()
             deleted = [], modified = [], added = [];
 
         if (formValid) {
@@ -207,7 +207,7 @@ Ext.define('Ecop.view.order.OrderController', {
 
     onBtnSwitchPrice: function (btn) {
         var me = this, itemIds = [],
-            itemStore = me.lookup('orderitems').getStore()
+            itemStore = me.lookup('items-grid').getStore();
 
         itemStore.each(function (oi) {
             itemIds.push(oi.get('itemId'));
