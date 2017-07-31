@@ -477,17 +477,22 @@ Ext.define('Ecop.view.order.OrderPanel', {
      * properly on the view controller
      */
     initComponent: function () {
-        var me = this, order = me.getViewModel().get('currentOrder');
+        var me = this
+        , vm = me.getViewModel()
+        , order = vm.get('currentOrder')
+        , controller = me.getController()
+        ;
 
         me.callParent();
-        me.down('grid').getStore().on({
+
+        me.lookup('orderitems').getStore().on({
             datachanged: 'refreshAmount',
             update: 'onOrderItemChange',
-            scope: me.getController()
+            scope: controller
         });
 
-        if (!order.phantom){
-            me.getController().loadOrder();
-        }
+        vm.bind('{orderEditable}', controller.onOrderEditableChange, controller);
+
+        !order.phantom && controller.loadOrder();
     }
 });

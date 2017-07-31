@@ -49,20 +49,18 @@ Ext.define('Ecop.view.order.OrderController', {
                 itemStore.loadData(ret.items);
                 itemStore.commitChanges();
                 paymentStore.loadData(ret.payments);
-
-                me.setEditStatus();
             }
         });
     },
 
     /*
-     * Only unpaid orders are allowed to be modified, except that:
-     *
+     * When `orderEditable` from view model is changed, update the grid view
+     * plugins to be readonly
      */
-    setEditStatus: function () {
+    onOrderEditableChange: function (editable) {
         var me = this, grid= me.lookup('orderitems');
 
-        if (me.isOrderEditable()) {
+        if (editable) {
             grid.getView().plugins[0].enable();
             grid.getPlugin('edit').enable();
         } else {
