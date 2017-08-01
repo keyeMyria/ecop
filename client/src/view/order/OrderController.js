@@ -256,11 +256,13 @@ Ext.define('Ecop.view.order.OrderController', {
 
         // we add the form to the view instead to view port in order for the
         // form to access this controller
-        me.paymentDialog = me.getView().add({
-            xtype: 'payment-window',
-            layout: 'fit' // TODO: this should be moved to PaymentWindow class
-                          // but it seems a bug and can not be placed there.
-        });
+        if (!me.paymentDialog) {
+            me.paymentDialog = me.getView().add({
+                xtype: 'payment-window',
+                layout: 'fit' // TODO: this should be moved to PaymentWindow class
+                            // but it seems a bug and can not be placed there.
+            });
+        }
         me.paymentDialog.show().center();
     },
 

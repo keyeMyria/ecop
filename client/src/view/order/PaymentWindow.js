@@ -12,6 +12,7 @@ Ext.define('Ecop.view.order.PaymentWindow', {
     height: 200,
     title: '订单收款',
     closable: true,
+    closeAction: 'hide',
     modal: true,
 
     items: [{
