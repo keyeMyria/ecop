@@ -3,6 +3,7 @@
     "files.exclude": {
         "**/client/.sencha": true,
         "**/client/lib": true,
-        "**/client/sass/example": true
+        "**/client/sass/example": true,
+        "**/bootstrap.*": true
     }
 }
