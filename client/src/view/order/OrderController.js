@@ -111,11 +111,22 @@ Ext.define('Ecop.view.order.OrderController', {
         });
     },
 
+    onCtrlS: function (evt) {
+        evt.preventDefault();
+        if (this.getViewModel().get('originalStatus') !== 4) {
+            this.saveOrder();
+        }
+    },
+
     saveOrder: function (callback) {
-        var me = this, f = me.getView().getForm(), formValid = f.isValid(),
-            order = me.getCurrentOrder(), headers = order.getChanges(),
-            itemStore = me.lookup('items-grid').getStore()
-            deleted = [], modified = [], added = [];
+        var me = this
+        , f = me.getView().getForm()
+        , formValid = f.isValid()
+        , order = me.getCurrentOrder()
+        , headers = order.getChanges()
+        , itemStore = me.lookup('items-grid').getStore()
+        , deleted = [], modified = [], added = []
+        ;
 
         if (formValid) {
             if (!order.get('recipientPhone') && ! order.get('recipientMobile')) {

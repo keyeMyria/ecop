@@ -26,19 +26,22 @@ Ext.define('Ecop.view.order.OrderPanel', {
         type: 'order'
     },
 
-    closable: true,
-
-    layout: {
-        type:'vbox',
-        align: 'stretch'
+    keyMap: {
+        'Ctrl+S': 'onCtrlS'
     },
 
+    closable: true,
     bind: {
         title: '{title}'
     },
 
     border: false,
     bodyPadding: 5,
+
+    layout: {
+        type:'vbox',
+        align: 'stretch'
+    },
 
     defaults: {
         xtype: 'container',
