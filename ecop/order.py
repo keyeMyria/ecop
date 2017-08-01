@@ -358,8 +358,6 @@ class OrderJSON(RpcBase):
         """ Offline payment initialized by staff """
         order = self.loadOrder(orderId)
 
-        assert order.orderStatus == ORDER_STATUS.BID
-
         now = datetime.now()
 
         if method and amount:
@@ -373,7 +371,6 @@ class OrderJSON(RpcBase):
             payment.paymentMethod = method
             payment.receivedBy = self.request.user.partyId
             self.sess.add(payment)
-
             self.sess.flush()
 
             op = OrderPayment()
@@ -386,8 +383,10 @@ class OrderJSON(RpcBase):
         if order.couponUid:
             order.coupon.redemptionTime = now
 
-        order.orderStatus = ORDER_STATUS.PAID
-        order.confirmTime = now
+        if order.orderStatus == ORDER_STATUS.BID:
+            order.orderStatus = ORDER_STATUS.PAID
+        if not order.confirmTime:
+            order.confirmTime = now
 
 
 @view_config(route_name='order_download')

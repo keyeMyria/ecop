@@ -467,7 +467,7 @@ Ext.define('Ecop.view.order.OrderPanel', {
             disabled: '{!orderEditable}'
         }
     }, {
-        text: '收款/确认',
+        text: '收款',
         scale: 'medium',
         handler: 'onBtnPayment',
         bind: {

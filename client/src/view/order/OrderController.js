@@ -13,14 +13,6 @@ Ext.define('Ecop.view.order.OrderController', {
         return this.getViewModel().get('currentOrder');
     },
 
-    onOrderItemChange: function (store, record, op, fields) {
-        if (fields && fields[0] !== 'amount') {
-            record.set('amount',
-                record.get('sellingPrice') * record.get('quantity'));
-            this.refreshAmount();
-        }
-    },
-
     isOrderEditable: function () {
         return this.getCurrentOrder().get('orderStatus') == 1;
     },
@@ -87,11 +79,21 @@ Ext.define('Ecop.view.order.OrderController', {
         this.lookup('items-grid').getView().refresh();
     },
 
+    onOrderItemChange: function (store, record, op, fields) {
+        if (fields && fields[0] !== 'amount') {
+            record.set('amount',
+                record.get('sellingPrice') * record.get('quantity'));
+            this.refreshAmount();
+        }
+    },
+
     doAddItems: function (items) {
-        var me = this, oi, i,
-            itemStore = me.lookup('items-grid').getStore(),
-            fields = ['itemId', 'itemName', 'specification', 'purchasePrice',
-                'model', 'unitName', 'sellingPrice'];
+        var me = this, oi, i
+        , itemStore = me.lookup('items-grid').getStore()
+        , fields = [
+            'itemId', 'itemName', 'specification', 'purchasePrice',
+            'model', 'unitName', 'sellingPrice'
+        ];
 
         Ext.each(items, function(item) {
             // The selector widget could return frozen item when an item id is entered
@@ -217,8 +219,10 @@ Ext.define('Ecop.view.order.OrderController', {
     },
 
     onBtnSwitchPrice: function (btn) {
-        var me = this, itemIds = [],
-            itemStore = me.lookup('items-grid').getStore();
+        var me = this
+        , itemIds = []
+        , itemStore = me.lookup('items-grid').getStore()
+        ;
 
         itemStore.each(function (oi) {
             itemIds.push(oi.get('itemId'));
@@ -261,13 +265,12 @@ Ext.define('Ecop.view.order.OrderController', {
     },
 
     onConfirmOrder: function () {
-        var me = this,
-            params = [me.getCurrentOrder().get('orderId')];
-
-        if (!me.getViewModel().get('creditSales')) {
-            params.push(me.lookup('paymentMethod').getValue());
-            params.push(me.lookup('paymentAmount').getValue());
-        }
+        var me = this
+        , params = [
+            me.getCurrentOrder().get('orderId'),
+            me.lookup('paymentMethod').getValue(),
+            me.lookup('paymentAmount').getValue()
+        ];
 
         me.saveOrder(function(){
             Web.data.JsonRPC.request({
