@@ -434,7 +434,6 @@ Ext.define('Ecop.view.order.OrderPanel', {
                 }
             }]
         }]
-
     }],
 
     buttonAlign: 'center',
@@ -473,29 +472,5 @@ Ext.define('Ecop.view.order.OrderPanel', {
         bind: {
             disabled: '{!orderEditable}'
         }
-    }],
-
-    /*
-     * There does not seem to exist any other way to set the store events
-     * properly on the view controller
-     */
-    initComponent: function () {
-        var me = this
-        , vm = me.getViewModel()
-        , order = vm.get('currentOrder')
-        , controller = me.getController()
-        ;
-
-        me.callParent();
-
-        me.lookup('items-grid').getStore().on({
-            datachanged: 'refreshAmount',
-            update: 'onOrderItemChange',
-            scope: controller
-        });
-
-        vm.bind('{orderEditable}', controller.onOrderEditableChange, controller);
-
-        !order.phantom && controller.loadOrder();
-    }
+    }]
 });

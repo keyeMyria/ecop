@@ -9,6 +9,26 @@ Ext.define('Ecop.view.order.OrderController', {
         'Ecop.view.order.PaymentWindow'
     ],
 
+    // private save a reference to items grid store
+    itemStore: null,
+
+    init: function () {
+        var me = this
+        , vm = me.getViewModel()
+        ;
+
+        me.itemStore = this.lookup('items-grid').getStore();
+        me.itemStore.on({
+            datachanged: 'refreshAmount',
+            update: 'onOrderItemChange',
+            scope: me
+        });
+
+        vm.bind('{orderEditable}', 'onOrderEditableChange', me);
+
+        !vm.get('currentOrder').phantom && me.loadOrder();
+    },
+
     getCurrentOrder: function () {
         return this.getViewModel().get('currentOrder');
     },
@@ -20,7 +40,6 @@ Ext.define('Ecop.view.order.OrderController', {
     loadOrder: function () {
         var me = this
         , order = me.getCurrentOrder()
-        , itemStore = me.lookup('items-grid').getStore()
         , paymentStore = me.lookup('payment-grid').getStore();
 
         Web.data.JsonRPC.request({
@@ -38,8 +57,8 @@ Ext.define('Ecop.view.order.OrderController', {
 
                 me.getViewModel().set('originalStatus', order.get('orderStatus'));
 
-                itemStore.loadData(ret.items);
-                itemStore.commitChanges();
+                me.itemStore.loadData(ret.items);
+                me.itemStore.commitChanges();
                 paymentStore.loadData(ret.payments);
             }
         });
@@ -65,12 +84,14 @@ Ext.define('Ecop.view.order.OrderController', {
      * Recalculate the order total amount in the order header
      */
     refreshAmount: function () {
-        var me = this, order = me.getCurrentOrder(),
-            itemStore = me.lookup('items-grid').getStore();
+        var me = this
+        , order = me.getCurrentOrder()
+        ;
+
         order.set('amount',
-            itemStore.sum('amount') + order.get('freight') - order.get('rebate'));
+            me.itemStore.sum('amount') + order.get('freight') - order.get('rebate'));
         order.set('cost',
-            itemStore.sum('cost') + order.get('freightCost'));
+            me.itemStore.sum('cost') + order.get('freightCost'));
     },
 
     onOrderItemDelete: function (btn) {
@@ -89,7 +110,6 @@ Ext.define('Ecop.view.order.OrderController', {
 
     doAddItems: function (items) {
         var me = this, oi, i
-        , itemStore = me.lookup('items-grid').getStore()
         , fields = [
             'itemId', 'itemName', 'specification', 'purchasePrice',
             'model', 'unitName', 'sellingPrice'
@@ -108,7 +128,7 @@ Ext.define('Ecop.view.order.OrderController', {
                 }
                 oi.quantity = 1;
                 oi.amount = item.get('sellingPrice');
-                itemStore.add(Web.model.OrderItem(oi));
+                me.itemStore.add(Web.model.OrderItem(oi));
             }
         });
     },
@@ -126,7 +146,6 @@ Ext.define('Ecop.view.order.OrderController', {
         , formValid = f.isValid()
         , order = me.getCurrentOrder()
         , headers = order.getChanges()
-        , itemStore = me.lookup('items-grid').getStore()
         , deleted = [], modified = [], added = []
         ;
 
@@ -148,21 +167,21 @@ Ext.define('Ecop.view.order.OrderController', {
             return;
         }
 
-        if (itemStore.getCount() === 0) {
+        if (me.itemStore.getCount() === 0) {
             Ecop.util.Util.showError('不允许保存没有项目的订单！');
             return;
         }
 
-        Ext.each(itemStore.getRemovedRecords(), function (r) {
+        Ext.each(me.itemStore.getRemovedRecords(), function (r) {
             deleted.push(r.get('orderItemId'));
         });
 
         // update the order item position
-        for (var i=0; i<itemStore.getCount(); i++) {
-            itemStore.getAt(i).set('pos', i);
+        for (var i=0; i<me.itemStore.getCount(); i++) {
+            me.itemStore.getAt(i).set('pos', i);
         }
 
-        Ext.each(itemStore.getModifiedRecords(), function (r) {
+        Ext.each(me.itemStore.getModifiedRecords(), function (r) {
             var fields = ['itemId', 'itemName', 'specification', 'model',
                 'quantity', 'purchasePrice', 'sellingPrice', 'pos'], oi={};
 
@@ -221,17 +240,16 @@ Ext.define('Ecop.view.order.OrderController', {
     onBtnSwitchPrice: function (btn) {
         var me = this
         , itemIds = []
-        , itemStore = me.lookup('items-grid').getStore()
         ;
 
-        itemStore.each(function (oi) {
+        me.itemStore.each(function (oi) {
             itemIds.push(oi.get('itemId'));
         });
         Web.data.JsonRPC.request({
             method: 'order.price.get',
             params: [itemIds, btn.priceType],
             success: function (prices) {
-                itemStore.each(function(oi) {
+                me.itemStore.each(function(oi) {
                     oi.set('sellingPrice', prices[oi.get('itemId')]);
                 });
                 btn.priceType = btn.priceType == 'B' ? 'C' : 'B';
