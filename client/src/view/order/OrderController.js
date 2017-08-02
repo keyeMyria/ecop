@@ -17,10 +17,20 @@ Ext.define('Ecop.view.order.OrderController', {
         , vm = me.getViewModel()
         ;
 
+        /*
+         * Bind events that can not easily be bound in the OrderPanel
+         */
         me.itemStore = this.lookup('items-grid').getStore();
         me.itemStore.on({
             datachanged: 'refreshAmount',
             update: 'onOrderItemChange',
+            remove: function () {
+                var grid = me.lookup('items-grid');
+                // this updates the row number after item removal
+                grid.getView().refresh();
+                // this ensures Ctrl+S works properly after item removal
+                grid.focus();
+            },
             scope: me
         });
 
@@ -94,7 +104,10 @@ Ext.define('Ecop.view.order.OrderController', {
             me.itemStore.sum('cost') + order.get('freightCost'));
     },
 
-    onOrderItemDelete: function (btn) {
+    onOrderItemDelete: function (btn, e) {
+        // prevent a click event on the grid
+        e.stopEvent();
+
         btn.getWidgetRecord().drop();
         // refresh the row number
         this.lookup('items-grid').getView().refresh();
