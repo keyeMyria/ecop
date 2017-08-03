@@ -79,13 +79,6 @@ Ext.define('Ecop.view.order.OrderPanel', {
             displayField: 'text',
             bind: '{currentOrder.orderStatus}',
             fieldLabel: '订单状态'
-        }, {
-            bind: '{currentOrder.shippingDate}',
-            fieldLabel: '发货日期',
-            renderer: Ext.util.Format.dateRenderer('Y-m-d')
-        }, {
-            bind: '{currentOrder.logisticsInfo}',
-            fieldLabel: '物流单号'
         }]
     }, {
         defaults: {

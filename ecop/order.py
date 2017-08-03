@@ -14,7 +14,7 @@ from pyramid_rpc.jsonrpc import jsonrpc_method
 from hm.lib.config import siteConfig
 
 from webmodel import (
-    Item, GetParamByKey, PartyCoupon, Order, Coupon, Payment, OrderPayment
+    Item, PartyCoupon, Order, Coupon, Payment, OrderPayment
 )
 from webmodel.consts import ORDER_STATUS
 
@@ -70,7 +70,7 @@ class OrderJSON(RpcBase):
             self._releaseCoupon()
 
         fields = [
-            'orderId', 'customerId', 'createTime', 'shippingDate', 'amount',
+            'orderId', 'customerId', 'createTime', 'amount',
             'freight', 'rebate', 'orderStatus', 'regionCode', 'recipientName',
             'streetAddress', 'recipientMobile', 'recipientPhone', 'memo',
             'internalMemo', 'couponUid', 'couponAmount', 'freightCost',
@@ -78,11 +78,6 @@ class OrderJSON(RpcBase):
         ]
 
         header = marshall(order, fields)
-        if order.orderStatus == ORDER_STATUS.COMPLETED and order.shipperCode:
-            header['logisticsInfo'] = '%s %s' % (
-                GetParamByKey('shipper', order.shipperCode),
-                order.shippingDocId
-            )
 
         oi_fields = ['orderItemId', 'itemId', 'itemName', 'specification',
             'model', 'quantity', 'unitName', 'sellingPrice', 'purchasePrice',
@@ -240,7 +235,7 @@ class OrderJSON(RpcBase):
             order.couponUid = coupon.uid
 
     @jsonrpc_method(endpoint='rpc', method='order.ship')
-    def shipOrder(self, orderId, shipperId, docId, shippingDate=None):
+    def shipOrder(self, orderId, shipperId, docId, s=None):
         self.loadOrder(orderId)
         order = self.order
 
