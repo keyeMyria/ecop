@@ -281,10 +281,16 @@ class OrderJSON(RpcBase):
         query = query.filter(and_(dateField >= start_date,
                                   dateField < end_date + timedelta(1)))
 
+        # By default only show orders of interest, i.e. not closed or
+        # completed, except when:
+        #  * order stauts is given
+        #  * customerId is given, then show all orders of the customer
         if cond['orderStatus']:
             query = query.filter(Order.orderStatus == cond['orderStatus'])
-        else:
-            query = query.filter(Order.orderStatus != ORDER_STATUS.CLOSED)
+        elif not cond['customerId']:
+            query = query.filter(and_(
+                Order.orderStatus != ORDER_STATUS.CLOSED,
+                Order.orderStatus != ORDER_STATUS.COMPLETED))
 
         if cond['customerId']:
             query = query.filter(Order.customerId == cond['customerId'])
