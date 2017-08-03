@@ -83,6 +83,12 @@ Ext.define('Ecop.view.order.OrderManager', {
                     xtype: 'customerpicker',
                     itemId: 'customerId',
                     fieldLabel: '订单顾客:',
+                    triggers: {
+                        add: {
+                            hidden: true,
+                        }
+                    },
+                    plugins: 'cleartrigger',
                     width: 250
                 }, {
                     xtype: 'idfield',
