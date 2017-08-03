@@ -234,19 +234,6 @@ class OrderJSON(RpcBase):
             order.couponAmount = coupon.coupon.amount
             order.couponUid = coupon.uid
 
-    @jsonrpc_method(endpoint='rpc', method='order.ship')
-    def shipOrder(self, orderId, shipperId, docId, s=None):
-        self.loadOrder(orderId)
-        order = self.order
-
-        assert order.orderStauts == ORDER_STATUS.PAID, \
-            'Can only ship paid order'
-
-        order.shipperId = shipperId
-        order.docId = docId
-        order.orderStatus = ORDER_STATUS.COMPLETED
-        order.shippingDate = shippingDate or date.today()
-
     @jsonrpc_method(endpoint='rpc', method='order.search')
     def searchOrder(self, cond):
         """ By default the search returns orders that are not closed, except
