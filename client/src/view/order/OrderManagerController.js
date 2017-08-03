@@ -17,7 +17,8 @@ Ext.define('Ecop.view.order.OrderManagerController', {
                 startDate: Ext.util.Format.date(daterange.start, 'Y-m-d'),
                 endDate: Ext.util.Format.date(daterange.end, 'Y-m-d'),
                 orderStatus: view.down('#orderstatus').getValue(),
-                customerId: view.down('#customerId').getValue()
+                customerId: view.down('#customerId').getValue(),
+                orderId: view.down('#orderId').getValue()
             }],
             success: function (orders) {
                 var grid = view.lookup('orders-list');

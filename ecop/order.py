@@ -243,39 +243,46 @@ class OrderJSON(RpcBase):
             dateType   # 1 = creationDate, 2 = completionDate
             startDate
             endDate
+            orderId
             orderStatus
             customerId
         """
-        start_date = datetime.strptime(cond['startDate'], '%Y-%m-%d')
-        end_date = datetime.strptime(cond['endDate'], '%Y-%m-%d')
+        query = self.sess.query(Order).options(eagerload('creator'))
 
-        if start_date > end_date:
-            raise RPCUserError('结束日期必须大于起始日期！')
-
-        query = self.sess.query(Order).join(Order.customer).\
-            options(eagerload('customer.referrer'), eagerload('creator'))
-
-        if cond.get('dateType', 1) == 1:
-            dateField = Order.createTime
+        if cond.get('orderId'):
+            orderId = int(cond['orderId'])
+            assert 10000000 <= orderId <= 99999999, '无效订单号。'
+            orders = [query.get(orderId)]
         else:
-            dateField = Order.completionDate
+            start_date = datetime.strptime(cond['startDate'], '%Y-%m-%d')
+            end_date = datetime.strptime(cond['endDate'], '%Y-%m-%d')
 
-        query = query.filter(and_(dateField >= start_date,
-                                  dateField < end_date + timedelta(1)))
+            if start_date > end_date:
+                raise RPCUserError('结束日期必须大于起始日期！')
 
-        # By default only show orders of interest, i.e. not closed or
-        # completed, except when:
-        #  * order stauts is given
-        #  * customerId is given, then show all orders of the customer
-        if cond['orderStatus']:
-            query = query.filter(Order.orderStatus == cond['orderStatus'])
-        elif not cond['customerId']:
-            query = query.filter(and_(
-                Order.orderStatus != ORDER_STATUS.CLOSED,
-                Order.orderStatus != ORDER_STATUS.COMPLETED))
+            if cond.get('dateType', 1) == 1:
+                dateField = Order.createTime
+            else:
+                dateField = Order.completionDate
 
-        if cond['customerId']:
-            query = query.filter(Order.customerId == cond['customerId'])
+            query = query.filter(and_(dateField >= start_date,
+                                    dateField < end_date + timedelta(1)))
+
+            # By default only show orders of interest, i.e. not closed or
+            # completed, except when:
+            #  * order stauts is given
+            #  * customerId is given, then show all orders of the customer
+            if cond['orderStatus']:
+                query = query.filter(Order.orderStatus == cond['orderStatus'])
+            elif not cond['customerId']:
+                query = query.filter(and_(
+                    Order.orderStatus != ORDER_STATUS.CLOSED,
+                    Order.orderStatus != ORDER_STATUS.COMPLETED))
+
+            if cond['customerId']:
+                query = query.filter(Order.customerId == cond['customerId'])
+
+            orders = query.all()
 
         fields = [
             'orderId', 'createTime', 'completionDate', 'amount', 'freight',
@@ -283,7 +290,7 @@ class OrderJSON(RpcBase):
             'customerName', 'creatorName', 'recipientName'
         ]
 
-        return [marshall(o, fields) for o in query.all()]
+        return [marshall(o, fields) for o in orders]
 
     @jsonrpc_method(endpoint='rpc', method='coupon.data')
     def getCouponData(self, couponUid):

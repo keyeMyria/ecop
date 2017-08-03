@@ -8,6 +8,7 @@ Ext.define('Ecop.view.order.OrderManager', {
 
         'Ecop.widget.DateRangeField',
         'Ecop.widget.CustomerPicker',
+        'Ecop.widget.DocidField',
         'Ecop.widget.ItemBrowser',
         'Ecop.view.order.OrderManagerController'
     ],
@@ -32,43 +33,72 @@ Ext.define('Ecop.view.order.OrderManager', {
         }],
 
         tbar: [{
-            xtype: 'fieldset',
-            title: '订单日期类型',
-
+            xtype: 'container',
+            layout: 'vbox',
             items: [{
-                xtype: 'radiogroup',
-                itemId: 'dateType',
+                // first row container
+                xtype: 'container',
+                layout: 'hbox',
+                margin: '0 0 5 0',
+
                 defaults: {
-                    width: 80,
-                    name: 'dateType'
+                    margin: '0 10 0 0'
                 },
-                items: [
-                    {boxLabel: '创建日期', inputValue: 1, checked: true},
-                    {boxLabel: '完成日期', inputValue: 2}
-                ]
+                items: [{
+                    xtype: 'fieldset',
+                    title: '订单日期类型',
+                    items: [{
+                        xtype: 'radiogroup',
+                        itemId: 'dateType',
+                        defaults: {
+                            width: 80,
+                            name: 'dateType'
+                        },
+                        items: [
+                            {boxLabel: '创建日期', inputValue: 1, checked: true},
+                            {boxLabel: '完成日期', inputValue: 2}
+                        ]
+                    }]
+                }, {
+                    xtype: 'daterange',
+                    itemId: 'daterange'
+                }, {
+                    xtype: 'button',
+                    text: '搜 索',
+                    iconCls: 'x-fa fa-search',
+                    padding: 10,
+                    scale: 'medium',
+                    handler: 'onSearchOrder'
+                }]
+            }, {
+                // second row container
+                xtype: 'container',
+                layout: 'hbox',
+                defaults: {
+                    labelWidth: 60,
+                    width: 180,
+                    margin: '0 10 0 0'
+                },
+                items: [{
+                    xtype: 'customerpicker',
+                    itemId: 'customerId',
+                    fieldLabel: '订单顾客:',
+                    width: 250
+                }, {
+                    xtype: 'idfield',
+                    itemId: 'orderId',
+                    fieldLabel: '订单编号:',
+                    plugins: 'cleartrigger'
+                }, {
+                    xtype: 'combo',
+                    itemId: 'orderstatus',
+                    fieldLabel: '订单状态:',
+                    editable: false,
+                    store: 'orderstatus',
+                    valueField: 'id',
+                    plugins: 'cleartrigger'
+                }]
             }]
-        }, {
-            xtype: 'daterange',
-            itemId: 'daterange'
-        }, {
-            xtype: 'customerpicker',
-            fieldLabel: '订单顾客:',
-            labelWidth: 60,
-            itemId: 'customerId'
-        }, {
-            xtype: 'combo',
-            itemId: 'orderstatus',
-            fieldLabel: '订单状态:',
-            labelWidth: 60,
-            editable: false,
-            width: 170,
-            store: 'orderstatus',
-            valueField: 'id',
-            plugins: 'cleartrigger'
-        }, {
-            text: '搜 索',
-            iconCls: 'x-fa fa-search',
-            handler: 'onSearchOrder'
         }],
 
         columns: {
