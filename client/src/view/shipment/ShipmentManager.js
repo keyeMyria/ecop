@@ -7,6 +7,7 @@ Ext.define('Ecop.view.shipment.ShipmentManager', {
         'Web.model.Shipment',
 
         'Ecop.widget.DateRangeField',
+        'Ecop.widget.DocidField',
         'Ecop.view.shipment.ShipmentManagerController'
     ],
 
@@ -54,16 +55,11 @@ Ext.define('Ecop.view.shipment.ShipmentManager', {
                 xtype: 'daterange',
                 reference: 'daterange'
             }, {
-                xtype: 'numberfield',
+                xtype: 'idfield',
                 reference: 'shipmentId',
                 fieldLabel: '发货单号:',
                 width: 160,
-                labelWidth: 60,
-                allowDecimal: false,
-                minValue: 10000000,
-                maxValue: 99999999,
-                maxLength: 8,
-                validateOnChange: false
+                labelWidth: 60
             }, {
                 xtype: 'combo',
                 reference: 'shipmentStatus',
