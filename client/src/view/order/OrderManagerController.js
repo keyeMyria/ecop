@@ -57,7 +57,8 @@ Ext.define('Ecop.view.order.OrderManagerController', {
             viewModel: {
                 data: {
                     currentOrder: Ext.create('Web.model.Order', {
-                        orderStatus: 1
+                        orderStatus: 1,
+                        regionCode: 310110
                     }),
                     originalStatus: 1
                 }
