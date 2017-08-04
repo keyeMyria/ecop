@@ -1,9 +1,22 @@
 // Place your settings in this file to overwrite default and user settings.
 {
     "files.exclude": {
-        "**/client/.sencha": true,
         "**/client/lib": true,
-        "**/client/sass/example": true,
-        "**/bootstrap.*": true
-    }
+        "**/build": true,
+        "**/ext": true,
+        "**/__pycache__": true,
+        "**/*.egg-info": true,
+        "**/*~": true,
+        "**/*.log": true,
+        "**/node_modules": true,
+        "**/.sencha": true,
+        "**/example": true,
+        "**/bootstrap*": true,
+        "**/resources": true
+
+    },
+
+    "prettier.semi": false,
+    "prettier.singleQuote": true,
+    "prettier.tabWidth": 2
 }

@@ -2,318 +2,340 @@
  * The controller associated with OrderPanel for manipulating a single order
  */
 Ext.define('Ecop.view.order.OrderController', {
-    extend: 'Ext.app.ViewController',
-    alias: 'controller.order',
+  extend: 'Ext.app.ViewController',
+  alias: 'controller.order',
 
-    requires: [
-        'Ecop.view.order.PaymentWindow'
-    ],
+  requires: ['Ecop.view.order.PaymentWindow'],
 
-    // private save a reference to items grid store
-    itemStore: null,
+  // private save a reference to items grid store
+  itemStore: null,
 
-    init: function () {
-        var me = this
-        , vm = me.getViewModel()
-        ;
-
-        /*
-         * Bind events that can not easily be bound in the OrderPanel
-         */
-        me.itemStore = this.lookup('items-grid').getStore();
-        me.itemStore.on({
-            datachanged: 'refreshAmount',
-            update: 'onOrderItemChange',
-            remove: function () {
-                var grid = me.lookup('items-grid');
-                // this updates the row number after item removal
-                grid.getView().refresh();
-                // this ensures Ctrl+S works properly after item removal
-                grid.focus();
-            },
-            scope: me
-        });
-
-        vm.bind('{orderEditable}', 'onOrderEditableChange', me);
-
-        !vm.get('currentOrder').phantom && me.loadOrder();
-    },
-
-    getCurrentOrder: function () {
-        return this.getViewModel().get('currentOrder');
-    },
-
-    isOrderEditable: function () {
-        return this.getCurrentOrder().get('orderStatus') == 1;
-    },
-
-    loadOrder: function () {
-        var me = this
-        , order = me.getCurrentOrder()
-        , paymentStore = me.lookup('payment-grid').getStore();
-
-        Web.data.JsonRPC.request({
-            method: 'order.data',
-            params: [order.getId()],
-            success: function (ret) {
-                /*
-                 * Merge detailed information into current order record,
-                 * as order opened by a click on an order search list
-                 */
-                order.beginEdit();
-                order.set(ret.header);
-                order.endEdit();
-                order.commit();
-
-                me.getViewModel().set('originalStatus', order.get('orderStatus'));
-
-                me.itemStore.loadData(ret.items);
-                me.itemStore.commitChanges();
-                paymentStore.loadData(ret.payments);
-            }
-        });
-    },
+  init: function() {
+    var me = this,
+      vm = me.getViewModel()
 
     /*
-     * When `orderEditable` from view model is changed, update the grid view
-     * plugins to be readonly
+     * Bind events that can not easily be bound in the OrderPanel
      */
-    onOrderEditableChange: function (editable) {
-        var me = this, grid= me.lookup('items-grid');
+    me.itemStore = this.lookup('items-grid').getStore()
+    me.itemStore.on({
+      datachanged: 'refreshAmount',
+      update: 'onOrderItemChange',
+      remove: function() {
+        var grid = me.lookup('items-grid')
+        // this updates the row number after item removal
+        grid.getView().refresh()
+        // this ensures Ctrl+S works properly after item removal
+        grid.focus()
+      },
+      scope: me
+    })
 
-        if (editable) {
-            grid.getView().plugins[0].enable();
-            grid.getPlugin('edit').enable();
-        } else {
-            grid.getView().plugins[0].disable();
-            grid.getPlugin('edit').disable();
-        }
-    },
+    vm.bind('{orderEditable}', 'onOrderEditableChange', me)
 
-    /*
-     * Recalculate the order total amount in the order header
-     */
-    refreshAmount: function () {
-        var me = this
-        , order = me.getCurrentOrder()
-        ;
+    !vm.get('currentOrder').phantom && me.loadOrder()
+  },
 
-        order.set('amount',
-            me.itemStore.sum('amount') + order.get('freight') - order.get('rebate'));
-        order.set('cost',
-            me.itemStore.sum('cost') + order.get('freightCost'));
-    },
+  getCurrentOrder: function() {
+    return this.getViewModel().get('currentOrder')
+  },
 
-    onOrderItemDelete: function (btn, e) {
-        // prevent a click event on the grid
-        e.stopEvent();
+  isOrderEditable: function() {
+    return this.getCurrentOrder().get('orderStatus') == 1
+  },
 
-        btn.getWidgetRecord().drop();
-        // refresh the row number
-        this.lookup('items-grid').getView().refresh();
-    },
+  loadOrder: function() {
+    var me = this,
+      order = me.getCurrentOrder(),
+      paymentStore = me.lookup('payment-grid').getStore()
 
-    onOrderItemChange: function (store, record, op, fields) {
-        if (fields && fields[0] !== 'amount') {
-            record.set('amount',
-                record.get('sellingPrice') * record.get('quantity'));
-            this.refreshAmount();
-        }
-    },
-
-    doAddItems: function (items) {
-        var me = this, oi, i
-        , fields = [
-            'itemId', 'itemName', 'specification', 'purchasePrice',
-            'model', 'unitName', 'sellingPrice'
-        ];
-
-        Ext.each(items, function(item) {
-            // The selector widget could return frozen item when an item id is entered
-            // directly. This check guard against this pssibility.
-            if (item.get('itemStatus') === 2) {
-                Ecop.util.Util.showError(
-                    Ext.String.format('商品{0}已冻结，不能添加到订单！', item.getId()));
-            } else {
-                oi = {};
-                for (i = 0; i < fields.length; ++i) {
-                    oi[fields[i]] = item.get(fields[i]);
-                }
-                oi.quantity = 1;
-                oi.amount = item.get('sellingPrice');
-                me.itemStore.add(Web.model.OrderItem(oi));
-            }
-        });
-    },
-
-    onCtrlS: function (evt) {
-        evt.preventDefault();
-        if (this.getViewModel().get('originalStatus') !== 4) {
-            this.saveOrder();
-        }
-    },
-
-    saveOrder: function (callback) {
-        var me = this
-        , f = me.getView().getForm()
-        , formValid = f.isValid()
-        , order = me.getCurrentOrder()
-        , headers = order.getChanges()
-        , deleted = [], modified = [], added = []
-        ;
-
-        if (formValid) {
-            if (!order.get('recipientPhone') && ! order.get('recipientMobile')) {
-                f.markInvalid({
-                    recipientMobile: '必须输入手机或固定电话之一',
-                    recipientPhone: '必须输入手机或固定电话之一'
-                });
-                formValid = false;
-            } else {
-                f.findField('recipientPhone').clearInvalid();
-                f.findField('recipientMobile').clearInvalid();
-            }
-        }
-
-        if (!formValid) {
-            Ecop.util.Util.showError('输入数据存在错误，请检查。');
-            return;
-        }
-
-        if (me.itemStore.getCount() === 0) {
-            Ecop.util.Util.showError('不允许保存没有项目的订单！');
-            return;
-        }
-
-        Ext.each(me.itemStore.getRemovedRecords(), function (r) {
-            deleted.push(r.get('orderItemId'));
-        });
-
-        // update the order item position
-        for (var i=0; i<me.itemStore.getCount(); i++) {
-            me.itemStore.getAt(i).set('pos', i);
-        }
-
-        Ext.each(me.itemStore.getModifiedRecords(), function (r) {
-            var fields = ['itemId', 'itemName', 'specification', 'model',
-                'quantity', 'purchasePrice', 'sellingPrice', 'pos'], oi={};
-
-            for (var i = 0; i < fields.length; ++i) {
-                oi[fields[i]] = r.get(fields[i]);
-            }
-            if (typeof r.get('orderItemId')  === 'number') {
-                modified.push([r.get('orderItemId'), oi]);
-            } else {
-                added.push([r.get('itemId'), oi]);
-            }
-        });
-
-        if (Ext.isEmpty(deleted) && Ext.isEmpty(modified) &&
-            Ext.isEmpty(added) && Ext.Object.isEmpty(headers)) {
-            if (typeof callback === 'function') {
-                callback.call(me);
-            } else {
-                Ecop.util.Util.showInfo('订单没有改变，无须保存!');
-            }
-            return;
-        }
-
+    Web.data.JsonRPC.request({
+      method: 'order.data',
+      params: [order.getId()],
+      success: function(ret) {
         /*
-         * Removes derived attributes and associations
+         * Merge detailed information into current order record,
+         * as order opened by a click on an order search list
          */
-        delete headers.amount;
-        delete headers.cost;
-        delete headers.couponAmount;
+        order.beginEdit()
+        order.set(ret.header)
+        order.endEdit()
+        order.commit()
 
-        Web.data.JsonRPC.request({
-            method: 'order.modify',
-            params: [
-                order.getId(),
-                {
-                    header: headers,
-                    deleted: deleted,
-                    modified: modified,
-                    added: added
-                }
-            ],
-            success: function (ret) {
-                if (order.phantom) {
-                    order.set('orderId', ret);
-                }
-                if (typeof callback === 'function') {
-                    callback.call(me);
-                } else {
-                    me.loadOrder();
-                    Ecop.util.Util.showInfo('订单保存成功!');
-                }
-            }
-        });
-    },
+        me.getViewModel().set('originalStatus', order.get('orderStatus'))
 
-    onBtnSwitchPrice: function (btn) {
-        var me = this
-        , itemIds = []
-        ;
+        me.itemStore.loadData(ret.items)
+        me.itemStore.commitChanges()
+        paymentStore.loadData(ret.payments)
+      }
+    })
+  },
 
-        me.itemStore.each(function (oi) {
-            itemIds.push(oi.get('itemId'));
-        });
-        Web.data.JsonRPC.request({
-            method: 'order.price.get',
-            params: [itemIds, btn.priceType],
-            success: function (prices) {
-                me.itemStore.each(function(oi) {
-                    oi.set('sellingPrice', prices[oi.get('itemId')]);
-                });
-                btn.priceType = btn.priceType == 'B' ? 'C' : 'B';
-                btn.setText(btn.priceType == 'B' ? 'B价' : 'C价');
-            }
-        });
-    },
+  /*
+   * When `orderEditable` from view model is changed, update the grid view
+   * plugins to be readonly
+   */
+  onOrderEditableChange: function(editable) {
+    var me = this,
+      grid = me.lookup('items-grid')
 
-    onQueryCoupon: function (queryplan) {
-        queryplan.query = this.getCurrentOrder().get('orderId');
-    },
-
-    onCouponChange: function (field, newValue, oldValue) {
-        var me = this, order = me.getCurrentOrder();
-        if (newValue === 0) return;
-        order.set('couponAmount',
-            newValue ? field.getStore().getById(newValue).get('amount') : 0);
-    },
-
-    onBtnPayment: function () {
-        var me = this;
-
-        // we add the form to the view instead to view port in order for the
-        // form to access this controller
-        if (!me.paymentDialog) {
-            me.paymentDialog = me.getView().add({
-                xtype: 'payment-window',
-                layout: 'fit' // TODO: this should be moved to PaymentWindow class
-                            // but it seems a bug and can not be placed there.
-            });
-        }
-        me.paymentDialog.show().center();
-    },
-
-    onConfirmOrder: function () {
-        var me = this
-        , params = [
-            me.getCurrentOrder().get('orderId'),
-            me.lookup('paymentMethod').getValue(),
-            me.lookup('paymentAmount').getValue()
-        ];
-
-        me.saveOrder(function(){
-            Web.data.JsonRPC.request({
-                method: 'order.pay',
-                params: params,
-                success: function () {
-                    me.paymentDialog.close();
-                    me.loadOrder();
-                }
-            });
-        });
+    if (editable) {
+      grid.getView().plugins[0].enable()
+      grid.getPlugin('edit').enable()
+    } else {
+      grid.getView().plugins[0].disable()
+      grid.getPlugin('edit').disable()
     }
-});
+  },
+
+  /*
+   * Recalculate the order total amount in the order header
+   */
+  refreshAmount: function() {
+    var me = this,
+      order = me.getCurrentOrder()
+
+    order.set(
+      'amount',
+      me.itemStore.sum('amount') + order.get('freight') - order.get('rebate')
+    )
+    order.set('cost', me.itemStore.sum('cost') + order.get('freightCost'))
+  },
+
+  onOrderItemDelete: function(btn, e) {
+    // prevent a click event on the grid
+    e.stopEvent()
+
+    btn.getWidgetRecord().drop()
+    // refresh the row number
+    this.lookup('items-grid').getView().refresh()
+  },
+
+  onOrderItemChange: function(store, record, op, fields) {
+    if (fields && fields[0] !== 'amount') {
+      record.set('amount', record.get('sellingPrice') * record.get('quantity'))
+      this.refreshAmount()
+    }
+  },
+
+  doAddItems: function(items) {
+    var me = this,
+      oi,
+      i,
+      fields = [
+        'itemId',
+        'itemName',
+        'specification',
+        'purchasePrice',
+        'model',
+        'unitName',
+        'sellingPrice'
+      ]
+
+    Ext.each(items, function(item) {
+      // The selector widget could return frozen item when an item id is entered
+      // directly. This check guard against this pssibility.
+      if (item.get('itemStatus') === 2) {
+        Ecop.util.Util.showError(
+          Ext.String.format('商品{0}已冻结，不能添加到订单！', item.getId())
+        )
+      } else {
+        oi = {}
+        for (i = 0; i < fields.length; ++i) {
+          oi[fields[i]] = item.get(fields[i])
+        }
+        oi.quantity = 1
+        oi.amount = item.get('sellingPrice')
+        me.itemStore.add(Web.model.OrderItem(oi))
+      }
+    })
+  },
+
+  onCtrlS: function(evt) {
+    evt.preventDefault()
+    if (this.getViewModel().get('originalStatus') !== 4) {
+      this.saveOrder()
+    }
+  },
+
+  saveOrder: function(callback) {
+    var me = this,
+      f = me.getView().getForm(),
+      formValid = f.isValid(),
+      order = me.getCurrentOrder(),
+      headers = order.getChanges(),
+      deleted = [],
+      modified = [],
+      added = []
+
+    if (formValid) {
+      if (!order.get('recipientPhone') && !order.get('recipientMobile')) {
+        f.markInvalid({
+          recipientMobile: '必须输入手机或固定电话之一',
+          recipientPhone: '必须输入手机或固定电话之一'
+        })
+        formValid = false
+      } else {
+        f.findField('recipientPhone').clearInvalid()
+        f.findField('recipientMobile').clearInvalid()
+      }
+    }
+
+    if (!formValid) {
+      Ecop.util.Util.showError('输入数据存在错误，请检查。')
+      return
+    }
+
+    if (me.itemStore.getCount() === 0) {
+      Ecop.util.Util.showError('不允许保存没有项目的订单！')
+      return
+    }
+
+    Ext.each(me.itemStore.getRemovedRecords(), function(r) {
+      deleted.push(r.get('orderItemId'))
+    })
+
+    // update the order item position
+    for (var i = 0; i < me.itemStore.getCount(); i++) {
+      me.itemStore.getAt(i).set('pos', i)
+    }
+
+    Ext.each(me.itemStore.getModifiedRecords(), function(r) {
+      var fields = [
+          'itemId',
+          'itemName',
+          'specification',
+          'model',
+          'quantity',
+          'purchasePrice',
+          'sellingPrice',
+          'pos'
+        ],
+        oi = {}
+
+      for (var i = 0; i < fields.length; ++i) {
+        oi[fields[i]] = r.get(fields[i])
+      }
+      if (typeof r.get('orderItemId') === 'number') {
+        modified.push([r.get('orderItemId'), oi])
+      } else {
+        added.push([r.get('itemId'), oi])
+      }
+    })
+
+    if (
+      Ext.isEmpty(deleted) &&
+      Ext.isEmpty(modified) &&
+      Ext.isEmpty(added) &&
+      Ext.Object.isEmpty(headers)
+    ) {
+      if (typeof callback === 'function') {
+        callback.call(me)
+      } else {
+        Ecop.util.Util.showInfo('订单没有改变，无须保存!')
+      }
+      return
+    }
+
+    /*
+     * Removes derived attributes and associations
+     */
+    delete headers.amount
+    delete headers.cost
+    delete headers.couponAmount
+
+    Web.data.JsonRPC.request({
+      method: 'order.modify',
+      params: [
+        order.getId(),
+        {
+          header: headers,
+          deleted: deleted,
+          modified: modified,
+          added: added
+        }
+      ],
+      success: function(ret) {
+        if (order.phantom) {
+          order.set('orderId', ret)
+        }
+        if (typeof callback === 'function') {
+          callback.call(me)
+        } else {
+          me.loadOrder()
+          Ecop.util.Util.showInfo('订单保存成功!')
+        }
+      }
+    })
+  },
+
+  onBtnSwitchPrice: function(btn) {
+    var me = this,
+      itemIds = []
+
+    me.itemStore.each(function(oi) {
+      itemIds.push(oi.get('itemId'))
+    })
+    Web.data.JsonRPC.request({
+      method: 'order.price.get',
+      params: [itemIds, btn.priceType],
+      success: function(prices) {
+        me.itemStore.each(function(oi) {
+          oi.set('sellingPrice', prices[oi.get('itemId')])
+        })
+        btn.priceType = btn.priceType == 'B' ? 'C' : 'B'
+        btn.setText(btn.priceType == 'B' ? 'B价' : 'C价')
+      }
+    })
+  },
+
+  onQueryCoupon: function(queryplan) {
+    queryplan.query = this.getCurrentOrder().get('orderId')
+  },
+
+  onCouponChange: function(field, newValue, oldValue) {
+    var me = this,
+      order = me.getCurrentOrder()
+    if (newValue === 0) return
+    order.set(
+      'couponAmount',
+      newValue ? field.getStore().getById(newValue).get('amount') : 0
+    )
+  },
+
+  onBtnPayment: function() {
+    var me = this
+
+    // we add the form to the view instead to view port in order for the
+    // form to access this controller
+    if (!me.paymentDialog) {
+      me.paymentDialog = me.getView().add({
+        xtype: 'payment-window',
+        // TODO: this should be moved to PaymentWindow class
+        // but it seems a bug and can not be placed there.
+        layout: 'fit'
+      })
+    }
+    me.paymentDialog.show().center()
+  },
+
+  onConfirmOrder: function() {
+    var me = this,
+      params = [
+        me.getCurrentOrder().get('orderId'),
+        me.lookup('paymentMethod').getValue(),
+        me.lookup('paymentAmount').getValue()
+      ]
+
+    me.saveOrder(function() {
+      Web.data.JsonRPC.request({
+        method: 'order.pay',
+        params: params,
+        success: function() {
+          me.paymentDialog.close()
+          me.loadOrder()
+        }
+      })
+    })
+  }
+})
