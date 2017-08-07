@@ -24,7 +24,7 @@ Ext.define('Ecop.internal.PartyWindow', {
       items: [
         {
           xtype: 'textfield',
-          name: 'name',
+          name: 'partyName',
           fieldLabel: '客戶名称',
           allowBlank: false
         },
@@ -43,6 +43,7 @@ Ext.define('Ecop.internal.PartyWindow', {
       buttonAlign: 'center',
       buttons: [
         {
+          itemId: 'btnAdd',
           text: '添加'
         },
         {
@@ -53,18 +54,13 @@ Ext.define('Ecop.internal.PartyWindow', {
         }
       ]
     }
-  ],
-
-  doDestroy: function() {
-    console.log('Party Window destroyed')
-    this.callParent()
-  }
+  ]
 })
 
 Ext.define('Ecop.widget.CustomerPicker', {
   extend: 'Ext.form.field.ComboBox',
   requires: [
-    'Web.model.User',
+    'Web.model.Party',
     'Web.ux.Util' // for gbkLength
   ],
   xtype: 'customerpicker',
@@ -74,9 +70,9 @@ Ext.define('Ecop.widget.CustomerPicker', {
   store: {
     proxy: {
       type: 'jsonrpc',
-      method: 'user.search'
+      method: 'party.search'
     },
-    model: 'Web.model.User'
+    model: 'Web.model.Party'
   },
 
   minChars: 0,
@@ -128,42 +124,52 @@ Ext.define('Ecop.widget.CustomerPicker', {
   },
 
   /*
-     * @private
-     *
-     * Start remote query when the user enters at least 5 digits for phone
-     * number or at least 2 Chinese characters for user name. Note we have to
-     * use custom code to determine length of Chinese characters since
-     * javascript only supports unicode length
-     */
+   * @private
+   *
+   * Start remote query when the user enters at least 5 digits for phone
+   * number or at least 2 Chinese characters for user name. Note we have to
+   * use custom code to determine length of Chinese characters since
+   * javascript only supports unicode length
+   */
   onBeforeQuery: function(queryPlan) {
     var me = this,
       q = queryPlan.query
-    if (q.match(/^\d+$/)) return q.length >= 5
+    if (q.match(/^\d+$/)) return q.length >= 6
     return Ext.String.gbkLength(queryPlan.query) >= 4
   },
 
   /*
-     * Since we used display template to alter the raw value of the textbox,
-     * we shall customize how to find a record by display value
-     */
+   * Since we used display template to alter the raw value of the textbox,
+   * we shall customize how to find a record by display value
+   */
   findRecordByDisplay: function(value) {
     return this.callParent([value.substr(1, 8)])
   },
 
   /*
-     * When ever the value of a CustomerPicker widget is set to partyId, load
-     * the party information first and use it to display widget text
-     */
+   * When ever the value of a CustomerPicker widget is set to partyId, load
+   * the party information first and use it to display widget text. For newly
+   * created party, the method can also be called with a returned party object.
+   */
   setValue: function(value) {
     var me = this
-    // this is very important to prevent infinitely recursive loads
-    // since setValue will be called again when store is loaded
+    /*
+     * Note when setValue is called with a partyId, the store has to be loaded
+     * first. And after the store is loaded, the setValue will be called again
+     * with the same partyId. So we shall be careful not to load the store
+     * again and again.
+    */
     if (typeof value === 'number' && value !== me.getValue()) {
       me.value = value
       me.store.load({
         params: { partyId: value }
       })
       return me
+      // note typeof null is also 'object'
+    } else if (typeof value === 'object' && value && value.partyId) {
+      me.value = value.partyId
+      me.store.setData([value])
+      return me.callParent([me.value])
     } else {
       return me.callParent(arguments)
     }
@@ -173,8 +179,27 @@ Ext.define('Ecop.widget.CustomerPicker', {
     var me = this
     if (!me.partyDialog) {
       me.partyDialog = Ext.widget('party-window')
+      me.partyDialog.down('#btnAdd').on('click', me.onAddParty, me)
     }
     me.partyDialog.show()
+  },
+
+  onAddParty: function() {
+    var me = this,
+      dlg = me.partyDialog,
+      form = dlg.down('form').getForm()
+
+    if (form.isValid()) {
+      Web.data.JsonRPC.request({
+        method: 'party.create',
+        params: [form.getValues()],
+        success: function(party) {
+          me.setValue(party)
+          form.reset()
+          dlg.close()
+        }
+      })
+    }
   },
 
   initComponent: function() {

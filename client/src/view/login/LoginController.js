@@ -45,7 +45,7 @@ Ext.define('Ecop.view.login.LoginController', {
             values = me.lookup('form').getValues();
 
         Web.data.JsonRPC.request({
-            method: 'user.login',
+            method: 'auth.login',
             params: [values.user, values.password],
             scope: me,
             success: 'onLoginSuccess',

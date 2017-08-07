@@ -245,7 +245,7 @@ Ext.define('Ecop.view.order.OrderController', {
     delete headers.couponAmount
 
     Web.data.JsonRPC.request({
-      method: 'order.modify',
+      method: 'order.upsert',
       params: [
         order.getId(),
         {

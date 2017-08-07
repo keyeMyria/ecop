@@ -15,13 +15,15 @@ Build (2017-8-)
  * Allow order status to be changed manually
  * Split ecop into own git repository with server and client code
  * Show payment information in order panel
+ * Use keyboard shortcuts to save order changes
+ * Manual customer creation
 
- * Allow manual customer creation
  * Allow multiple order payments for a single order
+ * Send an order to customer via SMS or Wechat message
  * Publish artiles to wechat open platform
  * Allow adding item without item id to order
- * Refund of appointment amount, both alipay and wepay
- * Do not create and render all the management panels at once during startup
+ * RegionSelector: auto-select the current region when picker is opened
+ * Implement order memos for order tracking
 
 Mecop
 
@@ -32,6 +34,8 @@ Future
 ------
  * Seperate js-common into its own package to be shared between various
    javascript projects
+ * Refund of appointment amount, both alipay and wepay
+ * Do not create and render all the management panels at once during startup
  * Use the same jsonrpc protection mechanism for website and ecop
  * Sepatate code / repository from web
  * Separate deployment of erp from website

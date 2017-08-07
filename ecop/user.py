@@ -1,4 +1,3 @@
-from sqlalchemy import or_
 import uuid
 import pickle
 
@@ -11,11 +10,9 @@ from weblibs.jsonrpc import RPCNotAllowedError, RPCUserError, marshall
 from weblibs.redis import RedisConn
 from weblibs.sqlalchemy import DBSession
 
-from .base import RpcBase
 
-
-@jsonrpc_method(endpoint='rpc', method='user.login')
-def userLogin(request, login, password):
+@jsonrpc_method(endpoint='rpc', method='auth.login')
+def userLogin(dummy_request, login, password):
     """ Verify account password and create authentication token.
 
     This is the only rpc method that does not subclass RpcBase for it occurs
@@ -44,24 +41,3 @@ def userLogin(request, login, password):
         return ret
 
     raise RPCUserError('登录失败，请检查用户名和密码！')
-
-
-class UserJSON(RpcBase):
-    @jsonrpc_method(endpoint='rpc', method='user.search')
-    def searchUser(self, query=None, partyId=None):
-        if partyId:
-            users = [self.sess.query(Party).get(partyId)]
-        elif query:
-            cond = or_(
-                Party.partyName.op('ilike')('%%%s%%' % query),
-                Party.login.op('ilike')('%%%s%%' % query))
-            if query.isdigit():
-                cond = or_(cond, Party.mobile.op('ilike')('%%%s%%' % query))
-            users = self.sess.query(Party).filter(cond).limit(20).all()
-        else:
-            # it is possible for the CustomerPicker store to send query without
-            # the query value
-            return
-
-        fields = ['partyId', 'login', 'partyName', 'mobile', 'partyType']
-        return [marshall(u, fields) for u in users]

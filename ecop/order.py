@@ -95,7 +95,7 @@ class OrderJSON(RpcBase):
             } for op in order.payments]
         }
 
-    @jsonrpc_method(endpoint='rpc', method='order.modify')
+    @jsonrpc_method(endpoint='rpc', method='order.upsert')
     def createOrModify(self, orderId, modifications):
         """ Modify an existing order or create a new one.
 
