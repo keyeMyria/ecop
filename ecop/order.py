@@ -30,8 +30,8 @@ def changeOrderStatus(order, old, new):
     if old == ORDER_STATUS.PARTIAL_DELIVERY and new != ORDER_STATUS.COMPLETED:
         raise RPCUserError('部分发货的订单状态只能修改为已完成！')
 
-    if old == ORDER_STATUS.COMPLETED:
-        raise RPCUserError('已完成的订单不能修改成其他状态！')
+    # if old == ORDER_STATUS.COMPLETED and not has_permission('order.reopen'):
+    #     raise RPCUserError('您没有权限打开已完成的订单。')
 
     order.orderStatus = new
 
@@ -260,7 +260,7 @@ class OrderJSON(RpcBase):
             if start_date > end_date:
                 raise RPCUserError('结束日期必须大于起始日期！')
 
-            if cond.get('dateType', 1) == 1:
+            if cond['dateType'] == 1:
                 dateField = Order.createTime
             else:
                 dateField = Order.completionDate
@@ -274,6 +274,8 @@ class OrderJSON(RpcBase):
             #  * customerId is given, then show all orders of the customer
             if cond['orderStatus']:
                 query = query.filter(Order.orderStatus == cond['orderStatus'])
+            elif cond['dateType'] == 2: # completed
+                query = query.filter_by(orderStatus=ORDER_STATUS.COMPLETED)
             elif not cond['customerId']:
                 query = query.filter(and_(
                     Order.orderStatus != ORDER_STATUS.CLOSED,

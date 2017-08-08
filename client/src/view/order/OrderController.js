@@ -151,11 +151,15 @@ Ext.define('Ecop.view.order.OrderController', {
     })
   },
 
+  /*
+   * Using Ctrl+S one can always save any changes to the order. Even when the
+   * order is already closed, the staff shall still be able to change the order
+   * status and internal memo. The fields that can be changed on a closed order
+   * is controlled by the UI, i.e. OrderPanel
+   */
   onCtrlS: function(evt) {
     evt.preventDefault()
-    if (this.getViewModel().get('originalStatus') !== 4) {
-      this.saveOrder()
-    }
+    this.saveOrder()
   },
 
   saveOrder: function(callback) {
