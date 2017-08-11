@@ -385,11 +385,6 @@ class OrderJSON(RpcBase):
         if order.couponUid:
             order.coupon.redemptionTime = now
 
-        if order.orderStatus == ORDER_STATUS.BID:
-            order.orderStatus = ORDER_STATUS.PAID
-        if not order.confirmTime:
-            order.confirmTime = now
-
 
 @view_config(route_name='order_download')
 class OrderExportView(DocBase):
