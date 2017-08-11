@@ -324,17 +324,16 @@ Ext.define('Ecop.view.order.OrderController', {
   },
 
   onPayment: function() {
-    var me = this,
-      params = [
-        me.getCurrentOrder().get('orderId'),
-        me.lookup('paymentMethod').getValue(),
-        me.lookup('paymentAmount').getValue()
-      ]
+    var me = this
 
     me.saveOrder(function() {
       Web.data.JsonRPC.request({
         method: 'order.pay',
-        params: params,
+        params: [
+          me.getCurrentOrder().get('orderId'),
+          me.lookup('paymentMethod').getValue(),
+          me.lookup('paymentAmount').getValue()
+        ],
         success: function() {
           me.paymentDialog.close()
           me.loadOrder()
