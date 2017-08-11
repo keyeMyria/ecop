@@ -56,7 +56,7 @@ Ext.define('Ecop.view.order.PaymentWindow', {
       buttons: [
         {
           text: '确认收款',
-          handler: 'onConfirmOrder'
+          handler: 'onPayment'
         },
         {
           text: '取消',
