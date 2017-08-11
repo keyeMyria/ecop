@@ -95,7 +95,7 @@ Ext.define('Ecop.view.order.OrderPanel', {
       items: [
         {
           allowBlank: false,
-          fieldLabel: '收货人',
+          fieldLabel: '联系人',
           bind: {
             readOnly: '{!orderEditable}',
             value: '{currentOrder.recipientName}'
@@ -440,7 +440,7 @@ Ext.define('Ecop.view.order.OrderPanel', {
                 renderer: Ext.util.Format.dateRenderer('Y-m-d H:i:s')
               },
               {
-                text: '收款渠道',
+                text: '付款渠道',
                 width: 160,
                 dataIndex: 'paymentMethod',
                 renderer: Ext.util.Format.storeRenderer(

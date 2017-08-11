@@ -323,7 +323,7 @@ Ext.define('Ecop.view.order.OrderController', {
     me.paymentDialog.show().center()
   },
 
-  onConfirmOrder: function() {
+  onPayment: function() {
     var me = this,
       params = [
         me.getCurrentOrder().get('orderId'),

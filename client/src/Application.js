@@ -1,15 +1,11 @@
 Ext.define('Ecop.Application', {
-    extend: 'Ext.app.Application',
+  extend: 'Ext.app.Application',
 
-    name: 'Ecop',
+  name: 'Ecop',
 
-    requires: [
-        'Ecop.view.login.Login',
-        'Ecop.view.main.Main'
-    ],
+  requires: ['Ecop.view.login.Login', 'Ecop.view.main.Main'],
 
-    launch: function () {
-        Ext.widget('login-dialog');
-    }
-
-});
+  launch: function() {
+    Ext.widget('login-dialog')
+  }
+})
