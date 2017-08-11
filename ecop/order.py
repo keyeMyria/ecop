@@ -252,7 +252,8 @@ class OrderJSON(RpcBase):
         if cond.get('orderId'):
             orderId = int(cond['orderId'])
             assert 10000000 <= orderId <= 99999999, '无效订单号。'
-            orders = [query.get(orderId)]
+            o = query.get(orderId)
+            orders = [o] if o else []
         else:
             start_date = datetime.strptime(cond['startDate'], '%Y-%m-%d')
             end_date = datetime.strptime(cond['endDate'], '%Y-%m-%d')
