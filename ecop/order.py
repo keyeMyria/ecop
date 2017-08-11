@@ -91,7 +91,8 @@ class OrderJSON(RpcBase):
                 'amount': op.amount,
                 'paymentMethod': op.payment.paymentMethod,
                 'payTime': op.payment.payTime,
-                'receiverName': op.payment.receiver.partyName if op.payment.receiver else None
+                'receiverName': op.payment.receiver.partyName \
+                    if op.payment.receiver else None
             } for op in order.payments]
         }
 
@@ -357,6 +358,9 @@ class OrderJSON(RpcBase):
         order = self.loadOrder(orderId)
 
         now = datetime.now()
+
+        if not amount:
+            raise RPCUserError('收款金额不能为0')
 
         if method and amount:
             assert amount <= order.amount - order.couponAmount
