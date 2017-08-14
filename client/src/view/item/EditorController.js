@@ -2,24 +2,19 @@ Ext.define('Ecop.view.item.EditorController', {
   extend: 'Ext.app.ViewController',
   alias: 'controller.item-editor',
 
-  requires: [
-    'Web.model.Image',
-    'Web.model.BomItem',
-    'Ecop.view.item.ItemWindow'
-  ],
+  requires: ['Ecop.view.item.ItemWindow'],
 
   /*
-     *@private
-     * Saves item under context menu
-     */
+   *@private
+   */
   currentRecord: null,
   bomOrderChanged: false,
   imageModified: false,
   moduleModified: false,
 
   /*
-     * Returns the item model that is currently being edited in the ItemForm
-     */
+   * Returns the item model that is currently being edited in the ItemForm
+   */
   getCurrentItem: function() {
     return this.dialog ? this.dialog.getViewModel().get('currentItem') : null
   },
@@ -38,23 +33,10 @@ Ext.define('Ecop.view.item.EditorController', {
       height: vp.getHeight() - 100,
       minHeight: Math.min(vp.getHeight(), 768),
       viewModel: {
+        data: {
+          currentItem: record,
+        },
         stores: {
-          boms: {
-            model: 'Web.model.BomItem',
-            autoLoad: false,
-            proxy: {
-              type: 'jsonrpc',
-              method: 'item.bom.get'
-            }
-          },
-          images: {
-            model: 'Web.model.Image',
-            autoLoad: false,
-            proxy: {
-              type: 'jsonrpc',
-              method: 'item.images.get'
-            }
-          },
           modules: {
             type: 'tree',
             autoLoad: false,
@@ -63,29 +45,6 @@ Ext.define('Ecop.view.item.EditorController', {
               method: 'item.modules.get',
               params: [record.getId()]
             }
-          }
-        },
-        data: {
-          currentItem: record
-        },
-        formulas: {
-          showRight: function(get) {
-            var s = get('images'),
-              record = get('selectedImage')
-            return record && s.indexOf(record) < s.getCount() - 1
-          },
-          showLeft: function(get) {
-            var s = get('images'),
-              record = get('selectedImage')
-            return record && s.indexOf(record) > 0
-          },
-          itemId: function(get) {
-            var item = get('currentItem')
-            return item.phantom ? '新商品' : item.getId()
-          },
-          title: function(get) {
-            var item = get('currentItem')
-            return item.phantom ? '新增商品' : '编辑商品: ' + item.get('itemName')
           }
         }
       }
@@ -372,8 +331,8 @@ Ext.define('Ecop.view.item.EditorController', {
   },
 
   /*
-     * =====================  BOM Manipulation  ===========================
-     */
+   * =====================  BOM Manipulation  ===========================
+   */
 
   onSkuSelect: function() {
     var btn = this.lookup('btnAddSku')
@@ -400,22 +359,22 @@ Ext.define('Ecop.view.item.EditorController', {
   },
 
   /*
-     * bom item order is changed via grid drag drop, which can not be properly
-     * tracked by store methods
-     */
+   * bom item order is changed via grid drag drop, which can not be properly
+   * tracked by store methods
+   */
   onSkuGridDrop: function() {
     this.bomOrderChanged = true
   },
 
   /*
-     * =====================  Item Image Manipulation  =======================
-     */
+   * =====================  Item Image Manipulation  =======================
+   */
 
   /*
-     * Client precheck of image based on usage, which can be either 'item-image'
-     * (the default) or 'desc-image'.
-     * Returns true if check passes or show fail message.
-     */
+   * Client precheck of image based on usage, which can be either 'item-image'
+    * (the default) or 'desc-image'.
+   * Returns true if check passes or show fail message.
+   */
   checkImageFile: function(file, usage) {
     if (!file) return
 
@@ -441,9 +400,9 @@ Ext.define('Ecop.view.item.EditorController', {
   },
 
   /*
-     * First check if the image already exists using md5 of the file. If yes
-     * return the found image, otherwise add the image to repository
-     */
+   * First check if the image already exists using md5 of the file. If yes
+   * return the found image, otherwise add the image to repository
+   */
   addOrUpdateImage: function(file, imgType, imageId) {
     var me = this,
       fileValue
@@ -524,8 +483,8 @@ Ext.define('Ecop.view.item.EditorController', {
   },
 
   /*
-     * Update an item image. Note that description image can not be updated
-     */
+   * Update an item image. Note that description image can not be updated
+   */
   onImageUpdate: function(fileBtn) {
     var me = this,
       store = me.dialog.getViewModel().get('images'),
@@ -596,8 +555,8 @@ Ext.define('Ecop.view.item.EditorController', {
   },
 
   /*
-     * =====================  Item Description  ===========================
-     */
+   * =====================  Item Description  ===========================
+   */
 
   onDescShow: function() {
     var me = this,
@@ -741,10 +700,10 @@ Ext.define('Ecop.view.item.EditorController', {
   },
 
   /*
-     * We can not use bind {data: selection} to automatically update preview
-     * since the default Component.update method calls model.getData before
-     * passing the data to template, so that the node structure would be lost
-     */
+   * We can not use bind {data: selection} to automatically update preview
+   * since the default Component.update method calls model.getData before
+   * passing the data to template, so that the node structure would be lost
+   */
   onDescTreeSelect: function(model, record) {
     var me = this,
       cmp = me.lookup('preview')
@@ -752,8 +711,8 @@ Ext.define('Ecop.view.item.EditorController', {
   },
 
   /*
-     * Preview the whole item description
-     */
+   * Preview the whole item description
+   */
   onDescPreview: function() {
     var me = this,
       cmp = me.lookup('preview'),
@@ -765,8 +724,8 @@ Ext.define('Ecop.view.item.EditorController', {
   },
 
   /*
-     * Prevent dropping a resource into module level
-     */
+   * Prevent dropping a resource into module level
+   */
   onDescTreeBeforeDrop: function(node, data, overModel, dropPosition) {
     if (!overModel.get('rid') && dropPosition === 'before') {
       return false
