@@ -448,6 +448,12 @@ Ext.define('Ecop.view.order.OrderPanel', {
               bind: {
                 disabled: '{!paymentDeletable}'
               }
+            },
+            {
+              iconCls: 'x-fa fa-minus-circle',
+              tooltip: '退款',
+              disabled: true,
+              handler: 'onPaymentDelete'
             }
           ],
 
@@ -471,7 +477,7 @@ Ext.define('Ecop.view.order.OrderPanel', {
               },
               {
                 text: '付款渠道',
-                width: 160,
+                width: 150,
                 dataIndex: 'paymentMethod',
                 renderer: Ext.util.Format.storeRenderer(
                   'paymentmethod',
@@ -480,8 +486,8 @@ Ext.define('Ecop.view.order.OrderPanel', {
                 )
               },
               {
-                text: '金额',
-                width: 70,
+                text: '付款金额',
+                width: 90,
                 align: 'center',
                 dataIndex: 'amount',
                 formatter: 'number("0,000.00")',

@@ -289,22 +289,6 @@ Ext.define('Ecop.view.order.OrderController', {
     })
   },
 
-  onPaymentAdd: function() {
-    var me = this
-
-    // we add the form to the view instead to view port in order for the
-    // form to access this controller
-    if (!me.paymentDialog) {
-      me.paymentDialog = me.getView().add({
-        xtype: 'payment-window',
-        // TODO: this should be moved to PaymentWindow class
-        // but it seems a bug and can not be placed there.
-        layout: 'fit'
-      })
-    }
-    me.paymentDialog.show().center()
-  },
-
   onPayment: function() {
     var me = this
 
@@ -322,7 +306,30 @@ Ext.define('Ecop.view.order.OrderController', {
         }
       })
     })
-  }
+  },
+
+  onPaymentAdd: function() {
+    var me = this
+
+    // we add the form to the view instead to view port in order for the
+    // form to access this controller
+    if (!me.paymentDialog) {
+      me.paymentDialog = me.getView().add({
+        xtype: 'payment-window',
+        // TODO: this should be moved to PaymentWindow class
+        // but it seems a bug and can not be placed there.
+        layout: 'fit'
+      })
+    }
+    me.paymentDialog.show().center()
+  },
+
+  onPaymentDelete: function() {
+    var me = this
+    console.log('Delete order payment', me.getViewModel().get('restAmount'))
+  },
+
+  onPaymentReturn: function() {}
 
   /*
    * ------------------------------------------------------------------------

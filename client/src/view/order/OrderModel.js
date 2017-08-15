@@ -32,17 +32,25 @@ Ext.define('Ecop.view.order.OrderModel', {
     },
 
     /*
-         * If an order is completed, disable the save button
-         */
+     * If an order is completed, disable the save button
+     */
     saveButtonDisabled: function(get) {
       return get('originalStatus') === 4
     },
 
     /*
-         * An order in bid status is editable
-         */
+     * An order in bid status is editable
+     */
     orderEditable: function(get) {
       return get('originalStatus') === 1
+    },
+
+    /*
+     * A payment entry is only deletable when it is added by staff
+     */
+    paymentDeletable: function(get) {
+      var rec = get('paymentGrid.selection')
+      return rec && rec.get('receiverName')
     }
   }
 })
