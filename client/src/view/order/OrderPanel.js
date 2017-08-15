@@ -379,13 +379,13 @@ Ext.define('Ecop.view.order.OrderPanel', {
         },
         {
           xtype: 'displayfield',
-          bind: '{profit}',
+          bind: '{currentOrder.profit}',
           fieldLabel: '毛利',
           renderer: Ext.util.Format.numberRenderer('0,000.00')
         },
         {
           xtype: 'displayfield',
-          bind: '{margin}',
+          bind: '{currentOrder.margin}',
           fieldLabel: '毛利率',
           renderer: function(v) {
             return Ext.util.Format.percent(v, '0.0')

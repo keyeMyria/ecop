@@ -7,15 +7,6 @@ Ext.define('Ecop.view.order.OrderModel', {
       return get('currentOrder.amount') - get('currentOrder.paidAmount')
     },
 
-    profit: function(get) {
-      return get('amount') - get('currentOrder.cost')
-    },
-
-    margin: function(get) {
-      var amount = get('amount')
-      return amount ? get('profit') / amount : 0
-    },
-
     title: function(get) {
       return typeof get('currentOrder.orderId') === 'string'
         ? '新建订单'
