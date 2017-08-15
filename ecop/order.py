@@ -73,8 +73,7 @@ class OrderJSON(RpcBase):
             'orderId', 'customerId', 'createTime', 'amount',
             'freight', 'rebate', 'orderStatus', 'regionCode', 'recipientName',
             'streetAddress', 'recipientMobile', 'recipientPhone', 'memo',
-            'internalMemo', 'couponUid', 'couponAmount', 'freightCost',
-            'completionDate'
+            'internalMemo', 'paidAmount', 'freightCost', 'completionDate'
         ]
 
         header = marshall(order, fields)
@@ -162,15 +161,16 @@ class OrderJSON(RpcBase):
         # currently only staff can add items to order
         for i in modifications.get('added', []):
             item = self.sess.query(Item).get(i[0])
-            order.addItem(itemId=item.itemId,
-                          itemName=i[1]['itemName'].strip(),
-                          specification=i[1]['specification'].strip() or None,
-                          model=i[1]['model'].strip() or None,
-                          quantity=Decimal(str(i[1]['quantity'])),
-                          unitId=item.unitId,
-                          sellingPrice=Decimal(str(i[1]['sellingPrice'])),
-                          purchasePrice=Decimal(str(i[1]['purchasePrice'])),
-                          pos=i[1]['pos'])
+            order.addItem(
+                itemId=item.itemId,
+                itemName=i[1]['itemName'].strip(),
+                specification=i[1]['specification'].strip() or None,
+                model=i[1]['model'].strip() or None,
+                quantity=Decimal(str(i[1]['quantity'])),
+                unitId=item.unitId,
+                sellingPrice=Decimal(str(i[1]['sellingPrice'])),
+                purchasePrice=Decimal(str(i[1]['purchasePrice'])),
+                pos=i[1]['pos'])
 
         order.updateTotals()
 
@@ -352,8 +352,8 @@ class OrderJSON(RpcBase):
             for i in items
         ])
 
-    @jsonrpc_method(endpoint='rpc', method='order.pay')
-    def payOrder(self, orderId, method=None, amount=None):
+    @jsonrpc_method(endpoint='rpc', method='order.payment.add')
+    def addOrderPayment(self, orderId, method=None, amount=None):
         """ Offline payment initialized by staff """
         order = self.loadOrder(orderId)
 
@@ -363,8 +363,8 @@ class OrderJSON(RpcBase):
             raise RPCUserError('收款金额不能为0')
 
         if method and amount:
-            assert amount <= order.amount - order.couponAmount
-            order.paidAmount = amount
+            # assert amount <= order.amount - order.couponAmount
+            order.paidAmount += amount
 
             payment = Payment()
             payment.amount = amount
@@ -372,6 +372,7 @@ class OrderJSON(RpcBase):
             payment.partyId = order.customerId
             payment.paymentMethod = method
             payment.receivedBy = self.request.user.partyId
+
             self.sess.add(payment)
             self.sess.flush()
 
@@ -382,8 +383,25 @@ class OrderJSON(RpcBase):
             self.sess.add(op)
 
         # mark coupon in use as redempted
-        if order.couponUid:
-            order.coupon.redemptionTime = now
+        # if order.couponUid:
+        #     order.coupon.redemptionTime = now
+
+    @jsonrpc_method(endpoint='rpc', method='order.payment.delete')
+    def deleteOrderPayment(self, orderId, paymentId):
+        """ Remove an offline payment initialized by staff """
+        order = self.loadOrder(orderId)
+        op = None
+
+        for op in order.payments:
+            if op.paymentId == paymentId:
+                break
+
+        if op:
+            assert op.payment.receivedBy, 'Payment receiver shall not be none'
+            order.paidAmount -= op.amount
+            order.payments.remove(op)
+            self.sess.delete(op.payment)
+            self.sess.delete(op)
 
 
 @view_config(route_name='order_download')

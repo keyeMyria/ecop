@@ -37,6 +37,7 @@ Ext.define('Ecop.view.order.OrderPanel', {
 
   border: false,
   bodyPadding: 5,
+  cls: 'order-panel',
 
   layout: {
     type: 'vbox',
@@ -332,7 +333,7 @@ Ext.define('Ecop.view.order.OrderPanel', {
             blur: 'refreshAmount'
           }
         },
-/*        {
+        /*        {
           xtype: 'couponpicker',
           fieldLabel: '抵用券',
           bind: {
@@ -356,14 +357,6 @@ Ext.define('Ecop.view.order.OrderPanel', {
           listeners: {
             blur: 'refreshAmount'
           }
-        },
-        {
-          xtype: 'displayfield',
-          bind: '{restAmount}',
-          labelWidth: 60,
-          fieldLabel: '订单总额',
-          padding: '0',
-          renderer: Ext.util.Format.numberRenderer('0,000.00')
         },
         {
           xtype: 'numberfield',
@@ -414,93 +407,121 @@ Ext.define('Ecop.view.order.OrderPanel', {
 
       items: [
         {
-          xtype: 'grid',
-          reference: 'paymentGrid',
-
-          store: {
-            model: 'Web.model.OrderPayment',
-            proxy: { type: 'memory', reader: 'array' }
+          xtype: 'container',
+          layout: {
+            type: 'vbox',
+            align: 'stretch'
           },
-          flex: 1,
-          plugins: ['headeralign'],
-          padding: '0 10 0 0',
-
-          enableColumnMove: false,
-          allowDeselect: true,
-
-          features: [
+          items: [
             {
-              ftype: 'summary',
-              dock: 'bottom'
-            }
-          ],
+              xtype: 'grid',
+              reference: 'paymentGrid',
 
-          lbar: [
-            {
-              iconCls: 'x-fa fa-plus-circle',
-              tooltip: '收款',
-              handler: 'onPaymentAdd'
-            },
-            {
-              iconCls: 'x-fa fa-times-circle',
-              tooltip: '删除收款',
-              handler: 'onPaymentDelete',
-              bind: {
-                disabled: '{!paymentDeletable}'
-              }
-            },
-            {
-              iconCls: 'x-fa fa-minus-circle',
-              tooltip: '退款',
-              disabled: true,
-              handler: 'onPaymentDelete'
-            }
-          ],
+              store: {
+                model: 'Web.model.OrderPayment',
+                proxy: { type: 'memory', reader: 'array' }
+              },
+              flex: 1,
+              plugins: ['headeralign'],
+              padding: '0 10 0 0',
 
-          columns: {
-            defaults: {
-              menuDisabled: true,
-              sortable: false,
-              headerAlign: 'center'
-            },
+              enableColumnMove: false,
+              allowDeselect: true,
 
-            items: [
-              {
-                text: '付款时间',
-                width: 160,
-                align: 'center',
-                dataIndex: 'payTime',
-                summaryType: function () {
-                  return '收款总额:'
+              features: [
+                {
+                  ftype: 'summary',
+                  dock: 'bottom'
+                }
+              ],
+
+              lbar: [
+                {
+                  iconCls: 'x-fa fa-plus-circle',
+                  tooltip: '收款',
+                  handler: 'onPaymentAdd'
                 },
-                renderer: Ext.util.Format.dateRenderer('Y-m-d H:i:s')
-              },
-              {
-                text: '付款渠道',
-                width: 150,
-                dataIndex: 'paymentMethod',
-                renderer: Ext.util.Format.storeRenderer(
-                  'paymentmethod',
-                  'id',
-                  'text'
-                )
-              },
-              {
-                text: '付款金额',
-                width: 90,
-                align: 'center',
-                dataIndex: 'amount',
-                formatter: 'number("0,000.00")',
-                summaryType: 'sum',
-                summaryRenderer: Ext.util.Format.numberRenderer('0,000.00')
-              },
-              {
-                text: '收款人',
-                align: 'center',
-                dataIndex: 'receiverName'
+                {
+                  iconCls: 'x-fa fa-times-circle',
+                  tooltip: '删除收款',
+                  handler: 'onPaymentDelete',
+                  bind: {
+                    disabled: '{!paymentDeletable}'
+                  }
+                },
+                {
+                  iconCls: 'x-fa fa-minus-circle',
+                  tooltip: '退款',
+                  disabled: true
+                }
+              ],
+
+              columns: {
+                defaults: {
+                  menuDisabled: true,
+                  sortable: false,
+                  headerAlign: 'center'
+                },
+
+                items: [
+                  {
+                    text: '付款时间',
+                    width: 160,
+                    align: 'center',
+                    dataIndex: 'payTime',
+                    summaryType: function() {
+                      return '收款总额:'
+                    },
+                    renderer: Ext.util.Format.dateRenderer('Y-m-d H:i:s')
+                  },
+                  {
+                    text: '付款渠道',
+                    width: 150,
+                    dataIndex: 'paymentMethod',
+                    renderer: Ext.util.Format.storeRenderer(
+                      'paymentmethod',
+                      'id',
+                      'text'
+                    )
+                  },
+                  {
+                    text: '付款金额',
+                    width: 90,
+                    align: 'center',
+                    dataIndex: 'amount',
+                    formatter: 'number("0,000.00")',
+                    summaryType: 'sum',
+                    summaryRenderer: Ext.util.Format.numberRenderer('0,000.00')
+                  },
+                  {
+                    text: '收款人',
+                    align: 'center',
+                    dataIndex: 'receiverName'
+                  }
+                ]
               }
-            ]
-          }
+            },
+            {
+              xtype: 'container',
+              cls: 'order-amount',
+              layout: 'hbox',
+              defaults: {
+                flex: 1,
+                xtype: 'displayfield',
+                renderer: Ext.util.Format.numberRenderer('0,000.00')
+              },
+              items: [
+                {
+                  bind: '{currentOrder.amount}',
+                  fieldLabel: '订单总额'
+                },
+                {
+                  bind: '{restAmount}',
+                  fieldLabel: '剩余应付金额'
+                }
+              ]
+            }
+          ]
         },
         {
           xtype: 'container',

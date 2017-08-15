@@ -289,12 +289,12 @@ Ext.define('Ecop.view.order.OrderController', {
     })
   },
 
-  onPayment: function() {
+  doAddPayment: function() {
     var me = this
 
     me.saveOrder(function() {
       Web.data.JsonRPC.request({
-        method: 'order.pay',
+        method: 'order.payment.add',
         params: [
           me.getCurrentOrder().get('orderId'),
           me.lookup('paymentMethod').getValue(),
@@ -325,11 +325,16 @@ Ext.define('Ecop.view.order.OrderController', {
   },
 
   onPaymentDelete: function() {
-    var me = this
-    console.log('Delete order payment', me.getViewModel().get('restAmount'))
-  },
+    var me = this,
+      p = me.lookup('paymentGrid').selection
 
-  onPaymentReturn: function() {}
+    Web.data.JsonRPC.request({
+      method: 'order.payment.delete',
+      params: [me.getCurrentOrder().get('orderId'), p.get('paymentId')],
+      success: me.loadOrder,
+      scope: me
+    })
+  }
 
   /*
    * ------------------------------------------------------------------------

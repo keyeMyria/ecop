@@ -4,15 +4,15 @@ Ext.define('Ecop.view.order.OrderModel', {
 
   formulas: {
     restAmount: function(get) {
-      return get('currentOrder.amount') - get('currentOrder.couponAmount')
+      return get('currentOrder.amount') - get('currentOrder.paidAmount')
     },
 
     profit: function(get) {
-      return get('restAmount') - get('currentOrder.cost')
+      return get('amount') - get('currentOrder.cost')
     },
 
     margin: function(get) {
-      var amount = get('restAmount')
+      var amount = get('amount')
       return amount ? get('profit') / amount : 0
     },
 

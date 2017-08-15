@@ -4,9 +4,9 @@ Ext.define('Ecop.view.order.PaymentWindow', {
   xtype: 'payment-window',
 
   /*
-     * controller
-     * The view controller is inherited from the parent container OrderPanel.
-     */
+   * controller
+   * The view controller is inherited from the parent container OrderPanel.
+   */
 
   width: 300,
   height: 200,
@@ -56,7 +56,7 @@ Ext.define('Ecop.view.order.PaymentWindow', {
       buttons: [
         {
           text: '确认收款',
-          handler: 'onPayment'
+          handler: 'doAddPayment'
         },
         {
           text: '取消',

@@ -18,12 +18,14 @@ Build (2017-8-)
  * Show payment information in order panel
  * Use keyboard shortcuts to save order changes
  * Manual customer creation
+ * Records multiple payments and paid amount of the order
 
- * Allow multiple order payments for a single order
- * Send an order to customer via SMS or Wechat message
  * Publish artiles to wechat open platform
+ * Send an order to customer via SMS or Wechat message
  * Implement order memos for order tracking
- * Add permission control to ecop backend
+ * Add permission control mechanism to ecop backend (for order reopen e.g.)
+ * Optimize the images sizes when uploading to oss
+ * Generate purchase orders for service order and proper profit accounting
 
 Mecop
 

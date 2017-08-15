@@ -169,7 +169,7 @@ Ext.define('Ecop.view.order.OrderManager', {
             text: '订单金额',
             width: 90,
             summaryType: 'sum',
-            dataIndex: 'netAmount',
+            dataIndex: 'amount',
             align: 'right',
             formatter: 'number("0,000.00")',
             summaryRenderer: function(v) {
