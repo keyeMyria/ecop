@@ -332,7 +332,7 @@ Ext.define('Ecop.view.order.OrderPanel', {
             blur: 'refreshAmount'
           }
         },
-        {
+/*        {
           xtype: 'couponpicker',
           fieldLabel: '抵用券',
           bind: {
@@ -344,6 +344,7 @@ Ext.define('Ecop.view.order.OrderPanel', {
             change: 'onCouponChange'
           }
         },
+*/
         {
           xtype: 'numberfield',
           fieldLabel: '运费',
@@ -414,16 +415,41 @@ Ext.define('Ecop.view.order.OrderPanel', {
       items: [
         {
           xtype: 'grid',
-          reference: 'payment-grid',
+          reference: 'paymentGrid',
 
           store: {
             model: 'Web.model.OrderPayment',
             proxy: { type: 'memory', reader: 'array' }
           },
-          enableColumnMove: false,
           flex: 1,
           plugins: ['headeralign'],
           padding: '0 10 0 0',
+
+          enableColumnMove: false,
+          allowDeselect: true,
+
+          features: [
+            {
+              ftype: 'summary',
+              dock: 'bottom'
+            }
+          ],
+
+          lbar: [
+            {
+              iconCls: 'x-fa fa-plus-circle',
+              tooltip: '收款',
+              handler: 'onPaymentAdd'
+            },
+            {
+              iconCls: 'x-fa fa-times-circle',
+              tooltip: '删除收款',
+              handler: 'onPaymentDelete',
+              bind: {
+                disabled: '{!paymentDeletable}'
+              }
+            }
+          ],
 
           columns: {
             defaults: {
@@ -434,9 +460,13 @@ Ext.define('Ecop.view.order.OrderPanel', {
 
             items: [
               {
-                text: '收款时间',
+                text: '付款时间',
                 width: 160,
+                align: 'center',
                 dataIndex: 'payTime',
+                summaryType: function () {
+                  return '收款总额:'
+                },
                 renderer: Ext.util.Format.dateRenderer('Y-m-d H:i:s')
               },
               {
@@ -453,8 +483,10 @@ Ext.define('Ecop.view.order.OrderPanel', {
                 text: '金额',
                 width: 70,
                 align: 'center',
+                dataIndex: 'amount',
                 formatter: 'number("0,000.00")',
-                dataIndex: 'amount'
+                summaryType: 'sum',
+                summaryRenderer: Ext.util.Format.numberRenderer('0,000.00')
               },
               {
                 text: '收款人',
@@ -529,11 +561,6 @@ Ext.define('Ecop.view.order.OrderPanel', {
       bind: {
         disabled: '{!orderEditable}'
       }
-    },
-    {
-      text: '收款',
-      scale: 'medium',
-      handler: 'onBtnPayment'
     }
   ]
 })

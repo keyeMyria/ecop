@@ -47,7 +47,7 @@ Ext.define('Ecop.view.order.OrderController', {
   loadOrder: function() {
     var me = this,
       order = me.getCurrentOrder(),
-      paymentStore = me.lookup('payment-grid').getStore()
+      paymentStore = me.lookup('paymentGrid').getStore()
 
     Web.data.JsonRPC.request({
       method: 'order.data',
@@ -293,21 +293,7 @@ Ext.define('Ecop.view.order.OrderController', {
     })
   },
 
-  onQueryCoupon: function(queryplan) {
-    queryplan.query = this.getCurrentOrder().get('orderId')
-  },
-
-  onCouponChange: function(field, newValue, oldValue) {
-    var me = this,
-      order = me.getCurrentOrder()
-    if (newValue === 0) return
-    order.set(
-      'couponAmount',
-      newValue ? field.getStore().getById(newValue).get('amount') : 0
-    )
-  },
-
-  onBtnPayment: function() {
+  onPaymentAdd: function() {
     var me = this
 
     // we add the form to the view instead to view port in order for the
@@ -341,4 +327,29 @@ Ext.define('Ecop.view.order.OrderController', {
       })
     })
   }
+
+  /*
+   * ------------------------------------------------------------------------
+   *
+   * Coupon related code are not currently used. About to change in the
+   * furture
+   *
+   * ------------------------------------------------------------------------
+   */
+
+  /*
+  onQueryCoupon: function(queryplan) {
+    queryplan.query = this.getCurrentOrder().get('orderId')
+  },
+
+  onCouponChange: function(field, newValue, oldValue) {
+    var me = this,
+      order = me.getCurrentOrder()
+    if (newValue === 0) return
+    order.set(
+      'couponAmount',
+      newValue ? field.getStore().getById(newValue).get('amount') : 0
+    )
+  }
+  */
 })
