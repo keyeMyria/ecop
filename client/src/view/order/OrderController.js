@@ -40,10 +40,6 @@ Ext.define('Ecop.view.order.OrderController', {
     return this.getViewModel().get('currentOrder')
   },
 
-  isOrderEditable: function() {
-    return this.getCurrentOrder().get('orderStatus') == 1
-  },
-
   loadOrder: function() {
     var me = this,
       order = me.getCurrentOrder(),

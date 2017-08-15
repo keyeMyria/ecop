@@ -83,7 +83,7 @@ Ext.define('Ecop.view.order.OrderManagerController', {
     }
 
     oController = me.activeOPanel.getController()
-    if (!oController.isOrderEditable()) {
+    if (!oController.getViewModel().get('orderEditable')) {
       Ecop.util.Util.showError('只允许添加商品到待付款的订单。')
       return
     }
