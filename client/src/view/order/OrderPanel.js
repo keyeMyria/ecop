@@ -439,7 +439,10 @@ Ext.define('Ecop.view.order.OrderPanel', {
                 {
                   iconCls: 'x-fa fa-plus-circle',
                   tooltip: '收款',
-                  handler: 'onPaymentAdd'
+                  handler: 'onPaymentAdd',
+                  bind: {
+                    disabled: '{!restAmount}'
+                  }
                 },
                 {
                   iconCls: 'x-fa fa-times-circle',
