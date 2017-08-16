@@ -4,7 +4,7 @@
 <?python
     from datetime import date
     from hm.lib.numformat import quantityfmt
-    from webmodel import GetParamByKey
+    from webmodel import getParameterText
 ?>
 
 <document
@@ -115,10 +115,10 @@
         <td>数量</td>
       </tr>
 
-      <tr  py:for="sku in skus">
+      <tr py:for="sku in skus">
         <td>${sku['item_name']}</td>
         <td>${sku['model']}</td>
-        <td>${quantityfmt(sku['quantity']) + GetParamByKey('unit', sku['unit_id'])}</td>
+        <td>${quantityfmt(sku['quantity']) + getParameterText('unit', sku['unit_id'])}</td>
       </tr>
     </blockTable>
 

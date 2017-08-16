@@ -4,7 +4,7 @@
 <?python
     from hm.lib.numformat import numberword, quantityfmt
     from datetime import date
-    from webmodel import GetParamByKey
+    from webmodel import getParameterText
     from webmodel.consts import ORDER_STATUS
 ?>
 
@@ -119,7 +119,7 @@
         <td>
           <para style="detail">${(oi.specification or '')+ (oi.specification and oi.model and ',' or '') + (oi.model or '')}</para>
         </td>
-        <td>${quantityfmt(oi.quantity)}${GetParamByKey('unit', oi.unitId)}</td>
+        <td>${quantityfmt(oi.quantity)}${getParameterText('unit', oi.unitId)}</td>
         <td>${'{:,.2f}'.format(oi.sellingPrice)}</td>
         <td>${'{:,.2f}'.format(oi.amount)}</td>
       </tr>

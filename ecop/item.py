@@ -12,7 +12,7 @@ from weblibs.rabbitmq import pool
 from weblibs.jsonrpc import marshall, RPCUserError, validateSchema
 
 from webmodel import Item, ItemGroup, ItemImage, BomItem, Image, Resource, \
-    GetParamByKey, ModuleSorter
+    getParameterText, ModuleSorter
 from webmodel.consts import ITEM_STATUS, RESOURCE_TYPE
 
 from .category import categoryFactory
@@ -411,7 +411,7 @@ class ItemJSON(RpcBase, ItemNotifierMixin):
 
                 ret.append({
                     'id': mid,
-                    'text': GetParamByKey('ModuleType', mid),
+                    'text': getParameterText('ModuleType', mid),
                     'children': children,
                     'expanded': True,
                     'allowDrag': False
@@ -529,4 +529,3 @@ class ItemGroupJSON(RpcBase, ItemNotifierMixin):
             self.sess.query(ItemGroup).\
                 filter(ItemGroup.itemGroupId == itemGroupId).delete()
             self.notifyItemChange(ig.items[0])
-
