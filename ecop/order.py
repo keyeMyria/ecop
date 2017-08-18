@@ -27,8 +27,8 @@ def changeOrderStatus(order, old, new):
     if old == new:
         return
 
-    if old == ORDER_STATUS.PARTIAL_DELIVERY and new != ORDER_STATUS.COMPLETED:
-        raise RPCUserError('部分发货的订单状态只能修改为已完成！')
+    # if old == ORDER_STATUS.PARTIAL_DELIVERY and new != ORDER_STATUS.COMPLETED:
+    #     raise RPCUserError('部分发货的订单状态只能修改为已完成！')
 
     # if old == ORDER_STATUS.COMPLETED and not has_permission('order.reopen'):
     #     raise RPCUserError('您没有权限打开已完成的订单。')
