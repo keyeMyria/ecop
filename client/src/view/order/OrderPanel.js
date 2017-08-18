@@ -521,6 +521,19 @@ Ext.define('Ecop.view.order.OrderPanel', {
                 {
                   bind: '{restAmount}',
                   fieldLabel: '剩余应付金额'
+                },
+                {
+                  xtype: 'numberfield',
+                  fieldLabel: '本次约定金额',
+                  allowBlank: true,
+                  minValue: 1,
+                  hidden: true,
+                  plugins: 'cleartrigger',
+                  bind: {
+                    value: '{currentOrder.installmentAmount}',
+                    hidden: '{!restAmount}',
+                    maxValue: '{restAmount}'
+                  }
                 }
               ]
             }
@@ -571,7 +584,7 @@ Ext.define('Ecop.view.order.OrderPanel', {
     {
       text: '取消变更',
       scale: 'medium',
-      handler: 'loadOrder',
+      handler: 'onCancelChanges',
       bind: {
         disabled: '{!orderEditable}'
       }
@@ -582,7 +595,10 @@ Ext.define('Ecop.view.order.OrderPanel', {
       bind: {
         href: '{downloadUrl}'
       }
-    },
+    }
+    /*
+    TODO: This is obsoleted as of Aug. 18, 2017.
+
     {
       text: 'B价',
       scale: 'medium',
@@ -592,5 +608,6 @@ Ext.define('Ecop.view.order.OrderPanel', {
         disabled: '{!orderEditable}'
       }
     }
+    */
   ]
 })

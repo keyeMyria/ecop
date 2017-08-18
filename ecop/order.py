@@ -73,7 +73,8 @@ class OrderJSON(RpcBase):
             'orderId', 'customerId', 'createTime', 'amount',
             'freight', 'rebate', 'orderStatus', 'regionCode', 'recipientName',
             'streetAddress', 'recipientMobile', 'recipientPhone', 'memo',
-            'internalMemo', 'paidAmount', 'freightCost', 'completionDate'
+            'internalMemo', 'paidAmount', 'freightCost', 'completionDate',
+            'installmentAmount'
         ]
 
         header = marshall(order, fields)
@@ -312,6 +313,7 @@ class OrderJSON(RpcBase):
     @jsonrpc_method(endpoint='rpc', method='order.coupon.get')
     def getCouponForOrder(self, orderId):
         """ Return all coupons that can be used for the order """
+        # pylint: disable=C0121
         order = self.loadOrder(orderId)
 
         query = self.sess.query(PartyCoupon).join(Coupon).filter(

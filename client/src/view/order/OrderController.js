@@ -7,8 +7,7 @@ Ext.define('Ecop.view.order.OrderController', {
 
   requires: ['Ecop.view.order.PaymentWindow'],
 
-  // private save a reference to items grid store
-  itemStore: null,
+  itemStore: null, // save a reference to items grid store
 
   init: function() {
     var me = this,
@@ -33,6 +32,7 @@ Ext.define('Ecop.view.order.OrderController', {
 
     vm.bind('{orderEditable}', 'onOrderEditableChange', me)
 
+    // when the order panel is first loaded, load the order from database
     !vm.get('currentOrder').phantom && me.loadOrder()
   },
 
@@ -267,6 +267,11 @@ Ext.define('Ecop.view.order.OrderController', {
         }
       }
     })
+  },
+
+  onCancelChanges: function() {
+    this.getCurrentOrder().reject()
+    this.loadOrder()
   },
 
   onBtnSwitchPrice: function(btn) {
