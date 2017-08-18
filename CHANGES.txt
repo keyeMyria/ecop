@@ -26,6 +26,7 @@ Build (2017-8-)
  * Add permission control mechanism to ecop backend (for order reopen e.g.)
  * Optimize the images sizes when uploading to oss
  * Generate purchase orders for service order and proper profit accounting
+ * Upload photos to order as attachments
 
 Mecop
 
@@ -34,6 +35,7 @@ Mecop
 
 Future
 ------
+
  * Seperate js-common into its own package to be shared between various
    javascript projects
  * Allow adding item without item id to order

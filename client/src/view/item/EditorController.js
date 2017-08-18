@@ -34,7 +34,7 @@ Ext.define('Ecop.view.item.EditorController', {
       minHeight: Math.min(vp.getHeight(), 768),
       viewModel: {
         data: {
-          currentItem: record,
+          currentItem: record
         },
         stores: {
           modules: {

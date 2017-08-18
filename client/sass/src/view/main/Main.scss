@@ -1,39 +1,44 @@
 a {
-    cursor: pointer;
-    color: #000000;
-    text-decoration: none;
+  cursor: pointer;
+  color: #000000;
+  text-decoration: none;
 }
 
 /* Hide the ExtJS trial version watermark */
-.x-panel-header-title-default, .x-window-header-title-default {
-    > .x-title-text-default:after {
-        content: none;
-    }
+.x-panel-header-title-default,
+.x-window-header-title-default {
+  > .x-title-text-default:after {
+    content: none;
+  }
 }
 
 /* Customize styles */
 
 .x-grid.cursor-pointer .x-grid-item-container {
-    cursor: pointer;
+  cursor: pointer;
 
-    .x-unselectable {
-        cursor: pointer;
-    }
+  .x-unselectable {
+    cursor: pointer;
+  }
 }
 
 .x-grid-cell-inner-row-numberer {
-    background-color: inherit;
+  background-color: inherit;
 }
 
-.x-grid-item-alt {
-    background-color: $light-grey;
+.x-grid-row-summary .x-grid-cell {
+  font-weight: bold;
 }
+
+// .x-grid-item-alt {
+//     background-color: $light-grey;
+// }
 
 .x-field.required label span.x-form-item-label-text:after {
-    color: $red-color;
-    content: ' *'
+  color: $red-color;
+  content: ' *';
 }
 
 .x-action-col-icon {
-    color: $dark-grey;
+  color: $dark-grey;
 }

@@ -524,7 +524,7 @@ Ext.define('Ecop.view.order.OrderPanel', {
                 },
                 {
                   xtype: 'numberfield',
-                  fieldLabel: '本次约定金额',
+                  fieldLabel: '本次约定付款',
                   allowBlank: true,
                   minValue: 1,
                   hidden: true,
