@@ -532,7 +532,7 @@ Ext.define('Ecop.view.order.OrderPanel', {
                   bind: {
                     value: '{currentOrder.installmentAmount}',
                     hidden: '{!restAmount}',
-                    maxValue: '{restAmount}'
+                    maxValue: '{restAmount - 1}'
                   }
                 }
               ]
