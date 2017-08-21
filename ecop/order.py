@@ -36,8 +36,12 @@ def changeOrderStatus(order, old, new):
     order.orderStatus = new
 
     # completionDate is set the first time an order is set to be completed
-    if new == ORDER_STATUS.COMPLETED and not order.completionDate:
-        order.completionDate = date.today()
+    if new == ORDER_STATUS.COMPLETED:
+        if order.amount != order.paidAmount:
+            raise RPCUserError('订单金额和收款金额不一致，不能完成订单！')
+
+        if not order.completionDate:
+            order.completionDate = date.today()
 
 
 class OrderJSON(RpcBase):
