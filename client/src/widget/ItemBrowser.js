@@ -131,6 +131,7 @@ Ext.define('Ecop.widget.ItemBrowser', {
       success: function(items) {
         me.getSelectionModel().deselectAll()
         me.store.loadData(items)
+        me.store.commitChanges()
         if (me.store.getCount() === 0 && showNotFound) {
           Ecop.util.Util.showError('没有找到符合条件的商品。')
         }
