@@ -64,7 +64,6 @@ The following permissions are in active use:
 item.manage
 item.inactivate
 item.create
-item.qrcode
 item.update.category
 item.update.maintainer
 item.update.price.purchase

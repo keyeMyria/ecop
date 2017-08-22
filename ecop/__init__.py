@@ -47,7 +47,6 @@ def main(global_config, **settings):
 
     # the below are deprecated as of April 17, 2017
     # config.add_route('labelPrint', '/labelPrint', request_method='GET')
-    # config.add_route('itemqr', '/itemqr', request_method='GET')
 
     config.scan()
     return config.make_wsgi_app()

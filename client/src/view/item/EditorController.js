@@ -112,18 +112,6 @@ Ext.define('Ecop.view.item.EditorController', {
             },
             href: ' ',
             hrefTarget: '_blank'
-          },
-          {
-            itemId: 'qrcode',
-            text: '下载二维码',
-            permission: 'item.qrcode',
-            bind: {
-              hidden: '{!item.isOnline}'
-            },
-            // an 'href' config is required for the default browser click
-            // event on 'a' element to be handled
-            href: ' ',
-            hrefTarget: '_top'
           }
         ],
         listeners: {
@@ -145,10 +133,6 @@ Ext.define('Ecop.view.item.EditorController', {
           menu.showAt(e.getXY())
           // the href attribute of menu item can not be reset
           // we have to do this on the dom level **AFTER** the menu is rendered
-          menu.down('#qrcode') &&
-            menu.down('#qrcode').el.down('a').set({
-              href: '/itemqr?itemId=' + record.get('itemId')
-            })
           menu.down('#openitem') &&
             menu.down('#openitem').el.down('a').set({
               href: Ecop.siteUrl + '/item/' + record.get('itemId') + '.html'
@@ -166,7 +150,7 @@ Ext.define('Ecop.view.item.EditorController', {
       status,
       menuId = item.getItemId()
 
-    if (['qrcode', 'openitem'].indexOf(menuId) !== -1) return
+    if (['openitem'].indexOf(menuId) !== -1) return
 
     status = ['online', 'offline', 'inactive'].indexOf(menuId)
     Web.data.JsonRPC.request({
