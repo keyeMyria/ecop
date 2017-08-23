@@ -70,31 +70,5 @@ Ext.define('Ecop.view.order.OrderManagerController', {
     })
     view.add(p)
     view.setActiveTab(p)
-  },
-
-  onItemSelect: function(table, record) {
-    var me = this,
-      items = [record],
-      oController
-
-    if (!me.activeOPanel) {
-      Ecop.util.Util.showError('没有打开的订单可以添加商品。')
-      return
-    }
-
-    oController = me.activeOPanel.getController()
-    if (!oController.getViewModel().get('orderEditable')) {
-      Ecop.util.Util.showError('只允许添加商品到待付款的订单。')
-      return
-    }
-
-    oController.doAddItems(items)
-    me.getView().setActiveTab(me.activeOPanel)
-  },
-
-  onTabChange: function(tabPanel, newTab) {
-    if (newTab.xtype === 'orderpanel') {
-      this.activeOPanel = newTab
-    }
   }
 })

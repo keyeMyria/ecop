@@ -5,7 +5,7 @@ Ext.define('Ecop.view.order.OrderController', {
   extend: 'Ext.app.ViewController',
   alias: 'controller.order',
 
-  requires: ['Ecop.view.order.PaymentWindow'],
+  requires: ['Ecop.view.order.PaymentWindow', 'Ecop.widget.ItemSelector'],
 
   itemStore: null, // save a reference to items grid store
 
@@ -112,39 +112,6 @@ Ext.define('Ecop.view.order.OrderController', {
       record.set('amount', record.get('sellingPrice') * record.get('quantity'))
       this.refreshAmount()
     }
-  },
-
-  doAddItems: function(items) {
-    var me = this,
-      oi,
-      i,
-      fields = [
-        'itemId',
-        'itemName',
-        'specification',
-        'purchasePrice',
-        'model',
-        'unitName',
-        'sellingPrice'
-      ]
-
-    Ext.each(items, function(item) {
-      // The selector widget could return frozen item when an item id is entered
-      // directly. This check guard against this pssibility.
-      if (item.get('itemStatus') === 2) {
-        Ecop.util.Util.showError(
-          Ext.String.format('商品{0}已冻结，不能添加到订单！', item.getId())
-        )
-      } else {
-        oi = {}
-        for (i = 0; i < fields.length; ++i) {
-          oi[fields[i]] = item.get(fields[i])
-        }
-        oi.quantity = 1
-        oi.amount = item.get('sellingPrice')
-        me.itemStore.add(Web.model.OrderItem(oi))
-      }
-    })
   },
 
   /*
@@ -290,6 +257,65 @@ Ext.define('Ecop.view.order.OrderController', {
         })
         btn.priceType = btn.priceType == 'B' ? 'C' : 'B'
         btn.setText(btn.priceType == 'B' ? 'B价' : 'C价')
+      }
+    })
+  },
+
+  onBtnAddItem: function() {
+    var me = this
+    if (!me.selectorWin) {
+      me.selectorWin = me.getView().add(
+        Ext.widget('itemselector', {
+          closeAction: 'hide',
+          height: 600,
+          width: 1200,
+          listeners: {
+            itemselect: me.doAddItems,
+            scope: me
+          }
+        })
+      )
+    }
+
+    me.selectorWin.down('itembrowser #itemStatus').setStore(
+      new Ext.data.ArrayStore({
+        fields: ['id', 'text'],
+        data: [[0, '在线'], [1, '下线']]
+      })
+    )
+
+    me.selectorWin.show()
+  },
+
+  doAddItems: function(items) {
+    var me = this,
+      oi,
+      i,
+      fields = [
+        'itemId',
+        'itemName',
+        'specification',
+        'purchasePrice',
+        'model',
+        'unitName',
+        'sellingPrice'
+      ]
+
+    Ext.each(items, function(item) {
+      // The selector widget could return frozen item when an item id is entered
+      // directly. This check guard against this pssibility.
+      if (item.get('itemStatus') === 2) {
+        Ecop.util.Util.showError(
+          Ext.String.format('商品{0}已冻结，不能添加到订单！', item.getId())
+        )
+      } else {
+        oi = {}
+        for (i = 0; i < fields.length; ++i) {
+          oi[fields[i]] = item.get(fields[i])
+        }
+        oi.quantity = 1
+        oi.amount = item.get('sellingPrice')
+        me.itemStore.add(Web.model.OrderItem(oi))
       }
     })
   },

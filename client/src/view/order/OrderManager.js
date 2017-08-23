@@ -9,7 +9,6 @@ Ext.define('Ecop.view.order.OrderManager', {
     'Ecop.widget.DateRangeField',
     'Ecop.widget.CustomerPicker',
     'Ecop.widget.DocidField',
-    'Ecop.widget.ItemBrowser',
     'Ecop.view.order.OrderManagerController'
   ],
 
@@ -220,31 +219,7 @@ Ext.define('Ecop.view.order.OrderManager', {
       listeners: {
         cellclick: 'onOpenOrder'
       }
-    },
-    {
-      xtype: 'itembrowser',
-      title: '查找商品',
-      closable: false,
-
-      listeners: {
-        rowdblclick: 'onItemSelect'
-      }
     }
-  ],
+  ]
 
-  listeners: {
-    tabchange: 'onTabChange'
-  },
-
-  initComponent: function() {
-    var me = this
-    me.callParent()
-
-    me.down('itembrowser #itemStatus').setStore(
-      new Ext.data.ArrayStore({
-        fields: ['id', 'text'],
-        data: [[0, '在线'], [1, '下线']]
-      })
-    )
-  }
 })

@@ -574,6 +574,14 @@ Ext.define('Ecop.view.order.OrderPanel', {
   buttonAlign: 'center',
   buttons: [
     {
+      text: '添加项目',
+      scale: 'medium',
+      handler: 'onBtnAddItem',
+      bind: {
+        disabled: '{!orderEditable}'
+      }
+    },
+    {
       text: '保存变更',
       scale: 'medium',
       handler: 'saveOrder',
