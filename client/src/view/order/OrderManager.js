@@ -147,7 +147,7 @@ Ext.define('Ecop.view.order.OrderManager', {
             dataIndex: 'customerName'
           },
           {
-            text: '收货人',
+            text: '联系人',
             width: 100,
             align: 'left',
             dataIndex: 'recipientName'
@@ -174,6 +174,13 @@ Ext.define('Ecop.view.order.OrderManager', {
             summaryRenderer: function(v) {
               return Ext.util.Format.number(v, '0,000.00')
             }
+          },
+          {
+            text: '已付金额',
+            width: 90,
+            dataIndex: 'paidAmount',
+            align: 'right',
+            formatter: 'number("0,000.00")'
           },
           {
             text: '订单利润',
@@ -221,5 +228,4 @@ Ext.define('Ecop.view.order.OrderManager', {
       }
     }
   ]
-
 })

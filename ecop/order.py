@@ -294,9 +294,9 @@ class OrderJSON(RpcBase):
             orders = query.all()
 
         fields = [
-            'orderId', 'createTime', 'completionDate', 'amount', 'freight',
-            'orderStatus', 'cost', 'freightCost', 'couponAmount',
-            'customerName', 'creatorName', 'recipientName'
+            'orderId', 'createTime', 'completionDate', 'amount', 'paidAmount',
+            'orderStatus', 'cost', 'customerName', 'creatorName',
+            'recipientName'
         ]
 
         return [marshall(o, fields) for o in orders]
