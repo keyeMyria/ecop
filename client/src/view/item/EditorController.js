@@ -542,21 +542,6 @@ Ext.define('Ecop.view.item.EditorController', {
    * =====================  Item Description  ===========================
    */
 
-  onDescShow: function() {
-    var me = this,
-      f = me.dialog,
-      item = me.getCurrentItem()
-    ;(me.moduleModified = false), (store = f.getViewModel().get('modules'))
-
-    if (!store.isLoaded()) {
-      if (!item.phantom) {
-        store.load()
-      } else {
-        store.setRoot({ expanded: true })
-      }
-    }
-  },
-
   getCurrentModuleIds: function() {
     var root = this.lookup('moduleTree').getRootNode(),
       mids = []

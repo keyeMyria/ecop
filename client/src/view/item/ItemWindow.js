@@ -38,7 +38,10 @@ Ext.define('Ecop.view.item.ItemWindow', {
         },
         {
           xtype: 'item-desc',
-          title: '商品描述'
+          title: '商品描述',
+          bind: {
+            disabled: '{isNewItem}'
+          }
         }
       ]
     }

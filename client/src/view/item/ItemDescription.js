@@ -10,10 +10,6 @@ Ext.define('Ecop.view.item.ItemDescription', {
     align: 'stretch'
   },
 
-  listeners: {
-    show: 'onDescShow'
-  },
-
   dockedItems: {
     xtype: 'toolbar',
     dock: 'top',

@@ -49,6 +49,10 @@ Ext.define('Ecop.view.item.ItemModel', {
     title: function(get) {
       var item = get('currentItem')
       return item.phantom ? '新增商品' : '编辑商品: ' + item.get('itemName')
+    },
+
+    isNewItem: function(get) {
+      return get('currentItem').phantom
     }
   }
 })
