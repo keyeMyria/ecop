@@ -7,12 +7,12 @@ Ext.define('Ecop.view.item.EditorGrid', {
   controller: 'item-editor',
 
   /*
-     * For select multiple items and recategorize them together
-     *
-     * NOTE: with EXTJS 6.2 it is important to specify checkOnly here, otherwise
-     * the use of 'gridviewdragdrop' plugin on the grid for moving items to
-     * category tree will cause item selction to behave incorrectly.
-     */
+   * For select multiple items and recategorize them together
+   *
+   * NOTE: with EXTJS 6.2 it is important to specify checkOnly here, otherwise
+   * the use of 'gridviewdragdrop' plugin on the grid for moving items to
+   * category tree will cause item selction to behave incorrectly.
+   */
   selModel: {
     selType: 'checkboxmodel',
     checkOnly: true

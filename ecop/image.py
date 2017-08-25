@@ -154,7 +154,8 @@ class ImageJSON(RpcBase):
 
     @jsonrpc_method(endpoint='rpc', method='image.add')
     def addImage(self, data, fname, imgType):
-        """ Adds an image to the system.
+        """
+        Adds an image to the system.
 
           - `image`: Content of the image to add as base64 encoded binary
           - `imgType`: If the image is intended to be used as item image, which
@@ -219,7 +220,10 @@ upload_template = """
 
 @view_config(route_name='upload', renderer='upload.pt')
 def uploadImage(request):
-    """ This handler accepts image upload from CKEditor for use in articles """
+    """
+    This handler accepts image upload from CKEditor for use in articles.
+    Note this has nothing to do with
+    """
     f = request.params['upload']
     ret = {
         'funcNum': request.params['CKEditorFuncNum'],

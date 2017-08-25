@@ -3,3 +3,4 @@ __pycache__
 *.pyc
 ecop.egg-info/
 build/
+*.ini

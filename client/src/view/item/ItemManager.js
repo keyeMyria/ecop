@@ -12,10 +12,10 @@ Ext.define('Ecop.view.item.ItemManager', {
   },
 
   /*
-     * Since both CategroyManager and EditorGrid have their own view controllers,
-     * events that originate from the two that need higher level coordination
-     * can only be defined without a ViewController on ItemManager.
-     */
+   * Since both CategroyManager and EditorGrid have their own view controllers,
+   * events that originate from the two that need higher level coordination
+   * can only be defined without a ViewController on ItemManager.
+   */
   initComponent: function() {
     var me = this
 
@@ -100,8 +100,8 @@ Ext.define('Ecop.view.item.ItemManager', {
   },
 
   /*
-     * @private
-     */
+   * @private
+   */
   onTreeSelectionChange: function(selModel, selected) {
     var me = this,
       cat = selected[0],
@@ -121,8 +121,8 @@ Ext.define('Ecop.view.item.ItemManager', {
   },
 
   /*
-     * @private
-     */
+   * @private
+   */
   afterTreeRender: function(tree) {
     var me = this
 
@@ -175,11 +175,11 @@ Ext.define('Ecop.view.item.ItemManager', {
       },
 
       /*
-             * If user is trying to move item to a non-leaf category node, or
-             * if the target category is the same as the source category,
-             * indicate that the drop would fail. Note this just apply a css
-             * to the drop source, it will **NOT** prevent the actual drop.
-             */
+       * If user is trying to move item to a non-leaf category node, or
+       * if the target category is the same as the source category,
+       * indicate that the drop would fail. Note this just apply a css
+       * to the drop source, it will **NOT** prevent the actual drop.
+       */
       onNodeOver: function(node, source, e, data) {
         if (
           Ext.fly(node).hasCls(Ext.baseCSSPrefix + 'grid-tree-node-leaf') &&
