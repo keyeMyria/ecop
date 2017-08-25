@@ -21,6 +21,14 @@ from .base import RpcBase
 
 class ItemNotifierMixin(object):
     def notifyItemChange(self, itemId):
+        """ TODO: item change has been deprecated. Was intended for syncing
+        items with Taobao.
+
+        There is no longer the 'item' exchange and no message processing will
+        take place.
+        """
+        return
+
         with pool.acquire() as cnx:
             cnx.channel.basic_publish(
                 exchange='item',
