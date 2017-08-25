@@ -2,7 +2,6 @@ Ext.define('Ecop.view.main.Main', {
   extend: 'Ext.Viewport',
 
   requires: [
-    'Ecop.view.item.ItemGroupManager',
     'Ecop.view.item.ItemManager',
     'Ecop.view.order.OrderManager',
     'Ecop.view.shipment.ShipmentManager',
@@ -21,12 +20,7 @@ Ext.define('Ecop.view.main.Main', {
 
       items: [
         {
-          title: '商品组合',
-          xtype: 'itemgroupmanager',
-          permission: 'item.manage'
-        },
-        {
-          title: '商品维护',
+          title: '商品管理',
           itemId: 'item-manager',
           xtype: 'item-manager',
           permission: 'item.manage'

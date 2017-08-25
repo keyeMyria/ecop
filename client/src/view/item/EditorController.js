@@ -2,7 +2,7 @@ Ext.define('Ecop.view.item.EditorController', {
   extend: 'Ext.app.ViewController',
   alias: 'controller.item-editor',
 
-  requires: ['Ecop.view.item.ItemWindow'],
+  requires: ['Ecop.view.item.ItemWindow', 'Ecop.widget.ItemSelector'],
 
   /*
    *@private
@@ -32,10 +32,17 @@ Ext.define('Ecop.view.item.EditorController', {
       width: vp.getWidth() - 100,
       height: vp.getHeight() - 100,
       minHeight: Math.min(vp.getHeight(), 768),
+
+      plugins: 'windowcenter',
+
       viewModel: {
         data: {
           currentItem: record
         },
+        /*
+         * As a tree store can not be loaded with load(itemId), we add the store
+         * with parameter to the view model here.
+         */
         stores: {
           modules: {
             type: 'tree',
@@ -52,7 +59,7 @@ Ext.define('Ecop.view.item.EditorController', {
 
     vp.mask()
     record.beginEdit()
-    me.dialog.show().center()
+    me.dialog.show().centerOnViewport()
   },
 
   onContextMenu: function(table, record, tr, rowIndex, e) {
@@ -168,6 +175,9 @@ Ext.define('Ecop.view.item.EditorController', {
     })
   },
 
+  /*
+   * When vendor opens the item editor, display her items by default
+   */
   onItemEditorRender: function() {
     var me = this
     if (Ecop.auth.isVendor()) {
@@ -325,10 +335,11 @@ Ext.define('Ecop.view.item.EditorController', {
   },
 
   onSkuAdd: function() {
-    var me = this
-    ;(f = me.dialog), (sku = f
-      .down('skuinput')
-      .getValue()), (store = me.dialog.getViewModel().get('boms'))
+    var me = this,
+      f = me.dialog,
+      sku = f.down('skuinput').getValue(),
+      store = me.dialog.getViewModel().get('boms')
+
     if (store.find('itemId', sku.getId()) !== -1) {
       Ecop.util.Util.showError('商品在部件清单中已存在。')
     } else if (sku.getId() === me.getCurrentItem().getId()) {
@@ -356,7 +367,7 @@ Ext.define('Ecop.view.item.EditorController', {
 
   /*
    * Client precheck of image based on usage, which can be either 'item-image'
-    * (the default) or 'desc-image'.
+   * (the default) or 'desc-image'.
    * Returns true if check passes or show fail message.
    */
   checkImageFile: function(file, usage) {
@@ -545,6 +556,7 @@ Ext.define('Ecop.view.item.EditorController', {
   getCurrentModuleIds: function() {
     var root = this.lookup('moduleTree').getRootNode(),
       mids = []
+
     for (i = 0; i < root.childNodes.length; i++) {
       mids.push(root.childNodes[i].getId())
     }
@@ -698,6 +710,139 @@ Ext.define('Ecop.view.item.EditorController', {
   onDescTreeBeforeDrop: function(node, data, overModel, dropPosition) {
     if (!overModel.get('rid') && dropPosition === 'before') {
       return false
+    }
+  },
+
+  /*
+   * =====================  Item Group  ===========================
+   */
+  afterGroupRender: function() {
+    var me = this,
+      vm = me.dialog.getViewModel(),
+      item = me.getCurrentItem(),
+      store = vm.get('groupitems')
+
+    Web.data.JsonRPC.request({
+      method: 'item.group.get',
+      params: [item.getId()],
+      success: function(ret) {
+        vm.set({
+          itemGroup: Ext.create('Web.model.ItemGroup', ret && ret.header)
+        })
+
+        if (ret && ret.items) {
+          store.loadData(ret.items)
+          store.commitChanges()
+        }
+      }
+    })
+  },
+
+  onBtnAddItemToGroup: function() {
+    var me = this
+
+    if (!me.selectorWin) {
+      me.selectorWin = me.getView().add(
+        Ext.widget('itemselector', {
+          closeAction: 'hide',
+          height: 600,
+          width: 1200,
+          listeners: {
+            itemselect: me.doAddGroupItems,
+            scope: me
+          }
+        })
+      )
+    }
+    me.selectorWin.show()
+  },
+
+  /*
+   * Add the items to the item group
+   */
+  doAddGroupItems: function(items) {
+    var me = this,
+      iids = [],
+      store = me.getStore()
+
+    // see if the item is already present by first compiling as list of all
+    // item ids
+    store.each(function(record) {
+      iids.push(record.get('itemId'))
+    })
+
+    Ext.each(items, function(item) {
+      if (iids.indexOf(item.get('itemId')) === -1) {
+        store.add({
+          thumb: true,
+          itemId: item.get('itemId'),
+          itemName: item.get('itemName'),
+          specification: item.get('specification'),
+          model: item.get('model'),
+          sellingPrice: item.get('sellingPrice')
+        })
+      }
+    })
+  },
+
+  onSaveItemGruop: function() {
+    var me = this,
+      params,
+      items = [],
+      f = me.down('form').getForm()
+
+    if (!f.isValid()) {
+      Ext.Msg.alert('', '输入错误，请检查')
+      return
+    }
+
+    if (me.store.count()) {
+      params = f.updateRecord().getRecord().getData()
+      delete params['items']
+
+      if (
+        me.store.findBy(function(record) {
+          var label = record.get('label')
+          return !label || label.trim() === ''
+        }) > -1
+      ) {
+        Ext.Msg.alert('', '标签不能为空')
+        return
+      }
+
+      me.store.each(function(record) {
+        items.push({
+          label: record.get('label'),
+          thumb: record.get('thumb'),
+          itemId: record.get('itemId')
+        })
+      })
+
+      params['items'] = items
+      params['groupBy'] = 'L'
+
+      Web.data.JsonRPC.request({
+        method: me.itemGroupId ? 'item.group.update' : 'item.group.add',
+        params: [params],
+        success: function(itemGroupId) {
+          if (!me.itemGroupId) {
+            f.getRecord().set('itemGroupId', itemGroupId)
+            me.itemGroupId = itemGroupId
+          }
+          me.store.commitChanges()
+          Ext.Msg.alert('', '商品组合已保存。')
+        }
+      })
+    } else if (me.itemGroupId) {
+      Web.data.JsonRPC.request({
+        method: 'item.group.delete',
+        params: [me.itemGroupId],
+        success: function() {
+          me.itemGroupId = null
+          me.load()
+          Ext.Msg.alert('', '商品组合已删除。')
+        }
+      })
     }
   }
 })

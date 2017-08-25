@@ -21,11 +21,25 @@ Ext.define('Ecop.view.item.ItemModel', {
         type: 'jsonrpc',
         method: 'item.images.get'
       }
+    },
+
+    groupitems: {
+      fields: [
+        'label',
+        'itemId',
+        'itemName',
+        'specification',
+        'model',
+        'sellingPrice',
+        'itemStatus'
+      ],
+      proxy: { type: 'memory', reader: 'json' }
     }
   },
 
   data: {
-    currentItem: null
+    currentItem: null,
+    itemGroup: null
   },
 
   formulas: {

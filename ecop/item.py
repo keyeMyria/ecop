@@ -435,26 +435,28 @@ class ItemGroupJSON(RpcBase, ItemNotifierMixin):
         RpcBase.__init__(self, request)
 
     @jsonrpc_method(endpoint='rpc', method='item.group.get')
-    def get(self, itemGroupId=None, itemId=None):
-        """ Return the item group data for the given itemGroupId or the item
-        group that the given itemId belongs to."""
-        if itemId:
-            item = self.sess.query(Item).get(itemId)
-            assert item, 'Item not found'
-            if not item.itemGroupId:
-                return
-            else:
-                itemGroupId = item.itemGroupId
+    def get(self, itemId):
+        """
+        Return the item group data for the item group to which the given
+        itemId belongs to.
+        """
+        item = self.sess.query(Item).get(itemId)
+        assert item, 'Item not found'
 
-        ig = self.sess.query(ItemGroup).get(itemGroupId)
+        if not item.itemGroupId:
+            return
+
+        ig = self.sess.query(ItemGroup).get(item.itemGroupId)
         if not ig:
             return
 
-        ret = marshall(ig, ['itemGroupId', 'groupItemName', 'groupImageId',
-                            'groupBy', 'shareDescription', 'shareImage'])
+        ret = {
+            'header': marshall(ig, ['itemGroupId', 'groupItemName',
+                'groupImageId', 'groupBy', 'shareDescription', 'shareImage'])
+        }
 
         if ig.groupBy == 'L':
-            ret['labelName'] = ig.groupCriteria['labelName']
+            ret['header']['labelName'] = ig.groupCriteria['labelName']
 
             items = []
             for idx, iid in enumerate(ig.items):
@@ -467,7 +469,6 @@ class ItemGroupJSON(RpcBase, ItemNotifierMixin):
                     'specification': item.specification,
                     'model': item.model,
                     'sellingPrice': item.sellingPrice,
-                    'sellingPriceB': item.sellingPriceB,
                     'itemStatus': item.itemStatus
                 })
 

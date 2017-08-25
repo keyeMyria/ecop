@@ -4,7 +4,8 @@ Ext.define('Ecop.view.item.ItemWindow', {
   requires: [
     'Ecop.view.item.ItemForm',
     'Ecop.view.item.ItemDescription',
-    'Ecop.view.item.ItemModel'
+    'Ecop.view.item.ItemModel',
+    'Ecop.view.item.ItemGroup'
   ],
 
   xtype: 'item-window',
@@ -39,6 +40,13 @@ Ext.define('Ecop.view.item.ItemWindow', {
         {
           xtype: 'item-desc',
           title: '商品描述',
+          bind: {
+            disabled: '{isNewItem}'
+          }
+        },
+        {
+          xtype: 'item-group',
+          title: '商品组合',
           bind: {
             disabled: '{isNewItem}'
           }

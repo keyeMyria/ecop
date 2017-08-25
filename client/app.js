@@ -61,6 +61,7 @@ Ext.require([
   'Web.ux.overrides.Locale',
   'Web.ux.plugins.ClearTrigger',
   'Web.ux.plugins.HeaderAlign',
+  'Web.ux.plugins.WindowCenter',
 
   'Web.data.JsonRPC',
   'Web.JsonRPCProxy',
