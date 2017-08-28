@@ -1,219 +1,16 @@
-Ext.define('Ecop.view.item.EditorController', {
+Ext.define('Ecop.view.item.ItemController', {
   extend: 'Ext.app.ViewController',
-  alias: 'controller.item-editor',
+  alias: 'controller.item',
 
-  requires: ['Ecop.view.item.ItemWindow', 'Ecop.widget.ItemSelector'],
+  requires: ['Ecop.widget.ItemSelector', 'Web.model.ItemGroup'],
 
-  /*
-   *@private
-   */
-  currentRecord: null,
   bomOrderChanged: false,
   imageModified: false,
   moduleModified: false,
+  itemGroupModified: false,
 
-  /*
-   * Returns the item model that is currently being edited in the ItemForm
-   */
   getCurrentItem: function() {
-    return this.dialog ? this.dialog.getViewModel().get('currentItem') : null
-  },
-
-  createForm: function(record) {
-    var me = this,
-      view = me.getView(),
-      vp = view.up('viewport')
-
-    record = record || Ext.create('Web.model.Item')
-    // we add the form to the view instead of to view port in order for the
-    // form to access this controller
-    me.dialog = view.add({
-      xtype: 'item-window',
-      width: vp.getWidth() - 100,
-      height: vp.getHeight() - 100,
-      minHeight: Math.min(vp.getHeight(), 768),
-
-      plugins: 'windowcenter',
-
-      viewModel: {
-        data: {
-          currentItem: record
-        },
-        /*
-         * As a tree store can not be loaded with load(itemId), we add the store
-         * with parameter to the view model here.
-         */
-        stores: {
-          modules: {
-            type: 'tree',
-            autoLoad: false,
-            proxy: {
-              type: 'jsonrpc',
-              method: 'item.modules.get',
-              params: [record.getId()]
-            }
-          }
-        }
-      }
-    })
-
-    vp.mask()
-    record.beginEdit()
-    me.dialog.show().centerOnViewport()
-  },
-
-  onContextMenu: function(table, record, tr, rowIndex, e) {
-    var me = this,
-      menu
-
-    me.currentRecord = record
-    e.preventDefault()
-
-    if (!me.contextMenu) {
-      me.contextMenu = Ext.widget('menu', {
-        width: 100,
-        plain: true,
-
-        viewModel: {
-          data: null,
-          formulas: {
-            hideOffline: function(get) {
-              var item = get('item')
-              return (
-                (!Ecop.auth.hasPermission('item.inactivate') &&
-                  item.get('isInactive')) ||
-                item.get('isOffline')
-              )
-            }
-          }
-        },
-
-        items: [
-          {
-            itemId: 'online',
-            text: '商品上线',
-            bind: {
-              hidden: '{!item.isOffline}'
-            }
-          },
-          {
-            itemId: 'offline',
-            text: '商品下线',
-            bind: {
-              hidden: '{hideOffline}'
-            }
-          },
-          {
-            itemId: 'inactive',
-            text: '冻结商品',
-            permission: 'item.inactivate',
-            bind: {
-              hidden: '{item.isInactive}'
-            }
-          },
-          {
-            itemId: 'openitem',
-            text: '显示商品',
-            bind: {
-              hidden: '{!item.isOnline}'
-            },
-            href: ' ',
-            hrefTarget: '_blank'
-          }
-        ],
-        listeners: {
-          click: me.onContextMenuClick,
-          scope: me
-        }
-      })
-    }
-
-    menu = me.contextMenu
-    menu.getViewModel().set('item', record)
-
-    Ext.defer(function() {
-      var i,
-        items = menu.query('menuitem')
-
-      for (i = 0; i < items.length; i++) {
-        if (!items[i].isHidden()) {
-          menu.showAt(e.getXY())
-          // the href attribute of menu item can not be reset
-          // we have to do this on the dom level **AFTER** the menu is rendered
-          menu.down('#openitem') &&
-            menu.down('#openitem').el.down('a').set({
-              href: Ecop.siteUrl + '/item/' + record.get('itemId') + '.html'
-            })
-          menu.focus()
-          break
-        }
-      }
-    }, 50)
-  },
-
-  onContextMenuClick: function(menu, item, e) {
-    var me = this,
-      grid = me.getView(),
-      status,
-      menuId = item.getItemId()
-
-    if (['openitem'].indexOf(menuId) !== -1) return
-
-    status = ['online', 'offline', 'inactive'].indexOf(menuId)
-    Web.data.JsonRPC.request({
-      method: 'item.upsert',
-      params: [
-        {
-          itemId: me.currentRecord.get('itemId'),
-          itemStatus: status
-        }
-      ],
-      success: function() {
-        me.currentRecord.set('itemStatus', status)
-        grid.getView().refresh()
-      }
-    })
-  },
-
-  /*
-   * When vendor opens the item editor, display her items by default
-   */
-  onItemEditorRender: function() {
-    var me = this
-    if (Ecop.auth.isVendor()) {
-      me.getView().doItemSearch({})
-    }
-  },
-
-  onItemDblClick: function(grid, td, cellIndex, record) {
-    var me = this
-
-    if (cellIndex < 3) {
-      me.createForm(record)
-    }
-  },
-
-  onBtnSave: function() {
-    var s = this.getView().getStore(),
-      modified = []
-
-    Ext.each(s.getModifiedRecords(), function(item) {
-      modified.push(Ext.merge({ itemId: item.getId() }, item.getChanges()))
-    })
-
-    if (!Ext.isEmpty(modified)) {
-      Web.data.JsonRPC.request({
-        method: 'item.upsert',
-        params: [modified],
-        success: function() {
-          s.commitChanges()
-        }
-      })
-    }
-  },
-
-  onBtnNewItem: function() {
-    this.createForm(null)
+    return this.getViewModel().get('currentItem')
   },
 
   onItemSave: function() {
@@ -222,8 +19,8 @@ Ext.define('Ecop.view.item.EditorController', {
       images = [],
       item = me.getCurrentItem(),
       params = item.getChanges(),
-      bomStore = me.dialog.getViewModel().get('boms'),
-      imageStore = me.dialog.getViewModel().get('images')
+      bomStore = me.getViewModel().get('boms'),
+      imageStore = me.getViewModel().get('images')
 
     if (!me.lookup('form').getForm().isValid()) {
       Ecop.util.Util.showError('输入数据存在错误，请检查。')
@@ -283,15 +80,14 @@ Ext.define('Ecop.view.item.EditorController', {
   },
 
   onItemCancel: function() {
-    var me = this
-    me.dialog = Ext.destroy(me.dialog)
+    this.getView().close()
   },
 
   beforeItemWinDestroy: function() {
     var me = this,
       item = me.getCurrentItem()
-    me.getView().up('viewport').unmask()
 
+    me.getView().up('viewport').unmask()
     if (item.phantom) {
       Ext.destroy(item)
     } else {
@@ -302,26 +98,22 @@ Ext.define('Ecop.view.item.EditorController', {
   // after the item form is rendered, load the boms and images store
   afterItemFormRender: function() {
     var me = this,
-      f = me.dialog,
       item = me.getCurrentItem()
+
     me.bomOrderChanged = false
     me.imageModified = false
 
     if (!item.phantom) {
-      f.getViewModel().get('images').load({
+      me.getViewModel().get('images').load({
         params: [item.getId()]
       })
 
       if (!item.get('isSku')) {
-        f.getViewModel().get('boms').load({
+        me.getViewModel().get('boms').load({
           params: [item.getId()]
         })
       }
     }
-  },
-
-  onDestroy: function() {
-    this.contextMenu.destroy()
   },
 
   /*
@@ -336,9 +128,8 @@ Ext.define('Ecop.view.item.EditorController', {
 
   onSkuAdd: function() {
     var me = this,
-      f = me.dialog,
-      sku = f.down('skuinput').getValue(),
-      store = me.dialog.getViewModel().get('boms')
+      sku = me.getView().down('skuinput').getValue(),
+      store = me.getViewModel().get('boms')
 
     if (store.find('itemId', sku.getId()) !== -1) {
       Ecop.util.Util.showError('商品在部件清单中已存在。')
@@ -441,7 +232,7 @@ Ext.define('Ecop.view.item.EditorController', {
             method: imageId ? 'image.update' : 'image.add',
             params: params,
             mask: {
-              component: me.dialog,
+              component: me.getView(),
               message: '图片上传中，请稍候...'
             }
           })
@@ -450,14 +241,14 @@ Ext.define('Ecop.view.item.EditorController', {
   },
 
   newImageOK: function(image) {
-    if (this.dialog.getViewModel().get('images').getById(image.imageId)) {
+    if (this.getViewModel().get('images').getById(image.imageId)) {
       Ecop.util.Util.showError('图片已存在。')
     } else return true
   },
 
   onImageAdd: function(fileBtn) {
     var me = this,
-      store = me.dialog.getViewModel().get('images'),
+      store = me.getViewModel().get('images'),
       file = fileBtn.el.down('input').dom.files[0]
 
     fileBtn.fileInputEl.dom.value = ''
@@ -482,7 +273,7 @@ Ext.define('Ecop.view.item.EditorController', {
    */
   onImageUpdate: function(fileBtn) {
     var me = this,
-      store = me.dialog.getViewModel().get('images'),
+      store = me.getViewModel().get('images'),
       image = me.lookup('imageList').selection,
       file = fileBtn.el.down('input').dom.files[0]
 
@@ -526,7 +317,7 @@ Ext.define('Ecop.view.item.EditorController', {
 
   onImageMoveLeft: function() {
     var me = this,
-      vm = me.dialog.getViewModel(),
+      vm = me.getViewModel(),
       idx,
       s = vm.get('images'),
       image = vm.get('selectedImage')
@@ -536,7 +327,7 @@ Ext.define('Ecop.view.item.EditorController', {
 
   onImageMoveRight: function() {
     var me = this,
-      vm = me.dialog.getViewModel(),
+      vm = me.getViewModel(),
       s = vm.get('images'),
       image = vm.get('selectedImage')
 
@@ -668,7 +459,7 @@ Ext.define('Ecop.view.item.EditorController', {
             method: 'item.download.taobao',
             params: [me.getCurrentItem().get('itemId'), text],
             mask: {
-              component: me.dialog,
+              component: me.getView(),
               message: '商品拷贝中，请耐心等候...'
             },
             success: function() {
@@ -718,7 +509,7 @@ Ext.define('Ecop.view.item.EditorController', {
    */
   afterGroupRender: function() {
     var me = this,
-      vm = me.dialog.getViewModel(),
+      vm = me.getViewModel(),
       item = me.getCurrentItem(),
       store = vm.get('groupitems')
 
@@ -733,6 +524,7 @@ Ext.define('Ecop.view.item.EditorController', {
         if (ret && ret.items) {
           store.loadData(ret.items)
           store.commitChanges()
+          me.itemGroupModified = false
         }
       }
     })
@@ -758,12 +550,12 @@ Ext.define('Ecop.view.item.EditorController', {
   },
 
   /*
-   * Add the items to the item group
+   * Add the items to the item group in the UI
    */
   doAddGroupItems: function(items) {
     var me = this,
       iids = [],
-      store = me.getStore()
+      store = me.getViewModel().get('groupitems')
 
     // see if the item is already present by first compiling as list of all
     // item ids
@@ -781,6 +573,7 @@ Ext.define('Ecop.view.item.EditorController', {
           model: item.get('model'),
           sellingPrice: item.get('sellingPrice')
         })
+        me.itemGroupModified = true
       }
     })
   },

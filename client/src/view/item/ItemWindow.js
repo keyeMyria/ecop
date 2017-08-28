@@ -5,19 +5,17 @@ Ext.define('Ecop.view.item.ItemWindow', {
     'Ecop.view.item.ItemForm',
     'Ecop.view.item.ItemDescription',
     'Ecop.view.item.ItemModel',
-    'Ecop.view.item.ItemGroup'
+    'Ecop.view.item.ItemGroup',
+    'Ecop.view.item.ItemController'
   ],
 
   xtype: 'item-window',
   cls: 'item-window',
 
-  /*
-   * controller
-   * The view controller is inherited from the parent container EditorGrid.
-   */
   viewModel: {
     type: 'item'
   },
+  controller: 'item',
 
   closable: true,
   modal: true,

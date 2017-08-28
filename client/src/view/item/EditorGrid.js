@@ -2,9 +2,9 @@ Ext.define('Ecop.view.item.EditorGrid', {
   extend: 'Ecop.widget.ItemBrowser',
   xtype: 'item-editor',
 
-  requires: ['Ext.menu.Menu', 'Ecop.view.item.EditorController'],
+  requires: ['Ext.menu.Menu', 'Ecop.view.item.ItemManagerController'],
 
-  controller: 'item-editor',
+  controller: 'item-manager',
 
   /*
    * For select multiple items and recategorize them together
@@ -41,7 +41,6 @@ Ext.define('Ecop.view.item.EditorGrid', {
   listeners: {
     rowcontextmenu: 'onContextMenu',
     celldblclick: 'onItemDblClick',
-    destroy: 'onDestroy',
-    afterrender: 'onItemEditorRender'
+    destroy: 'onDestroy'
   }
 })

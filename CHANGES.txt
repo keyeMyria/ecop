@@ -19,18 +19,25 @@ Build (2017-8-)
  * Use keyboard shortcuts to save order changes
  * Manual customer creation
  * Records multiple payments and paid amount of the order
+ * Separate ItemController from ItemManagerController
 
  * Upload photos to order as attachments
 
+ * Merge item group management into a tab in ItemWindow
  * Send an order to customer via SMS or Wechat message
  * Implement order memos for order tracking
  * Generate purchase orders for service order and proper profit accounting
  * Publish artiles to wechat open platform
- * Separate ItemController from ItemMangerController
+
+Mecop
+
+ * Allow staff to add photos to an order on-site
+
 
 Future
 ------
 
+ * Assign an order to a particular user for tracking
  * Use the same session mechanism for website and ecop
  * Use the same jsonrpc protection mechanism for website and ecop
  * Push / share an order to a friend via wechat message
@@ -47,7 +54,6 @@ Future
 Low priority
 
  * Support freight calculation from shipper code and weight
- * Merge item group management into a tab in item manage
  * Add invoice info to order
  * Allow one company user to have multiple accounts
  * Do not require user to re-login every time browser is refreshed
