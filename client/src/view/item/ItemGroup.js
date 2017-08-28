@@ -13,6 +13,10 @@ Ext.define('Ecop.view.item.ItemGroup', {
       ptype: 'gridviewdragdrop'
     },
 
+    listeners: {
+      drop: 'onItemGroupGridDrop'
+    },
+
     // highlight offline and inactive items
     getRowClass: function(record) {
       return ['', 'offline', 'inactive'][record.get('itemStatus')]
@@ -31,6 +35,7 @@ Ext.define('Ecop.view.item.ItemGroup', {
     {
       xtype: 'form',
       dock: 'top',
+      reference: 'itemgroup',
 
       defaults: {
         xtype: 'container',
@@ -58,7 +63,6 @@ Ext.define('Ecop.view.item.ItemGroup', {
                 valueField: 'code'
             }, */ {
               xtype: 'textfield',
-              name: 'labelName',
               fieldLabel: '标签名称',
               labelWidth: 60,
               bind: '{itemGroup.labelName}'
@@ -66,14 +70,12 @@ Ext.define('Ecop.view.item.ItemGroup', {
             {
               xtype: 'checkbox',
               labelWidth: 60,
-              name: 'shareDescription',
               fieldLabel: '共享描述',
               bind: '{itemGroup.shareDescription}'
             },
             {
               xtype: 'checkbox',
               labelWidth: 60,
-              name: 'shareImage',
               fieldLabel: '共享主图',
               bind: '{itemGroup.shareImage}'
             },
@@ -92,7 +94,6 @@ Ext.define('Ecop.view.item.ItemGroup', {
           items: [
             {
               xtype: 'textfield',
-              name: 'groupItemName',
               fieldLabel: '组合商品名称',
               minLength: 5,
               minLengthText: '组合名称至少为5个字符',
@@ -101,7 +102,6 @@ Ext.define('Ecop.view.item.ItemGroup', {
             },
             {
               xtype: 'numberfield',
-              name: 'groupImageId',
               fieldLabel: '组合商品主图',
               vtype: 'docid',
               bind: '{itemGroup.groupImageId}'
@@ -190,14 +190,5 @@ Ext.define('Ecop.view.item.ItemGroup', {
         ]
       }
     ]
-  },
-
-  buttonAlign: 'center',
-  buttons: [
-    {
-      text: '保存',
-      scale: 'medium',
-      handler: 'onItemGroupSave'
-    }
-  ]
+  }
 })

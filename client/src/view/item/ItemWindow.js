@@ -27,12 +27,13 @@ Ext.define('Ecop.view.item.ItemWindow', {
   items: [
     {
       xtype: 'tabpanel',
+      reference: 'tabpanel',
 
       items: [
         {
           xtype: 'item-form',
           title: '基础信息',
-          reference: 'form',
+          reference: 'itemform',
           bodyPadding: 5
         },
         {

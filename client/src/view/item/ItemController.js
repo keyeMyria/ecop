@@ -4,10 +4,10 @@ Ext.define('Ecop.view.item.ItemController', {
 
   requires: ['Ecop.widget.ItemSelector', 'Web.model.ItemGroup'],
 
-  bomOrderChanged: false,
   imageModified: false,
   moduleModified: false,
-  itemGroupModified: false,
+  bomOrderChanged: false,
+  itemGroupOrderChanged: false,
 
   getCurrentItem: function() {
     return this.getViewModel().get('currentItem')
@@ -22,7 +22,12 @@ Ext.define('Ecop.view.item.ItemController', {
       bomStore = me.getViewModel().get('boms'),
       imageStore = me.getViewModel().get('images')
 
-    if (!me.lookup('form').getForm().isValid()) {
+    if (me.lookup('tabpanel').getActiveTab().xtype == 'item-group') {
+      me.doSaveItemGroup()
+      return
+    }
+
+    if (!me.lookup('itemform').getForm().isValid()) {
       Ecop.util.Util.showError('输入数据存在错误，请检查。')
       return
     }
@@ -524,10 +529,13 @@ Ext.define('Ecop.view.item.ItemController', {
         if (ret && ret.items) {
           store.loadData(ret.items)
           store.commitChanges()
-          me.itemGroupModified = false
         }
       }
     })
+  },
+
+  onItemGroupGridDrop: function() {
+    this.itemGroupOrderChanged = true
   },
 
   onBtnAddItemToGroup: function() {
@@ -540,8 +548,7 @@ Ext.define('Ecop.view.item.ItemController', {
           height: 600,
           width: 1200,
           listeners: {
-            itemselect: me.doAddGroupItems,
-            scope: me
+            itemselect: 'doAddGroupItems'
           }
         })
       )
@@ -573,37 +580,46 @@ Ext.define('Ecop.view.item.ItemController', {
           model: item.get('model'),
           sellingPrice: item.get('sellingPrice')
         })
-        me.itemGroupModified = true
       }
     })
   },
 
-  onSaveItemGruop: function() {
+  doSaveItemGroup: function() {
     var me = this,
       params,
       items = [],
-      f = me.down('form').getForm()
+      vm = me.getViewModel(),
+      itemGroup = vm.get('itemGroup'),
+      f = me.lookup('itemgroup').getForm(),
+      store = vm.get('groupitems'),
+      modified =
+        itemGroup.modified ||
+        me.itemGroupOrderChanged ||
+        !Ext.isEmpty(store.getModifiedRecords()) ||
+        !Ext.isEmpty(store.getRemovedRecords())
 
-    if (!f.isValid()) {
-      Ext.Msg.alert('', '输入错误，请检查')
+    if (!modified) {
+      Ecop.util.Util.showInfo('商品组合未发生变化。')
       return
     }
 
-    if (me.store.count()) {
-      params = f.updateRecord().getRecord().getData()
-      delete params['items']
+    if (!f.isValid()) {
+      Ecop.util.Util.showError('商品组合输入错误，请检查')
+      return
+    }
 
+    if (store.count()) {
       if (
-        me.store.findBy(function(record) {
+        store.findBy(function(record) {
           var label = record.get('label')
           return !label || label.trim() === ''
         }) > -1
       ) {
-        Ext.Msg.alert('', '标签不能为空')
+        Ecop.util.Util.showError('商品组合标签不能为空')
         return
       }
 
-      me.store.each(function(record) {
+      store.each(function(record) {
         items.push({
           label: record.get('label'),
           thumb: record.get('thumb'),
@@ -611,29 +627,37 @@ Ext.define('Ecop.view.item.ItemController', {
         })
       })
 
+      params = itemGroup.getData()
       params['items'] = items
       params['groupBy'] = 'L'
 
       Web.data.JsonRPC.request({
-        method: me.itemGroupId ? 'item.group.update' : 'item.group.add',
+        method: itemGroup.phantom ? 'item.group.add' : 'item.group.update',
         params: [params],
         success: function(itemGroupId) {
-          if (!me.itemGroupId) {
-            f.getRecord().set('itemGroupId', itemGroupId)
-            me.itemGroupId = itemGroupId
+          if (itemGroup.phantom) {
+            itemGroup.set('itemGroupId', itemGroupId)
           }
-          me.store.commitChanges()
-          Ext.Msg.alert('', '商品组合已保存。')
+          store.commitChanges()
+          itemGroup.commit()
+          me.itemGroupOrderChanged = false
+          Ecop.util.Util.showInfo('商品组合已保存。')
         }
       })
-    } else if (me.itemGroupId) {
+    } else if (!itemGroup.phantom) {
       Web.data.JsonRPC.request({
         method: 'item.group.delete',
-        params: [me.itemGroupId],
+        params: [itemGroup.getId()],
         success: function() {
-          me.itemGroupId = null
-          me.load()
-          Ext.Msg.alert('', '商品组合已删除。')
+          store.commitChanges()
+          vm.set({
+            itemGroup: Ext.create('Web.model.ItemGroup')
+          })
+          me.itemGroupOrderChanged = false
+          Ecop.util.Util.showInfo('商品组合已删除。')
+          // this shall come after view model change for the form binding to
+          // continue work
+          Ext.destroy(itemGroup)
         }
       })
     }

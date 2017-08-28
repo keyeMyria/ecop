@@ -9,7 +9,7 @@ Build 6 (2017-4-19)
  * Implement wechat client mecop for shipment package scanning
 
 
-Build (2017-8-)
+Build (2017-8-28)
 
  * Support internal memo field on order
  * Allow order status to be changed manually
@@ -20,10 +20,12 @@ Build (2017-8-)
  * Manual customer creation
  * Records multiple payments and paid amount of the order
  * Separate ItemController from ItemManagerController
+ * Merge item group management into a tab in ItemWindow
+
+
+Build (2017-9)
 
  * Upload photos to order as attachments
-
- * Merge item group management into a tab in ItemWindow
  * Send an order to customer via SMS or Wechat message
  * Implement order memos for order tracking
  * Generate purchase orders for service order and proper profit accounting
