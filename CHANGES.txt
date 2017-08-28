@@ -9,7 +9,7 @@ Build 6 (2017-4-19)
  * Implement wechat client mecop for shipment package scanning
 
 
-Build (2017-8-28)
+Build 31 (2017-8-28)
 
  * Support internal memo field on order
  * Allow order status to be changed manually
