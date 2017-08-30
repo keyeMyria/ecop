@@ -1,11 +1,14 @@
+from datetime import datetime
 from dateutil import parser
+from urllib.parse import urlparse
+
 from sqlalchemy import Sequence
 from elasticsearch_dsl import Search
-from datetime import datetime
+from bs4 import BeautifulSoup
 
 from pyramid_rpc.jsonrpc import jsonrpc_method
 
-
+from weblibs.jsonrpc import RPCUserError
 from webmodel import Article
 
 from .base import RpcBase
@@ -22,6 +25,15 @@ class ArticleJSON(RpcBase):
         is_new = _id.startswith('Web.model')  # is ths a new article?
         kwargs.pop('updateTime', None)  # this shall be automatically set
         tags = kwargs.pop('tags', None)
+
+        content = kwargs.get('content')
+        # checks the content for external image urls
+        if content:
+            soup = BeautifulSoup(content, 'lxml')
+            for img in soup.select('img'):
+                host = urlparse(img['src']).netloc
+                if not host.endswith('homemaster.cn'):
+                    raise RPCUserError('文章中不能包含外部图片链接！')
 
         if is_new:
             article = Article(**kwargs)
