@@ -178,9 +178,13 @@ Ext.define('Ecop.view.order.OrderManager', {
           {
             text: '已付金额',
             width: 90,
+            summaryType: 'sum',
             dataIndex: 'paidAmount',
             align: 'right',
-            formatter: 'number("0,000.00")'
+            formatter: 'number("0,000.00")',
+            summaryRenderer: function(v) {
+              return Ext.util.Format.number(v, '0,000.00')
+            }
           },
           {
             text: '订单利润',
