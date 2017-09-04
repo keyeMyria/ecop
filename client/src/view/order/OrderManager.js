@@ -126,7 +126,6 @@ Ext.define('Ecop.view.order.OrderManager', {
 
       columns: {
         defaults: {
-          sortable: false,
           menuDisabled: true,
           align: 'center'
         },
