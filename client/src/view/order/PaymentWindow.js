@@ -22,10 +22,17 @@ Ext.define('Ecop.view.order.PaymentWindow', {
 
       defaults: {
         labelWidth: 60,
+        allowBlank: false,
         anchor: '100%'
       },
 
       items: [
+        {
+          xtype: 'datefield',
+          fieldLabel: '收款日期',
+          reference: 'paymentDate',
+          format: 'Y-m-d'
+        },
         {
           xtype: 'combo',
           fieldLabel: '收款方式',

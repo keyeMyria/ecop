@@ -1,7 +1,9 @@
 import os.path
 from datetime import date, datetime, timedelta
 from decimal import Decimal
+
 from sqlalchemy.sql import and_, text, or_
+# import shortuuid
 from sqlalchemy.orm import eagerload
 from genshi.template import TemplateLoader
 from z3c.rml import rml2pdf
@@ -86,6 +88,8 @@ class OrderJSON(RpcBase):
         oi_fields = ['orderItemId', 'itemId', 'itemName', 'specification',
             'model', 'quantity', 'unitName', 'sellingPrice', 'purchasePrice',
             'pos']
+
+        order.payments.sort(key=lambda op: op.payment.payTime)
 
         return {
             'header': header,
@@ -359,20 +363,19 @@ class OrderJSON(RpcBase):
         ])
 
     @jsonrpc_method(endpoint='rpc', method='order.payment.add')
-    def addOrderPayment(self, orderId, method, amount):
+    def addOrderPayment(self, orderId, payDate, method, amount):
         """ Offline payment initialized by staff """
         order = self.loadOrder(orderId)
         if not amount:
             raise RPCUserError('收款金额不能为0')
 
         amount = Decimal(str(amount))
-        now = datetime.now()
-        # assert amount <= order.amount - order.couponAmount
+        payDate = datetime.strptime(payDate, '%Y-%m-%d')
         order.paidAmount += amount
 
         payment = Payment()
         payment.amount = amount
-        payment.payTime = now
+        payment.payTime = payDate
         payment.partyId = order.customerId
         payment.paymentMethod = method
         payment.receivedBy = self.request.user.partyId
@@ -385,10 +388,6 @@ class OrderJSON(RpcBase):
         op.paymentId = payment.paymentId
         op.amount = amount
         self.sess.add(op)
-
-        # mark coupon in use as redempted
-        # if order.couponUid:
-        #     order.coupon.redemptionTime = now
 
     @jsonrpc_method(endpoint='rpc', method='order.payment.delete')
     def deleteOrderPayment(self, orderId, paymentId):
@@ -406,6 +405,18 @@ class OrderJSON(RpcBase):
             order.payments.remove(op)
             self.sess.delete(op.payment)
             self.sess.delete(op)
+
+    @jsonrpc_method(endpoint='rpc', method='order.attachment.add')
+    def uploadAttachment(self):
+        """ Add the given file as the last attachment of the order """
+
+    @jsonrpc_method(endpoint='rpc', method='order.attachment.get')
+    def getAttachment(self):
+        pass
+
+    @jsonrpc_method(endpoint='rpc', method='order.attachment.set')
+    def setAttachment(self):
+        pass
 
 
 @view_config(route_name='order_download')

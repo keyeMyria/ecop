@@ -104,7 +104,9 @@ Ext.define('Ecop.view.order.OrderController', {
 
     btn.getWidgetRecord().drop()
     // refresh the row number
-    this.lookup('items-grid').getView().refresh()
+    this.lookup('items-grid')
+      .getView()
+      .refresh()
   },
 
   onOrderItemChange: function(store, record, op, fields) {
@@ -328,6 +330,7 @@ Ext.define('Ecop.view.order.OrderController', {
         method: 'order.payment.add',
         params: [
           me.getCurrentOrder().get('orderId'),
+          Ext.Date.format(me.lookup('paymentDate').getValue(), 'Y-m-d'),
           me.lookup('paymentMethod').getValue(),
           me.lookup('paymentAmount').getValue()
         ],
