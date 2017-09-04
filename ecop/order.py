@@ -359,34 +359,32 @@ class OrderJSON(RpcBase):
         ])
 
     @jsonrpc_method(endpoint='rpc', method='order.payment.add')
-    def addOrderPayment(self, orderId, method=None, amount=None):
+    def addOrderPayment(self, orderId, method, amount):
         """ Offline payment initialized by staff """
         order = self.loadOrder(orderId)
-
-        now = datetime.now()
-
         if not amount:
             raise RPCUserError('收款金额不能为0')
 
-        if method and amount:
-            # assert amount <= order.amount - order.couponAmount
-            order.paidAmount += amount
+        amount = Decimal(str(amount))
+        now = datetime.now()
+        # assert amount <= order.amount - order.couponAmount
+        order.paidAmount += amount
 
-            payment = Payment()
-            payment.amount = amount
-            payment.payTime = now
-            payment.partyId = order.customerId
-            payment.paymentMethod = method
-            payment.receivedBy = self.request.user.partyId
+        payment = Payment()
+        payment.amount = amount
+        payment.payTime = now
+        payment.partyId = order.customerId
+        payment.paymentMethod = method
+        payment.receivedBy = self.request.user.partyId
 
-            self.sess.add(payment)
-            self.sess.flush()
+        self.sess.add(payment)
+        self.sess.flush()
 
-            op = OrderPayment()
-            op.orderId = order.orderId
-            op.paymentId = payment.paymentId
-            op.amount = amount
-            self.sess.add(op)
+        op = OrderPayment()
+        op.orderId = order.orderId
+        op.paymentId = payment.paymentId
+        op.amount = amount
+        self.sess.add(op)
 
         # mark coupon in use as redempted
         # if order.couponUid:

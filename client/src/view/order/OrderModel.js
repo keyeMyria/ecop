@@ -4,7 +4,11 @@ Ext.define('Ecop.view.order.OrderModel', {
 
   formulas: {
     restAmount: function(get) {
-      return get('currentOrder.amount') - get('currentOrder.paidAmount')
+      return (
+        Math.round(
+          (get('currentOrder.amount') - get('currentOrder.paidAmount')) * 100
+        ) / 100
+      )
     },
 
     title: function(get) {
