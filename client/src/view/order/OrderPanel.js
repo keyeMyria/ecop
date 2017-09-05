@@ -50,6 +50,58 @@ Ext.define('Ecop.view.order.OrderPanel', {
     margin: '0 0 5 0'
   },
 
+  tbar: [
+    {
+      iconCls: 'x-fa fa-plus-circle',
+      tooltip: '添加项目',
+      handler: 'onBtnAddItem',
+      bind: {
+        disabled: '{!orderEditable}'
+      }
+    },
+    {
+      iconCls: 'x-fa fa-save',
+      tooltip: '保存变更',
+      handler: 'saveOrder',
+      bind: {
+        disabled: '{saveButtonDisabled}'
+      }
+    },
+    {
+      iconCls: 'x-fa fa-refresh',
+      tooltip: '取消变更',
+      handler: 'onCancelChanges',
+      bind: {
+        disabled: '{cancelButtonDisabled}'
+      }
+    },
+    {
+      iconCls: 'x-fa fa-download',
+      tooltip: '下载订单',
+      bind: {
+        href: '{downloadUrl}',
+        disabled: '{isNewOrder}'
+      }
+    },
+    {
+      iconCls: 'x-fa fa-bold',
+      tooltip: 'B价',
+      priceType: 'B',
+      handler: 'onBtnSwitchPrice',
+      bind: {
+        disabled: '{!orderEditable}'
+      }
+    },
+    {
+      iconCls: 'x-fa fa-list',
+      tooltip: '显示顾客所有订单',
+      handler: 'onBtnShowAllOrders',
+      bind: {
+        disabled: '{!currentOrder.customerId}'
+      }
+    }
+  ],
+
   items: [
     {
       defaults: {
@@ -569,53 +621,5 @@ Ext.define('Ecop.view.order.OrderPanel', {
         }
       ]
     }
-  ],
-
-  buttonAlign: 'center',
-  buttons: [
-    {
-      text: '添加项目',
-      scale: 'medium',
-      handler: 'onBtnAddItem',
-      bind: {
-        disabled: '{!orderEditable}'
-      }
-    },
-    {
-      text: '保存变更',
-      scale: 'medium',
-      handler: 'saveOrder',
-      bind: {
-        disabled: '{saveButtonDisabled}'
-      }
-    },
-    {
-      text: '取消变更',
-      scale: 'medium',
-      handler: 'onCancelChanges',
-      bind: {
-        disabled: '{!orderEditable}'
-      }
-    },
-    {
-      text: '下载订单',
-      scale: 'medium',
-      bind: {
-        href: '{downloadUrl}'
-      }
-    }
-    /*
-    TODO: This is obsoleted as of Aug. 18, 2017.
-
-    {
-      text: 'B价',
-      scale: 'medium',
-      priceType: 'B',
-      handler: 'onBtnSwitchPrice',
-      bind: {
-        disabled: '{!orderEditable}'
-      }
-    }
-    */
   ]
 })

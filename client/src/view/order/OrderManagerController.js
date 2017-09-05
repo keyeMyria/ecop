@@ -70,5 +70,26 @@ Ext.define('Ecop.view.order.OrderManagerController', {
     })
     view.add(p)
     view.setActiveTab(p)
+  },
+
+  showCustomerOrder: function(customerId) {
+    var me = this
+
+    Web.data.JsonRPC.request({
+      method: 'order.search',
+      params: [
+        {
+          customerId: customerId
+        }
+      ],
+      success: function(orders) {
+        var grid = me.lookup('orders-list')
+        me.getView().setActiveTab(grid)
+        grid.store.loadData(orders)
+        if (grid.store.getCount() === 0) {
+          Ecop.util.Util.showInfo('该时间段内没有找到符合条件的订单。')
+        }
+      }
+    })
   }
 })

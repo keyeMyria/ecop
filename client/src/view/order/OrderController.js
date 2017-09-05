@@ -368,6 +368,20 @@ Ext.define('Ecop.view.order.OrderController', {
       success: me.loadOrder,
       scope: me
     })
+  },
+
+  /*
+   * Show all orders of the customer in the order manager
+   */
+  onBtnShowAllOrders: function() {
+    var me = this,
+      order = me.getCurrentOrder()
+
+    me
+      .getView()
+      .up('order-manager')
+      .getController()
+      .showCustomerOrder(order.get('customerId'))
   }
 
   /*

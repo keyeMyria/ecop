@@ -247,7 +247,8 @@ class OrderJSON(RpcBase):
     @jsonrpc_method(endpoint='rpc', method='order.search')
     def searchOrder(self, cond):
         """ By default the search returns orders that are not closed, except
-        when orderStatus is explicitly set.
+        when orderStatus is explicitly set. And if customerId is given without
+        explicit orderStatus, show all orders of the customer.
 
         The `cond` parameter is a dictionary containing the following keys:
             dateType   # 1 = creationDate, 2 = completionDate
@@ -265,29 +266,34 @@ class OrderJSON(RpcBase):
             o = query.get(orderId)
             orders = [o] if o else []
         else:
-            start_date = datetime.strptime(cond['startDate'], '%Y-%m-%d')
-            end_date = datetime.strptime(cond['endDate'], '%Y-%m-%d')
+            if 'startDate' in cond or 'endDate' in cond:
+                # when any date is present, dateType must be present
+                if cond['dateType'] == 1:
+                    dateField = Order.createTime
+                else:
+                    dateField = Order.completionDate
 
-            if start_date > end_date:
+            if 'startDate' in cond:
+                start_date = datetime.strptime(cond['startDate'], '%Y-%m-%d')
+                query = query.filter(dateField >= start_date)
+
+            if 'endDate' in cond:
+                end_date = datetime.strptime(cond['endDate'], '%Y-%m-%d')
+                query = query.filter(dateField < end_date + timedelta(1))
+
+            if 'startDate' in cond and 'endDate' in cond and \
+                start_date > end_date:
                 raise RPCUserError('结束日期必须大于起始日期！')
-
-            if cond['dateType'] == 1:
-                dateField = Order.createTime
-            else:
-                dateField = Order.completionDate
-
-            query = query.filter(and_(dateField >= start_date,
-                                    dateField < end_date + timedelta(1)))
 
             # By default only show orders of interest, i.e. not closed or
             # completed, except when:
             #  * order stauts is given
             #  * customerId is given, then show all orders of the customer
-            if cond['orderStatus']:
+            if cond.get('orderStatus'):
                 query = query.filter(Order.orderStatus == cond['orderStatus'])
-            elif cond['dateType'] == 2: # completed
+            elif cond.get('dateType') == 2: # completed
                 query = query.filter_by(orderStatus=ORDER_STATUS.COMPLETED)
-            elif not cond['customerId']:
+            elif not cond.get('customerId'):
                 query = query.filter(and_(
                     Order.orderStatus != ORDER_STATUS.CLOSED,
                     Order.orderStatus != ORDER_STATUS.COMPLETED))
