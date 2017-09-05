@@ -29,7 +29,7 @@ Ext.define('Ecop.view.order.OrderModel', {
     /*
      * If an order is completed, disable the save button
      */
-    saveButtonDisabled: function(get) {
+    isCompleted: function(get) {
       return get('originalStatus') === 4
     },
 

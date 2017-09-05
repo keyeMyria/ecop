@@ -64,7 +64,7 @@ Ext.define('Ecop.view.order.OrderPanel', {
       tooltip: '保存变更',
       handler: 'saveOrder',
       bind: {
-        disabled: '{saveButtonDisabled}'
+        disabled: '{isCompleted}'
       }
     },
     {
@@ -119,13 +119,18 @@ Ext.define('Ecop.view.order.OrderPanel', {
           }
         },
         {
-          xtype: 'customerpicker',
-          allowBlank: false,
-          fieldLabel: '顾客',
+          fieldLabel: '创建日期',
+          bind: '{currentOrder.createTime}',
+          renderer: Ext.util.Format.dateRenderer('Y-m-d')
+        },
+        {
+          fieldLabel: '完成日期',
           bind: {
-            value: '{currentOrder.customerId}',
-            readOnly: '{!orderEditable}'
-          }
+            value: '{currentOrder.completionDate}',
+            hidden: '{!currentOrder.completionDate}'
+          },
+          hidden: true,
+          renderer: Ext.util.Format.dateRenderer('Y-m-d')
         },
         {
           xtype: 'combo',
@@ -146,6 +151,15 @@ Ext.define('Ecop.view.order.OrderPanel', {
         margin: '0 10 0 0'
       },
       items: [
+        {
+          xtype: 'customerpicker',
+          allowBlank: false,
+          fieldLabel: '顾客',
+          bind: {
+            value: '{currentOrder.customerId}',
+            readOnly: '{!orderEditable}'
+          }
+        },
         {
           allowBlank: false,
           fieldLabel: '联系人',
