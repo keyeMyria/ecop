@@ -1,17 +1,17 @@
 .item-desc {
-    .x-grid-item-focused .x-grid-cell-inner:before {
-        border: none !important;
-    }
+  .x-grid-item-focused .x-grid-cell-inner:before {
+    border: none !important;
+  }
 
-    .preview {
-        .wrapper {
-            width: 800px;
-            text-align: center;
+  .preview {
+    .wrapper {
+      width: 800px;
+      text-align: center;
 
-            img {
-                display: block;
-                margin: auto;
-            }
-        }
+      img {
+        display: block;
+        margin: auto;
+      }
     }
+  }
 }

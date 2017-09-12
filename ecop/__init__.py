@@ -23,7 +23,9 @@ def main(global_config, **settings):
     config.include('weblibs.rabbitmq')
     config.include('weblibs.elasticsearch')
     config.include('weblibs.oss')
-    config.include('weblibs.weixin')
+
+    # This tween can only be added after session is also enabled for ecop
+    # config.include('weblibs.weixin')
 
     # tweens are registered below
     # note that tweens toward the bottom are executed first

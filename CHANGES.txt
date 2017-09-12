@@ -25,7 +25,10 @@ Build 31 (2017-8-28)
 
 Build (2017-9)
 
+ * Add paymentDate to order payment
+
  * Upload photos to order as attachments
+
  * Send an order to customer via SMS or Wechat message
  * Implement order memos for order tracking
  * Generate purchase orders for service order and proper profit accounting

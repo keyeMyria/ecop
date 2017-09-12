@@ -3,6 +3,9 @@ Ext.define('Ecop.view.order.OrderModel', {
   alias: 'viewmodel.order',
 
   formulas: {
+    /*
+     * To avoid float precision error, e.g. 5310.15-3977.75 < 1332.4 === true
+     */
     restAmount: function(get) {
       return (
         Math.round(
