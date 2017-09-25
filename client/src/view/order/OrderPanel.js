@@ -119,9 +119,9 @@ Ext.define('Ecop.view.order.OrderPanel', {
           }
         },
         {
-          fieldLabel: '创建日期',
+          fieldLabel: '创建时间',
           bind: '{currentOrder.createTime}',
-          renderer: Ext.util.Format.dateRenderer('Y-m-d')
+          renderer: Ext.util.Format.dateRenderer('Y-m-d H:i:s')
         },
         {
           fieldLabel: '完成日期',

@@ -152,10 +152,10 @@ Ext.define('Ecop.view.order.OrderManager', {
             dataIndex: 'recipientName'
           },
           {
-            text: '创建日期',
-            width: 90,
+            text: '创建时间',
+            width: 160,
             dataIndex: 'createTime',
-            formatter: 'date("Y-m-d")'
+            formatter: 'date("Y-m-d H:i:s")'
           },
           {
             text: '完成日期',
