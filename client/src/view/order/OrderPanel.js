@@ -12,10 +12,8 @@ Ext.define('Ecop.view.order.OrderPanel', {
     'Web.model.Order',
     'Web.model.OrderItem',
     'Web.model.OrderPayment',
-    'Web.model.Coupon',
 
     'Ecop.widget.CustomerPicker',
-    'Ecop.widget.CouponPicker',
 
     'Ecop.view.order.OrderController',
     'Ecop.view.order.OrderModel'
@@ -399,19 +397,6 @@ Ext.define('Ecop.view.order.OrderPanel', {
             blur: 'refreshAmount'
           }
         },
-        /*        {
-          xtype: 'couponpicker',
-          fieldLabel: '抵用券',
-          bind: {
-            value: '{currentOrder.couponUid}',
-            readOnly: '{!orderEditable}'
-          },
-          listeners: {
-            beforeQuery: 'onQueryCoupon',
-            change: 'onCouponChange'
-          }
-        },
-*/
         {
           xtype: 'numberfield',
           fieldLabel: '运费',

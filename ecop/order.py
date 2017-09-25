@@ -2,7 +2,7 @@ import os.path
 from datetime import date, datetime, timedelta
 from decimal import Decimal
 
-from sqlalchemy.sql import and_, text, or_
+from sqlalchemy.sql import and_
 # import shortuuid
 from sqlalchemy.orm import eagerload
 from genshi.template import TemplateLoader
@@ -15,15 +15,12 @@ from pyramid_rpc.jsonrpc import jsonrpc_method
 
 from hm.lib.config import siteConfig
 
-from webmodel import (
-    Item, PartyCoupon, Order, Coupon, Payment, OrderPayment
-)
+from webmodel import Item, Order, Payment, OrderPayment
 from webmodel.consts import ORDER_STATUS
 
 from weblibs.jsonrpc import marshall, RPCUserError
 
 from .base import RpcBase, DocBase
-
 
 def changeOrderStatus(order, old, new):
     if old == new:
@@ -68,12 +65,6 @@ class OrderJSON(RpcBase):
     def data(self, orderId):
         """ Returns the JSON representation of the order. """
         order = self.loadOrder(orderId)
-
-        # if coupon was used on the order for payment but still not paid,
-        # check if the coupon has expired
-        if order.orderStatus == ORDER_STATUS.BID and order.couponUid and \
-                date.today() > order.coupon.endDate:
-            self._releaseCoupon()
 
         fields = [
             'orderId', 'customerId', 'createTime', 'amount',
@@ -185,64 +176,8 @@ class OrderJSON(RpcBase):
 
         if new_order:
             self.sess.flush()
-        else:
-            # if customer of an order is changed via ecop, release the
-            # related coupon
-            if 'customerId' in m_fields:
-                self._releaseCoupon()
-                m_fields.pop('couponUid', None)
-            # only a staff can modify an order's couponUid via ecop
-            elif 'couponUid' in m_fields:
-                cuid = m_fields['couponUid']
-                if cuid:
-                    self._useCoupon(cuid)
-                else:
-                    self._releaseCoupon()
-            # whenever a bid order is modified by the user, release coupon
-            # usage since the condition to use the order might no longer be
-            # applicable
-            else:
-                self._releaseCoupon()
+
         return order.orderId
-
-    def _releaseCoupon(self):
-        """ If a coupon was used for an order during payment and the order is
-        still not paid, release the coupon so that it can be used for payment
-        for other orders """
-        order = self.order
-
-        if order.orderStatus == ORDER_STATUS.BID:
-            self.sess.execute(
-                PartyCoupon.__table__.update().
-                where(PartyCoupon.orderId == order.orderId).
-                values(order_id=None))
-            order.couponAmount = 0
-            order.couponUid = None
-
-    def _useCoupon(self, cuid):
-        """ Use the given coupon on the order """
-        order = self.order
-        orderId = order.orderId
-
-        coupon = self.sess.query(PartyCoupon).get(cuid)
-        if coupon.orderId:
-            if coupon.orderId != orderId:
-                raise RPCUserError('所选优惠券已被使用，请重新选择')
-            if order.amount < coupon.coupon.minOrderAmount:
-                raise RPCUserError('当前订单金额不到优惠券起用金额，请重新选择')
-        else:  # a different and unused coupon
-            # prevent one order from locking up 2 coupons from 2 different
-            # clients
-            self.sess.execute(
-                PartyCoupon.__table__.update().where(
-                    and_(PartyCoupon.orderId == orderId,
-                         PartyCoupon.uid != coupon.uid)
-                ).values(order_id=None)
-            )
-
-            coupon.orderId = orderId
-            order.couponAmount = coupon.coupon.amount
-            order.couponUid = coupon.uid
 
     @jsonrpc_method(endpoint='rpc', method='order.search')
     def searchOrder(self, cond):
@@ -310,51 +245,6 @@ class OrderJSON(RpcBase):
         ]
 
         return [marshall(o, fields) for o in orders]
-
-    @jsonrpc_method(endpoint='rpc', method='coupon.data')
-    def getCouponData(self, couponUid):
-        coupon = self.sess.query(PartyCoupon).get(couponUid)
-
-        return [{
-            'uid': c.uid,
-            'couponName': c.coupon.couponName,
-            'amount': c.coupon.amount,
-            'minOrderAmount': c.coupon.minOrderAmount,
-            'startDate': c.startDate or c.coupon.startDate,
-            'endDate': c.endDate or c.coupon.endDate
-        } for c in (coupon,)]
-
-    @jsonrpc_method(endpoint='rpc', method='order.coupon.get')
-    def getCouponForOrder(self, orderId):
-        """ Return all coupons that can be used for the order """
-        # pylint: disable=C0121
-        order = self.loadOrder(orderId)
-
-        query = self.sess.query(PartyCoupon).join(Coupon).filter(
-            PartyCoupon.partyId == order.customerId,
-            PartyCoupon.redemptionTime == None,
-            text("now() between party_coupon.start_date "
-                 "and party_coupon.end_date + interval '1 day' "),
-            or_(PartyCoupon.orderId == None,
-                PartyCoupon.orderId == orderId),
-            order.amount >= Coupon.minOrderAmount
-        ).order_by(PartyCoupon.uid)
-
-        coupons = query.all()
-
-        # if a coupon was used for the order, check if the coupon is still
-        # valid. If not, release it.
-        if order.couponUid and order.couponUid not in (c.uid for c in coupons):
-            self._releaseCoupon()
-
-        return [{
-            'uid': c.uid,
-            'couponName': c.coupon.couponName,
-            'amount': c.coupon.amount,
-            'minOrderAmount': c.coupon.minOrderAmount,
-            'startDate': c.startDate or c.coupon.startDate,
-            'endDate': c.endDate or c.coupon.endDate
-        } for c in coupons]
 
     @jsonrpc_method(endpoint='rpc', method='order.price.get')
     def getItemPrice(self, itemIds, priceType):

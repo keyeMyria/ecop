@@ -211,7 +211,6 @@ Ext.define('Ecop.view.order.OrderController', {
      */
     delete headers.amount
     delete headers.cost
-    delete headers.couponAmount
 
     Web.data.JsonRPC.request({
       method: 'order.upsert',
@@ -383,29 +382,4 @@ Ext.define('Ecop.view.order.OrderController', {
       .getController()
       .showCustomerOrder(order.get('customerId'))
   }
-
-  /*
-   * ------------------------------------------------------------------------
-   *
-   * Coupon related code are not currently used. About to change in the
-   * furture
-   *
-   * ------------------------------------------------------------------------
-   */
-
-  /*
-  onQueryCoupon: function(queryplan) {
-    queryplan.query = this.getCurrentOrder().get('orderId')
-  },
-
-  onCouponChange: function(field, newValue, oldValue) {
-    var me = this,
-      order = me.getCurrentOrder()
-    if (newValue === 0) return
-    order.set(
-      'couponAmount',
-      newValue ? field.getStore().getById(newValue).get('amount') : 0
-    )
-  }
-  */
 })
