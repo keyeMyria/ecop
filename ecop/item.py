@@ -2,13 +2,11 @@ from decimal import Decimal
 from bs4 import BeautifulSoup
 from sqlalchemy import or_, and_, not_, func
 from sqlalchemy.orm import eagerload
-import pika
 
 from pyramid_rpc.jsonrpc import jsonrpc_method
 
 from hm.lib.checksum import damm
 
-from weblibs.rabbitmq import pool
 from weblibs.jsonrpc import marshall, RPCUserError, validateSchema
 
 from webmodel import Item, ItemGroup, ItemImage, BomItem, Image, Resource, \
@@ -19,28 +17,7 @@ from .category import categoryFactory
 from .base import RpcBase
 
 
-class ItemNotifierMixin(object):
-    def notifyItemChange(self, itemId):
-        """ TODO: item change has been deprecated. Was intended for syncing
-        items with Taobao.
-
-        There is no longer the 'item' exchange and no message processing will
-        take place.
-        """
-        return
-
-        with pool.acquire() as cnx:
-            cnx.channel.basic_publish(
-                exchange='item',
-                routing_key='updated',
-                body=str(itemId),
-                properties=pika.BasicProperties(
-                    delivery_mode=2,  # make message persistent
-                )
-            )
-
-
-class ItemJSON(RpcBase, ItemNotifierMixin):
+class ItemJSON(RpcBase):
     def __init__(self, request):
         RpcBase.__init__(self, request)
 
@@ -340,7 +317,7 @@ class ItemJSON(RpcBase, ItemNotifierMixin):
         item = self.sess.query(Item).options(eagerload('images')).get(itemId)
         return [{
             'imageId': img.imageId,
-            'title': img.image.title,
+            'title': img.image.fileName,
             'width': img.image.width,
             'height': img.image.height,
             'url': img.image.url
@@ -379,7 +356,7 @@ class ItemJSON(RpcBase, ItemNotifierMixin):
         """ Returns the tree data for description modules in the format
             [{id: 5, text: '商品情景', children: [
                 ｛id: 10043046, text: 'M22061', type: 1, leaf: True}
-                ｛id: 10043067, text: 'ResourceTitle',
+                ｛id: 10043067, text: 'Resource File Name',
                   type: ResourceType, leaf: True
                  }
                 ...
@@ -406,7 +383,7 @@ class ItemJSON(RpcBase, ItemNotifierMixin):
                     resource = self.sess.query(Resource).get(rid)
                     children.append({
                         'rid': rid,
-                        'text': resource.title,
+                        'text': resource.fileName,
                         'type': resource.resourceType,
                         'format': resource.format,
                         'leaf': True
@@ -427,7 +404,7 @@ class ItemJSON(RpcBase, ItemNotifierMixin):
         return ret
 
 
-class ItemGroupJSON(RpcBase, ItemNotifierMixin):
+class ItemGroupJSON(RpcBase):
     """ This class collects JSON-RPC methods used for management of item groups,
     i.e. the CRUD operations """
 
