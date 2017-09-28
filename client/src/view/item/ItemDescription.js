@@ -75,9 +75,7 @@ Ext.define('Ecop.view.item.ItemDescription', {
               xtype: 'treecolumn',
               sortable: false,
               renderer: function(v, c, record) {
-                return record.get('format')
-                  ? record.get('text') + '.' + record.get('format')
-                  : record.get('text')
+                return record.get('text')
               },
               flex: 1
             }

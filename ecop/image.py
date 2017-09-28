@@ -173,8 +173,6 @@ class ImageJSON(RpcBase):
         self.updateImageAttr(image, img, data)
 
         if not image.imageId:  # for new image
-            if fname:
-                image.title = fname.split('.')[0]
             image.content = content
             self.sess.add(image)
             self.sess.flush()  # flush to get the image id
@@ -219,10 +217,10 @@ upload_template = """
 
 
 @view_config(route_name='upload', renderer='upload.pt')
-def uploadImage(request):
+def uploadArticleImage(request):
     """
     This handler accepts image upload from CKEditor for use in articles.
-    Note this has nothing to do with
+    Note this has nothing to do with the upload of item images
     """
     f = request.params['upload']
     ret = {

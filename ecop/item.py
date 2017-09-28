@@ -317,7 +317,7 @@ class ItemJSON(RpcBase):
         item = self.sess.query(Item).options(eagerload('images')).get(itemId)
         return [{
             'imageId': img.imageId,
-            'title': img.image.fileName,
+            'title': img.image.title,
             'width': img.image.width,
             'height': img.image.height,
             'url': img.image.url
@@ -383,7 +383,7 @@ class ItemJSON(RpcBase):
                     resource = self.sess.query(Resource).get(rid)
                     children.append({
                         'rid': rid,
-                        'text': resource.fileName,
+                        'text': resource.title,
                         'type': resource.resourceType,
                         'format': resource.format,
                         'leaf': True
