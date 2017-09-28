@@ -64,16 +64,15 @@ class ImageJSON(RpcBase):
         Returns an `Image` object if the same image already exists, none
         otherwise.
         """
-        fingerprint = hashlib.md5(data).digest()
+        md5 = hashlib.md5(data).digest()
 
-        return self.sess.query(Image).filter_by(
-            fingerPrint=fingerprint).one_or_none()
+        return self.sess.query(Image).filter_by(md5=md5).one_or_none()
 
     def updateImageAttr(self, image, img, data):
         """ image: DB image, img: PIL image, data: binary image data """
         image.width, image.height = img.size
         image.format = 'jpg' if img.format == 'JPEG' else img.format.lower()
-        image.fingerPrint = hashlib.md5(data).digest()
+        image.md5 = hashlib.md5(data).digest()
 
     def checkAndConvertImage(self, data, fname, imgType):
         """ Helper function that returns a **PIL.Image** object and the binary
@@ -146,10 +145,13 @@ class ImageJSON(RpcBase):
 
     @jsonrpc_method(endpoint='rpc', method='image.get.md5')
     def getImageByMd5(self, md5):
-        """ Checks if an image with the given md5 already exists. If found,
-        returns the found image, otherwise returns None """
+        """
+        Checks if an image with the given md5 already exists. If found,
+        returns the found image, otherwise returns None
+        """
         image = self.sess.query(Image).filter_by(
-            fingerPrint=b64decode(md5)).one_or_none()
+            md5=b64decode(md5)
+        ).one_or_none()
         return self.toJson(image) if image else None
 
     @jsonrpc_method(endpoint='rpc', method='image.add')
