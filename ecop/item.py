@@ -160,12 +160,10 @@ class ItemJSON(RpcBase):
 
         for rec in records:
             if isinstance(rec['itemId'], int):
-                newItem = False
                 item = self.sess.query(Item).get(rec['itemId'])
                 assert item, 'Item id %d is not found' % rec['itemId']
             else:
                 item = Item()
-                newItem = True
                 if self.request.user.isVendor:  # vendor created item:
                     item.maintainerId = self.request.user.partyId
                 self.sess.add(item)
@@ -191,9 +189,6 @@ class ItemJSON(RpcBase):
                 self.setBom(item, rec['boms'])
             if 'images' in rec:
                 self.setImages(item, rec['images'])
-
-            if not newItem:
-                self.notifyItemChange(item.itemId)
 
     @jsonrpc_method(endpoint='rpc', method='item.sku.search')
     def searchSku(self, text):
@@ -490,8 +485,6 @@ class ItemGroupJSON(RpcBase):
 
             ig.items = [i['itemId'] for i in content['items']]
 
-            self.notifyItemChange(ig.items[0])
-
     @jsonrpc_method(endpoint='rpc', method='item.group.update')
     def update(self, content):
         """ Note the itemGroupId to be updated must be contained in the content
@@ -514,4 +507,3 @@ class ItemGroupJSON(RpcBase):
         if ig:
             self.sess.query(ItemGroup).\
                 filter(ItemGroup.itemGroupId == itemGroupId).delete()
-            self.notifyItemChange(ig.items[0])
