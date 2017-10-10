@@ -6,6 +6,7 @@ requires = [
     'pyramid_rpc',  # for json rpc server
 
     'beautifulsoup4',
+    'elasticsearch-dsl>=5.0.0,<6.0.0',
     'genshi',
     'hiredis',
     'oss2',  # for Aliyun oss bucket management
