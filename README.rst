@@ -70,7 +70,6 @@ item.update.price.purchase
 item.bom.manage
 
 order.manage
-shop.manage
 content.manage
 shipment.manage
 article.delete
