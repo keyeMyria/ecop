@@ -3,7 +3,6 @@ from datetime import date, datetime, timedelta
 from decimal import Decimal
 
 from sqlalchemy.sql import and_
-# import shortuuid
 from sqlalchemy.orm import eagerload
 from genshi.template import TemplateLoader
 from z3c.rml import rml2pdf
@@ -71,7 +70,7 @@ class OrderJSON(RpcBase):
             'freight', 'rebate', 'orderStatus', 'regionCode', 'recipientName',
             'streetAddress', 'recipientMobile', 'recipientPhone', 'memo',
             'internalMemo', 'paidAmount', 'freightCost', 'completionDate',
-            'installmentAmount'
+            'installmentAmount', 'attachments'
         ]
 
         header = marshall(order, fields)
@@ -104,7 +103,7 @@ class OrderJSON(RpcBase):
         to the order. 'deleted' is list of order item id's to be removed from
         the order. 'modified' is a list of fields changes for changed items.
         Example input:
-         {
+        {
             "header": {
                 "freight":50,
                 "regionCode":230103,
@@ -112,7 +111,8 @@ class OrderJSON(RpcBase):
             },
             "deleted":[55556],
             "modified":[[55564, {"quantity": 2, "sellingPrice": 500.5}]],
-            "added":[[10018201,{"quantity": 1, "sellingPrice": 1350}]]}]}
+            "added":[[10018201,{"quantity": 1, "sellingPrice": 1350}]]}]
+        }
         """
         if isinstance(orderId, str):
             new_order = True

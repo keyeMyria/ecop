@@ -9,13 +9,18 @@
     <link tal:repeat="css view.resources.css"
         type="text/css" rel="stylesheet" media="all"
         href="${css}" />
+
+    <script type="text/javascript">
+        var Ecop = {
+            siteUrl: '${view.siteUrl}',
+            version: ${view.version},
+            imageUrl: '${view.imageUrl}'
+        }
+    </script>
+
     <script tal:repeat="script view.resources.headjs" src="${script}"></script>
 </head>
 
 <body>
-    <script type="text/javascript">
-        Ecop.siteUrl = '${view.siteUrl}';
-        Ecop.version = '${view.version}';
-    </script>
 </body>
 </html>

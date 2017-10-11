@@ -16,7 +16,7 @@ Ext.define('Ecop.view.order.OrderController', {
     /*
      * Bind events that can not easily be bound in the OrderPanel
      */
-    me.itemStore = this.lookup('items-grid').getStore()
+    me.itemStore = vm.get('items')
     me.itemStore.on({
       datachanged: 'refreshAmount',
       update: 'onOrderItemChange',
@@ -42,8 +42,8 @@ Ext.define('Ecop.view.order.OrderController', {
 
   loadOrder: function() {
     var me = this,
-      order = me.getCurrentOrder(),
-      paymentStore = me.lookup('paymentGrid').getStore()
+      vm = me.getViewModel(),
+      order = me.getCurrentOrder()
 
     Web.data.JsonRPC.request({
       method: 'order.data',
@@ -58,11 +58,13 @@ Ext.define('Ecop.view.order.OrderController', {
         order.endEdit()
         order.commit()
 
-        me.getViewModel().set('originalStatus', order.get('orderStatus'))
+        vm.set('originalStatus', order.get('orderStatus'))
 
         me.itemStore.loadData(ret.items)
         me.itemStore.commitChanges()
-        paymentStore.loadData(ret.payments)
+        vm.get('payments').loadData(ret.payments)
+        ret.header.attachments &&
+          vm.get('attachments').loadData(ret.header.attachments)
       }
     })
   },

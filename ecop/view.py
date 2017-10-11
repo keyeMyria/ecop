@@ -46,10 +46,14 @@ class BaseEcopView(object):
     def version(self):
         return siteConfig.version
 
-    @property
+    @reify
     def siteUrl(self):
         """ The url that points to the desktop version of web """
         return siteConfig.canonical_url
+
+    @reify
+    def imageUrl(self):
+        return siteConfig.image_url
 
     def __call__(self):
         return {}

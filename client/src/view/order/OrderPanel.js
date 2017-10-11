@@ -9,10 +9,6 @@ Ext.define('Ecop.view.order.OrderPanel', {
     'Web.ux.Renderers',
     'Web.ux.form.RegionSelector',
 
-    'Web.model.Order',
-    'Web.model.OrderItem',
-    'Web.model.OrderPayment',
-
     'Ecop.widget.CustomerPicker',
 
     'Ecop.view.order.OrderController',
@@ -221,9 +217,8 @@ Ext.define('Ecop.view.order.OrderPanel', {
     {
       xtype: 'grid',
       reference: 'items-grid',
-      store: {
-        model: 'Web.model.OrderItem',
-        proxy: { type: 'memory', reader: 'array' }
+      bind: {
+        store: '{items}'
       },
       layout: 'fit',
       enableColumnMove: false,
@@ -380,6 +375,34 @@ Ext.define('Ecop.view.order.OrderPanel', {
       }
     },
     {
+      xtype: 'panel',
+      collapsible: true,
+      collapsed: false,
+      height: 210,
+      title: '订单附件',
+      layout: 'fit',
+
+      hidden: true,
+      bind: {
+        hidden: '{!hasAttachments}'
+      },
+
+      items: {
+        xtype: 'dataview',
+        scrollable: 'y',
+        bind: {
+          store: '{attachments}'
+        },
+        itemTpl: [
+          '<div class="order-attachment-thumb">',
+          '<a href="{[Ecop.imageUrl]}/{name}" target="_blank" >',
+          '<img src="{[Ecop.imageUrl]}/{name}@!attachment_thumb" />',
+          '</a>',
+          '</div>'
+        ]
+      }
+    },
+    {
       defaults: {
         labelWidth: 50,
         padding: '0 10 0 0',
@@ -467,11 +490,10 @@ Ext.define('Ecop.view.order.OrderPanel', {
             {
               xtype: 'grid',
               reference: 'paymentGrid',
-
-              store: {
-                model: 'Web.model.OrderPayment',
-                proxy: { type: 'memory', reader: 'array' }
+              bind: {
+                store: '{payments}'
               },
+
               flex: 1,
               plugins: ['headeralign'],
               padding: '0 10 0 0',

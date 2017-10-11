@@ -15,9 +15,6 @@ Ext.Loader.setConfig({
 })
 Ext.ariaWarn = Ext.emptyFn
 
-// Define the namespace early so variables could be passed from template files
-Ext.ns('Ecop')
-
 /*
  * Below are absolutely necessaries dependencies. There is no need to repeat
  * thesse elsewhere

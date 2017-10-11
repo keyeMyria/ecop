@@ -2,6 +2,25 @@ Ext.define('Ecop.view.order.OrderModel', {
   extend: 'Ext.app.ViewModel',
   alias: 'viewmodel.order',
 
+  requires: ['Web.model.OrderItem', 'Web.model.OrderPayment'],
+
+  stores: {
+    items: {
+      model: 'Web.model.OrderItem',
+      proxy: { type: 'memory', reader: 'array' }
+    },
+
+    payments: {
+      model: 'Web.model.OrderPayment',
+      proxy: { type: 'memory', reader: 'array' }
+    },
+
+    attachments: {
+      fields: ['name'],
+      proxy: { type: 'memory', reader: 'json' }
+    }
+  },
+
   formulas: {
     /*
      * To avoid float precision error, e.g. 5310.15-3977.75 < 1332.4 === true
@@ -57,6 +76,10 @@ Ext.define('Ecop.view.order.OrderModel', {
 
     isNewOrder: function(get) {
       return get('currentOrder').phantom
+    },
+
+    hasAttachments: function(get) {
+      return get('attachments').getCount() > 0
     }
   }
 })
