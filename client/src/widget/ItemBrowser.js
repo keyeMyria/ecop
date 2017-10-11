@@ -42,7 +42,7 @@ Ext.define('Ecop.widget.ItemBrowser', {
         minWidth: 210,
         flex: 1
       },
-      {
+      /*      {
         xtype: 'combo',
         labelWidth: 50,
         fieldLabel: '供货商',
@@ -53,6 +53,7 @@ Ext.define('Ecop.widget.ItemBrowser', {
         plugins: 'cleartrigger',
         width: 200
       },
+*/
       {
         xtype: 'combo',
         itemId: 'itemStatus',
@@ -95,7 +96,10 @@ Ext.define('Ecop.widget.ItemBrowser', {
       widget
 
     params = {
-      text: me.down('#searchText').getValue().trim(),
+      text: me
+        .down('#searchText')
+        .getValue()
+        .trim(),
       brandId: me.down('#brandId').getValue(),
       catId: me.down('#categoryId').getValue(),
       status: me.down('#itemStatus').getValue()

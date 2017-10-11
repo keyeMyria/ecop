@@ -125,7 +125,7 @@ class ImageJSON(RpcBase):
         else:  # this is image for description
             if img.width < 790:
                 raise RPCUserError('商品描述图片宽度最小为790。')
-            if not (0.3 <= img.height / img.width <= 2):
+            if not 0.3 <= img.height / img.width <= 2:
                 raise RPCUserError('商品描述图片高宽比(高度/宽度)必须在0.3-2之间。')
             if img.width > 790:
                 img = img.resize((790, int(790 / img.width * img.height)),
@@ -218,7 +218,7 @@ upload_template = """
 </script>"""
 
 
-@view_config(route_name='upload', renderer='upload.pt')
+@view_config(route_name='upload')
 def uploadArticleImage(request):
     """
     This handler accepts image upload from CKEditor for use in articles.
@@ -233,7 +233,6 @@ def uploadArticleImage(request):
 
     try:
         img = PIL.Image.open(f.file)
-
         if img.format in ('JPEG', 'PNG', 'GIF'):
             bucket = getBucket(siteConfig.image_bucket)
             md5 = hashlib.md5(f.value).hexdigest()

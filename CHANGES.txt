@@ -27,9 +27,9 @@ Build (2017-9)
 
  * Add paymentDate to order payment
 
- * Upload photos to order as attachments
+ * Send an order url to customer via SMS or Wechat message
 
- * Send an order to customer via SMS or Wechat message
+ * Upload photos to order as attachments
  * Implement order memos for order tracking
  * Generate purchase orders for service order and proper profit accounting
  * Publish artiles to wechat open platform

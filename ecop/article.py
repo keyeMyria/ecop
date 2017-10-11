@@ -1,10 +1,10 @@
 from datetime import datetime
-from dateutil import parser
 from urllib.parse import urlparse
 
+from bs4 import BeautifulSoup
+from dateutil import parser
 from sqlalchemy import Sequence
 from elasticsearch_dsl import Search
-from bs4 import BeautifulSoup
 
 from pyramid_rpc.jsonrpc import jsonrpc_method
 
