@@ -164,15 +164,6 @@ Ext.define('Ecop.widget.ItemGrid', {
         align: 'center',
         dataIndex: 'isStocking'
       }
-      // obsoleted catalog column 2016.9.19
-      /*, {
-            xtype: 'checkcolumn',
-            text: '目录',
-            width: 50,
-            align: 'center',
-            dataIndex: 'catalog',
-            permission: 'item.update.catalog'
-        }*/
     ]
   },
 
