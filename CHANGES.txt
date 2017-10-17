@@ -26,13 +26,11 @@ Build 31 (2017-8-28)
 Build (2017-9)
 
  * Add paymentDate to order payment
+ * Show photos upload into order by customer
 
  * Send an order url to customer via SMS or Wechat message
 
- * Upload photos to order as attachments
- * Implement order memos for order tracking
  * Generate purchase orders for service order and proper profit accounting
- * Publish artiles to wechat open platform
 
 Mecop
 
@@ -42,6 +40,9 @@ Mecop
 Future
 ------
 
+ * Upload photos to order as attachments
+ * Implement order memos for order tracking
+ * Publish artiles to wechat open platform
  * Assign an order to a particular user for tracking
  * Use the same session mechanism for website and ecop
  * Use the same jsonrpc protection mechanism for website and ecop

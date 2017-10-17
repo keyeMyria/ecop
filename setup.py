@@ -11,10 +11,9 @@ requires = [
     'hiredis',
     'oss2',  # for Aliyun oss bucket management
     'pika',
-    'pillow',  # to generate qrcode in png format
+    'pillow', # PIL
     'psd-tools',
     'psycopg2',
-    'qrcode',
     'sqlalchemy',
     'transaction',
     'z3c.rml',
