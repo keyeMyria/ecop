@@ -103,7 +103,7 @@ class ItemJSON(RpcBase):
                   'sellingPrice', 'sellingPriceB', 'purchasePrice',
                   'itemStatus', 'isSku', 'unitName', 'primaryCategoryId',
                   'checkDigit', 'unitId', 'brandId', 'countryId',
-                  'maintainerId', 'weight', 'isStocking']
+                  'maintainerId', 'weight']
         return [marshall(i, fields) for i in items]
 
     def setItemStatus(self, item, status):

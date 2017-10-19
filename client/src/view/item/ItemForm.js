@@ -139,12 +139,6 @@ Ext.define('Ecop.view.item.ItemForm', {
               bind: '{currentItem.primaryCategoryId}'
             },
             {
-              xtype: 'checkbox',
-              fieldLabel: '库存商品',
-              labelWidth: 75,
-              bind: '{currentItem.isStocking}'
-            },
-            {
               fieldLabel: '供货商',
               store: 'supplier',
               permission: 'item.update.maintainer',

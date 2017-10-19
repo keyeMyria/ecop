@@ -156,13 +156,6 @@ Ext.define('Ecop.widget.ItemGrid', {
         disabledCls: null,
         align: 'center',
         dataIndex: 'isSku'
-      },
-      {
-        xtype: 'checkcolumn',
-        text: '库存',
-        width: 50,
-        align: 'center',
-        dataIndex: 'isStocking'
       }
     ]
   },
