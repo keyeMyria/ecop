@@ -12,22 +12,18 @@
 # │   └── ecop
 # └─asset
 #     └─ecop
-#     └─mecop
 
 PY_MODULE_BASE=/home/hong/workspace/web
 
 rm -fr build
-mkdir -p build/ecop build/asset
-
-cd build/asset
-mkdir ecop mecop
-cd ../..
+mkdir -p build/ecop build/asset/ecop
 
 # for hm.lib we use the latest master of git repository
-curl https://hongyuan:gfdmonster@bitbucket.org/hongyuan/hm.lib/get/master.tar.gz -o hm.lib.tar.gz
+wget https://github.com/hongyuan1306/hm.lib/archive/master.zip
+unzip master.zip
 mkdir build/ecop/hm.lib
-tar xzf hm.lib.tar.gz -C build/ecop/hm.lib --strip-components=1
-rm -f *.tar.gz
+cp -r hm.lib-master/* build/ecop/hm.lib
+rm -fr *.zip hm.lib-master
 
 # For the web python package we copy from the local workspace.
 # So be sure to build from a clean release branch.
