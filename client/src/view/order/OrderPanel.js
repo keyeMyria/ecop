@@ -54,16 +54,8 @@ Ext.define('Ecop.view.order.OrderPanel', {
       }
     },
     {
-      iconCls: 'x-fa fa-save',
-      tooltip: '保存变更',
-      handler: 'saveOrder',
-      bind: {
-        disabled: '{isCompleted}'
-      }
-    },
-    {
       iconCls: 'x-fa fa-refresh',
-      tooltip: '取消变更',
+      tooltip: '刷新订单',
       handler: 'onCancelChanges',
       bind: {
         disabled: '{cancelButtonDisabled}'
@@ -90,6 +82,14 @@ Ext.define('Ecop.view.order.OrderPanel', {
       iconCls: 'x-fa fa-list',
       tooltip: '显示顾客所有订单',
       handler: 'onBtnShowAllOrders',
+      bind: {
+        disabled: '{!currentOrder.customerId}'
+      }
+    },
+    {
+      iconCls: 'x-fa fa-paper-plane',
+      tooltip: '发送信息',
+      handler: 'onBtnSendSMS',
       bind: {
         disabled: '{!currentOrder.customerId}'
       }
@@ -147,6 +147,7 @@ Ext.define('Ecop.view.order.OrderPanel', {
       items: [
         {
           xtype: 'customerpicker',
+          reference: 'customerPicker',
           allowBlank: false,
           fieldLabel: '顾客',
           bind: {

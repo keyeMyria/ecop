@@ -5,7 +5,11 @@ Ext.define('Ecop.view.order.OrderController', {
   extend: 'Ext.app.ViewController',
   alias: 'controller.order',
 
-  requires: ['Ecop.view.order.PaymentWindow', 'Ecop.widget.ItemSelector'],
+  requires: [
+    'Ecop.view.order.PaymentWindow',
+    'Ecop.view.order.NotifyWindow',
+    'Ecop.widget.ItemSelector'
+  ],
 
   itemStore: null, // save a reference to items grid store
 
@@ -323,6 +327,24 @@ Ext.define('Ecop.view.order.OrderController', {
     })
   },
 
+  /*
+   * Show all orders of the customer in the order manager
+   */
+  onBtnShowAllOrders: function() {
+    var me = this,
+      order = me.getCurrentOrder()
+
+    me
+      .getView()
+      .up('order-manager')
+      .getController()
+      .showCustomerOrder(order.get('customerId'))
+  },
+
+  /*
+   * =====================  Order Payment  ===========================
+   */
+
   doAddPayment: function() {
     var me = this
 
@@ -372,16 +394,48 @@ Ext.define('Ecop.view.order.OrderController', {
   },
 
   /*
-   * Show all orders of the customer in the order manager
+   * =====================  SMS Notification  ===========================
    */
-  onBtnShowAllOrders: function() {
-    var me = this,
-      order = me.getCurrentOrder()
 
-    me
-      .getView()
-      .up('order-manager')
-      .getController()
-      .showCustomerOrder(order.get('customerId'))
+  onBtnSendSMS: function() {
+    var me = this
+
+    if (!me.notifyWindow) {
+      me.notifyWindow = me.getView().add({
+        xtype: 'notify-window',
+        layout: 'fit'
+      })
+    }
+    me.notifyWindow.show().center()
+  },
+
+  onMessageTypeChange: function() {
+    var me = this,
+      vm = me.getViewModel()
+
+    Web.data.JsonRPC.request({
+      method: 'order.notify.preview',
+      params: [vm.get('currentOrder.orderId'), vm.get('messageType')],
+      success: function(message) {
+        vm.set('previewMessage', message)
+      }
+    })
+  },
+
+  closeNotifyWindow: function() {
+    this.notifyWindow.close()
+  },
+
+  doSendMessage: function() {
+    var me = this,
+      vm = me.getViewModel()
+
+    Web.data.JsonRPC.request({
+      method: 'order.notify.send',
+      params: [vm.get('currentOrder.orderId'), vm.get('messageType')],
+      success: function() {
+        Ecop.util.Util.showInfo('信息已发送!', me.closeNotifyWindow, me)
+      }
+    })
   }
 })

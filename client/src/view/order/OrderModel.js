@@ -4,6 +4,15 @@ Ext.define('Ecop.view.order.OrderModel', {
 
   requires: ['Web.model.OrderItem', 'Web.model.OrderPayment'],
 
+  data: {
+    currentOrder: null,
+    originalStatus: 1,
+
+    // for use in NotifyWindow
+    messageType: null,
+    previewMessage: null
+  },
+
   stores: {
     items: {
       model: 'Web.model.OrderItem',
@@ -46,13 +55,6 @@ Ext.define('Ecop.view.order.OrderModel', {
         Ecop.auth.currentUser.partyId,
         Web.JsonRPCProxy.token
       )
-    },
-
-    /*
-     * If an order is completed, disable the save button
-     */
-    isCompleted: function(get) {
-      return get('originalStatus') === 4
     },
 
     cancelButtonDisabled: function(get) {

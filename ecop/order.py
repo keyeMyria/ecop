@@ -16,6 +16,7 @@ from hm.lib.config import siteConfig
 
 from webmodel import Item, Order, Payment, OrderPayment
 from webmodel.consts import ORDER_STATUS
+from webmodel.sms import SMSGateway
 
 from weblibs.jsonrpc import marshall, RPCUserError
 
@@ -43,8 +44,6 @@ def changeOrderStatus(order, old, new):
 
 
 class OrderJSON(RpcBase):
-    order = None  # the current order
-
     def loadOrder(self, orderId):
         """ The result of this factory shall not be cached to ensure it remains
         in the current database session """
@@ -56,8 +55,6 @@ class OrderJSON(RpcBase):
         order = self.sess.query(Order).get(orderId)
         if order is None:
             raise HTTPNotFound()
-
-        self.order = order
         return order
 
     @jsonrpc_method(endpoint='rpc', method='order.data')
@@ -96,7 +93,8 @@ class OrderJSON(RpcBase):
 
     @jsonrpc_method(endpoint='rpc', method='order.upsert')
     def createOrModify(self, orderId, modifications):
-        """ Modify an existing order or create a new one.
+        """
+        Modify an existing order or create a new one.
 
         The parameter `modifications` is a dictionary containing 'header' for
         all modified header fields. 'added' is a list of item id's to be added
@@ -116,12 +114,11 @@ class OrderJSON(RpcBase):
         """
         if isinstance(orderId, str):
             new_order = True
-            self.order = order = Order(creatorId=self.request.user.partyId)
+            order = Order(creatorId=self.request.user.partyId)
             self.sess.add(order)
         else:
             new_order = False
-            self.loadOrder(orderId)
-            order = self.order
+            order = self.loadOrder(orderId)
 
         def findItemById(o, oiid):
             for i in o.items:
@@ -248,9 +245,11 @@ class OrderJSON(RpcBase):
 
     @jsonrpc_method(endpoint='rpc', method='order.price.get')
     def getItemPrice(self, itemIds, priceType):
-        """ Given a list of item ids, return the C-price or B-price based on
+        """
+        Given a list of item ids, return the C-price or B-price based on
         parameter priceType. The return values is a dictionary mapping item id
-        to requested price """
+        to requested price
+        """
         itemIds = set(itemIds)
         items = self.sess.query(Item).filter(Item.itemId.in_(itemIds))
         return dict([
@@ -306,13 +305,27 @@ class OrderJSON(RpcBase):
     def uploadAttachment(self):
         """ Add the given file as the last attachment of the order """
 
-    @jsonrpc_method(endpoint='rpc', method='order.attachment.get')
-    def getAttachment(self):
-        pass
-
     @jsonrpc_method(endpoint='rpc', method='order.attachment.set')
     def setAttachment(self):
         pass
+
+    @jsonrpc_method(endpoint='rpc', method='order.notify.preview')
+    def previewOrderNotification(self, orderId, messageType):
+        order = self.loadOrder(orderId)
+        return order.getNotificationText(messageType)
+
+    @jsonrpc_method(endpoint='rpc', method='order.notify.send')
+    def sendOrderNotification(self, orderId, messageType):
+        order = self.loadOrder(orderId)
+        assert messageType in ('order.changed', 'order.completed')
+
+        SMSGateway().sendTemplateMessage(
+            order.customer.mobile or order.recipientMobile,
+            order.getNotificationTemplate(messageType)['templateId'],
+            (order.customerName or self.recipientName,
+             order.orderId,
+             order.shortUrl)
+        )
 
 
 @view_config(route_name='order_download')

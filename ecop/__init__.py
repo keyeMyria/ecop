@@ -23,6 +23,7 @@ def main(global_config, **settings):
     config.include('weblibs.rabbitmq')
     config.include('weblibs.elasticsearch')
     config.include('weblibs.oss')
+    config.include('weblibs.sms')
 
     # This tween can only be added after session is also enabled for ecop
     # config.include('weblibs.weixin')
