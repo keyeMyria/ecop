@@ -63,8 +63,7 @@ Ext.define('Ecop.view.order.OrderManagerController', {
           currentOrder: Ext.create('Web.model.Order', {
             orderStatus: 1,
             regionCode: 310110
-          }),
-          originalStatus: 1
+          })
         }
       }
     })

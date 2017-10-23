@@ -45,8 +45,10 @@ class PartyJSON(RpcBase):
 
     @jsonrpc_method(endpoint='rpc', method='party.create')
     def createParty(self, data):
-        """ Create a new party. Default type is customer. Now only mobile is
-        requried """
+        """
+        Create a new party. Default type is customer. Now only mobile is
+        requried
+        """
         assert data.get('mobile')
 
         party = self.sess.query(Party)\

@@ -1,9 +1,9 @@
 import os
 import re
 import json
-import pika
 from datetime import datetime
 
+import pika
 from sqlalchemy.sql import between
 from sqlalchemy.orm import eagerload
 from genshi.template import TemplateLoader
@@ -11,8 +11,8 @@ from z3c.rml import rml2pdf
 
 from pyramid.response import Response
 from pyramid.view import view_config
-from pyramid_rpc.jsonrpc import jsonrpc_method
 from pyramid.httpexceptions import HTTPNotFound
+from pyramid_rpc.jsonrpc import jsonrpc_method
 
 from hm.lib.config import siteConfig
 

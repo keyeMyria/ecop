@@ -149,7 +149,8 @@ Ext.define('Ecop.widget.CustomerPicker', {
   /*
    * When ever the value of a CustomerPicker widget is set to partyId, load
    * the party information first and use it to display widget text. For newly
-   * created party, the method can also be called with a returned party object.
+   * created party, the method can also be called with a returned `Party`
+   * object.
    */
   setValue: function(value) {
     var me = this

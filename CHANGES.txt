@@ -28,7 +28,7 @@ Build (2017-9)
  * Add paymentDate to order payment
  * Show photos upload into order by customer
 
- * Send an order url to customer via SMS or Wechat message
+ * Send an order url to customer via SMS
 
  * Generate purchase orders for service order and proper profit accounting
 
