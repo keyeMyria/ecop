@@ -4,8 +4,9 @@ from pyramid_rpc.jsonrpc import jsonrpc_method
 from pyramid.threadlocal import get_current_request
 from zope.sqlalchemy import mark_changed
 
-from webmodel import Category, CategoryNode, CategoryRollup, loadCategory
-from weblibs.sqlalchemy import DBSession
+from webmodel.base import DBSession
+from webmodel.category import (Category, CategoryNode, CategoryRollup,
+    loadCategory)
 
 from .base import RpcBase
 

@@ -1,7 +1,7 @@
 from pyramid_rpc.jsonrpc import jsonrpc_method
 
-from webmodel import loadRegion
-from weblibs.sqlalchemy import DBSession
+from webmodel.base import DBSession
+from webmodel.region import loadRegion
 
 from .base import RpcBase
 

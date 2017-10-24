@@ -5,18 +5,20 @@ from pyramid_rpc.jsonrpc import jsonrpc_method
 
 from hm.lib.config import siteConfig
 
-from webmodel import Party
+from webmodel.base import DBSession
+from webmodel.party import Party
 from weblibs.jsonrpc import RPCNotAllowedError, RPCUserError, marshall
 from weblibs.redis import RedisConn
-from weblibs.sqlalchemy import DBSession
 
 
 @jsonrpc_method(endpoint='rpc', method='auth.login')
-def userLogin(dummy_request, login, password):
-    """ Verify account password and create authentication token.
+def userLogin(request, login, password): # pylint: disable=W0613
+    """
+    Verify account password and create authentication token.
 
     This is the only rpc method that does not subclass RpcBase for it occurs
-    before a current user session is established """
+    before a current user session is established
+    """
     sess = DBSession()
     user = sess.query(Party).filter_by(login=login).first()
 

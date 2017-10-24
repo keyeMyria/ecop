@@ -5,11 +5,10 @@ from pyramid.response import Response
 from pyramid.httpexceptions import HTTPForbidden
 
 from hm.lib.config import siteConfig
+from webmodel.base import DBSession
+from webmodel.party import Party
 from weblibs.redis import RedisConn
 from weblibs.jsonrpc import RPCNotAllowedError, RPCUserError
-from weblibs.sqlalchemy import DBSession
-
-from webmodel import Party
 
 
 class RpcBase(object):
@@ -46,10 +45,12 @@ class RpcBase(object):
 
 
 class DocBase(object):
-    """ Base class for request authentication for downloading generated PDF
-    files like order or shipment documents. """
+    """
+    Base class for request authentication for downloading generated PDF
+    files like order or shipment documents.
+    """
 
-    def __init__(self, context, request):
+    def __init__(self, context, request): #pylint: disable=W0613
         self.sess = DBSession()
         self.request = request
 
@@ -74,9 +75,11 @@ class DocBase(object):
 
 
 @view_config(route_name='health_check')
-def health_check(request):
-    """ ecop runs behind the aliyun load balancing service, which performs
+def health_check(request): #pylint: disable=W0613
+    """
+    ecop runs behind the aliyun load balancing service, which performs
     frequent health check using the HEAD method to /rpc.
 
-    Note the response to HEAD shall contain no body"""
+    Note the response to HEAD shall contain no body
+    """
     return Response(status_code=200)
