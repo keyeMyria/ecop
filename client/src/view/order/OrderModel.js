@@ -7,6 +7,7 @@ Ext.define('Ecop.view.order.OrderModel', {
   data: {
     currentOrder: null,
     originalStatus: 1,
+    hasAttachments: false,
 
     // for use in NotifyWindow
     messageType: null,
@@ -78,10 +79,6 @@ Ext.define('Ecop.view.order.OrderModel', {
 
     isNewOrder: function(get) {
       return get('currentOrder').phantom
-    },
-
-    hasAttachments: function(get) {
-      return get('attachments').getCount() > 0
     }
   }
 })

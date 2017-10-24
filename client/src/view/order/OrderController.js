@@ -34,6 +34,12 @@ Ext.define('Ecop.view.order.OrderController', {
       scope: me
     })
 
+    vm.get('attachments').on({
+      datachanged: function(store) {
+        vm.set('hasAttachments', store.getCount() > 0)
+      }
+    })
+
     vm.bind('{orderEditable}', 'onOrderEditableChange', me)
 
     // when the order panel is first loaded, load the order from database
