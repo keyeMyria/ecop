@@ -56,6 +56,7 @@ Ext.define('Ecop.view.order.NotifyWindow', {
         {
           text: '发送',
           handler: 'doSendMessage',
+          iconCls: 'x-fa fa-paper-plane',
           bind: {
             disabled: '{!previewMessage}'
           }
