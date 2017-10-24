@@ -320,6 +320,9 @@ class OrderJSON(RpcBase):
         order = self.loadOrder(orderId)
         assert messageType in ('order.changed', 'order.completed')
 
+        if messageType == 'order.completed' and order.payableAmount <= 0:
+            raise RPCUserError('该订单无应付金额!')
+
         SMSGateway().sendTemplateMessage(
             order.customer.mobile or order.recipientMobile,
             messageType,
