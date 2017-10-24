@@ -84,7 +84,7 @@ class DecopView(BaseEcopView):
     }
 
 
-@view_config(route_name='mecop', renderer='mecop.pt', xhr=False)
+# @view_config(route_name='mecop', renderer='mecop.pt', xhr=False)
 class MecopView(BaseEcopView):
     resourceConfig = {
         'debug': {
