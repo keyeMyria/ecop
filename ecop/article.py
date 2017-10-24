@@ -8,8 +8,8 @@ from elasticsearch_dsl import Search
 
 from pyramid_rpc.jsonrpc import jsonrpc_method
 
+from webmodel.esweb import Article
 from weblibs.jsonrpc import RPCUserError
-from webmodel import Article
 
 from .base import RpcBase
 

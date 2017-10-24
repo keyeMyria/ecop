@@ -2,7 +2,9 @@ from sqlalchemy import or_
 
 from pyramid_rpc.jsonrpc import jsonrpc_method
 
-from webmodel import Party
+# this is for the desc clause for the relation party.wishlist
+from webmodel.wishlist import WishlistItem #pylint: disable=W0611
+from webmodel.party import Party
 from weblibs.jsonrpc import RPCUserError, marshall
 
 from .base import RpcBase

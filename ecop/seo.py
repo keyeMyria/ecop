@@ -1,6 +1,6 @@
 from pyramid_rpc.jsonrpc import jsonrpc_method
 
-from webmodel import Seo
+from webmodel.seo import Seo
 from weblibs.jsonrpc import marshall
 
 from .base import RpcBase

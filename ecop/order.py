@@ -14,10 +14,11 @@ from pyramid_rpc.jsonrpc import jsonrpc_method
 
 from hm.lib.config import siteConfig
 
-from webmodel import Item, Order, Payment, OrderPayment
 from webmodel.consts import ORDER_STATUS
+from webmodel.item import Item
+from webmodel.order import Order
+from webmodel.payment import Payment, OrderPayment
 from webmodel.sms import SMSGateway
-
 from weblibs.jsonrpc import marshall, RPCUserError
 
 from .base import RpcBase, DocBase

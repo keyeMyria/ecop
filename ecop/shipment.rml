@@ -4,7 +4,7 @@
 <?python
     from datetime import date
     from hm.lib.numformat import quantityfmt
-    from webmodel import getParameterText
+    from webmodel.param import getParameterText
 ?>
 
 <document

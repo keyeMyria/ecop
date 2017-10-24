@@ -4,7 +4,7 @@
 <?python
     from hm.lib.numformat import numberword, quantityfmt
     from datetime import date
-    from webmodel import getParameterText
+    from webmodel.param import getParameterText
     from webmodel.consts import ORDER_STATUS
 ?>
 

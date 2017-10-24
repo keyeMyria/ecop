@@ -12,7 +12,7 @@ from pyramid.view import view_config
 
 from hm.lib.config import siteConfig
 
-from webmodel import Image
+from webmodel.resource import Image
 from weblibs.jsonrpc import RPCUserError
 from weblibs.oss import getBucket
 

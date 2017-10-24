@@ -19,8 +19,8 @@ from hm.lib.config import siteConfig
 from weblibs.rabbitmq import pool
 from weblibs.jsonrpc import marshall, RPCUserError
 
-from webmodel import Shipment, ShipmentPackage
 from webmodel.consts import PACKAGE_STATUS
+from webmodel.shipment import Shipment, ShipmentPackage
 
 from .base import RpcBase, DocBase
 from .region import getRegionName
@@ -314,7 +314,7 @@ having sum(ss.quantity)<>0
                 skuids.append(sku.skuId)
         return ret
 
-    @view_config(route_name='shipment_doc')
+    #@view_config(route_name='shipment_doc')
     def shipmentDoc(self):
         loader = TemplateLoader([os.path.dirname(__file__)])
         tmpl = loader.load('shipment.rml')

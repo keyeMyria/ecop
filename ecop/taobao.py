@@ -29,10 +29,10 @@ from pyramid_rpc.jsonrpc import jsonrpc_method
 
 from hm.lib.config import siteConfig
 
+from webmodel.item import Item, __desc_module_order__
+from webmodel.resource import Image
 from weblibs.jsonrpc import RPCUserError
 from weblibs.oss import getBucket
-from webmodel import Item, Image
-from webmodel.item import __desc_module_order__
 
 from .image import ImageJSON
 from .item import ItemJSON

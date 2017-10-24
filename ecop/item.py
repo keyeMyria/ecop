@@ -9,9 +9,10 @@ from hm.lib.checksum import damm
 
 from weblibs.jsonrpc import marshall, RPCUserError, validateSchema
 
-from webmodel import Item, ItemGroup, ItemImage, BomItem, Image, Resource, \
-    getParameterText, ModuleSorter
 from webmodel.consts import ITEM_STATUS, RESOURCE_TYPE
+from webmodel.item import Item, ItemGroup, ItemImage, BomItem, ModuleSorter
+from webmodel.resource import Image, Resource
+from webmodel.param import getParameterText
 
 from .category import categoryFactory
 from .base import RpcBase

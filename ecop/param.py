@@ -1,6 +1,8 @@
 from pyramid_rpc.jsonrpc import jsonrpc_method
 
-from webmodel import getParameter, Brand, Party
+from webmodel.param import getParameter
+from webmodel.brand import Brand
+from webmodel.party import Party
 
 from .base import RpcBase
 
