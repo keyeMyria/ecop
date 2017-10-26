@@ -55,18 +55,20 @@ Ext.define('Ecop.view.order.OrderManagerController', {
 
   onNewOrder: function() {
     var view = this.getView(),
-      p
-
-    p = Ext.widget('orderpanel', {
-      viewModel: {
+      p,
+      vm = new Ecop.view.order.OrderModel({
         data: {
           currentOrder: Ext.create('Web.model.Order', {
-            orderStatus: 1,
-            regionCode: 310110
+            orderStatus: 1
           })
         }
-      }
+      })
+
+    p = Ext.widget('orderpanel', {
+      viewModel: vm
     })
+    // make sure regionCode is marked as modified
+    vm.set('currentOrder.regionCode', 310110)
     view.add(p)
     view.setActiveTab(p)
   },
