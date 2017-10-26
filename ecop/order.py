@@ -318,7 +318,8 @@ class OrderJSON(RpcBase):
     @jsonrpc_method(endpoint='rpc', method='order.notify.send')
     def sendOrderNotification(self, orderId, messageType):
         order = self.loadOrder(orderId)
-        assert messageType in ('order.changed', 'order.completed')
+        assert messageType in (
+            'order.created', 'order.changed', 'order.completed')
 
         if messageType == 'order.completed' and order.payableAmount <= 0:
             raise RPCUserError('该订单无应付金额!')

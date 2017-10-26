@@ -35,7 +35,11 @@ Ext.define('Ecop.view.order.NotifyWindow', {
         {
           xtype: 'combo',
           fieldLabel: '短信类型',
-          store: [['order.changed', '变更通知'], ['order.completed', '余款支付']],
+          store: [
+            ['order.created', '订单创建'],
+            ['order.changed', '变更通知'],
+            ['order.completed', '余款支付']
+          ],
           bind: '{messageType}',
           editable: false,
           autoLoadOnValue: true,
