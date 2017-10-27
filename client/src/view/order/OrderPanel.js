@@ -404,7 +404,8 @@ Ext.define('Ecop.view.order.OrderPanel', {
           '<img src="{[Ecop.imageUrl]}/{name}@!attachment_thumb" />',
           '</a>',
           '</div>'
-        ]
+        ],
+        itemSelector: 'div.order-attachment-thumb'
       }
     },
     {
