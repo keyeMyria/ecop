@@ -309,7 +309,14 @@ Ext.define('Ecop.view.order.OrderPanel', {
             text: '单位',
             width: 50,
             align: 'center',
-            dataIndex: 'unitName'
+            dataIndex: 'unitId',
+            formatter: 'store("unit")',
+            editor: {
+              xtype: 'combo',
+              store: 'unit',
+              editable: 'false',
+              valueField: 'id'
+            }
           },
           {
             text: '售价',

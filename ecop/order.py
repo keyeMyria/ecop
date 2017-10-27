@@ -74,7 +74,7 @@ class OrderJSON(RpcBase):
         header = marshall(order, fields)
 
         oi_fields = ['orderItemId', 'itemId', 'itemName', 'specification',
-            'model', 'quantity', 'unitName', 'sellingPrice', 'purchasePrice',
+            'model', 'quantity', 'unitId', 'sellingPrice', 'purchasePrice',
             'pos']
 
         order.payments.sort(key=lambda op: op.payment.payTime)
@@ -155,6 +155,7 @@ class OrderJSON(RpcBase):
                 oi.specification = i[1]['specification'].strip() or None
                 oi.model = i[1]['model'].strip() or None
                 oi.pos = i[1]['pos']
+                oi.unitId = i[1]['unitId']
 
         # currently only staff can add items to order
         for i in modifications.get('added', []):
@@ -165,7 +166,7 @@ class OrderJSON(RpcBase):
                 specification=i[1]['specification'].strip() or None,
                 model=i[1]['model'].strip() or None,
                 quantity=Decimal(str(i[1]['quantity'])),
-                unitId=item.unitId,
+                unitId=i[1]['unitId'],
                 sellingPrice=Decimal(str(i[1]['sellingPrice'])),
                 purchasePrice=Decimal(str(i[1]['purchasePrice'])),
                 pos=i[1]['pos'])
