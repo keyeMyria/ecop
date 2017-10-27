@@ -21,7 +21,7 @@ Ext.define('Ecop.view.order.OrderPanel', {
   },
 
   keyMap: {
-    'Ctrl+S': 'onCtrlS'
+    'Ctrl+S': 'onSaveOrder'
   },
 
   closable: true,
@@ -56,10 +56,7 @@ Ext.define('Ecop.view.order.OrderPanel', {
     {
       iconCls: 'x-fa fa-refresh',
       tooltip: '刷新订单',
-      handler: 'onCancelChanges',
-      bind: {
-        disabled: '{cancelButtonDisabled}'
-      }
+      handler: 'onRefreshOrder'
     },
     {
       iconCls: 'x-fa fa-download',

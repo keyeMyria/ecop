@@ -58,10 +58,6 @@ Ext.define('Ecop.view.order.OrderModel', {
       )
     },
 
-    cancelButtonDisabled: function(get) {
-      return get('currentOrder').phantom || !get('originalStatus') === 1
-    },
-
     /*
      * An order in bid status is editable
      */

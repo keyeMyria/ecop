@@ -134,43 +134,33 @@ Ext.define('Ecop.view.order.OrderController', {
    * status and internal memo. The fields that can be changed on a closed order
    * is controlled by the UI, i.e. OrderPanel
    */
-  onCtrlS: function(evt) {
+  onSaveOrder: function(evt) {
     evt.preventDefault()
-    this.saveOrder()
+    this.doSaveOrder()
   },
 
-  saveOrder: function(callback) {
+  /*
+   * Return the order changes in an object:
+   * {
+   *   changed: true or false
+   *   header: changed fields of the order header
+   *   added: list of added order items
+   *   modified: list of modified order items
+   *   deleted: list of deleted orderItemId's
+   * }
+   */
+  getOrderChanges: function() {
     var me = this,
-      f = me.getView().getForm(),
-      formValid = f.isValid(),
-      order = me.getCurrentOrder(),
-      headers = order.getChanges(),
+      header = me.getCurrentOrder().getChanges(),
       deleted = [],
       modified = [],
       added = []
 
-    if (formValid) {
-      if (!order.get('recipientPhone') && !order.get('recipientMobile')) {
-        f.markInvalid({
-          recipientMobile: '必须输入手机或固定电话之一',
-          recipientPhone: '必须输入手机或固定电话之一'
-        })
-        formValid = false
-      } else {
-        f.findField('recipientPhone').clearInvalid()
-        f.findField('recipientMobile').clearInvalid()
-      }
-    }
-
-    if (!formValid) {
-      Ecop.util.Util.showError('输入数据存在错误，请检查。')
-      return
-    }
-
-    if (me.itemStore.getCount() === 0) {
-      Ecop.util.Util.showError('不允许保存没有项目的订单！')
-      return
-    }
+    /*
+     * Removes derived attributes
+     */
+    delete header.amount
+    delete header.cost
 
     Ext.each(me.itemStore.getRemovedRecords(), function(r) {
       deleted.push(r.get('orderItemId'))
@@ -205,12 +195,53 @@ Ext.define('Ecop.view.order.OrderController', {
       }
     })
 
-    if (
-      Ext.isEmpty(deleted) &&
-      Ext.isEmpty(modified) &&
-      Ext.isEmpty(added) &&
-      Ext.Object.isEmpty(headers)
-    ) {
+    return {
+      header: header,
+      added: added,
+      modified: modified,
+      deleted: deleted,
+      changed: !(
+        Ext.isEmpty(deleted) &&
+        Ext.isEmpty(modified) &&
+        Ext.isEmpty(added) &&
+        Ext.Object.isEmpty(header)
+      )
+    }
+  },
+
+  doSaveOrder: function(callback) {
+    var me = this,
+      f = me.getView().getForm(),
+      formValid = f.isValid(),
+      order = me.getCurrentOrder(),
+      changes
+
+    if (formValid) {
+      if (!order.get('recipientPhone') && !order.get('recipientMobile')) {
+        f.markInvalid({
+          recipientMobile: '必须输入手机或固定电话之一',
+          recipientPhone: '必须输入手机或固定电话之一'
+        })
+        formValid = false
+      } else {
+        f.findField('recipientPhone').clearInvalid()
+        f.findField('recipientMobile').clearInvalid()
+      }
+    }
+
+    if (!formValid) {
+      Ecop.util.Util.showError('输入数据存在错误，请检查。')
+      return
+    }
+
+    if (me.itemStore.getCount() === 0) {
+      Ecop.util.Util.showError('不允许保存没有项目的订单！')
+      return
+    }
+
+    changes = me.getOrderChanges()
+
+    if (!changes.changed) {
       if (typeof callback === 'function') {
         callback.call(me)
       } else {
@@ -219,21 +250,15 @@ Ext.define('Ecop.view.order.OrderController', {
       return
     }
 
-    /*
-     * Removes derived attributes and associations
-     */
-    delete headers.amount
-    delete headers.cost
-
     Web.data.JsonRPC.request({
       method: 'order.upsert',
       params: [
         order.getId(),
         {
-          header: headers,
-          deleted: deleted,
-          modified: modified,
-          added: added
+          header: changes.header,
+          deleted: changes.deleted,
+          modified: changes.modified,
+          added: changes.added
         }
       ],
       success: function(ret) {
@@ -250,9 +275,24 @@ Ext.define('Ecop.view.order.OrderController', {
     })
   },
 
-  onCancelChanges: function() {
+  doRefreshOrder: function() {
     this.getCurrentOrder().reject()
     this.loadOrder()
+  },
+
+  onRefreshOrder: function() {
+    var me = this,
+      changes = me.getOrderChanges()
+
+    if (changes.changed) {
+      Ext.Msg.confirm('请确认', '刷新订单将丢失未保存的订单变更，是否继续？', function(btnId) {
+        if (btnId === 'yes') {
+          me.doRefreshOrder()
+        }
+      })
+    } else {
+      me.doRefreshOrder()
+    }
   },
 
   onBtnSwitchPrice: function(btn) {
@@ -355,7 +395,7 @@ Ext.define('Ecop.view.order.OrderController', {
   doAddPayment: function() {
     var me = this
 
-    me.saveOrder(function() {
+    me.doSaveOrder(function() {
       Web.data.JsonRPC.request({
         method: 'order.payment.add',
         params: [
