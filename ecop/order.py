@@ -16,7 +16,7 @@ from hm.lib.config import siteConfig
 
 from webmodel.consts import ORDER_STATUS
 from webmodel.item import Item
-from webmodel.order import Order
+from webmodel.order import Order, SalesOrder
 from webmodel.payment import Payment, OrderPayment
 from webmodel.sms import SMSGateway
 from weblibs.jsonrpc import marshall, RPCUserError
@@ -115,7 +115,7 @@ class OrderJSON(RpcBase):
         """
         if isinstance(orderId, str):
             new_order = True
-            order = Order(creatorId=self.request.user.partyId)
+            order = SalesOrder(creatorId=self.request.user.partyId)
             self.sess.add(order)
         else:
             new_order = False
