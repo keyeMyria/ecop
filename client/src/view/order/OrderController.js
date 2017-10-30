@@ -264,6 +264,7 @@ Ext.define('Ecop.view.order.OrderController', {
       success: function(ret) {
         if (order.phantom) {
           order.set('orderId', ret)
+          order.commit()
         }
         if (typeof callback === 'function') {
           callback.call(me)

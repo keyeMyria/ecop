@@ -75,6 +75,16 @@ Ext.define('Ecop.view.order.OrderModel', {
 
     isNewOrder: function(get) {
       return get('currentOrder').phantom
+    },
+
+    smsButtonDisabled: {
+      bind: {
+        bindTo: '{currentOrder}',
+        deep: true
+      },
+      get: function(order) {
+        return order.phantom || !order.get('customerId')
+      }
     }
   }
 })

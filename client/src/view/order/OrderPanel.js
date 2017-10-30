@@ -88,7 +88,7 @@ Ext.define('Ecop.view.order.OrderPanel', {
       tooltip: '发送信息',
       handler: 'onBtnSendSMS',
       bind: {
-        disabled: '{!currentOrder.customerId}'
+        disabled: '{smsButtonDisabled}'
       }
     }
   ],
