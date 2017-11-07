@@ -251,7 +251,7 @@ Ext.define('Ecop.view.order.OrderController', {
     }
 
     Web.data.JsonRPC.request({
-      method: 'order.upsert',
+      method: 'order.sales.upsert',
       params: [
         order.getId(),
         {

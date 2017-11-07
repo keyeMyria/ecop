@@ -92,7 +92,7 @@ class OrderJSON(RpcBase):
             } for op in order.payments]
         }
 
-    @jsonrpc_method(endpoint='rpc', method='order.upsert')
+    @jsonrpc_method(endpoint='rpc', method='order.sales.upsert')
     def createOrModify(self, orderId, modifications):
         """
         Modify an existing order or create a new one.
@@ -180,7 +180,8 @@ class OrderJSON(RpcBase):
 
     @jsonrpc_method(endpoint='rpc', method='order.search')
     def searchOrder(self, cond):
-        """ By default the search returns orders that are not closed, except
+        """
+        By default the search returns orders that are not closed, except
         when orderStatus is explicitly set. And if customerId is given without
         explicit orderStatus, show all orders of the customer.
 
