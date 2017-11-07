@@ -4,7 +4,7 @@ Ext.define('Ecop.view.main.Main', {
   requires: [
     'Ecop.view.item.ItemManager',
     'Ecop.view.order.OrderManager',
-    'Ecop.view.shipment.ShipmentManager',
+    // 'Ecop.view.shipment.ShipmentManager',
     'Ecop.view.article.ArticleManager',
     'Ecop.view.seo.SeoPanel'
   ],
@@ -30,11 +30,11 @@ Ext.define('Ecop.view.main.Main', {
           xtype: 'order-manager',
           permission: 'order.manage'
         },
-        {
+        /* {
           title: '物流管理',
           xtype: 'shipment-manager',
           permission: 'shipment.manage'
-        },
+        },*/
         {
           title: '内容管理',
           xtype: 'article-manager',
