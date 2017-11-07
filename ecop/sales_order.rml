@@ -61,10 +61,10 @@
       <tr>
         <td>
           <para style="normal" py:if="order.customer.partyName">客户名称：$order.customer.partyName</para>
-          <para style="normal" leftIndent="60" firstLineIndent="-60">送货地址：$order.streetAddress</para>
+          <para style="normal" leftIndent="60" firstLineIndent="-60">地址：$order.streetAddress</para>
           <para style="normal"
                 py:if="order.customer.partyName != order.recipientName">
-            收货人: $order.recipientName
+            联系人: $order.recipientName
           </para>
           <para style="normal">联系电话：$view.mobileAndPhone</para>
         </td>
@@ -76,7 +76,7 @@
     </blockTable>
 
     <para style="base" spaceBefore="10" spaceAfter="10" fontSize="14" >
-      <b>商品明细</b>
+      <b>订单明细</b>
     </para>
 
     <blockTable colWidths="40%, 20%, 12%, 13%, 15%" repeatRows="1">
