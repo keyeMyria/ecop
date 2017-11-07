@@ -21,7 +21,7 @@ Ext.define('Ecop.view.order.OrderPanel', {
   },
 
   keyMap: {
-    'Ctrl+S': 'onSaveOrder'
+    'Ctrl+S': 'onCtrlS'
   },
 
   closable: true,
@@ -45,6 +45,14 @@ Ext.define('Ecop.view.order.OrderPanel', {
   },
 
   tbar: [
+    {
+      iconCls: 'x-fa fa-save',
+      tooltip: '保存订单',
+      handler: 'doSaveOrder',
+      bind: {
+        disabled: '{isCompleted}'
+      }
+    },
     {
       iconCls: 'x-fa fa-plus-circle',
       tooltip: '添加项目',

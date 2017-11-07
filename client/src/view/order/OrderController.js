@@ -134,7 +134,7 @@ Ext.define('Ecop.view.order.OrderController', {
    * status and internal memo. The fields that can be changed on a closed order
    * is controlled by the UI, i.e. OrderPanel
    */
-  onSaveOrder: function(evt) {
+  onCtrlS: function(evt) {
     evt.preventDefault()
     this.doSaveOrder()
   },
