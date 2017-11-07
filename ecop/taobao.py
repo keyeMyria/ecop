@@ -92,8 +92,7 @@ def parseTmall(html):
             images = el.select('img')
 
         if images:
-            module_images.extend(
-                [(img.attrs.get('alt'), img.attrs['src']) for img in images])
+            module_images.extend([img.attrs['src'] for img in images])
 
     if module_images:
         modules[mid] = module_images
@@ -108,10 +107,8 @@ class ImportExportJSON(ImageJSON, ItemJSON):
     def __init__(self, request):
         ImageJSON.__init__(self, request)
 
-    def _uploadImage(self, img, data, title=None):
-        if title:
-            title = title[:30]
-        image = Image(title=title)
+    def _uploadImage(self, img, data):
+        image = Image()
         self.updateImageAttr(image, img, data)
         self.sess.add(image)
         self.sess.flush()  # flush to get the image id
@@ -121,8 +118,8 @@ class ImportExportJSON(ImageJSON, ItemJSON):
         return image
 
     @jsonrpc_method(endpoint='rpc', method='item.download.taobao')
-    def download(self, itemId, url):
-        host = urlparse(url).netloc
+    def download(self, itemId, itemUrl):
+        host = urlparse(itemUrl).netloc
         if host == 'item.taobao.com':
             raise RPCUserError('不支持从集市店铺导入商品描述。')
         elif host != 'detail.tmall.com':
@@ -131,7 +128,7 @@ class ImportExportJSON(ImageJSON, ItemJSON):
         item = self.sess.query(Item).get(itemId)
         assert item, 'Invalid itemId'
 
-        ret = requests.get(url)
+        ret = requests.get(itemUrl)
         if not ret.ok:
             raise RPCUserError('链接访问失败，请确定商品链接是否正确。')
 
@@ -165,9 +162,9 @@ class ImportExportJSON(ImageJSON, ItemJSON):
                 continue
 
             imageIds = []
-            for (title, url) in mimages:
+            for imgUrl in mimages:
                 image = None
-                ret = requests.get(url)
+                ret = requests.get(imgUrl)
                 data = ret.content
                 if not ret.ok or ret.headers['Content-Type'] not in \
                         ('image/jpeg', 'image/png', 'image/gif'):
@@ -189,9 +186,9 @@ class ImportExportJSON(ImageJSON, ItemJSON):
                         data = stream.getvalue()
                         image = self.findImage(data)
                         if not image:
-                            image = self._uploadImage(img, data, title)
+                            image = self._uploadImage(img, data)
                     else:
-                        image = self._uploadImage(img, data, title)
+                        image = self._uploadImage(img, data)
 
                 imageIds.append(image.imageId)
 
