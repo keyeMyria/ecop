@@ -24,13 +24,6 @@ Ext.define('Ecop.view.order.OrderController', {
     me.itemStore.on({
       datachanged: 'refreshAmount',
       update: 'onOrderItemChange',
-      remove: function() {
-        var grid = me.lookup('items-grid')
-        // this updates the row number after item removal
-        grid.getView().refresh()
-        // this ensures Ctrl+S works properly after item removal
-        grid.focus()
-      },
       scope: me
     })
 
@@ -85,7 +78,7 @@ Ext.define('Ecop.view.order.OrderController', {
    */
   onOrderEditableChange: function(editable) {
     var me = this,
-      grid = me.lookup('items-grid')
+      grid = me.lookup('itemsGrid')
 
     if (editable) {
       grid.getView().plugins[0].enable()
@@ -111,14 +104,15 @@ Ext.define('Ecop.view.order.OrderController', {
   },
 
   onOrderItemDelete: function(btn, e) {
+    var grid = this.lookup('itemsGrid')
     // prevent a click event on the grid
     e.stopEvent()
 
     btn.getWidgetRecord().drop()
     // refresh the row number
-    this.lookup('items-grid')
-      .getView()
-      .refresh()
+    grid.getView().refresh()
+    // this ensures Ctrl+S works properly after item removal
+    grid.focus()
   },
 
   onOrderItemChange: function(store, record, op, fields) {

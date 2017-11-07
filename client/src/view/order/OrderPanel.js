@@ -222,7 +222,7 @@ Ext.define('Ecop.view.order.OrderPanel', {
     },
     {
       xtype: 'grid',
-      reference: 'items-grid',
+      reference: 'itemsGrid',
       bind: {
         store: '{items}'
       },
