@@ -67,7 +67,7 @@ Ext.define('Ecop.view.order.OrderPanel', {
         disabled: '{isNewOrder}'
       }
     },
-    {
+    /*    {
       iconCls: 'x-fa fa-bold',
       tooltip: 'B价',
       priceType: 'B',
@@ -76,7 +76,7 @@ Ext.define('Ecop.view.order.OrderPanel', {
         disabled: '{!orderEditable}'
       }
     },
-    {
+*/ {
       iconCls: 'x-fa fa-list',
       tooltip: '显示顾客所有订单',
       handler: 'onBtnShowAllOrders',
@@ -155,7 +155,7 @@ Ext.define('Ecop.view.order.OrderPanel', {
         {
           defaults: {
             xtype: 'textfield',
-            labelWidth: 60,
+            labelWidth: 40,
             margin: '0 10 0 0'
           },
           items: [
@@ -171,6 +171,7 @@ Ext.define('Ecop.view.order.OrderPanel', {
             },
             {
               allowBlank: false,
+              labelWidth: 50,
               fieldLabel: '联系人',
               bind: {
                 readOnly: '{!orderEditable}',
@@ -180,6 +181,7 @@ Ext.define('Ecop.view.order.OrderPanel', {
             {
               name: 'recipientMobile',
               fieldLabel: '手机',
+              maxWidth: 160,
               vtype: 'mobile',
               enforceMaxLength: true,
               maxLength: 11,
@@ -192,6 +194,7 @@ Ext.define('Ecop.view.order.OrderPanel', {
             {
               name: 'recipientPhone',
               fieldLabel: '电话',
+              maxWidth: 160,
               vtype: 'phone',
               validateOnChange: false,
               bind: {
@@ -285,7 +288,7 @@ Ext.define('Ecop.view.order.OrderPanel', {
                 xtype: 'rownumberer',
                 width: 25
               },
-/*              {
+              /*              {
                 text: '商品号',
                 width: 80,
                 dataIndex: 'itemId'
@@ -368,6 +371,9 @@ Ext.define('Ecop.view.order.OrderPanel', {
                 align: 'right',
                 dataIndex: 'purchasePrice',
                 formatter: 'number("0,000.00")',
+                bind: {
+                  hidden: '{!sidePanelCollapsed}'
+                },
                 editor: {
                   xtype: 'numberfield',
                   allowBlank: false
@@ -378,12 +384,18 @@ Ext.define('Ecop.view.order.OrderPanel', {
                 width: 60,
                 align: 'right',
                 dataIndex: 'margin',
-                formatter: 'percent("0.0")'
+                formatter: 'percent("0.0")',
+                bind: {
+                  hidden: '{!sidePanelCollapsed}'
+                }
               },
               {
                 xtype: 'widgetcolumn',
                 width: 50,
                 menuDisabled: true,
+                bind: {
+                  hidden: '{!sidePanelCollapsed}'
+                },
                 widget: {
                   xtype: 'button',
                   bind: {
@@ -675,9 +687,15 @@ Ext.define('Ecop.view.order.OrderPanel', {
     {
       xtype: 'panel',
       collapsible: true,
-      collapsed: false,
-      width: 400,
-      collapseDirection: 'right'
+      collapsed: true,
+      width: '40%',
+      collapseDirection: 'right',
+      reference: 'sidePanel',
+      listeners: {
+        collapse: 'onSidePanelCollpase',
+        expand: 'onSidePanelExpand'
+      },
+      html: 'Nothing here yet!'
     }
   ]
 })

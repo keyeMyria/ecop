@@ -384,6 +384,16 @@ Ext.define('Ecop.view.order.OrderController', {
   },
 
   /*
+   * When the side panel is expanded / collapsed, the UI shall adapt based on
+   * the 'sidePanelCollapsed' model variable
+   */
+  onSidePanelCollpase: function() {
+    this.getViewModel().set('sidePanelCollapsed', true)
+  },
+
+  onSidePanelExpand: function() {
+    this.getViewModel().set('sidePanelCollapsed', false)
+  },
    * =====================  Order Payment  ===========================
    */
 

@@ -8,6 +8,7 @@ Ext.define('Ecop.view.order.OrderModel', {
     currentOrder: null,
     originalStatus: 1,
     hasAttachments: false,
+    sidePanelCollapsed: true,
 
     // for use in NotifyWindow
     messageType: null,
