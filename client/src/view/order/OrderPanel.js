@@ -85,12 +85,10 @@ Ext.define('Ecop.view.order.OrderPanel', {
       }
     },
     {
-      iconCls: 'x-fa fa-paper-plane',
-      tooltip: '发送信息',
-      handler: 'onBtnSendSMS',
-      bind: {
-        disabled: '{smsButtonDisabled}'
-      }
+      iconCls: 'x-fa fa-close',
+      tooltip: '关闭其他订单',
+      handler: 'onCloseOtherOrders'
+    },
     }
   ],
 

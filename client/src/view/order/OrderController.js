@@ -384,6 +384,25 @@ Ext.define('Ecop.view.order.OrderController', {
   },
 
   /*
+   * Close other order panels which contain unmodified order
+   */
+  onCloseOtherOrders: function() {
+    var me = this
+    me
+      .getView()
+      .up('order-manager')
+      .items.each(function(p) {
+        if (
+          p.xtype === 'orderpanel' &&
+          p !== me.getView() &&
+          !p.getController().getOrderChanges().changed
+        ) {
+          p.close()
+        }
+      })
+  },
+
+  /*
    * When the side panel is expanded / collapsed, the UI shall adapt based on
    * the 'sidePanelCollapsed' model variable
    */
