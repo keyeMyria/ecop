@@ -76,7 +76,17 @@ Ext.define('Ecop.view.order.OrderPanel', {
         disabled: '{!orderEditable}'
       }
     },
-*/ {
+*/
+    {
+      iconCls: 'x-fa fa-paper-plane',
+      tooltip: '发送信息',
+      handler: 'onBtnSendSMS',
+      bind: {
+        disabled: '{smsButtonDisabled}'
+      }
+    },
+    { xtype: 'tbseparator' },
+    {
       iconCls: 'x-fa fa-list',
       tooltip: '显示顾客所有订单',
       handler: 'onBtnShowAllOrders',
@@ -89,7 +99,17 @@ Ext.define('Ecop.view.order.OrderPanel', {
       tooltip: '关闭其他订单',
       handler: 'onCloseOtherOrders'
     },
+    { xtype: 'tbseparator' },
+    {
+      iconCls: 'x-fa fa-exchange',
+      tooltip: '供应商订单'
     }
+    /*
+    {
+      iconCls: 'x-fa fa-history',
+      tooltip: '订单跟踪'
+    }
+    */
   ],
 
   items: [
@@ -286,7 +306,8 @@ Ext.define('Ecop.view.order.OrderPanel', {
                 xtype: 'rownumberer',
                 width: 25
               },
-              /*              {
+              /*  To be deprecated 2017.11.8
+                          {
                 text: '商品号',
                 width: 80,
                 dataIndex: 'itemId'
@@ -466,7 +487,8 @@ Ext.define('Ecop.view.order.OrderPanel', {
                 blur: 'refreshAmount'
               }
             },
-            {
+            /* To be deprecated 2017.11.8
+                       {
               xtype: 'numberfield',
               labelWidth: 60,
               fieldLabel: '运费成本',
@@ -479,22 +501,16 @@ Ext.define('Ecop.view.order.OrderPanel', {
                 blur: 'refreshAmount'
               }
             },
-            {
-              xtype: 'displayfield',
-              bind: '{currentOrder.cost}',
-              fieldLabel: '总成本',
-              renderer: Ext.util.Format.numberRenderer('0,000.00')
-            },
-            {
+*/ {
               xtype: 'displayfield',
               bind: '{currentOrder.profit}',
-              fieldLabel: '毛利',
+              fieldLabel: '利润',
               renderer: Ext.util.Format.numberRenderer('0,000.00')
             },
             {
               xtype: 'displayfield',
               bind: '{currentOrder.margin}',
-              fieldLabel: '毛利率',
+              fieldLabel: '利润率',
               renderer: function(v) {
                 return Ext.util.Format.percent(v, '0.0')
               }
