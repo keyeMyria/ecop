@@ -19,15 +19,17 @@ Ext.define('Ecop.view.main.Main', {
 
       items: [
         {
-          title: '商品管理',
           itemId: 'item-manager',
           xtype: 'item-manager',
+          iconCls: 'x-fa fa-database x-main-tab-icon',
+          tooltip: '商品管理',
           permission: 'item.manage'
         },
         {
-          title: '订单管理',
           itemId: 'order-manager',
           xtype: 'order-manager',
+          iconCls: 'x-fa fa-list x-main-tab-icon',
+          tooltip: '订单管理',
           permission: 'order.manage'
         },
         /* {
@@ -36,13 +38,15 @@ Ext.define('Ecop.view.main.Main', {
           permission: 'shipment.manage'
         },*/
         {
-          title: '内容管理',
           xtype: 'article-manager',
+          iconCls: 'x-fa fa-pencil x-main-tab-icon',
+          tooltip: '内容管理',
           permission: 'content.manage'
         },
         {
-          title: '搜索优化',
           xtype: 'seo-panel',
+          iconCls: 'x-fa fa-rocket x-main-tab-icon',
+          tooltip: '搜索优化',
           permission: 'seo'
         }
       ]
