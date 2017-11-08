@@ -329,7 +329,7 @@ class OrderJSON(RpcBase):
         SMSGateway().sendTemplateMessage(
             order.customer.mobile or order.recipientMobile,
             messageType,
-            (order.customerName or self.recipientName,
+            (order.customerName or order.recipientName,
              order.orderId,
              order.shortUrl)
         )
