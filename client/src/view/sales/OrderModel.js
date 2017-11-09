@@ -1,4 +1,4 @@
-Ext.define('Ecop.view.order.OrderModel', {
+Ext.define('Ecop.view.sales.OrderModel', {
   extend: 'Ext.app.ViewModel',
   alias: 'viewmodel.order',
 

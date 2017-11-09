@@ -1,13 +1,13 @@
 /*
  * The controller associated with OrderPanel for manipulating a single order
  */
-Ext.define('Ecop.view.order.OrderController', {
+Ext.define('Ecop.view.sales.OrderController', {
   extend: 'Ext.app.ViewController',
   alias: 'controller.order',
 
   requires: [
-    'Ecop.view.order.PaymentWindow',
-    'Ecop.view.order.NotifyWindow',
+    'Ecop.view.sales.PaymentWindow',
+    'Ecop.view.sales.NotifyWindow',
     'Ecop.widget.ItemSelector'
   ],
 
@@ -290,6 +290,9 @@ Ext.define('Ecop.view.order.OrderController', {
     }
   },
 
+  /*
+   * Shall we deprecate this??
+   *
   onBtnSwitchPrice: function(btn) {
     var me = this,
       itemIds = []
@@ -309,6 +312,7 @@ Ext.define('Ecop.view.order.OrderController', {
       }
     })
   },
+  */
 
   onBtnAddItem: function() {
     var me = this
@@ -413,6 +417,57 @@ Ext.define('Ecop.view.order.OrderController', {
   onSidePanelExpand: function() {
     this.getViewModel().set('sidePanelCollapsed', false)
   },
+
+  /*
+   * =====================  Supplier Order  ===========================
+   */
+  onOrderItemRightClick: function(table, record, tr, rowIndex, e) {
+    var me = this,
+      menu
+
+    e.preventDefault()
+    if (Ext.isEmpty(table.getSelection())) {
+      table.setSelection(record)
+    }
+
+    if (!me.contextMenu) {
+      me.contextMenu = Ext.widget('menu', {
+        width: 100,
+        plain: true,
+
+        items: [
+          {
+            itemId: 'createPO',
+            text: '创建供应商订单'
+          }
+        ],
+        listeners: {
+          click: me.onContextMenuClick,
+          scope: me
+        }
+      })
+    }
+
+    me.contextMenu.showAt(e.getXY()).focus()
+  },
+
+  onContextMenuClick: function(menu, item) {
+    var me = this,
+      items,
+      menuId = item.getItemId()
+
+    if (menuId === 'createPO') {
+      changes = me.getOrderChanges()
+      if (changes.changed) {
+        Ecop.util.Util.showError('请先保存订单修改再创建采购订单。')
+        return
+      }
+      items = me.lookup('itemsGrid').getSelection()
+      me.lookup('sidePanel').expand()
+    }
+  },
+
+  /*
    * =====================  Order Payment  ===========================
    */
 

@@ -1,4 +1,4 @@
-Ext.define('Ecop.view.order.PaymentWindow', {
+Ext.define('Ecop.view.sales.PaymentWindow', {
   extend: 'Ext.window.Window',
 
   xtype: 'payment-window',

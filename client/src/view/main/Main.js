@@ -3,7 +3,7 @@ Ext.define('Ecop.view.main.Main', {
 
   requires: [
     'Ecop.view.item.ItemManager',
-    'Ecop.view.order.OrderManager',
+    'Ecop.view.sales.OrderManager',
     // 'Ecop.view.shipment.ShipmentManager',
     'Ecop.view.article.ArticleManager',
     'Ecop.view.seo.SeoPanel'

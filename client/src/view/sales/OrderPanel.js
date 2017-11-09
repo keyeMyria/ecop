@@ -1,4 +1,4 @@
-Ext.define('Ecop.view.order.OrderPanel', {
+Ext.define('Ecop.view.sales.OrderPanel', {
   extend: 'Ext.form.Panel',
   xtype: 'orderpanel',
 
@@ -11,8 +11,8 @@ Ext.define('Ecop.view.order.OrderPanel', {
 
     'Ecop.widget.CustomerPicker',
 
-    'Ecop.view.order.OrderController',
-    'Ecop.view.order.OrderModel'
+    'Ecop.view.sales.OrderController',
+    'Ecop.view.sales.OrderModel'
   ],
 
   controller: 'order',

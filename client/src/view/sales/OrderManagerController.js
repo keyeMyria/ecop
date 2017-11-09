@@ -1,8 +1,8 @@
-Ext.define('Ecop.view.order.OrderManagerController', {
+Ext.define('Ecop.view.sales.OrderManagerController', {
   extend: 'Ext.app.ViewController',
   alias: 'controller.order-manager',
 
-  requires: ['Ecop.view.order.OrderPanel'],
+  requires: ['Ecop.view.sales.OrderPanel'],
 
   onSearchOrder: function() {
     var me = this,
@@ -56,7 +56,7 @@ Ext.define('Ecop.view.order.OrderManagerController', {
   onNewOrder: function() {
     var view = this.getView(),
       p,
-      vm = new Ecop.view.order.OrderModel({
+      vm = new Ecop.view.sales.OrderModel({
         data: {
           currentOrder: Ext.create('Web.model.Order', {
             orderStatus: 1

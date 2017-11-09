@@ -1,4 +1,4 @@
-Ext.define('Ecop.view.order.OrderManager', {
+Ext.define('Ecop.view.sales.OrderManager', {
   extend: 'Ext.tab.Panel',
   xtype: 'order-manager',
 
@@ -9,7 +9,7 @@ Ext.define('Ecop.view.order.OrderManager', {
     'Ecop.widget.DateRangeField',
     'Ecop.widget.CustomerPicker',
     'Ecop.widget.DocidField',
-    'Ecop.view.order.OrderManagerController'
+    'Ecop.view.sales.OrderManagerController'
   ],
 
   controller: 'order-manager',

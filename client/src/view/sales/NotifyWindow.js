@@ -1,4 +1,4 @@
-Ext.define('Ecop.view.order.NotifyWindow', {
+Ext.define('Ecop.view.sales.NotifyWindow', {
   extend: 'Ext.window.Window',
 
   xtype: 'notify-window',
