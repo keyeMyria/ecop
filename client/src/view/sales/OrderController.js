@@ -421,6 +421,11 @@ Ext.define('Ecop.view.sales.OrderController', {
   /*
    * =====================  Supplier Order  ===========================
    */
+  onOpenPurchase: function() {
+    var me = this
+    me.lookup('sidePanel').toggleCollapse()
+  },
+
   onOrderItemRightClick: function(table, record, tr, rowIndex, e) {
     var me = this,
       menu
