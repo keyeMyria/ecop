@@ -306,13 +306,6 @@ Ext.define('Ecop.view.sales.OrderPanel', {
                 xtype: 'rownumberer',
                 width: 25
               },
-              /*  To be deprecated 2017.11.8
-                          {
-                text: '商品号',
-                width: 80,
-                dataIndex: 'itemId'
-              },
-*/
               {
                 text: '项目名称',
                 dataIndex: 'itemName',
@@ -384,10 +377,10 @@ Ext.define('Ecop.view.sales.OrderPanel', {
                 summaryRenderer: Ext.util.Format.numberRenderer('0,000.00')
               },
               {
-                text: '进价',
+                text: '成本',
                 width: 70,
                 align: 'right',
-                dataIndex: 'purchasePrice',
+                dataIndex: 'unitCost',
                 formatter: 'number("0,000.00")',
                 bind: {
                   hidden: '{!sidePanelCollapsed}'
@@ -692,11 +685,11 @@ Ext.define('Ecop.view.sales.OrderPanel', {
       width: '40%',
       collapseDirection: 'right',
       reference: 'sidePanel',
+      layout: 'card',
       listeners: {
         collapse: 'onSidePanelCollpase',
         expand: 'onSidePanelExpand'
-      },
-      html: 'Nothing here yet!'
+      }
     }
   ]
 })

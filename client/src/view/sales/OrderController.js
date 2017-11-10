@@ -172,8 +172,8 @@ Ext.define('Ecop.view.sales.OrderController', {
           'specification',
           'model',
           'quantity',
-          'purchasePrice',
           'sellingPrice',
+          'unitCost',
           'unitId',
           'pos'
         ],
@@ -348,7 +348,7 @@ Ext.define('Ecop.view.sales.OrderController', {
         'itemId',
         'itemName',
         'specification',
-        'purchasePrice',
+        'cost',
         'model',
         'unitId',
         'sellingPrice'
