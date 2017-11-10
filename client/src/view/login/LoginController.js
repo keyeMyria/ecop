@@ -2,31 +2,9 @@ Ext.define('Ecop.view.login.LoginController', {
   extend: 'Ext.app.ViewController',
   alias: 'controller.login',
 
-  requires: ['Ecop.view.login.CapsLockTooltip'],
-
   onTextFieldSpecialKey: function(field, e, options) {
     if (e.getKey() === e.ENTER) {
       this.onBtnLogin()
-    }
-  },
-
-  onTextFieldKeyPress: function(field, e, options) {
-    var charCode = e.getCharCode(),
-      me = this
-
-    if (
-      (e.shiftKey && charCode >= 97 && charCode <= 122) ||
-      (!e.shiftKey && charCode >= 65 && charCode <= 90)
-    ) {
-      if (me.capslockTooltip === undefined) {
-        me.capslockTooltip = Ext.widget('capslocktooltip')
-      }
-
-      me.capslockTooltip.show()
-    } else {
-      if (me.capslockTooltip !== undefined) {
-        me.capslockTooltip.hide()
-      }
     }
   },
 
@@ -58,7 +36,10 @@ Ext.define('Ecop.view.login.LoginController', {
   },
 
   onLoginShow: function() {
-    this.lookup('form').getForm().findField('user').focus()
+    this.lookup('form')
+      .getForm()
+      .findField('user')
+      .focus()
   },
 
   onLoginSuccess: function(response, opts) {
