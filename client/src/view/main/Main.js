@@ -29,7 +29,7 @@ Ext.define('Ecop.view.main.Main', {
           itemId: 'order-manager',
           xtype: 'order-manager',
           iconCls: 'x-fa fa-list x-main-tab-icon',
-          tooltip: '订单管理',
+          tooltip: '销售订单',
           permission: 'order.manage'
         },
         /* {

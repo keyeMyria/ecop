@@ -44,13 +44,12 @@ Ext.define('Ecop.view.login.Login', {
           inputType: 'password',
           name: 'password',
           id: 'password',
-          fieldLabel: '登录密码',
+          fieldLabel: '密码',
           minLength: 6,
           minLengthText: '密码最小长度为6个字符',
           maxLength: 12,
           maxLengthText: '密码最大长度为12个字符',
           listeners: {
-            keypress: 'onTextFieldKeyPress',
             specialKey: 'onTextFieldSpecialKey'
           }
         }

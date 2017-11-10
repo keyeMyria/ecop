@@ -164,7 +164,7 @@ Ext.define('Ecop.view.sales.OrderManager', {
             formatter: 'date("Y-m-d")'
           },
           {
-            text: '订单金额',
+            text: '金额',
             width: 90,
             summaryType: 'sum',
             dataIndex: 'amount',
@@ -186,7 +186,7 @@ Ext.define('Ecop.view.sales.OrderManager', {
             }
           },
           {
-            text: '订单利润',
+            text: '利润',
             width: 90,
             summaryType: 'sum',
             dataIndex: 'profit',
@@ -209,7 +209,7 @@ Ext.define('Ecop.view.sales.OrderManager', {
             dataIndex: 'creatorName'
           },
           {
-            text: '订单状态',
+            text: '状态',
             width: 80,
             dataIndex: 'orderStatus',
             formatter: 'store("orderstatus", "id", "text")'

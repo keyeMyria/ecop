@@ -1,16 +1,19 @@
 Ext.define('Ecop.auth', {
-    statics : {
-        currentUser: undefined,
+  statics: {
+    currentUser: undefined,
 
-        hasPermission: function (permission) {
-            var me = this, perm = me.currentUser && me.currentUser.permission;
+    hasPermission: function(permission) {
+      var me = this,
+        perm = me.currentUser && me.currentUser.permission
 
-            return perm && (perm === 'all' ||
-                 me.currentUser.permission.indexOf(permission) !== -1)
-        },
+      return (
+        perm &&
+        (perm === 'all' || me.currentUser.permission.indexOf(permission) !== -1)
+      )
+    },
 
-        isVendor: function() {
-            return this.currentUser.partyType === 'V';
-        }
+    isVendor: function() {
+      return this.currentUser.partyType === 'V'
     }
-});
+  }
+})

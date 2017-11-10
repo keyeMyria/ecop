@@ -23,14 +23,20 @@ Build 31 (2017-8-28)
  * Merge item group management into a tab in ItemWindow
 
 
-Build (2017-9)
+Build (2017-11)
 
  * Add paymentDate to order payment
- * Show photos upload into order by customer
-
+ * Show photos uploaded into order by customer
  * Send an order url to customer via SMS
 
  * Generate purchase orders for service order and proper profit accounting
+ * Share session and login between ecop and web
+ * Mark orders changed by user actions such as payment or photo upload
+
+ * Switch to ExtJS Modern toolkit with 6.5.2 in preparation for switch to
+   ExtReact
+ * Move common api between web and ecop into same api domain
+ * Upload photos to order as attachments
 
 Mecop
 
@@ -40,9 +46,9 @@ Mecop
 Future
 ------
 
- * Upload photos to order as attachments
  * Implement order memos for order tracking
- * Publish artiles to wechat open platform
+ * Prevent images or contents with forbidden words from being published
+ * Publish articles to wechat open platform
  * Assign an order to a particular user for tracking
  * Use the same session mechanism for website and ecop
  * Use the same jsonrpc protection mechanism for website and ecop
@@ -51,7 +57,7 @@ Future
  * Optimize the images sizes when uploading to oss
  * Seperate js-common into its own package to be shared between various
    javascript projects (for ecop)
- * Refund of appointment amount, both alipay and wepay
+ * Refund of order payment for alipay and wepay
  * Do not create and render all the management panels at once during startup
  * Consider integrate online markdown editor like
    https://markdown-it.github.io/ for article authoring
@@ -59,11 +65,5 @@ Future
 
 Low priority
 
- * Support freight calculation from shipper code and weight
  * Add invoice info to order
- * Allow one company user to have multiple accounts
  * Do not require user to re-login every time browser is refreshed
- * Refresh item data from server whenever the item edit form is opened
- * Accept COD (Cash on Delivery) as payment method
- * Export item list into excel or allow user to select and copy content from
-   ItemGrid
