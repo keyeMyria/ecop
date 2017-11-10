@@ -16,7 +16,7 @@ from hm.lib.config import siteConfig
 
 from webmodel.consts import ORDER_STATUS
 from webmodel.item import Item
-from webmodel.order import Order, SalesOrder
+from webmodel.order import Order, SalesOrder, PurchaseOrder
 from webmodel.payment import Payment, OrderPayment
 from webmodel.sms import SMSGateway
 from weblibs.jsonrpc import marshall, RPCUserError
@@ -58,7 +58,7 @@ class OrderJSON(RpcBase):
             raise HTTPNotFound()
         return order
 
-    @jsonrpc_method(endpoint='rpc', method='order.data')
+    @jsonrpc_method(endpoint='rpc', method='order.sales.data')
     def data(self, orderId):
         """ Returns the JSON representation of the order. """
         order = self.loadOrder(orderId)
@@ -74,8 +74,7 @@ class OrderJSON(RpcBase):
         header = marshall(order, fields)
 
         oi_fields = ['orderItemId', 'itemId', 'itemName', 'specification',
-            'model', 'quantity', 'unitId', 'sellingPrice', 'purchasePrice',
-            'pos']
+            'model', 'quantity', 'unitId', 'sellingPrice', 'unitCost', 'pos']
 
         order.payments.sort(key=lambda op: op.payment.payTime)
 
@@ -150,7 +149,7 @@ class OrderJSON(RpcBase):
             if oi:
                 oi.quantity = Decimal(str(i[1]['quantity']))
                 oi.sellingPrice = Decimal(str(i[1]['sellingPrice']))
-                oi.purchasePrice = Decimal(str(i[1]['purchasePrice']))
+                oi.unitCost = Decimal(str(i[1]['unitCost']))
                 oi.itemName = i[1]['itemName'].strip()
                 oi.specification = i[1]['specification'].strip() or None
                 oi.model = i[1]['model'].strip() or None
@@ -159,17 +158,16 @@ class OrderJSON(RpcBase):
 
         # currently only staff can add items to order
         for i in modifications.get('added', []):
-            item = self.sess.query(Item).get(i[0])
             order.addItem(
-                itemId=item.itemId,
+                itemId=i[0],
                 itemName=i[1]['itemName'].strip(),
                 specification=i[1]['specification'].strip() or None,
                 model=i[1]['model'].strip() or None,
                 quantity=Decimal(str(i[1]['quantity'])),
                 unitId=i[1]['unitId'],
                 sellingPrice=Decimal(str(i[1]['sellingPrice'])),
-                purchasePrice=Decimal(str(i[1]['purchasePrice'])),
-                pos=i[1]['pos'])
+                unitCost=Decimal(str(i[1]['unitCost']))
+            )
 
         order.updateTotals()
 
@@ -178,7 +176,7 @@ class OrderJSON(RpcBase):
 
         return order.orderId
 
-    @jsonrpc_method(endpoint='rpc', method='order.search')
+    @jsonrpc_method(endpoint='rpc', method='order.sales.search')
     def searchOrder(self, cond):
         """
         By default the search returns orders that are not closed, except
@@ -193,7 +191,7 @@ class OrderJSON(RpcBase):
             orderStatus
             customerId
         """
-        query = self.sess.query(Order).options(eagerload('creator'))
+        query = self.sess.query(SalesOrder).options(eagerload('creator'))
 
         if cond.get('orderId'):
             orderId = int(cond['orderId'])
@@ -333,6 +331,86 @@ class OrderJSON(RpcBase):
              order.orderId,
              order.shortUrl)
         )
+
+    @staticmethod
+    def purchaseOrderData(order):
+        fields = [
+            'orderId', 'supplierId', 'customerId', 'createTime', 'amount',
+            'freight', 'orderStatus', 'regionCode', 'recipientName',
+            'streetAddress', 'recipientMobile', 'recipientPhone', 'memo',
+            'completionDate'
+        ]
+
+        header = marshall(order, fields)
+        oi_fields = ['orderItemId', 'itemId', 'itemName', 'specification',
+            'model', 'quantity', 'unitId', 'sellingPrice', 'pos']
+
+        return {
+            'header': header,
+            'items': [marshall(oi, oi_fields) for oi in order.items]
+        }
+
+    @jsonrpc_method(endpoint='rpc', method='order.purchase.data')
+    def getPurchaseOrderData(self, orderId):
+        """ Returns the JSON representation of the order. """
+        po = self.loadOrder(orderId)
+        assert isinstance(po, PurchaseOrder)
+        return self.purchaseOrderData(po)
+
+    @jsonrpc_method(endpoint='rpc', method='order.sales.getPurchaseOrder')
+    def getPurchaseOrder(self, orderId):
+        """
+        Return the header information of purchase orders related to the
+        given sales order.
+        """
+        query = self.sess.query(PurchaseOrder).\
+            filter_by(relatedOrderId=orderId)
+        orders = query.all()
+        fields = [
+            'orderId', 'createTime', 'completionDate', 'amount',
+            'orderStatus', 'customerName', 'creatorName',
+        ]
+        return [marshall(o, fields) for o in orders]
+
+    @jsonrpc_method(endpoint='rpc', method='order.sales.createPurchaseOrder')
+    def createPurchaseOrder(self, orderId, items, supplierId=None):
+        """
+        Create a purchase order from the given order items in a sales order.
+        The parameter `supplierId` is optional.
+
+          orderId: for which sales order the purchase order is created
+          items: a list of orderItemId
+        """
+        so = self.loadOrder(orderId)
+        assert isinstance(so, SalesOrder)
+
+        po = PurchaseOrder(
+            relatedOrderId=orderId,
+            supplierId=supplierId,
+            customerId=so.customerId,
+            creatorId=self.request.user.partyId,
+
+            regionCode=so.regionCode,
+            streetAddress=so.streetAddress,
+            recipientName=so.recipientName,
+            recipientMobile=so.recipientMobile,
+            recipientPhone=so.recipientPhone
+        )
+
+        for oiid in items:
+            oi = [oi for oi in so.items if oi.orderItemId == oiid][0]
+            po.addItem(
+                itemName=oi.itemName,
+                specification=oi.specification,
+                model=oi.model,
+                unitId=oi.unitId,
+                sellingPrice=oi.unitCost,
+                quantity=oi.quantity
+            )
+
+        self.sess.add(po)
+        self.sess.flush()
+        return self.purchaseOrderData(po)
 
 
 @view_config(route_name='order_download')

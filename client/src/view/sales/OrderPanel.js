@@ -310,6 +310,7 @@ Ext.define('Ecop.view.sales.OrderPanel', {
                 text: '项目名称',
                 dataIndex: 'itemName',
                 flex: 1,
+                cellWrap: true,
                 editor: {
                   xtype: 'textfield',
                   allowBlank: false,
@@ -318,16 +319,18 @@ Ext.define('Ecop.view.sales.OrderPanel', {
               },
               {
                 text: '规格',
-                width: 150,
                 dataIndex: 'specification',
+                width: 150,
+                cellWrap: true,
                 editor: {
                   xtype: 'textfield'
                 }
               },
               {
                 text: '型号',
-                width: 150,
                 dataIndex: 'model',
+                width: 150,
+                cellWrap: true,
                 editor: {
                   xtype: 'textfield'
                 }

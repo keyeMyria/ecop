@@ -10,7 +10,7 @@ Ext.define('Ecop.view.sales.OrderManagerController', {
       daterange = view.down('daterange').getValue()
 
     Web.data.JsonRPC.request({
-      method: 'order.search',
+      method: 'order.sales.search',
       params: [
         {
           dateType: view.down('#dateType').getValue().dateType,
@@ -77,7 +77,7 @@ Ext.define('Ecop.view.sales.OrderManagerController', {
     var me = this
 
     Web.data.JsonRPC.request({
-      method: 'order.search',
+      method: 'order.sales.search',
       params: [
         {
           customerId: customerId

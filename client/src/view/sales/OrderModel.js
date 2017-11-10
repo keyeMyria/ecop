@@ -29,6 +29,15 @@ Ext.define('Ecop.view.sales.OrderModel', {
     attachments: {
       fields: ['name'],
       proxy: { type: 'memory', reader: 'json' }
+    },
+
+    purchaseOrders: {
+      model: 'Web.model.Order',
+      autoLoad: false,
+      proxy: {
+        type: 'jsonrpc',
+        method: 'order.sales.getPurchaseOrder'
+      }
     }
   },
 

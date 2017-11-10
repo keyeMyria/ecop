@@ -6,9 +6,10 @@ Ext.define('Ecop.view.sales.OrderController', {
   alias: 'controller.order',
 
   requires: [
+    'Ecop.widget.ItemSelector',
     'Ecop.view.sales.PaymentWindow',
     'Ecop.view.sales.NotifyWindow',
-    'Ecop.widget.ItemSelector'
+    'Ecop.view.purchase.OrderPanel'
   ],
 
   itemStore: null, // save a reference to items grid store
@@ -49,7 +50,7 @@ Ext.define('Ecop.view.sales.OrderController', {
       order = me.getCurrentOrder()
 
     Web.data.JsonRPC.request({
-      method: 'order.data',
+      method: 'order.sales.data',
       params: [order.getId()],
       success: function(ret) {
         /*
@@ -456,10 +457,11 @@ Ext.define('Ecop.view.sales.OrderController', {
     me.contextMenu.showAt(e.getXY()).focus()
   },
 
-  onContextMenuClick: function(menu, item) {
+  onContextMenuClick: function(menu, menuItem) {
     var me = this,
-      items,
-      menuId = item.getItemId()
+      sidepanel = me.lookup('sidePanel'),
+      items = [],
+      menuId = menuItem.getItemId()
 
     if (menuId === 'createPO') {
       changes = me.getOrderChanges()
@@ -467,8 +469,31 @@ Ext.define('Ecop.view.sales.OrderController', {
         Ecop.util.Util.showError('请先保存订单修改再创建采购订单。')
         return
       }
-      items = me.lookup('itemsGrid').getSelection()
-      me.lookup('sidePanel').expand()
+      Ext.each(me.lookup('itemsGrid').getSelection(), function(oi) {
+        items.push(oi.get('orderItemId'))
+      })
+      Web.data.JsonRPC.request({
+        method: 'order.sales.createPurchaseOrder',
+        params: [me.getCurrentOrder().get('orderId'), items],
+        success: function(po) {
+          sidepanel.add(
+            Ext.widget({
+              xtype: 'po-panel',
+              viewModel: {
+                data: {
+                  currentOrder: Ext.create('Web.model.Order', po.header)
+                },
+                stores: {
+                  items: {
+                    data: po.items
+                  }
+                }
+              }
+            })
+          )
+          sidepanel.expand()
+        }
+      })
     }
   },
 
