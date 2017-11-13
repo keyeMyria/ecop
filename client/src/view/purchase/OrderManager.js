@@ -28,12 +28,21 @@ Ext.define('Ecop.view.purchase.OrderManager', {
     {
       xtype: 'grid',
       height: 200,
+      reference: 'orderlist',
 
       bind: {
         store: '{orders}'
       },
 
       plugins: 'headeralign',
+
+      selModel: {
+        ignoreRightMouseSelection: true
+      },
+
+      listeners: {
+        select: 'onPOSelect'
+      },
 
       columns: {
         defaults: {

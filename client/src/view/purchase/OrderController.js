@@ -19,7 +19,15 @@ Ext.define('Ecop.view.purchase.OrderController', {
       update: 'onOrderItemChange',
       scope: me
     })
-
+    vm.get('orders').on({
+      load: function (store) {
+        // Use select method directly here will not work since the store change
+        // has not yet be reflected in the grid yet
+        setTimeout(function () {
+          me.lookup('orderlist').getSelectionModel().select(0)
+        }, 500)
+      }
+    })
     vm.bind('{orderEditable}', 'onOrderEditableChange', me)
   },
 
@@ -51,6 +59,12 @@ Ext.define('Ecop.view.purchase.OrderController', {
         me.itemStore.commitChanges()
       }
     })
+  },
+
+  onPOSelect: function(rowmodel, record) {
+    var me = this
+    me.getViewModel().set('currentOrder', record)
+    me.loadOrder()
   },
 
   /*
