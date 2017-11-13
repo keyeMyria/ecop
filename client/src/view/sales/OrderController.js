@@ -105,18 +105,6 @@ Ext.define('Ecop.view.sales.OrderController', {
     order.set('cost', me.itemStore.sum('cost') + order.get('freightCost'))
   },
 
-  onOrderItemDelete: function(btn, e) {
-    var grid = this.lookup('itemsGrid')
-    // prevent a click event on the grid
-    e.stopEvent()
-
-    btn.getWidgetRecord().drop()
-    // refresh the row number
-    grid.getView().refresh()
-    // this ensures Ctrl+S works properly after item removal
-    grid.focus()
-  },
-
   onOrderItemChange: function(store, record, op, fields) {
     if (fields && fields[0] !== 'amount') {
       record.set('amount', record.get('sellingPrice') * record.get('quantity'))
@@ -390,9 +378,9 @@ Ext.define('Ecop.view.sales.OrderController', {
   },
 
   /*
-   * Close other order panels which contain unmodified order
+   * Close other order tabs which contain **unmodified** order
    */
-  onCloseOtherOrders: function() {
+  onCloseOtherTabs: function() {
     var me = this
     me
       .getView()
@@ -468,6 +456,10 @@ Ext.define('Ecop.view.sales.OrderController', {
           {
             itemId: 'createPO',
             text: '创建供应商订单'
+          },
+          {
+            itemId: 'removeItem',
+            text: '删除订单项目'
           }
         ],
         listeners: {
@@ -482,17 +474,26 @@ Ext.define('Ecop.view.sales.OrderController', {
 
   onContextMenuClick: function(menu, menuItem) {
     var me = this,
+      itemsGrid = this.lookup('itemsGrid'),
       sidepanel = me.lookup('sidePanel'),
       items = [],
       menuId = menuItem.getItemId()
 
-    if (menuId === 'createPO') {
+    if (menuId === 'removeItem') {
+      Ext.each(itemsGrid.getSelection(), function(oi) {
+        itemsGrid.getStore().remove(oi)
+      })
+      // refresh the row number
+      itemsGrid.getView().refresh()
+      // this ensures Ctrl+S works properly after item removal
+      itemsGrid.focus()
+    } else if (menuId === 'createPO') {
       changes = me.getOrderChanges()
       if (changes.changed) {
         Ecop.util.Util.showError('请先保存订单修改再创建采购订单。')
         return
       }
-      Ext.each(me.lookup('itemsGrid').getSelection(), function(oi) {
+      Ext.each(itemsGrid.getSelection(), function(oi) {
         items.push(oi.get('orderItemId'))
       })
       Web.data.JsonRPC.request({

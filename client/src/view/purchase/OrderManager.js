@@ -40,6 +40,13 @@ Ext.define('Ecop.view.purchase.OrderManager', {
         ignoreRightMouseSelection: true
       },
 
+      features: [
+        {
+          ftype: 'summary',
+          dock: 'bottom'
+        }
+      ],
+
       listeners: {
         select: 'onPOSelect'
       },

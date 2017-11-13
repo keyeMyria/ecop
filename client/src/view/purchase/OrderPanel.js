@@ -204,6 +204,10 @@ Ext.define('Ecop.view.purchase.OrderPanel', {
         ]
       },
 
+      listeners: {
+        rowcontextmenu: 'onOrderItemRightClick'
+      },
+
       plugins: [
         {
           ptype: 'cellediting',
@@ -297,23 +301,6 @@ Ext.define('Ecop.view.purchase.OrderPanel', {
             dataIndex: 'amount',
             summaryType: 'sum',
             summaryRenderer: Ext.util.Format.numberRenderer('0,000.00')
-          },
-          {
-            xtype: 'widgetcolumn',
-            width: 40,
-            menuDisabled: true,
-            bind: {
-              hidden: '{!sidePanelCollapsed}'
-            },
-            widget: {
-              xtype: 'button',
-              bind: {
-                disabled: '{!orderEditable}'
-              },
-              iconCls: 'x-fa fa-times-circle',
-              tooltip: '从当前订单中删除该商品',
-              handler: 'onOrderItemDelete'
-            }
           }
         ]
       }

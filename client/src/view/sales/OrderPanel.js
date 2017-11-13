@@ -396,22 +396,6 @@ Ext.define('Ecop.view.sales.OrderPanel', {
                 bind: {
                   hidden: '{!sidePanelCollapsed}'
                 }
-              },
-              {
-                xtype: 'widgetcolumn',
-                width: 40,
-                menuDisabled: true,
-                bind: {
-                  hidden: '{!sidePanelCollapsed}'
-                },
-                widget: {
-                  xtype: 'button',
-                  bind: {
-                    disabled: '{!orderEditable}'
-                  },
-                  iconCls: 'x-fa fa-times-circle',
-                  handler: 'onOrderItemDelete'
-                }
               }
             ]
           }

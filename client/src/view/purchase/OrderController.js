@@ -20,11 +20,14 @@ Ext.define('Ecop.view.purchase.OrderController', {
       scope: me
     })
     vm.get('orders').on({
-      load: function (store) {
+      load: function(store) {
         // Use select method directly here will not work since the store change
         // has not yet be reflected in the grid yet
-        setTimeout(function () {
-          me.lookup('orderlist').getSelectionModel().select(0)
+        setTimeout(function() {
+          me
+            .lookup('orderlist')
+            .getSelectionModel()
+            .select(0)
         }, 500)
       }
     })
@@ -97,20 +100,48 @@ Ext.define('Ecop.view.purchase.OrderController', {
     )
   },
 
-  onOrderItemDelete: function(btn, e) {
-    var grid = this.lookup('itemsGrid')
-    // prevent a click event on the grid
-    e.stopEvent()
-
-    btn.getWidgetRecord().drop()
-    // refresh the row number
-    grid.getView().refresh()
-  },
-
   onOrderItemChange: function(store, record, op, fields) {
     if (fields && fields[0] !== 'amount') {
       record.set('amount', record.get('sellingPrice') * record.get('quantity'))
       this.refreshAmount()
+    }
+  },
+
+  onOrderItemRightClick: function(table, record, tr, rowIndex, e) {
+    var me = this,
+      menu
+
+    e.preventDefault()
+    if (!me.contextMenu) {
+      me.contextMenu = Ext.widget('menu', {
+        width: 100,
+        plain: true,
+
+        items: [
+          {
+            itemId: 'removeItem',
+            text: '删除订单项目'
+          }
+        ],
+        listeners: {
+          click: me.onContextMenuClick,
+          scope: me
+        }
+      })
+    }
+
+    me.contextMenu.showAt(e.getXY()).focus()
+  },
+
+  onContextMenuClick: function(menu, menuItem) {
+    var me = this,
+      itemsGrid = this.lookup('itemsGrid'),
+      menuId = menuItem.getItemId()
+
+    if (menuId === 'removeItem') {
+      itemsGrid.getStore().remove(itemsGrid.getSelection()[0])
+      // refresh the row number
+      itemsGrid.getView().refresh()
     }
   },
 
