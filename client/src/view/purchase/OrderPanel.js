@@ -77,6 +77,7 @@ Ext.define('Ecop.view.purchase.OrderPanel', {
         },
         {
           xtype: 'partypicker',
+          partyType: 'V',
           fieldLabel: '供应商',
           flex: 1,
           bind: '{currentOrder.supplierId}'

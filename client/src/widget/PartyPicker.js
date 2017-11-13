@@ -66,6 +66,10 @@ Ext.define('Ecop.widget.PartyPicker', {
   xtype: 'partypicker',
   cls: 'party-picker',
 
+  config: {
+    partyType: 'C'
+  },
+
   queryMode: 'remote',
   store: {
     model: 'Web.model.Party',
@@ -121,6 +125,23 @@ Ext.define('Ecop.widget.PartyPicker', {
       return '该输入项为必输项'
     }
     return true
+  },
+
+  /*
+   * @overrite private
+   *
+   * The default implementation from ComboBox.js is overriden to allow sending
+   * additional `partyType` parameter to `party.search` when doing autocomplete
+   */
+  getParams: function(queryString) {
+    var params = {},
+      param = this.queryParam
+
+    if (param) {
+      params[param] = queryString
+      params.partyType = this.getPartyType()
+    }
+    return params
   },
 
   /*
@@ -188,12 +209,14 @@ Ext.define('Ecop.widget.PartyPicker', {
   onAddParty: function() {
     var me = this,
       dlg = me.partyDialog,
-      form = dlg.down('form').getForm()
+      form = dlg.down('form').getForm(),
+      params = form.getValues()
 
     if (form.isValid()) {
+      params.partyType = me.getPartyType()
       Web.data.JsonRPC.request({
         method: 'party.create',
-        params: [form.getValues()],
+        params: [params],
         success: function(party) {
           me.setValue(party)
           form.reset()
