@@ -7,7 +7,7 @@ Ext.define('Ecop.view.sales.OrderManager', {
     'Web.model.Order',
 
     'Ecop.widget.DateRangeField',
-    'Ecop.widget.CustomerPicker',
+    'Ecop.widget.PartyPicker',
     'Ecop.widget.DocidField',
     'Ecop.view.sales.OrderManagerController'
   ],
@@ -92,7 +92,7 @@ Ext.define('Ecop.view.sales.OrderManager', {
               },
               items: [
                 {
-                  xtype: 'customerpicker',
+                  xtype: 'partypicker',
                   itemId: 'customerId',
                   fieldLabel: '订单顾客:',
                   triggers: {

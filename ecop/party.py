@@ -37,7 +37,7 @@ class PartyJSON(RpcBase):
 
             users.extend(q.filter(cond).limit(20).all())
         else:
-            # it is possible for the CustomerPicker store to send query without
+            # it is possible for the PartyPicker store to send query without
             # the query value
             return
 

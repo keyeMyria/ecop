@@ -8,7 +8,7 @@ Ext.define('Ecop.view.sales.OrderPanel', {
     'Web.ux.Renderers',
     'Web.ux.form.RegionSelector',
 
-    'Ecop.widget.CustomerPicker',
+    'Ecop.widget.PartyPicker',
 
     'Ecop.view.sales.OrderController',
     'Ecop.view.sales.OrderModel'
@@ -172,7 +172,7 @@ Ext.define('Ecop.view.sales.OrderPanel', {
           },
           items: [
             {
-              xtype: 'customerpicker',
+              xtype: 'partypicker',
               reference: 'customerPicker',
               allowBlank: false,
               fieldLabel: '顾客',

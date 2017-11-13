@@ -4,7 +4,7 @@ Ext.define('Ecop.view.purchase.OrderPanel', {
 
   requires: [
     'Ext.grid.feature.Summary',
-    'Ecop.widget.CustomerPicker',
+    'Ecop.widget.PartyPicker',
     'Web.ux.Renderers'
   ],
 
@@ -76,7 +76,7 @@ Ext.define('Ecop.view.purchase.OrderPanel', {
           bind: '{currentOrder.orderId}'
         },
         {
-          xtype: 'customerpicker',
+          xtype: 'partypicker',
           fieldLabel: '供应商',
           flex: 1,
           bind: '{currentOrder.supplierId}'

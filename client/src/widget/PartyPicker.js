@@ -57,22 +57,22 @@ Ext.define('Ecop.internal.PartyWindow', {
   ]
 })
 
-Ext.define('Ecop.widget.CustomerPicker', {
+Ext.define('Ecop.widget.PartyPicker', {
   extend: 'Ext.form.field.ComboBox',
   requires: [
     'Web.model.Party',
     'Web.ux.Util' // for gbkLength
   ],
-  xtype: 'customerpicker',
-  cls: 'customer-picker',
+  xtype: 'partypicker',
+  cls: 'party-picker',
 
   queryMode: 'remote',
   store: {
+    model: 'Web.model.Party',
     proxy: {
       type: 'jsonrpc',
       method: 'party.search'
-    },
-    model: 'Web.model.Party'
+    }
   },
 
   minChars: 0,
@@ -147,7 +147,7 @@ Ext.define('Ecop.widget.CustomerPicker', {
   },
 
   /*
-   * When ever the value of a CustomerPicker widget is set to partyId, load
+   * When ever the value of a PartyPicker widget is set to partyId, load
    * the party information first and use it to display widget text. For newly
    * created party, the method can also be called with a returned `Party`
    * object.
