@@ -5,10 +5,25 @@ Ext.define('Ecop.view.purchase.OrderModel', {
   requires: ['Web.model.OrderItem'],
 
   data: {
-    currentOrder: null
+    currentOrder: null,
+    originalStatus: 1
   },
 
   stores: {
+    orders: {
+      model: 'Web.model.Order',
+      autoLoad: true,
+      proxy: {
+        type: 'jsonrpc',
+        method: 'order.sales.getPurchaseOrder'
+      },
+      sorters: {
+        property: 'createTime',
+        direction: 'DESC'
+      }
+    },
+
+    // the order items of the current purchase order
     items: {
       model: 'Web.model.OrderItem'
     }

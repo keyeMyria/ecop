@@ -9,7 +9,8 @@ Ext.define('Ecop.view.sales.OrderController', {
     'Ecop.widget.ItemSelector',
     'Ecop.view.sales.PaymentWindow',
     'Ecop.view.sales.NotifyWindow',
-    'Ecop.view.purchase.OrderPanel'
+    'Ecop.view.purchase.OrderPanel',
+    'Ecop.view.purchase.OrderManager'
   ],
 
   itemStore: null, // save a reference to items grid store
@@ -423,8 +424,30 @@ Ext.define('Ecop.view.sales.OrderController', {
    * =====================  Supplier Order  ===========================
    */
   onOpenPurchase: function() {
-    var me = this
-    me.lookup('sidePanel').toggleCollapse()
+    var me = this,
+      sidepanel = me.lookup('sidePanel')
+
+    if (!sidepanel.getComponent('po-manager')) {
+      sidepanel.add(
+        Ext.widget({
+          xtype: 'po-manager',
+          itemId: 'po-manager',
+          viewModel: {
+            stores: {
+              orders: {
+                proxy: {
+                  params: [me.getCurrentOrder().get('orderId')]
+                }
+              }
+            }
+          }
+        })
+      )
+    } else {
+      sidepanel.setActiveItem('po-manager')
+    }
+    me.getViewModel().set('sidepanelTitle', '供货商订单')
+    sidepanel.toggleCollapse()
   },
 
   onOrderItemRightClick: function(table, record, tr, rowIndex, e) {

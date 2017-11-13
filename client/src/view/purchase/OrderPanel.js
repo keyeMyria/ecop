@@ -4,20 +4,11 @@ Ext.define('Ecop.view.purchase.OrderPanel', {
 
   requires: [
     'Ext.grid.feature.Summary',
-
-    'Web.ux.Renderers',
-
-    'Ecop.view.purchase.OrderController',
-    'Ecop.view.purchase.OrderModel'
+    'Ecop.widget.CustomerPicker',
+    'Web.ux.Renderers'
   ],
 
-  controller: 'po-order',
-  viewModel: {
-    type: 'po-order'
-  },
-
   border: false,
-  header: false,
 
   layout: {
     type: 'vbox',
@@ -72,6 +63,7 @@ Ext.define('Ecop.view.purchase.OrderPanel', {
 
   items: [
     {
+      margin: '5 0 5 0',
       defaults: {
         xtype: 'displayfield',
         labelWidth: 60,
@@ -82,6 +74,12 @@ Ext.define('Ecop.view.purchase.OrderPanel', {
         {
           fieldLabel: '订单编号',
           bind: '{currentOrder.orderId}'
+        },
+        {
+          xtype: 'customerpicker',
+          fieldLabel: '供应商',
+          flex: 1,
+          bind: '{currentOrder.supplierId}'
         },
         {
           fieldLabel: '创建时间',
@@ -111,43 +109,71 @@ Ext.define('Ecop.view.purchase.OrderPanel', {
     },
     {
       defaults: {
-        xtype: 'displayfield',
+        xtype: 'textfield',
         labelWidth: 40,
         margin: '0 10 0 0'
       },
       items: [
         {
-          fieldLabel: '联系人',
+          allowBlank: false,
           labelWidth: 50,
-          bind: '{currentOrder.recipientName}'
+          fieldLabel: '联系人',
+          bind: {
+            readOnly: '{!orderEditable}',
+            value: '{currentOrder.recipientName}'
+          }
         },
         {
+          name: 'recipientMobile',
           fieldLabel: '手机',
           maxWidth: 160,
-          bind: '{currentOrder.recipientMobile}'
+          vtype: 'mobile',
+          enforceMaxLength: true,
+          maxLength: 11,
+          validateOnChange: false,
+          bind: {
+            readOnly: '{!orderEditable}',
+            value: '{currentOrder.recipientMobile}'
+          }
         },
         {
+          name: 'recipientPhone',
           fieldLabel: '电话',
-          bind: '{currentOrder.recipientPhone}'
+          maxWidth: 160,
+          vtype: 'phone',
+          validateOnChange: false,
+          bind: {
+            readOnly: '{!orderEditable}',
+            value: '{currentOrder.recipientPhone}'
+          }
         }
       ]
     },
     {
       defaults: {
-        xtype: 'displayfield',
-        labelWidth: 60,
+        labelWidth: 50,
         margin: '0 10 0 0'
       },
       items: [
         {
-          fieldLabel: '地区',
+          xtype: 'regionselector',
           width: 300,
-          bind: '{currentOrder.regionCode}'
+          allowBlank: false,
+          fieldLabel: '地区',
+          bind: {
+            value: '{currentOrder.regionCode}',
+            readOnly: '{!orderEditable}'
+          }
         },
         {
+          xtype: 'textfield',
           fieldLabel: '地址',
+          allowBlank: false,
           flex: 1,
-          bind: '{currentOrder.streetAddress}'
+          bind: {
+            value: '{currentOrder.streetAddress}',
+            readOnly: '{!orderEditable}'
+          }
         }
       ]
     },
@@ -160,11 +186,6 @@ Ext.define('Ecop.view.purchase.OrderPanel', {
       layout: 'fit',
       enableColumnMove: false,
       flex: 1,
-
-      selModel: {
-        selType: 'checkboxmodel',
-        checkOnly: true
-      },
 
       features: [
         {
@@ -236,7 +257,6 @@ Ext.define('Ecop.view.purchase.OrderPanel', {
             text: '数量',
             width: 60,
             align: 'center',
-            summaryType: 'sum',
             dataIndex: 'quantity',
             editor: {
               xtype: 'numberfield',
@@ -337,18 +357,7 @@ Ext.define('Ecop.view.purchase.OrderPanel', {
     },
     {
       xtype: 'textarea',
-      height: 160,
-      labelWidth: 60,
-
-      fieldLabel: '内部备注',
-      bind: {
-        value: '{currentOrder.internalMemo}',
-        readOnly: '{saveButtonDisabled}'
-      }
-    },
-    {
-      xtype: 'textarea',
-      height: 160,
+      height: 60,
       labelWidth: 60,
       fieldLabel: '订单备注',
       bind: {

@@ -114,12 +114,6 @@ Ext.define('Ecop.view.sales.OrderPanel', {
           tooltip: '供应商订单',
           handler: 'onOpenPurchase'
         }
-        /*
-    {
-      iconCls: 'x-fa fa-history',
-      tooltip: '订单跟踪'
-    }
-    */
       ],
 
       defaults: {
@@ -689,6 +683,9 @@ Ext.define('Ecop.view.sales.OrderPanel', {
       collapseDirection: 'right',
       reference: 'sidePanel',
       layout: 'card',
+      bind: {
+        title: '{sidepanelTitle}'
+      },
       listeners: {
         collapse: 'onSidePanelCollpase',
         expand: 'onSidePanelExpand'
