@@ -89,10 +89,16 @@ Ext.define('Ecop.view.purchase.OrderController', {
         width: 100,
         plain: true,
 
+        viewModel: me.getViewModel(),
+
         items: [
           {
             itemId: 'removeItem',
-            text: '删除订单项目'
+            text: '删除订单项目',
+            hidden: true,
+            bind: {
+              hidden: '{!orderEditable}'
+            }
           }
         ],
         listeners: {

@@ -183,14 +183,24 @@ Ext.define('Ecop.view.sales.OrderController', {
         width: 100,
         plain: true,
 
+        viewModel: me.getViewModel(),
+
         items: [
           {
             itemId: 'createPO',
-            text: '创建供应商订单'
+            text: '创建供应商订单',
+            hidden: true,
+            bind: {
+              hidden: '{isCompletedOrClosed}'
+            }
           },
           {
             itemId: 'removeItem',
-            text: '删除订单项目'
+            text: '删除订单项目',
+            hidden: true,
+            bind: {
+              hidden: '{!orderEditable}'
+            }
           }
         ],
         listeners: {

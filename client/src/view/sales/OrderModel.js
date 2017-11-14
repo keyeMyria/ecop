@@ -74,6 +74,14 @@ Ext.define('Ecop.view.sales.OrderModel', {
     },
 
     /*
+     * Do not show supplier order context menu when order is either closed or
+     * completed.
+     */
+    isCompletedOrClosed: function(get) {
+      return get('originalStatus') === 4 || get('originalStatus') === 5
+    },
+
+    /*
      * A payment entry is only deletable when it is added by staff
      */
     paymentDeletable: function(get) {
