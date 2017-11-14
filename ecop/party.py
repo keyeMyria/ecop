@@ -16,7 +16,7 @@ class PartyJSON(RpcBase):
         return marshall(party, fields)
 
     @jsonrpc_method(endpoint='rpc', method='party.search')
-    def searchParty(self, query=None, partyId=None, partyType='C'):
+    def searchParty(self, query=None, partyId=None, partyType=None):
         q = self.sess.query(Party)
         if partyId:
             users = [q.get(partyId)]
@@ -34,10 +34,10 @@ class PartyJSON(RpcBase):
                 Party.login.op('ilike')('%%%s%%' % query))
             if query.isdigit():
                 cond = or_(cond, Party.mobile.op('ilike')('%%%s%%' % query))
+            if partyType:
+                q = q.filter_by(partyType=partyType)
 
-            users.extend(
-                q.filter_by(partyType=partyType).filter(cond).limit(20).all()
-            )
+            users.extend(q.filter(cond).limit(20).all())
         else:
             # it is possible for the PartyPicker store to send query without
             # the query value

@@ -67,7 +67,7 @@ Ext.define('Ecop.widget.PartyPicker', {
   cls: 'party-picker',
 
   config: {
-    partyType: 'C'
+    partyType: null
   },
 
   queryMode: 'remote',
