@@ -6,13 +6,14 @@ Ext.define('Ecop.view.purchase.OrderModel', {
 
   data: {
     currentOrder: null,
+    relatedOrder: null, // the sales order to which the purchase manager is for
     originalStatus: 1
   },
 
   stores: {
     orders: {
       model: 'Web.model.Order',
-      autoLoad: true,
+      autoLoad: false,
       proxy: {
         type: 'jsonrpc',
         method: 'order.sales.getPurchaseOrder'

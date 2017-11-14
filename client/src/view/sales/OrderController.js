@@ -152,12 +152,8 @@ Ext.define('Ecop.view.sales.OrderController', {
           xtype: 'po-manager',
           itemId: 'po-manager',
           viewModel: {
-            stores: {
-              orders: {
-                proxy: {
-                  params: [me.getCurrentOrder().get('orderId')]
-                }
-              }
+            data: {
+              relatedOrder: me.getCurrentOrder()
             }
           }
         })
@@ -234,30 +230,9 @@ Ext.define('Ecop.view.sales.OrderController', {
         Ecop.util.Util.showError('请先保存订单修改再创建采购订单。')
         return
       }
+
       Ext.each(itemsGrid.getSelection(), function(oi) {
         items.push(oi.get('orderItemId'))
-      })
-      Web.data.JsonRPC.request({
-        method: 'order.sales.createPurchaseOrder',
-        params: [me.getCurrentOrder().get('orderId'), items],
-        success: function(po) {
-          sidepanel.add(
-            Ext.widget({
-              xtype: 'po-panel',
-              viewModel: {
-                data: {
-                  currentOrder: Ext.create('Web.model.Order', po.header)
-                },
-                stores: {
-                  items: {
-                    data: po.items
-                  }
-                }
-              }
-            })
-          )
-          sidepanel.expand()
-        }
       })
     }
   },

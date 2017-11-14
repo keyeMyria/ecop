@@ -13,17 +13,34 @@ Ext.define('Ecop.view.purchase.OrderController', {
 
     vm.get('orders').on({
       load: function(store) {
-        // Use select method directly here will not work since the store change
-        // has not yet be reflected in the grid yet
-        setTimeout(function() {
-          me
-            .lookup('orderlist')
-            .getSelectionModel()
-            .select(0)
-        }, 500)
+        if (store.getCount()) {
+          // Use select method directly here will not work since the store change
+          // has not yet be reflected in the grid yet
+          setTimeout(function() {
+            me
+              .lookup('orderlist')
+              .getSelectionModel()
+              .select(0)
+          }, 500)
+        } else {
+          var so = vm.get('relatedOrder')
+          var po = Ext.create('Web.model.Order')
+          po.set({
+            relatedOrderId: so.get('orderId'),
+            customerId: so.get('customerId'),
+            recipientName: so.get('recipientName'),
+            regionCode: so.get('regionCode'),
+            streetAddress: so.get('streetAddress'),
+            recipientMobile: so.get('recipientMobile'),
+            recipientPhone: so.get('recipientPhone'),
+            orderStatus: 1
+          })
+          vm.set('currentOrder', po)
+        }
       }
     })
     vm.bind('{orderEditable}', 'onOrderEditableChange', me)
+    vm.get('orders').load({ params: [vm.get('relatedOrder').get('orderId')] })
   },
 
   getOrderForm: function() {
@@ -121,5 +138,19 @@ Ext.define('Ecop.view.purchase.OrderController', {
       // refresh the row number
       itemsGrid.getView().refresh()
     }
+  },
+
+  doSaveOrder: function() {
+    var me = this,
+      vm = me.getViewModel(),
+      store = vm.get('orders'),
+      order = vm.get('currentOrder')
+
+    me.callParent([function() {
+      // if the currently saved order is not in orders store, add it
+      if (store.indexOf(order) === -1) {
+        store.add(order)
+      }
+    }])
   }
 })

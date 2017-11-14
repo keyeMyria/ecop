@@ -63,13 +63,16 @@ Ext.define('Ecop.view.purchase.OrderPanel', {
       defaults: {
         xtype: 'displayfield',
         labelWidth: 60,
-        margin: '0 10 0 0',
+        margin: '0 10 0 0'
       },
       items: [
         {
           fieldLabel: '订单号',
           labelWidth: 50,
-          bind: '{currentOrder.orderId}'
+          bind: '{currentOrder.orderId}',
+          renderer: function(v) {
+            return typeof v === 'number' ? v : '新建订单'
+          }
         },
         {
           xtype: 'partypicker',
@@ -94,7 +97,7 @@ Ext.define('Ecop.view.purchase.OrderPanel', {
           valueField: 'id',
           editable: false,
           displayField: 'text',
-          bind: '{currentOrder.orderStatus}',
+          bind: '{currentOrder.orderStatus}'
         }
       ]
     },

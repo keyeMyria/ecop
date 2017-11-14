@@ -161,36 +161,6 @@ class OrderJSON(RpcBase):
 
         return order.orderId
 
-    @jsonrpc_method(endpoint='rpc', method='order.purchase.upsert')
-    def upsertPurchaseOrder(self, orderId, modifications):
-        if isinstance(orderId, str):
-            newOrder = True
-            order = PurchaseOrder(creatorId=self.request.user.partyId)
-            self.sess.add(order)
-        else:
-            newOrder = False
-            order = self.loadOrder(orderId)
-
-        modifiedFields = modifications['header']
-        newStatus = modifiedFields.pop('orderStatus', None)
-
-        for (k, v) in modifiedFields.items():
-            if newOrder and not v:
-                continue
-            setattr(order, k, Decimal(str(v)) if isinstance(v, float) else v)
-
-        self.updateOrderChange(order, modifications)
-
-        # change of order status needs special handling, and the checking shall
-        # be done after all other order changes
-        if newStatus:
-            self.changePurchaseOrderStatus(order, newStatus)
-
-        if newOrder:
-            self.sess.flush()
-
-        return order.orderId
-
     def changeSalesOrderStatus(self, order, new):
         old = order.orderStatus
         if old == new:
@@ -203,20 +173,6 @@ class OrderJSON(RpcBase):
 
             if not order.completionDate:
                 order.completionDate = date.today()
-
-        order.orderStatus = new
-
-    def changePurchaseOrderStatus(self, order, new):
-        old = order.orderStatus
-        if old == new:
-            return
-
-        if new == ORDER_STATUS.COMPLETED and not order.completionDate:
-            order.completionDate = date.today()
-
-        if ORDER_STATUS.COMPLETED in (new, old):
-            # update sales order actualCost
-            pass
 
         order.orderStatus = new
 
@@ -397,6 +353,50 @@ class OrderJSON(RpcBase):
             'header': header,
             'items': [marshall(oi, oi_fields) for oi in order.items]
         }
+
+    def changePurchaseOrderStatus(self, order, new):
+        old = order.orderStatus
+        if old == new:
+            return
+
+        if new == ORDER_STATUS.COMPLETED and not order.completionDate:
+            order.completionDate = date.today()
+
+        if ORDER_STATUS.COMPLETED in (new, old):
+            # update sales order actualCost
+            pass
+
+        order.orderStatus = new
+
+    @jsonrpc_method(endpoint='rpc', method='order.purchase.upsert')
+    def upsertPurchaseOrder(self, orderId, modifications):
+        if isinstance(orderId, str):
+            newOrder = True
+            order = PurchaseOrder(creatorId=self.request.user.partyId)
+            self.sess.add(order)
+        else:
+            newOrder = False
+            order = self.loadOrder(orderId)
+
+        modifiedFields = modifications['header']
+        newStatus = modifiedFields.pop('orderStatus', None)
+
+        for (k, v) in modifiedFields.items():
+            if newOrder and not v:
+                continue
+            setattr(order, k, Decimal(str(v)) if isinstance(v, float) else v)
+
+        self.updateOrderChange(order, modifications)
+
+        # change of order status needs special handling, and the checking shall
+        # be done after all other order changes
+        if newStatus:
+            self.changePurchaseOrderStatus(order, newStatus)
+
+        if newOrder:
+            self.sess.flush()
+
+        return order.orderId
 
     @jsonrpc_method(endpoint='rpc', method='order.sales.getPurchaseOrder')
     def getPurchaseOrder(self, orderId):
