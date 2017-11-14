@@ -56,19 +56,7 @@ Ext.define('Ecop.view.purchase.OrderController', {
       method: 'order.purchase.data',
       params: [order.getId()],
       success: function(ret) {
-        /*
-         * Merge detailed information into current order record,
-         * as order opened by a click on an order search list
-         */
-        order.beginEdit()
-        order.set(ret.header)
-        order.endEdit()
-        order.commit()
-
-        vm.set('originalStatus', order.get('orderStatus'))
-
-        me.itemStore.loadData(ret.items)
-        me.itemStore.commitChanges()
+        me.setOrderData(ret)
       }
     })
   },
@@ -146,11 +134,14 @@ Ext.define('Ecop.view.purchase.OrderController', {
       store = vm.get('orders'),
       order = vm.get('currentOrder')
 
-    me.callParent([function() {
-      // if the currently saved order is not in orders store, add it
-      if (store.indexOf(order) === -1) {
-        store.add(order)
+    me.callParent([
+      function() {
+        // if the currently saved order is not in orders store, add it
+        if (store.indexOf(order) === -1) {
+          store.add(order)
+        }
+        Ecop.util.Util.showInfo('订单保存成功!')
       }
-    }])
+    ])
   }
 })

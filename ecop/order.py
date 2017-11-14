@@ -47,9 +47,10 @@ class OrderJSON(RpcBase):
         return order
 
     @jsonrpc_method(endpoint='rpc', method='order.sales.data')
-    def data(self, orderId):
+    def getSalesOrderData(self, order):
         """ Returns the JSON representation of the order. """
-        order = self.loadOrder(orderId)
+        if isinstance(order, int):
+            order = self.loadOrder(order)
 
         fields = [
             'orderId', 'customerId', 'createTime', 'amount',
@@ -132,6 +133,9 @@ class OrderJSON(RpcBase):
             "modified":[[55564, {"quantity": 2, "sellingPrice": 500.5}]],
             "added":[[10018201,{"quantity": 1, "sellingPrice": 1350}]]}]
         }
+
+        Returns a JSON representation of the new order as returned by
+        order.sales.data
         """
         if isinstance(orderId, str):
             newOrder = True
@@ -158,8 +162,7 @@ class OrderJSON(RpcBase):
 
         if newOrder:
             self.sess.flush()
-
-        return order.orderId
+            return self.getSalesOrderData(order)
 
     def changeSalesOrderStatus(self, order, new):
         old = order.orderStatus
@@ -333,16 +336,17 @@ class OrderJSON(RpcBase):
         )
 
     @jsonrpc_method(endpoint='rpc', method='order.purchase.data')
-    def getPurchaseOrderData(self, orderId):
+    def getPurchaseOrderData(self, order):
         """ Returns the JSON representation of the order. """
-        order = self.loadOrder(orderId)
+        if isinstance(order, int):
+            order = self.loadOrder(order)
         assert isinstance(order, PurchaseOrder)
 
         fields = [
             'orderId', 'supplierId', 'customerId', 'createTime', 'amount',
             'freight', 'orderStatus', 'regionCode', 'recipientName',
             'streetAddress', 'recipientMobile', 'recipientPhone', 'memo',
-            'completionDate'
+            'completionDate', 'supplierName', 'creatorName'
         ]
 
         header = marshall(order, fields)
@@ -395,8 +399,7 @@ class OrderJSON(RpcBase):
 
         if newOrder:
             self.sess.flush()
-
-        return order.orderId
+            return self.getPurchaseOrderData(order)
 
     @jsonrpc_method(endpoint='rpc', method='order.sales.getPurchaseOrder')
     def getPurchaseOrder(self, orderId):

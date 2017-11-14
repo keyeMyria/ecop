@@ -27,6 +27,30 @@ Ext.define('Ecop.view.sales.OrderControllerBase', {
   },
 
   /*
+   * Set the order header and items data as returned by the json rpc method
+   * order.sales.data or order.purchase.data
+   */
+  setOrderData: function(ret) {
+    var me = this,
+      vm = me.getViewModel(),
+      order = me.getCurrentOrder()
+
+    /*
+     * Merge detailed information into current order record,
+      * as order opened by a click on an order search list
+      */
+    order.beginEdit()
+    order.set(ret.header)
+    order.endEdit()
+    order.commit()
+
+    vm.set('originalStatus', order.get('orderStatus'))
+
+    me.itemStore.loadData(ret.items)
+    me.itemStore.commitChanges()
+  },
+
+  /*
    * Using Ctrl+S one can always save any changes to the order. Even when the
    * order is already closed, the staff shall still be able to change the order
    * status and internal memo. The fields that can be changed on a closed order
@@ -212,6 +236,7 @@ Ext.define('Ecop.view.sales.OrderControllerBase', {
   doSaveOrder: function(callback) {
     var me = this,
       f = me.getOrderForm(),
+      vm = me.getViewModel(),
       formValid = f.isValid(),
       order = me.getCurrentOrder(),
       changes
@@ -249,14 +274,17 @@ Ext.define('Ecop.view.sales.OrderControllerBase', {
         }
       ],
       success: function(ret) {
-        if (order.phantom) {
-          order.set('orderId', ret)
+        // if this is a new order, refresh the order data
+        if (ret) {
+          me.setOrderData(ret)
+        } else {
           order.commit()
+          vm.set('originalStatus', order.get('orderStatus'))
+          me.itemStore.commitChanges()
         }
         if (typeof callback === 'function') {
           callback.call(me)
         } else {
-          me.loadOrder()
           Ecop.util.Util.showInfo('订单保存成功!')
         }
       }

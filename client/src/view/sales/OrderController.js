@@ -33,6 +33,29 @@ Ext.define('Ecop.view.sales.OrderController', {
     !vm.get('currentOrder').phantom && me.loadOrder()
   },
 
+  /*
+   * Set the order data returned by the json rpc method order.sales.data
+   */
+  setOrderData: function(ret) {
+    var me = this,
+      vm = me.getViewModel(),
+      order = me.getCurrentOrder()
+
+    /*
+     * Merge detailed information into current order record,
+      * as order opened by a click on an order search list
+      */
+    order.beginEdit()
+    order.set(ret.header)
+    order.endEdit()
+    order.commit()
+
+    vm.set('originalStatus', order.get('orderStatus'))
+
+    me.itemStore.loadData(ret.items)
+    me.itemStore.commitChanges()
+  },
+
   loadOrder: function() {
     var me = this,
       vm = me.getViewModel(),
@@ -42,19 +65,7 @@ Ext.define('Ecop.view.sales.OrderController', {
       method: 'order.sales.data',
       params: [order.getId()],
       success: function(ret) {
-        /*
-         * Merge detailed information into current order record,
-         * as order opened by a click on an order search list
-         */
-        order.beginEdit()
-        order.set(ret.header)
-        order.endEdit()
-        order.commit()
-
-        vm.set('originalStatus', order.get('orderStatus'))
-
-        me.itemStore.loadData(ret.items)
-        me.itemStore.commitChanges()
+        me.setOrderData(ret)
         vm.get('payments').loadData(ret.payments)
         ret.header.attachments &&
           vm.get('attachments').loadData(ret.header.attachments)
