@@ -36,8 +36,7 @@ Ext.define('Ecop.view.sales.OrderPanel', {
     align: 'stretch'
   },
 
-  items: [
-    {
+  items: [{
       xtype: 'form',
       reference: 'so-form',
       bodyPadding: 5,
@@ -47,21 +46,12 @@ Ext.define('Ecop.view.sales.OrderPanel', {
       },
       flex: 1,
 
-      tbar: [
-        {
+      tbar: [{
           iconCls: 'x-fa fa-save',
           tooltip: '保存订单',
           handler: 'doSaveOrder',
           bind: {
             disabled: '{isCompleted}'
-          }
-        },
-        {
-          iconCls: 'x-fa fa-plus-circle',
-          tooltip: '添加项目',
-          handler: 'onBtnAddItem',
-          bind: {
-            disabled: '{!orderEditable}'
           }
         },
         {
@@ -85,7 +75,9 @@ Ext.define('Ecop.view.sales.OrderPanel', {
             disabled: '{smsButtonDisabled}'
           }
         },
-        { xtype: 'tbseparator' },
+        {
+          xtype: 'tbseparator'
+        },
         {
           iconCls: 'x-fa fa-list',
           tooltip: '显示顾客所有订单',
@@ -99,7 +91,9 @@ Ext.define('Ecop.view.sales.OrderPanel', {
           tooltip: '关闭其他窗口',
           handler: 'onCloseOtherTabs'
         },
-        { xtype: 'tbseparator' },
+        {
+          xtype: 'tbseparator'
+        },
         {
           iconCls: 'x-fa fa-exchange',
           tooltip: '供应商订单',
@@ -113,20 +107,18 @@ Ext.define('Ecop.view.sales.OrderPanel', {
         margin: '0 0 5 0'
       },
 
-      items: [
-        {
+      items: [{
           defaults: {
             xtype: 'displayfield',
             labelWidth: 60,
             margin: '0 10 0 0',
             minWidth: 150
           },
-          items: [
-            {
+          items: [{
               fieldLabel: '订单号',
               labelWidth: 50,
               bind: '{currentOrder.orderId}',
-              renderer: function(v) {
+              renderer: function (v) {
                 return typeof v === 'number' ? v : '新建订单'
               }
             },
@@ -162,8 +154,7 @@ Ext.define('Ecop.view.sales.OrderPanel', {
             labelWidth: 40,
             margin: '0 10 0 0'
           },
-          items: [
-            {
+          items: [{
               xtype: 'partypicker',
               reference: 'customerPicker',
               allowBlank: false,
@@ -212,8 +203,7 @@ Ext.define('Ecop.view.sales.OrderPanel', {
           defaults: {
             labelWidth: 60
           },
-          items: [
-            {
+          items: [{
               xtype: 'regionselector',
               width: 300,
               margin: '0 10 0 0',
@@ -252,34 +242,41 @@ Ext.define('Ecop.view.sales.OrderPanel', {
             checkOnly: true
           },
 
-          features: [
-            {
-              ftype: 'summary',
-              dock: 'bottom'
-            }
-          ],
+          features: [{
+            ftype: 'summary',
+            dock: 'bottom'
+          }],
 
           viewConfig: {
-            plugins: [
-              {
-                ptype: 'gridviewdragdrop',
-                containerScroll: true
-              }
-            ]
+            plugins: [{
+              ptype: 'gridviewdragdrop',
+              containerScroll: true
+            }]
           },
 
-          plugins: [
-            {
+          lbar: [{
+            iconCls: 'x-fa fa-plus-circle',
+            tooltip: '添加项目',
+            handler: 'onBtnAddItem',
+            bind: {
+              disabled: '{!orderEditable}'
+            }
+          }, {
+            iconCls: 'x-fa fa-times-circle',
+            tooltip: '删除项目',
+            handler: 'onBtnRemoveItem',
+            bind: {
+              disabled: '{!itemsGrid.selection}'
+            }
+          }],
+
+          plugins: [{
               ptype: 'cellediting',
               id: 'edit',
               clicksToEdit: 1
             },
             'headeralign'
           ],
-
-          listeners: {
-            rowcontextmenu: 'onOrderItemRightClick'
-          },
 
           columns: {
             defaults: {
@@ -288,8 +285,7 @@ Ext.define('Ecop.view.sales.OrderPanel', {
               headerAlign: 'center'
             },
 
-            items: [
-              {
+            items: [{
                 xtype: 'rownumberer',
                 width: 25
               },
@@ -430,8 +426,7 @@ Ext.define('Ecop.view.sales.OrderPanel', {
             flex: 1,
             renderer: Ext.util.Format.numberRenderer('0,000.00')
           },
-          items: [
-            {
+          items: [{
               xtype: 'numberfield',
               fieldLabel: '- 折扣',
               bind: {
@@ -493,7 +488,8 @@ Ext.define('Ecop.view.sales.OrderPanel', {
                 blur: 'refreshAmount'
               }
             },
-          */ {
+          */
+            {
               xtype: 'displayfield',
               bind: {
                 value: '{currentOrder.profit}',
@@ -509,7 +505,7 @@ Ext.define('Ecop.view.sales.OrderPanel', {
                 hidden: '{!sidePanelCollapsed}'
               },
               fieldLabel: '利润率',
-              renderer: function(v) {
+              renderer: function (v) {
                 return Ext.util.Format.percent(v, '0.0')
               }
             }
@@ -528,8 +524,7 @@ Ext.define('Ecop.view.sales.OrderPanel', {
             flex: 1
           },
 
-          items: [
-            {
+          items: [{
               xtype: 'grid',
               reference: 'paymentGrid',
               bind: {
@@ -544,15 +539,12 @@ Ext.define('Ecop.view.sales.OrderPanel', {
               enableColumnMove: false,
               allowDeselect: true,
 
-              features: [
-                {
-                  ftype: 'summary',
-                  dock: 'bottom'
-                }
-              ],
+              features: [{
+                ftype: 'summary',
+                dock: 'bottom'
+              }],
 
-              lbar: [
-                {
+              lbar: [{
                   iconCls: 'x-fa fa-plus-circle',
                   tooltip: '收款',
                   handler: 'onPaymentAdd',
@@ -582,13 +574,12 @@ Ext.define('Ecop.view.sales.OrderPanel', {
                   headerAlign: 'center'
                 },
 
-                items: [
-                  {
+                items: [{
                     text: '付款时间',
                     width: 160,
                     align: 'center',
                     dataIndex: 'payTime',
-                    summaryType: function() {
+                    summaryType: function () {
                       return '收款总额:'
                     },
                     renderer: Ext.util.Format.dateRenderer('Y-m-d H:i:s')
@@ -631,8 +622,7 @@ Ext.define('Ecop.view.sales.OrderPanel', {
                 flex: 1,
                 labelWidth: 60
               },
-              items: [
-                {
+              items: [{
                   fieldLabel: '内部备注',
                   bind: {
                     value: '{currentOrder.internalMemo}',
@@ -653,7 +643,9 @@ Ext.define('Ecop.view.sales.OrderPanel', {
         }
       ]
     },
-    { xtype: 'splitter' },
+    {
+      xtype: 'splitter'
+    },
     {
       xtype: 'panel',
       collapsible: true,
