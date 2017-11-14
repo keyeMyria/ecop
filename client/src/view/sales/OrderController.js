@@ -2,32 +2,24 @@
  * The controller associated with OrderPanel for manipulating a single order
  */
 Ext.define('Ecop.view.sales.OrderController', {
-  extend: 'Ext.app.ViewController',
+  extend: 'Ecop.view.sales.OrderControllerBase',
   alias: 'controller.order',
 
   requires: [
-    'Ecop.widget.ItemSelector',
     'Ecop.view.sales.PaymentWindow',
     'Ecop.view.sales.NotifyWindow',
     'Ecop.view.purchase.OrderPanel',
     'Ecop.view.purchase.OrderManager'
   ],
 
-  itemStore: null, // save a reference to items grid store
+  orderType: 'S',
+  rpcSaveMethod: 'order.sales.upsert',
 
   init: function() {
     var me = this,
       vm = me.getViewModel()
 
-    /*
-     * Bind events that can not easily be bound in the OrderPanel
-     */
-    me.itemStore = vm.get('items')
-    me.itemStore.on({
-      datachanged: 'refreshAmount',
-      update: 'onOrderItemChange',
-      scope: me
-    })
+    me.callParent()
 
     vm.get('attachments').on({
       datachanged: function(store) {
@@ -39,10 +31,6 @@ Ext.define('Ecop.view.sales.OrderController', {
 
     // when the order panel is first loaded, load the order from database
     !vm.get('currentOrder').phantom && me.loadOrder()
-  },
-
-  getCurrentOrder: function() {
-    return this.getViewModel().get('currentOrder')
   },
 
   loadOrder: function() {
@@ -98,270 +86,12 @@ Ext.define('Ecop.view.sales.OrderController', {
     var me = this,
       order = me.getCurrentOrder()
 
-    order.set(
-      'amount',
-      me.itemStore.sum('amount') + order.get('freight') - order.get('rebate')
-    )
+    me.callParent()
     order.set('cost', me.itemStore.sum('cost') + order.get('freightCost'))
   },
 
-  onOrderItemChange: function(store, record, op, fields) {
-    if (fields && fields[0] !== 'amount') {
-      record.set('amount', record.get('sellingPrice') * record.get('quantity'))
-      this.refreshAmount()
-    }
-  },
-
-  /*
-   * Using Ctrl+S one can always save any changes to the order. Even when the
-   * order is already closed, the staff shall still be able to change the order
-   * status and internal memo. The fields that can be changed on a closed order
-   * is controlled by the UI, i.e. OrderPanel
-   */
-  onCtrlS: function(evt) {
-    evt.stopEvent()
-    this.doSaveOrder()
-  },
-
-  /*
-   * Return the order changes in an object:
-   * {
-   *   changed: true or false
-   *   header: changed fields of the order header
-   *   added: list of added order items
-   *   modified: list of modified order items
-   *   deleted: list of deleted orderItemId's
-   * }
-   */
-  getOrderChanges: function() {
-    var me = this,
-      header = me.getCurrentOrder().getChanges(),
-      deleted = [],
-      modified = [],
-      added = []
-
-    /*
-     * Removes derived attributes
-     */
-    delete header.amount
-    delete header.cost
-
-    Ext.each(me.itemStore.getRemovedRecords(), function(r) {
-      deleted.push(r.get('orderItemId'))
-    })
-
-    // update the order item position
-    for (var i = 0; i < me.itemStore.getCount(); i++) {
-      me.itemStore.getAt(i).set('pos', i)
-    }
-
-    Ext.each(me.itemStore.getModifiedRecords(), function(r) {
-      var fields = [
-          'itemId',
-          'itemName',
-          'specification',
-          'model',
-          'quantity',
-          'sellingPrice',
-          'unitCost',
-          'unitId',
-          'pos'
-        ],
-        oi = {}
-
-      for (var i = 0; i < fields.length; ++i) {
-        oi[fields[i]] = r.get(fields[i])
-      }
-      if (typeof r.get('orderItemId') === 'number') {
-        modified.push([r.get('orderItemId'), oi])
-      } else {
-        added.push([r.get('itemId'), oi])
-      }
-    })
-
-    return {
-      header: header,
-      added: added,
-      modified: modified,
-      deleted: deleted,
-      changed: !(
-        Ext.isEmpty(deleted) &&
-        Ext.isEmpty(modified) &&
-        Ext.isEmpty(added) &&
-        Ext.Object.isEmpty(header)
-      )
-    }
-  },
-
-  doSaveOrder: function(callback) {
-    var me = this,
-      f = me.lookup('so-form').getForm(),
-      formValid = f.isValid(),
-      order = me.getCurrentOrder(),
-      changes
-
-    if (formValid) {
-      if (!order.get('recipientPhone') && !order.get('recipientMobile')) {
-        f.markInvalid({
-          recipientMobile: '必须输入手机或固定电话之一',
-          recipientPhone: '必须输入手机或固定电话之一'
-        })
-        formValid = false
-      } else {
-        f.findField('recipientPhone').clearInvalid()
-        f.findField('recipientMobile').clearInvalid()
-      }
-    }
-
-    if (!formValid) {
-      Ecop.util.Util.showError('输入数据存在错误，请检查。')
-      return
-    }
-
-    if (me.itemStore.getCount() === 0) {
-      Ecop.util.Util.showError('不允许保存没有项目的订单！')
-      return
-    }
-
-    changes = me.getOrderChanges()
-
-    if (!changes.changed) {
-      if (typeof callback === 'function') {
-        callback.call(me)
-      } else {
-        Ecop.util.Util.showInfo('订单没有改变，无须保存!')
-      }
-      return
-    }
-
-    Web.data.JsonRPC.request({
-      method: 'order.sales.upsert',
-      params: [
-        order.getId(),
-        {
-          header: changes.header,
-          deleted: changes.deleted,
-          modified: changes.modified,
-          added: changes.added
-        }
-      ],
-      success: function(ret) {
-        if (order.phantom) {
-          order.set('orderId', ret)
-          order.commit()
-        }
-        if (typeof callback === 'function') {
-          callback.call(me)
-        } else {
-          me.loadOrder()
-          Ecop.util.Util.showInfo('订单保存成功!')
-        }
-      }
-    })
-  },
-
-  doRefreshOrder: function() {
-    this.getCurrentOrder().reject()
-    this.loadOrder()
-  },
-
-  onRefreshOrder: function() {
-    var me = this,
-      changes = me.getOrderChanges()
-
-    if (changes.changed) {
-      Ext.Msg.confirm('请确认', '刷新订单将丢失未保存的订单变更，是否继续？', function(btnId) {
-        if (btnId === 'yes') {
-          me.doRefreshOrder()
-        }
-      })
-    } else {
-      me.doRefreshOrder()
-    }
-  },
-
-  /*
-   * Shall we deprecate this??
-   *
-  onBtnSwitchPrice: function(btn) {
-    var me = this,
-      itemIds = []
-
-    me.itemStore.each(function(oi) {
-      itemIds.push(oi.get('itemId'))
-    })
-    Web.data.JsonRPC.request({
-      method: 'order.price.get',
-      params: [itemIds, btn.priceType],
-      success: function(prices) {
-        me.itemStore.each(function(oi) {
-          oi.set('sellingPrice', prices[oi.get('itemId')])
-        })
-        btn.priceType = btn.priceType == 'B' ? 'C' : 'B'
-        btn.setText(btn.priceType == 'B' ? 'B价' : 'C价')
-      }
-    })
-  },
-  */
-
-  onBtnAddItem: function() {
-    var me = this
-    if (!me.selectorWin) {
-      me.selectorWin = me.getView().add(
-        Ext.widget('itemselector', {
-          closeAction: 'hide',
-          width: 1200,
-          height: 600,
-          plugins: 'centeronviewport',
-          listeners: {
-            itemselect: me.doAddItems,
-            scope: me
-          }
-        })
-      )
-    }
-
-    me.selectorWin.down('itembrowser #itemStatus').setStore(
-      new Ext.data.ArrayStore({
-        fields: ['id', 'text'],
-        data: [[0, '在线'], [1, '下线']]
-      })
-    )
-
-    me.selectorWin.show().center()
-  },
-
-  doAddItems: function(items) {
-    var me = this,
-      oi,
-      i,
-      fields = [
-        'itemId',
-        'itemName',
-        'specification',
-        'cost',
-        'model',
-        'unitId',
-        'sellingPrice'
-      ]
-
-    Ext.each(items, function(item) {
-      // The selector widget could return frozen item when an item id is entered
-      // directly. This check guard against this pssibility.
-      if (item.get('itemStatus') === 2) {
-        Ecop.util.Util.showError(
-          Ext.String.format('商品{0}已冻结，不能添加到订单！', item.getId())
-        )
-      } else {
-        oi = {}
-        for (i = 0; i < fields.length; ++i) {
-          oi[fields[i]] = item.get(fields[i])
-        }
-        oi.quantity = 1
-        oi.amount = item.get('sellingPrice')
-        me.itemStore.add(Web.model.OrderItem(oi))
-      }
-    })
+  getOrderForm: function() {
+    return this.lookup('so-form').getForm()
   },
 
   /*
