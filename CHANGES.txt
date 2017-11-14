@@ -23,29 +23,27 @@ Build 31 (2017-8-28)
  * Merge item group management into a tab in ItemWindow
 
 
-Build (2017-11)
+Build (2017-11-)
 
  * Add paymentDate to order payment
  * Show photos uploaded into order by customer
  * Send an order url to customer via SMS
-
  * Generate purchase orders for service order and proper profit accounting
- * Share session and login between ecop and web
- * Mark orders changed by user actions such as payment or photo upload
 
- * Switch to ExtJS Modern toolkit with 6.5.2 in preparation for switch to
-   ExtReact
- * Move common api between web and ecop into same api domain
  * Upload photos to order as attachments
-
-Mecop
-
- * Allow staff to add photos to an order on-site
 
 
 Future
 ------
 
+ * Share session and login between ecop and web
+ * Mark orders changed by user actions such as payment or photo upload
+ * Switch to ExtJS Modern toolkit with 6.5.2 in preparation for switch to
+   ExtReact
+ * Move common api between web and ecop into same api domain
+
+
+ * Allow staff to add photos to an order on-site
  * Implement order memos for order tracking
  * Prevent images or contents with forbidden words from being published
  * Publish articles to wechat open platform

@@ -48,14 +48,6 @@ Ext.define('Ecop.view.purchase.OrderPanel', {
         href: '{downloadUrl}',
         disabled: '{isNewOrder}'
       }
-    },
-    {
-      iconCls: 'x-fa fa-paper-plane',
-      tooltip: '发送信息',
-      handler: 'onBtnSendSMS',
-      bind: {
-        disabled: '{smsButtonDisabled}'
-      }
     }
   ],
 
@@ -72,11 +64,11 @@ Ext.define('Ecop.view.purchase.OrderPanel', {
         xtype: 'displayfield',
         labelWidth: 60,
         margin: '0 10 0 0',
-        minWidth: 150
       },
       items: [
         {
-          fieldLabel: '订单编号',
+          fieldLabel: '订单号',
+          labelWidth: 50,
           bind: '{currentOrder.orderId}'
         },
         {
@@ -93,24 +85,16 @@ Ext.define('Ecop.view.purchase.OrderPanel', {
           renderer: Ext.util.Format.dateRenderer('Y-m-d H:i:s')
         },
         {
-          fieldLabel: '完成日期',
-          bind: {
-            value: '{currentOrder.completionDate}',
-            hidden: '{!currentOrder.completionDate}'
-          },
-          hidden: true,
-          renderer: Ext.util.Format.dateRenderer('Y-m-d')
-        },
-        {
           xtype: 'combo',
-          store: 'orderstatus',
-          width: 120,
+          fieldLabel: '状态',
+          width: 130,
+          labelWidth: 40,
           margin: 0,
+          store: 'orderstatus',
           valueField: 'id',
           editable: false,
           displayField: 'text',
           bind: '{currentOrder.orderStatus}',
-          fieldLabel: '订单状态'
         }
       ]
     },
@@ -268,7 +252,7 @@ Ext.define('Ecop.view.purchase.OrderPanel', {
           },
           {
             text: '数量',
-            width: 60,
+            width: 55,
             align: 'center',
             dataIndex: 'quantity',
             editor: {
@@ -279,7 +263,7 @@ Ext.define('Ecop.view.purchase.OrderPanel', {
           },
           {
             text: '单位',
-            width: 40,
+            width: 50,
             align: 'center',
             dataIndex: 'unitId',
             formatter: 'store("unit")',
@@ -292,7 +276,7 @@ Ext.define('Ecop.view.purchase.OrderPanel', {
           },
           {
             text: '单价',
-            width: 60,
+            width: 55,
             align: 'right',
             dataIndex: 'sellingPrice',
             formatter: 'number("0,000.00")',

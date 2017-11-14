@@ -22,36 +22,7 @@ from webmodel.sms import SMSGateway
 from weblibs.jsonrpc import marshall, RPCUserError
 
 from .base import RpcBase, DocBase
-
-def changeSalesOrderStatus(order, new):
-    old = order.orderStatus
-    if old == new:
-        return
-
-    # completionDate is set the first time an order is set to be completed
-    if new == ORDER_STATUS.COMPLETED:
-        if order.amount != order.paidAmount:
-            raise RPCUserError('订单金额和收款金额不一致，不能完成订单！')
-
-        if not order.completionDate:
-            order.completionDate = date.today()
-
-    order.orderStatus = new
-
-
-def changePurchaseOrderStatus(order, new):
-    old = order.orderStatus
-    if old == new:
-        return
-
-    if new == ORDER_STATUS.COMPLETED and not order.completionDate:
-        order.completionDate = date.today()
-
-    if ORDER_STATUS.COMPLETED in (new, old):
-        # update sales order actualCost
-        pass
-
-    order.orderStatus = new
+from .region import getRegionName
 
 
 def findItemById(o, oiid):
@@ -183,7 +154,7 @@ class OrderJSON(RpcBase):
         # change of order status needs special handling, and the checking shall
         # be done after all other order changes
         if newStatus:
-            changeSalesOrderStatus(order, newStatus)
+            self.changeSalesOrderStatus(order, newStatus)
 
         if newOrder:
             self.sess.flush()
@@ -213,13 +184,41 @@ class OrderJSON(RpcBase):
         # change of order status needs special handling, and the checking shall
         # be done after all other order changes
         if newStatus:
-            changePurchaseOrderStatus(order, newStatus)
+            self.changePurchaseOrderStatus(order, newStatus)
 
         if newOrder:
             self.sess.flush()
 
         return order.orderId
 
+    def changeSalesOrderStatus(self, order, new):
+        old = order.orderStatus
+        if old == new:
+            return
+
+        # completionDate is set the first time an order is set to be completed
+        if new == ORDER_STATUS.COMPLETED:
+            if order.amount != order.paidAmount:
+                raise RPCUserError('订单金额和收款金额不一致，不能完成订单！')
+
+            if not order.completionDate:
+                order.completionDate = date.today()
+
+        order.orderStatus = new
+
+    def changePurchaseOrderStatus(self, order, new):
+        old = order.orderStatus
+        if old == new:
+            return
+
+        if new == ORDER_STATUS.COMPLETED and not order.completionDate:
+            order.completionDate = date.today()
+
+        if ORDER_STATUS.COMPLETED in (new, old):
+            # update sales order actualCost
+            pass
+
+        order.orderStatus = new
 
     @jsonrpc_method(endpoint='rpc', method='order.sales.search')
     def searchOrder(self, cond):
@@ -377,8 +376,12 @@ class OrderJSON(RpcBase):
              order.shortUrl)
         )
 
-    @staticmethod
-    def purchaseOrderData(order):
+    @jsonrpc_method(endpoint='rpc', method='order.purchase.data')
+    def getPurchaseOrderData(self, orderId):
+        """ Returns the JSON representation of the order. """
+        order = self.loadOrder(orderId)
+        assert isinstance(order, PurchaseOrder)
+
         fields = [
             'orderId', 'supplierId', 'customerId', 'createTime', 'amount',
             'freight', 'orderStatus', 'regionCode', 'recipientName',
@@ -395,13 +398,6 @@ class OrderJSON(RpcBase):
             'items': [marshall(oi, oi_fields) for oi in order.items]
         }
 
-    @jsonrpc_method(endpoint='rpc', method='order.purchase.data')
-    def getPurchaseOrderData(self, orderId):
-        """ Returns the JSON representation of the order. """
-        po = self.loadOrder(orderId)
-        assert isinstance(po, PurchaseOrder)
-        return self.purchaseOrderData(po)
-
     @jsonrpc_method(endpoint='rpc', method='order.sales.getPurchaseOrder')
     def getPurchaseOrder(self, orderId):
         """
@@ -416,46 +412,6 @@ class OrderJSON(RpcBase):
             'orderStatus', 'creatorName', 'supplierName'
         ]
         return [marshall(o, fields) for o in orders]
-
-    @jsonrpc_method(endpoint='rpc', method='order.sales.createPurchaseOrder')
-    def createPurchaseOrder(self, orderId, items, supplierId=None):
-        """
-        Create a purchase order from the given order items in a sales order.
-        The parameter `supplierId` is optional.
-
-          orderId: for which sales order the purchase order is created
-          items: a list of orderItemId
-        """
-        so = self.loadOrder(orderId)
-        assert isinstance(so, SalesOrder)
-
-        po = PurchaseOrder(
-            relatedOrderId=orderId,
-            supplierId=supplierId,
-            customerId=so.customerId,
-            creatorId=self.request.user.partyId,
-
-            regionCode=so.regionCode,
-            streetAddress=so.streetAddress,
-            recipientName=so.recipientName,
-            recipientMobile=so.recipientMobile,
-            recipientPhone=so.recipientPhone
-        )
-
-        for oiid in items:
-            oi = [oi for oi in so.items if oi.orderItemId == oiid][0]
-            po.addItem(
-                itemName=oi.itemName,
-                specification=oi.specification,
-                model=oi.model,
-                unitId=oi.unitId,
-                sellingPrice=oi.unitCost,
-                quantity=oi.quantity
-            )
-
-        self.sess.add(po)
-        self.sess.flush()
-        return self.purchaseOrderData(po)
 
 
 @view_config(route_name='order_download')

@@ -90,7 +90,7 @@ Ext.define('Ecop.view.sales.OrderModel', {
     },
 
     isNewOrder: function(get) {
-      return get('currentOrder').phantom
+      return isNaN(get('currentOrder.orderId'))
     },
 
     smsButtonDisabled: {

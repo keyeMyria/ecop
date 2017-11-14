@@ -77,16 +77,6 @@ Ext.define('Ecop.view.sales.OrderPanel', {
             disabled: '{isNewOrder}'
           }
         },
-        /*    {
-            iconCls: 'x-fa fa-bold',
-            tooltip: 'B价',
-            priceType: 'B',
-            handler: 'onBtnSwitchPrice',
-            bind: {
-              disabled: '{!orderEditable}'
-            }
-          },
-     　　 */
         {
           iconCls: 'x-fa fa-paper-plane',
           tooltip: '发送信息',
@@ -133,7 +123,8 @@ Ext.define('Ecop.view.sales.OrderPanel', {
           },
           items: [
             {
-              fieldLabel: '订单编号',
+              fieldLabel: '订单号',
+              labelWidth: 50,
               bind: '{currentOrder.orderId}',
               renderer: function(v) {
                 return typeof v === 'number' ? v : '新建订单'
@@ -367,15 +358,6 @@ Ext.define('Ecop.view.sales.OrderPanel', {
                 }
               },
               {
-                text: '金额',
-                width: 70,
-                align: 'right',
-                formatter: 'number("0,000.00")',
-                dataIndex: 'amount',
-                summaryType: 'sum',
-                summaryRenderer: Ext.util.Format.numberRenderer('0,000.00')
-              },
-              {
                 text: '成本',
                 width: 70,
                 align: 'right',
@@ -398,6 +380,15 @@ Ext.define('Ecop.view.sales.OrderPanel', {
                 bind: {
                   hidden: '{!sidePanelCollapsed}'
                 }
+              },
+              {
+                text: '金额',
+                width: 70,
+                align: 'right',
+                formatter: 'number("0,000.00")',
+                dataIndex: 'amount',
+                summaryType: 'sum',
+                summaryRenderer: Ext.util.Format.numberRenderer('0,000.00')
               }
             ]
           }
