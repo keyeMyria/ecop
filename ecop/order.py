@@ -459,9 +459,9 @@ class OrderJSON(RpcBase):
 
 
 @view_config(route_name='order_download')
-class OrderExportView(DocBase):
+class OrderPDFDownload(DocBase):
     def __init__(self, context, request):
-        super(OrderExportView, self).__init__(context, request)
+        super(OrderPDFDownload, self).__init__(context, request)
 
         self.order = self.sess.query(Order)\
             .get(int(request.matchdict['orderid']))
@@ -484,13 +484,19 @@ class OrderExportView(DocBase):
         return ret
 
     @property
+    def regionName(self):
+        return getRegionName(self.order.regionCode)
+
+    @property
     def siteUrl(self):
         """ The url that points to the desktop version of web """
         return siteConfig.canonical_url
 
     def __call__(self):
         loader = TemplateLoader([os.path.dirname(__file__)])
-        tmpl = loader.load('sales_order.rml')
+        tmplName = 'sales_order.rml' if isinstance(self.order, SalesOrder) \
+            else 'purchase_order.rml'
+        tmpl = loader.load(tmplName)
         stream = tmpl.generate(order=self.order, view=self)
         body = rml2pdf.parseString(stream.render()).read()
 

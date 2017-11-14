@@ -37,6 +37,19 @@ Ext.define('Ecop.view.purchase.OrderModel', {
       return get('originalStatus') === 1
     },
 
+    isNewOrder: function(get) {
+      return isNaN(get('currentOrder.orderId'))
+    },
+
+    downloadUrl: function(get) {
+      return Ext.String.format(
+        '/order/{0}.pdf?uid={1}&token={2}',
+        get('currentOrder.orderId'),
+        Ecop.auth.currentUser.partyId,
+        Web.JsonRPCProxy.token
+      )
+    },
+
     /*
      * If an order is completed, disable the save button
      */

@@ -10,7 +10,7 @@
 
 <document
     xmlns:doc="http://namespaces.zope.org/rml/doc"
-    xmlns:py="http://genshi.edgewall.org/" title="大管家家居销售订单${order.orderId}">
+    xmlns:py="http://genshi.edgewall.org/" title="大管家家居采购订单${order.orderId}">
 
   <docinit displayDocTitle="true">
     <registerTTFont faceName="VeraBoldItalic" fileName="[reportlab]/fonts/VeraBI.ttf"/>
@@ -50,18 +50,22 @@
 
   <story>
     <para fontSize="18" fontName="simhei" alignment="center">
-      大管家家居销售订单
+      大管家家居采购订单
     </para>
-
     <spacer length="20" />
+
+    <para fontName="simhei" fontSize="20" leading="20">
+       $order.supplierName
+    </para>
+    <spacer length="10" />
+
     <blockTable colWidths="60% 40%">
       <blockTableStyle id="dummy">
         <blockValign value="top" />
       </blockTableStyle>
       <tr>
         <td>
-          <para style="normal" py:if="order.customer.partyName">客户名称：$order.customer.partyName</para>
-          <para style="normal" leftIndent="60" firstLineIndent="-60">地址：${view.regionName}${order.streetAddress}</para>
+          <para style="normal" leftIndent="60" firstLineIndent="-60">客户地址：${view.regionName}${order.streetAddress}</para>
           <para style="normal"
                 py:if="order.customer.partyName != order.recipientName">
             联系人: $order.recipientName
