@@ -1,5 +1,5 @@
 Ext.define('Ecop.view.sales.OrderPanel', {
-  extend: 'Ext.form.Panel',
+  extend: 'Ext.Panel',
   xtype: 'orderpanel',
 
   requires: [
@@ -38,7 +38,8 @@ Ext.define('Ecop.view.sales.OrderPanel', {
 
   items: [
     {
-      xtype: 'panel',
+      xtype: 'form',
+      reference: 'so-form',
       bodyPadding: 5,
       layout: {
         type: 'vbox',
@@ -85,7 +86,7 @@ Ext.define('Ecop.view.sales.OrderPanel', {
               disabled: '{!orderEditable}'
             }
           },
-      */
+     　　 */
         {
           iconCls: 'x-fa fa-paper-plane',
           tooltip: '发送信息',
@@ -105,8 +106,8 @@ Ext.define('Ecop.view.sales.OrderPanel', {
         },
         {
           iconCls: 'x-fa fa-close',
-          tooltip: '关闭其他订单',
-          handler: 'onCloseOtherOrders'
+          tooltip: '关闭其他窗口',
+          handler: 'onCloseOtherTabs'
         },
         { xtype: 'tbseparator' },
         {
@@ -218,13 +219,13 @@ Ext.define('Ecop.view.sales.OrderPanel', {
         },
         {
           defaults: {
-            labelWidth: 60,
-            margin: '0 10 0 0'
+            labelWidth: 60
           },
           items: [
             {
               xtype: 'regionselector',
               width: 300,
+              margin: '0 10 0 0',
               allowBlank: false,
               fieldLabel: '地区',
               bind: {
@@ -237,6 +238,7 @@ Ext.define('Ecop.view.sales.OrderPanel', {
               fieldLabel: '地址',
               allowBlank: false,
               flex: 1,
+              margin: 0,
               bind: {
                 value: '{currentOrder.streetAddress}',
                 readOnly: '{!orderEditable}'
@@ -525,6 +527,7 @@ Ext.define('Ecop.view.sales.OrderPanel', {
         {
           xtype: 'container',
           height: 160,
+          margin: 0,
           layout: {
             type: 'hbox',
             align: 'stretch'
@@ -647,6 +650,7 @@ Ext.define('Ecop.view.sales.OrderPanel', {
                 },
                 {
                   fieldLabel: '订单备注',
+                  margin: 0,
                   bind: {
                     value: '{currentOrder.memo}',
                     readOnly: '{!orderEditable}'

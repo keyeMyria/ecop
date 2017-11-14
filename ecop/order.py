@@ -23,17 +23,10 @@ from weblibs.jsonrpc import marshall, RPCUserError
 
 from .base import RpcBase, DocBase
 
-def changeOrderStatus(order, old, new):
+def changeSalesOrderStatus(order, new):
+    old = order.orderStatus
     if old == new:
         return
-
-    # if old == ORDER_STATUS.PARTIAL_DELIVERY and new != ORDER_STATUS.COMPLETED:
-    #     raise RPCUserError('部分发货的订单状态只能修改为已完成！')
-
-    # if old == ORDER_STATUS.COMPLETED and not has_permission('order.reopen'):
-    #     raise RPCUserError('您没有权限打开已完成的订单。')
-
-    order.orderStatus = new
 
     # completionDate is set the first time an order is set to be completed
     if new == ORDER_STATUS.COMPLETED:
@@ -42,6 +35,30 @@ def changeOrderStatus(order, old, new):
 
         if not order.completionDate:
             order.completionDate = date.today()
+
+    order.orderStatus = new
+
+
+def changePurchaseOrderStatus(order, new):
+    old = order.orderStatus
+    if old == new:
+        return
+
+    if new == ORDER_STATUS.COMPLETED and not order.completionDate:
+        order.completionDate = date.today()
+
+    if ORDER_STATUS.COMPLETED in (new, old):
+        # update sales order actualCost
+        pass
+
+    order.orderStatus = new
+
+
+def findItemById(o, oiid):
+    for i in o.items:
+        if i.orderItemId == oiid:
+            return i
+    return None
 
 
 class OrderJSON(RpcBase):
@@ -91,8 +108,41 @@ class OrderJSON(RpcBase):
             } for op in order.payments]
         }
 
+    def updateOrderChange(self, order, modifications):
+        for i in modifications.get('deleted', []):
+            item = findItemById(order, i)
+            if item:
+                order.items.remove(item)
+                self.sess.delete(item)
+
+        for i in modifications.get('modified', []):
+            oi = findItemById(order, i[0])
+            if oi:
+                oi.quantity = Decimal(str(i[1]['quantity']))
+                oi.sellingPrice = Decimal(str(i[1]['sellingPrice']))
+                oi.unitCost = Decimal(str(i[1]['unitCost']))
+                oi.itemName = i[1]['itemName'].strip()
+                oi.specification = i[1]['specification'].strip() or None
+                oi.model = i[1]['model'].strip() or None
+                oi.pos = i[1]['pos']
+                oi.unitId = i[1]['unitId']
+
+        for i in modifications.get('added', []):
+            order.addItem(
+                itemId=i[0],
+                itemName=i[1]['itemName'].strip(),
+                specification=i[1]['specification'].strip() or None,
+                model=i[1]['model'].strip() or None,
+                quantity=Decimal(str(i[1]['quantity'])),
+                unitId=i[1]['unitId'],
+                sellingPrice=Decimal(str(i[1]['sellingPrice'])),
+                unitCost=Decimal(str(i[1]['unitCost']))
+            )
+
+        order.updateTotals()
+
     @jsonrpc_method(endpoint='rpc', method='order.sales.upsert')
-    def createOrModify(self, orderId, modifications):
+    def upsertSalesOrder(self, orderId, modifications):
         """
         Modify an existing order or create a new one.
 
@@ -113,68 +163,63 @@ class OrderJSON(RpcBase):
         }
         """
         if isinstance(orderId, str):
-            new_order = True
+            newOrder = True
             order = SalesOrder(creatorId=self.request.user.partyId)
             self.sess.add(order)
         else:
-            new_order = False
+            newOrder = False
             order = self.loadOrder(orderId)
 
-        def findItemById(o, oiid):
-            for i in o.items:
-                if i.orderItemId == oiid:
-                    return i
-            return None
+        modifiedFields = modifications['header']
+        newStatus = modifiedFields.pop('orderStatus', None)
 
-        m_fields = modifications['header']
-
-        # change of order status needs special handling
-        if 'orderStatus' in m_fields:
-            old, new = order.orderStatus, m_fields.pop('orderStatus')
-            changeOrderStatus(order, old, new)
-
-        for (k, v) in m_fields.items():
-            if new_order and not v:
+        for (k, v) in modifiedFields.items():
+            if newOrder and not v:
                 continue
             setattr(order, k, Decimal(str(v)) if isinstance(v, float) else v)
 
-        for i in modifications.get('deleted', []):
-            item = findItemById(order, i)
-            if item:
-                order.items.remove(item)
-                self.sess.delete(item)
+        self.updateOrderChange(order, modifications)
 
-        for i in modifications.get('modified', []):
-            oi = findItemById(order, i[0])
-            if oi:
-                oi.quantity = Decimal(str(i[1]['quantity']))
-                oi.sellingPrice = Decimal(str(i[1]['sellingPrice']))
-                oi.unitCost = Decimal(str(i[1]['unitCost']))
-                oi.itemName = i[1]['itemName'].strip()
-                oi.specification = i[1]['specification'].strip() or None
-                oi.model = i[1]['model'].strip() or None
-                oi.pos = i[1]['pos']
-                oi.unitId = i[1]['unitId']
+        # change of order status needs special handling, and the checking shall
+        # be done after all other order changes
+        if newStatus:
+            changeSalesOrderStatus(order, newStatus)
 
-        # currently only staff can add items to order
-        for i in modifications.get('added', []):
-            order.addItem(
-                itemId=i[0],
-                itemName=i[1]['itemName'].strip(),
-                specification=i[1]['specification'].strip() or None,
-                model=i[1]['model'].strip() or None,
-                quantity=Decimal(str(i[1]['quantity'])),
-                unitId=i[1]['unitId'],
-                sellingPrice=Decimal(str(i[1]['sellingPrice'])),
-                unitCost=Decimal(str(i[1]['unitCost']))
-            )
-
-        order.updateTotals()
-
-        if new_order:
+        if newOrder:
             self.sess.flush()
 
         return order.orderId
+
+    @jsonrpc_method(endpoint='rpc', method='order.purchase.upsert')
+    def upsertPurchaseOrder(self, orderId, modifications):
+        if isinstance(orderId, str):
+            newOrder = True
+            order = PurchaseOrder(creatorId=self.request.user.partyId)
+            self.sess.add(order)
+        else:
+            newOrder = False
+            order = self.loadOrder(orderId)
+
+        modifiedFields = modifications['header']
+        newStatus = modifiedFields.pop('orderStatus', None)
+
+        for (k, v) in modifiedFields.items():
+            if newOrder and not v:
+                continue
+            setattr(order, k, Decimal(str(v)) if isinstance(v, float) else v)
+
+        self.updateOrderChange(order, modifications)
+
+        # change of order status needs special handling, and the checking shall
+        # be done after all other order changes
+        if newStatus:
+            changePurchaseOrderStatus(order, newStatus)
+
+        if newOrder:
+            self.sess.flush()
+
+        return order.orderId
+
 
     @jsonrpc_method(endpoint='rpc', method='order.sales.search')
     def searchOrder(self, cond):
@@ -368,7 +413,7 @@ class OrderJSON(RpcBase):
         orders = query.all()
         fields = [
             'orderId', 'createTime', 'completionDate', 'amount',
-            'orderStatus', 'customerName', 'creatorName',
+            'orderStatus', 'creatorName', 'supplierName'
         ]
         return [marshall(o, fields) for o in orders]
 

@@ -70,6 +70,12 @@ Ext.define('Ecop.view.purchase.OrderController', {
     me.loadOrder()
   },
 
+  onCtrlS: function(evt) {
+    // do not trigger Ctrl+S on sales order
+    evt.stopEvent()
+    this.doSaveOrder()
+  },
+
   /*
    * When `orderEditable` from view model is changed, update the grid view
    * plugins to be readonly
@@ -294,8 +300,9 @@ Ext.define('Ecop.view.purchase.OrderController', {
       me.selectorWin = me.getView().add(
         Ext.widget('itemselector', {
           closeAction: 'hide',
-          height: 600,
           width: 1200,
+          height: 600,
+          plugins: 'centeronviewport',
           listeners: {
             itemselect: me.doAddItems,
             scope: me
@@ -311,7 +318,7 @@ Ext.define('Ecop.view.purchase.OrderController', {
       })
     )
 
-    me.selectorWin.show()
+    me.selectorWin.show().center()
   },
 
   doAddItems: function(items) {

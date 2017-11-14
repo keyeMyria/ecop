@@ -119,7 +119,7 @@ Ext.define('Ecop.view.sales.OrderController', {
    * is controlled by the UI, i.e. OrderPanel
    */
   onCtrlS: function(evt) {
-    evt.preventDefault()
+    evt.stopEvent()
     this.doSaveOrder()
   },
 
@@ -195,7 +195,7 @@ Ext.define('Ecop.view.sales.OrderController', {
 
   doSaveOrder: function(callback) {
     var me = this,
-      f = me.getView().getForm(),
+      f = me.lookup('so-form').getForm(),
       formValid = f.isValid(),
       order = me.getCurrentOrder(),
       changes
@@ -310,8 +310,9 @@ Ext.define('Ecop.view.sales.OrderController', {
       me.selectorWin = me.getView().add(
         Ext.widget('itemselector', {
           closeAction: 'hide',
-          height: 600,
           width: 1200,
+          height: 600,
+          plugins: 'centeronviewport',
           listeners: {
             itemselect: me.doAddItems,
             scope: me
@@ -327,7 +328,7 @@ Ext.define('Ecop.view.sales.OrderController', {
       })
     )
 
-    me.selectorWin.show()
+    me.selectorWin.show().center()
   },
 
   doAddItems: function(items) {

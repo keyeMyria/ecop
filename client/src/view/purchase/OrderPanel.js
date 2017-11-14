@@ -15,6 +15,10 @@ Ext.define('Ecop.view.purchase.OrderPanel', {
     align: 'stretch'
   },
 
+  keyMap: {
+    'Ctrl+S': 'onCtrlS'
+  },
+
   tbar: [
     {
       iconCls: 'x-fa fa-save',
@@ -79,6 +83,7 @@ Ext.define('Ecop.view.purchase.OrderPanel', {
           xtype: 'partypicker',
           partyType: 'V',
           fieldLabel: '供应商',
+          allowBlank: false,
           flex: 1,
           bind: '{currentOrder.supplierId}'
         },
@@ -100,6 +105,7 @@ Ext.define('Ecop.view.purchase.OrderPanel', {
           xtype: 'combo',
           store: 'orderstatus',
           width: 120,
+          margin: 0,
           valueField: 'id',
           editable: false,
           displayField: 'text',
@@ -170,6 +176,7 @@ Ext.define('Ecop.view.purchase.OrderPanel', {
           xtype: 'textfield',
           fieldLabel: '地址',
           allowBlank: false,
+          margin: 0,
           flex: 1,
           bind: {
             value: '{currentOrder.streetAddress}',
@@ -227,7 +234,8 @@ Ext.define('Ecop.view.purchase.OrderPanel', {
         items: [
           {
             xtype: 'rownumberer',
-            width: 25
+            width: 25,
+            align: 'center'
           },
           {
             text: '项目名称',
@@ -314,7 +322,7 @@ Ext.define('Ecop.view.purchase.OrderPanel', {
       items: [
         {
           xtype: 'numberfield',
-          fieldLabel: '折扣',
+          fieldLabel: '- 折扣',
           bind: {
             value: '{currentOrder.rebate}',
             readOnly: '{!orderEditable}'
@@ -325,7 +333,7 @@ Ext.define('Ecop.view.purchase.OrderPanel', {
         },
         {
           xtype: 'numberfield',
-          fieldLabel: '运费',
+          fieldLabel: '+ 运费',
           minValue: 0,
           bind: {
             value: '{currentOrder.freight}',
@@ -337,7 +345,8 @@ Ext.define('Ecop.view.purchase.OrderPanel', {
         },
         {
           xtype: 'displayfield',
-          fieldLabel: '总金额',
+          labelWidth: 60,
+          fieldLabel: '= 总金额',
           renderer: Ext.util.Format.numberRenderer('0,000.00'),
           bind: '{currentOrder.amount}'
         }
@@ -345,8 +354,9 @@ Ext.define('Ecop.view.purchase.OrderPanel', {
     },
     {
       xtype: 'textarea',
-      height: 60,
+      maxHeight: 60,
       labelWidth: 60,
+      margin: 0,
       fieldLabel: '订单备注',
       bind: {
         value: '{currentOrder.memo}',
