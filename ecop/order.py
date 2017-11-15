@@ -60,7 +60,7 @@ class OrderJSON(RpcBase):
             'installmentAmount', 'attachments', 'effectiveCost'
         ]
 
-        header = marshall(order, fields)
+        header = marshall(order, fields, ignoreNone=False)
 
         oi_fields = ['orderItemId', 'itemId', 'itemName', 'specification',
             'model', 'quantity', 'unitId', 'sellingPrice', 'unitCost', 'pos']
@@ -270,7 +270,11 @@ class OrderJSON(RpcBase):
 
         amount = Decimal(str(amount))
         payDate = datetime.strptime(payDate, '%Y-%m-%d')
+
+        if order.orderStatus == ORDER_STATUS.BID:
+            order.orderStatus = ORDER_STATUS.PAID
         order.paidAmount += amount
+        order.installmentAmount = None
 
         payment = Payment()
         payment.amount = amount
