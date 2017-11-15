@@ -134,8 +134,8 @@ class OrderJSON(RpcBase):
             "added":[[10018201,{"quantity": 1, "sellingPrice": 1350}]]}]
         }
 
-        Returns a JSON representation of the new order as returned by
-        order.sales.data
+        Returns a **complete** JSON representation of the modified order as
+        would be returned by order.sales.data
         """
         if isinstance(orderId, str):
             newOrder = True
@@ -160,9 +160,9 @@ class OrderJSON(RpcBase):
         if newStatus:
             self.changeSalesOrderStatus(order, newStatus)
 
-        if newOrder:
-            self.sess.flush()
-            return self.getSalesOrderData(order)
+        # flush first so that trigger based field can be populated
+        self.sess.flush()
+        return self.getSalesOrderData(order)
 
     def changeSalesOrderStatus(self, order, new):
         old = order.orderStatus

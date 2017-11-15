@@ -292,14 +292,9 @@ Ext.define('Ecop.view.sales.OrderControllerBase', {
         }
       ],
       success: function(ret) {
-        // if this is a new order, refresh the order data
-        if (ret) {
-          me.setOrderData(ret)
-        } else {
-          order.commit()
-          vm.set('originalStatus', order.get('orderStatus'))
-          me.itemStore.commitChanges()
-        }
+        // same as an order reload
+        me.setOrderData(ret)
+
         if (typeof callback === 'function') {
           callback.call(me)
         } else {
