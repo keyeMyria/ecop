@@ -199,6 +199,19 @@ Ext.define('Ecop.view.sales.OrderControllerBase', {
     me.selectorWin.show().center()
   },
 
+  onBtnRemoveItem: function() {
+    var me = this,
+      itemsGrid = this.lookup('itemsGrid')
+
+    Ext.each(itemsGrid.getSelection(), function(oi) {
+      itemsGrid.getStore().remove(oi)
+    })
+    // refresh the row number
+    itemsGrid.getView().refresh()
+    // this ensures Ctrl+S works properly after item removal
+    itemsGrid.focus()
+  },
+
   doAddItems: function(items) {
     var me = this,
       oi,

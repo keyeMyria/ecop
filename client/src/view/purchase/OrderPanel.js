@@ -192,6 +192,25 @@ Ext.define('Ecop.view.purchase.OrderPanel', {
         }
       ],
 
+      lbar: [
+        {
+          iconCls: 'x-fa fa-plus-circle',
+          tooltip: '添加项目',
+          handler: 'onBtnAddItem',
+          bind: {
+            disabled: '{!orderEditable}'
+          }
+        },
+        {
+          iconCls: 'x-fa fa-times-circle',
+          tooltip: '删除项目',
+          handler: 'onBtnRemoveItem',
+          bind: {
+            disabled: '{!itemsGrid.selection}'
+          }
+        }
+      ],
+
       viewConfig: {
         plugins: [
           {
@@ -199,10 +218,6 @@ Ext.define('Ecop.view.purchase.OrderPanel', {
             containerScroll: true
           }
         ]
-      },
-
-      listeners: {
-        rowcontextmenu: 'onOrderItemRightClick'
       },
 
       plugins: [
@@ -282,7 +297,7 @@ Ext.define('Ecop.view.purchase.OrderPanel', {
           },
           {
             text: '单价',
-            width: 55,
+            width: 60,
             align: 'right',
             dataIndex: 'sellingPrice',
             formatter: 'number("0,000.00")',
@@ -293,7 +308,7 @@ Ext.define('Ecop.view.purchase.OrderPanel', {
           },
           {
             text: '金额',
-            width: 55,
+            width: 60,
             align: 'right',
             formatter: 'number("0,000.00")',
             dataIndex: 'amount',

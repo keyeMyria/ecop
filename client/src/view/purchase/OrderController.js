@@ -105,50 +105,6 @@ Ext.define('Ecop.view.purchase.OrderController', {
     }
   },
 
-  onOrderItemRightClick: function(table, record, tr, rowIndex, e) {
-    var me = this,
-      menu
-
-    e.preventDefault()
-    if (!me.contextMenu) {
-      me.contextMenu = Ext.widget('menu', {
-        width: 100,
-        plain: true,
-
-        viewModel: me.getViewModel(),
-
-        items: [
-          {
-            itemId: 'removeItem',
-            text: '删除订单项目',
-            hidden: true,
-            bind: {
-              hidden: '{!orderEditable}'
-            }
-          }
-        ],
-        listeners: {
-          click: me.onContextMenuClick,
-          scope: me
-        }
-      })
-    }
-
-    me.contextMenu.showAt(e.getXY()).focus()
-  },
-
-  onContextMenuClick: function(menu, menuItem) {
-    var me = this,
-      itemsGrid = this.lookup('itemsGrid'),
-      menuId = menuItem.getItemId()
-
-    if (menuId === 'removeItem') {
-      itemsGrid.getStore().remove(itemsGrid.getSelection()[0])
-      // refresh the row number
-      itemsGrid.getView().refresh()
-    }
-  },
-
   doSaveOrder: function() {
     var me = this,
       vm = me.getViewModel(),

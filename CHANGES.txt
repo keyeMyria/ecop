@@ -36,6 +36,8 @@ Build (2017-11-)
 Future
 ------
 
+ * Make ItemSelector window a global singleton window using utility function
+    Ecop.util.Util.selectItem(callback)
  * Share session and login between ecop and web
  * Mark orders changed by user actions such as payment or photo upload
  * Switch to ExtJS Modern toolkit with 6.5.2 in preparation for switch to
