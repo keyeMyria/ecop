@@ -67,7 +67,12 @@ Ext.define('Ecop.view.sales.OrderControllerBase', {
    */
   refreshAmount: function() {
     var me = this,
+      vm = me.getViewModel(),
       order = me.getCurrentOrder()
+
+    if (!vm.get('orderEditable')) {
+      return
+    }
 
     order.set(
       'amount',
@@ -103,7 +108,7 @@ Ext.define('Ecop.view.sales.OrderControllerBase', {
      * Removes derived attributes
      */
     delete header.amount
-    delete header.cost
+    delete header.effectiveCost
 
     Ext.each(me.itemStore.getRemovedRecords(), function(r) {
       deleted.push(r.get('orderItemId'))

@@ -2,7 +2,7 @@ import os.path
 from datetime import date, datetime, timedelta
 from decimal import Decimal
 
-from sqlalchemy.sql import and_
+from sqlalchemy.sql import and_, func, select, update
 from sqlalchemy.orm import eagerload
 from genshi.template import TemplateLoader
 from z3c.rml import rml2pdf
@@ -14,7 +14,7 @@ from pyramid_rpc.jsonrpc import jsonrpc_method
 
 from hm.lib.config import siteConfig
 
-from webmodel.consts import ORDER_STATUS
+from webmodel.consts import ORDER_STATUS, ORDER_TYPE
 from webmodel.item import Item
 from webmodel.order import Order, SalesOrder, PurchaseOrder
 from webmodel.payment import Payment, OrderPayment
@@ -56,8 +56,8 @@ class OrderJSON(RpcBase):
             'orderId', 'customerId', 'createTime', 'amount',
             'freight', 'rebate', 'orderStatus', 'regionCode', 'recipientName',
             'streetAddress', 'recipientMobile', 'recipientPhone', 'memo',
-            'internalMemo', 'paidAmount', 'freightCost', 'completionDate',
-            'installmentAmount', 'attachments'
+            'internalMemo', 'paidAmount', 'completionDate',
+            'installmentAmount', 'attachments', 'effectiveCost'
         ]
 
         header = marshall(order, fields)
@@ -241,7 +241,7 @@ class OrderJSON(RpcBase):
 
         fields = [
             'orderId', 'createTime', 'completionDate', 'amount', 'paidAmount',
-            'orderStatus', 'cost', 'customerName', 'creatorName',
+            'orderStatus', 'effectiveCost', 'customerName', 'creatorName',
             'recipientName'
         ]
 
@@ -366,11 +366,25 @@ class OrderJSON(RpcBase):
         if new == ORDER_STATUS.COMPLETED and not order.completionDate:
             order.completionDate = date.today()
 
-        if ORDER_STATUS.COMPLETED in (new, old):
-            # update sales order actualCost
-            pass
-
         order.orderStatus = new
+
+        #
+        # Whenever purchase order status changes to or from `completed`, update
+        # sales order actualCost
+        #
+        if ORDER_STATUS.COMPLETED in (new, old):
+            # flush the status change first so that it will be captured by the
+            # following query
+            self.sess.flush()
+
+            cost = select([func.sum(PurchaseOrder.amount)]).where(and_(
+                PurchaseOrder.orderStatus == ORDER_STATUS.COMPLETED,
+                PurchaseOrder.orderType == ORDER_TYPE.PURCHASE,
+                PurchaseOrder.relatedOrderId == order.relatedOrderId
+            ))
+            self.sess.execute(update(SalesOrder).where(
+                SalesOrder.orderId == order.relatedOrderId
+            ).values(actual_cost=cost.as_scalar()))
 
     @jsonrpc_method(endpoint='rpc', method='order.purchase.upsert')
     def upsertPurchaseOrder(self, orderId, modifications):

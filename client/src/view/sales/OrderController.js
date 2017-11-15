@@ -72,10 +72,15 @@ Ext.define('Ecop.view.sales.OrderController', {
    */
   refreshAmount: function() {
     var me = this,
+      vm = me.getViewModel(),
       order = me.getCurrentOrder()
 
+    if (!vm.get('orderEditable')) {
+      return
+    }
+
     me.callParent()
-    order.set('cost', me.itemStore.sum('cost') + order.get('freightCost'))
+    order.set('effectiveCost', me.itemStore.sum('cost'))
   },
 
   getOrderForm: function() {

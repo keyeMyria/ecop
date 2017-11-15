@@ -495,21 +495,6 @@ Ext.define('Ecop.view.sales.OrderPanel', {
                 maxValue: '{restAmount - 1}'
               }
             },
-            /* To be deprecated 2017.11.8
-                       {
-              xtype: 'numberfield',
-              labelWidth: 60,
-              fieldLabel: '运费成本',
-              minValue: 0,
-              bind: {
-                value: '{currentOrder.freightCost}',
-                readOnly: '{!orderEditable}'
-              },
-              listeners: {
-                blur: 'refreshAmount'
-              }
-            },
-          */
             {
               xtype: 'displayfield',
               bind: {
