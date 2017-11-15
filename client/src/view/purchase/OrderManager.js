@@ -22,7 +22,7 @@ Ext.define('Ecop.view.purchase.OrderManager', {
     align: 'stretch'
   },
   border: false,
-  bodyPadding: 5,
+  bodyPadding: 2,
 
   items: [
     {
@@ -50,6 +50,22 @@ Ext.define('Ecop.view.purchase.OrderManager', {
       listeners: {
         select: 'onPOSelect'
       },
+
+      lbar: [
+        {
+          iconCls: 'x-fa fa-plus-circle',
+          tooltip: '新建订单',
+          handler: 'addNewOrder',
+          bind: {
+            disabled: '{!showCreatePOButton}'
+          }
+        },
+        {
+          iconCls: 'x-fa fa-refresh',
+          tooltip: '刷新',
+          handler: 'refreshPOList'
+        }
+      ],
 
       columns: {
         defaults: {
@@ -93,7 +109,7 @@ Ext.define('Ecop.view.purchase.OrderManager', {
             dataIndex: 'creatorName'
           },
           {
-            text: '订单状态',
+            text: '状态',
             width: 80,
             dataIndex: 'orderStatus',
             formatter: 'store("orderstatus", "id", "text")'

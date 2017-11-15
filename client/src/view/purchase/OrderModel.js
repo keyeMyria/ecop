@@ -7,7 +7,7 @@ Ext.define('Ecop.view.purchase.OrderModel', {
   data: {
     currentOrder: null,
     relatedOrder: null, // the sales order to which the purchase manager is for
-    originalStatus: 1
+    originalStatus: null
   },
 
   stores: {
@@ -49,6 +49,15 @@ Ext.define('Ecop.view.purchase.OrderModel', {
         Ecop.auth.currentUser.partyId,
         Web.JsonRPCProxy.token
       )
+    },
+
+    /*
+     * When related sales order is closed or completed, we do not allow create
+     * new purchase order
+     */
+    showCreatePOButton: function(get) {
+      var status = get('relatedOrder.orderStatus')
+      return status !== 4 && status !== 5 && !isNaN(get('currentOrder.orderId'))
     },
 
     /*

@@ -39,7 +39,10 @@ Ext.define('Ecop.view.purchase.OrderPanel', {
     {
       iconCls: 'x-fa fa-refresh',
       tooltip: '刷新订单',
-      handler: 'onRefreshOrder'
+      handler: 'onRefreshOrder',
+      bind: {
+        disabled: '{isNewOrder}'
+      }
     },
     {
       iconCls: 'x-fa fa-download',
@@ -290,7 +293,7 @@ Ext.define('Ecop.view.purchase.OrderPanel', {
           },
           {
             text: '金额',
-            width: 70,
+            width: 55,
             align: 'right',
             formatter: 'number("0,000.00")',
             dataIndex: 'amount',

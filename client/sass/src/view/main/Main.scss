@@ -30,10 +30,6 @@ a {
   font-weight: bold;
 }
 
-// .x-grid-item-alt {
-//     background-color: $light-grey;
-// }
-
 .x-field.required label span.x-form-item-label-text:after {
   color: $red-color;
   content: ' *';
@@ -47,4 +43,8 @@ a {
   width: 24px;
   font-size: 24px;
   line-height: 24px;
+}
+
+.x-toolbar-default-vertical {
+  padding: 3px 2px 0;
 }

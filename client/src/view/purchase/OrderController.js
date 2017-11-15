@@ -23,24 +23,12 @@ Ext.define('Ecop.view.purchase.OrderController', {
               .select(0)
           }, 500)
         } else {
-          var so = vm.get('relatedOrder')
-          var po = Ext.create('Web.model.Order')
-          po.set({
-            relatedOrderId: so.get('orderId'),
-            customerId: so.get('customerId'),
-            recipientName: so.get('recipientName'),
-            regionCode: so.get('regionCode'),
-            streetAddress: so.get('streetAddress'),
-            recipientMobile: so.get('recipientMobile'),
-            recipientPhone: so.get('recipientPhone'),
-            orderStatus: 1
-          })
-          vm.set('currentOrder', po)
+          me.addNewOrder()
         }
       }
     })
     vm.bind('{orderEditable}', 'onOrderEditableChange', me)
-    vm.get('orders').load({ params: [vm.get('relatedOrder').get('orderId')] })
+    me.refreshPOList()
   },
 
   getOrderForm: function() {
@@ -59,6 +47,39 @@ Ext.define('Ecop.view.purchase.OrderController', {
         me.setOrderData(ret)
       }
     })
+  },
+
+  addNewOrder: function() {
+    var me = this,
+      vm = me.getViewModel(),
+      so = vm.get('relatedOrder')
+
+    po = Ext.create('Web.model.Order')
+    po.set({
+      relatedOrderId: so.get('orderId'),
+      customerId: so.get('customerId'),
+      recipientName: so.get('recipientName'),
+      regionCode: so.get('regionCode'),
+      streetAddress: so.get('streetAddress'),
+      recipientMobile: so.get('recipientMobile'),
+      recipientPhone: so.get('recipientPhone'),
+      orderStatus: 1
+    })
+    vm.set('currentOrder', po)
+    // clear any leftover from last order
+    vm.get('items').removeAll()
+    vm.set('originalStatus', 1)
+  },
+
+  refreshPOList: function() {
+    var me = this,
+      vm = me.getViewModel()
+
+    me
+      .lookup('orderlist')
+      .getSelectionModel()
+      .deselectAll()
+    vm.get('orders').load({ params: [vm.get('relatedOrder').get('orderId')] })
   },
 
   onPOSelect: function(rowmodel, record) {
