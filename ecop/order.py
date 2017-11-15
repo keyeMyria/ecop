@@ -415,9 +415,8 @@ class OrderJSON(RpcBase):
         if newStatus:
             self.changePurchaseOrderStatus(order, newStatus)
 
-        if newOrder:
-            self.sess.flush()
-            return self.getPurchaseOrderData(order)
+        self.sess.flush()
+        return self.getPurchaseOrderData(order)
 
     @jsonrpc_method(endpoint='rpc', method='order.sales.getPurchaseOrder')
     def getPurchaseOrder(self, orderId):
