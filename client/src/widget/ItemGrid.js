@@ -28,10 +28,7 @@ Ext.define('Ecop.widget.ItemGrid', {
         text: '商品号',
         width: 80,
         align: 'center',
-        dataIndex: 'itemId',
-        renderer: function(value, meta, record) {
-          return record.getId() + '-' + record.get('checkDigit')
-        }
+        dataIndex: 'itemId'
       },
       {
         text: '商品名称',

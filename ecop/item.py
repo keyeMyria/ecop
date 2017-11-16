@@ -5,8 +5,6 @@ from sqlalchemy.orm import eagerload
 
 from pyramid_rpc.jsonrpc import jsonrpc_method
 
-from hm.lib.checksum import damm
-
 from weblibs.jsonrpc import marshall, RPCUserError, validateSchema
 
 from webmodel.consts import ITEM_STATUS, RESOURCE_TYPE
@@ -67,9 +65,6 @@ class ItemJSON(RpcBase):
                     Item.specification.op('ilike')('%%%s%%' % text),
                     Item.model.op('ilike')('%%%s%%' % text)
                 ]
-                if text.isdigit() and len(text) == 6 and \
-                        damm.verify(int(text)):
-                    or_clause.append(Item.itemId == 10000000 + int(text[:-1]))
                 query = query.filter(or_(*or_clause))
 
             if brandId:
@@ -97,8 +92,7 @@ class ItemJSON(RpcBase):
         fields = ['itemId', 'itemName', 'specification', 'model',
                   'sellingPrice', 'sellingPriceB', 'purchasePrice',
                   'itemStatus', 'isSku', 'unitName', 'primaryCategoryId',
-                  'checkDigit', 'unitId', 'brandId', 'countryId',
-                  'weight']
+                  'unitId', 'brandId', 'countryId', 'weight']
         return [marshall(i, fields) for i in items]
 
     def setItemStatus(self, item, status):
