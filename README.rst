@@ -65,7 +65,6 @@ item.manage
 item.inactivate
 item.create
 item.update.category
-item.update.maintainer
 item.update.price.purchase
 item.bom.manage
 

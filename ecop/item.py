@@ -40,8 +40,9 @@ class ItemJSON(RpcBase):
 
     @jsonrpc_method(endpoint='rpc', method='item.search')
     def searchItem(self, text=None, brandId=None, catId=None, status=None,
-                   isSku=False, maintainerId=None, assortmentOnly=False):
-        """ Search items based on given conditions. When status is not given,
+                   isSku=False, assortmentOnly=False):
+        """
+        Search items based on given conditions. When status is not given,
         no inactive items will be returned. To search for items of all status,
         set status to 'all'.
 
@@ -49,15 +50,8 @@ class ItemJSON(RpcBase):
         """
         query = self.sess.query(Item).order_by(Item.lastModified.desc())
 
-        # for vendors, restrict item search to her own items
-        user = self.request.user
-        if user.isVendor:
-            query = query.filter(Item.maintainerId == user.partyId)
-        elif maintainerId:
-            query = query.filter(Item.maintainerId == maintainerId)
-        else:
-            if not (catId or text or brandId):
-                raise RPCUserError('请指定搜索条件!')
+        if not (catId or text or brandId):
+            raise RPCUserError('请指定搜索条件!')
 
         if text and Item.IsItemNumber(text):
             query = query.filter(Item.itemId.in_((int(text),)))
@@ -104,7 +98,7 @@ class ItemJSON(RpcBase):
                   'sellingPrice', 'sellingPriceB', 'purchasePrice',
                   'itemStatus', 'isSku', 'unitName', 'primaryCategoryId',
                   'checkDigit', 'unitId', 'brandId', 'countryId',
-                  'maintainerId', 'weight']
+                  'weight']
         return [marshall(i, fields) for i in items]
 
     def setItemStatus(self, item, status):
@@ -123,11 +117,6 @@ class ItemJSON(RpcBase):
                     .get(item.itemGroup.items[0]).mainImageFile
             ):
                 raise RPCUserError('商品%d没有主图不能上线！' % item.itemId)
-
-        user = self.request.user
-        if item.itemStatus == ITEM_STATUS.INACTIVE:
-            if user.isVendor:
-                raise RPCUserError('您无权改变已冻结商品的状态。')
 
         item.itemStatus = status
 
@@ -165,8 +154,6 @@ class ItemJSON(RpcBase):
                 assert item, 'Item id %d is not found' % rec['itemId']
             else:
                 item = Item()
-                if self.request.user.isVendor:  # vendor created item:
-                    item.maintainerId = self.request.user.partyId
                 self.sess.add(item)
                 del rec['itemId']
 

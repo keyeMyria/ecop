@@ -137,12 +137,6 @@ Ext.define('Ecop.view.item.ItemForm', {
               permission: 'item.update.category',
               minWidth: 300,
               bind: '{currentItem.primaryCategoryId}'
-            },
-            {
-              fieldLabel: '供货商',
-              store: 'supplier',
-              permission: 'item.update.maintainer',
-              bind: '{currentItem.maintainerId}'
             }
           ]
         }

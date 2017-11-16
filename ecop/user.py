@@ -23,8 +23,8 @@ def userLogin(request, login, password): # pylint: disable=W0613
     user = sess.query(Party).filter_by(login=login).first()
 
     if user and user.verifyPassword(password):
-        # Only staff and vendor are allowed
-        if user.partyType not in ('S', 'V'):
+        # Only those with defined permission are allowed
+        if not user.extraData or not user.extraData['permission']:
             raise RPCNotAllowedError('您无权登录大管家ERP。')
 
         token = uuid.uuid4().hex
@@ -33,13 +33,12 @@ def userLogin(request, login, password): # pylint: disable=W0613
         conn = RedisConn()
         conn.setex('ecop|rpctoken:%s' % token,
                    int(siteConfig.auth_token_timeout),
-                   pickle.dumps(user),)
+                   pickle.dumps(user))
 
-        fields = ['partyId', 'login', 'partyName', 'mobile', 'partyType']
+        fields = ['partyId', 'login', 'partyName', 'mobile']
         ret = marshall(user, fields)
         ret['token'] = token
-        if user.extraData:
-            ret['permission'] = user.extraData['permission']
+        ret['permission'] = user.extraData['permission']
         return ret
 
     raise RPCUserError('登录失败，请检查用户名和密码！')

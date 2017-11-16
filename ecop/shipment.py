@@ -10,7 +10,6 @@ from genshi.template import TemplateLoader
 from z3c.rml import rml2pdf
 
 from pyramid.response import Response
-from pyramid.view import view_config
 from pyramid.httpexceptions import HTTPNotFound
 from pyramid_rpc.jsonrpc import jsonrpc_method
 
@@ -56,11 +55,6 @@ class ShipmentJSON(RpcBase):
             raise RPCUserError('结束日期必须大于起始日期！')
 
         query = self.sess.query(Shipment)
-
-        # for vendors, restrict search to their own shipments
-        user = self.request.user
-        if user.isVendor:
-            query = query.filter_by(senderId=user.partyId)
 
         if shipmentId:
             query = query.filter_by(shipmentId=shipmentId)

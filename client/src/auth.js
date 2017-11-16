@@ -10,10 +10,6 @@ Ext.define('Ecop.auth', {
         perm &&
         (perm === 'all' || me.currentUser.permission.indexOf(permission) !== -1)
       )
-    },
-
-    isVendor: function() {
-      return this.currentUser.partyType === 'V'
     }
   }
 })

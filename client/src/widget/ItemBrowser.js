@@ -42,18 +42,6 @@ Ext.define('Ecop.widget.ItemBrowser', {
         minWidth: 210,
         flex: 1
       },
-      /*      {
-        xtype: 'combo',
-        labelWidth: 50,
-        fieldLabel: '供货商',
-        itemId: 'maintainerId',
-        store: 'supplier',
-        permission: 'item.update.maintainer',
-        valueField: 'id',
-        plugins: 'cleartrigger',
-        width: 200
-      },
-*/
       {
         xtype: 'combo',
         itemId: 'itemStatus',
@@ -115,20 +103,6 @@ Ext.define('Ecop.widget.ItemBrowser', {
       params['assortmentOnly'] = true
     }
 
-    widget = me.down('#maintainerId')
-    if (widget && widget.getValue()) {
-      params['maintainerId'] = widget.getValue()
-    }
-    me.doItemSearch(params, true)
-  },
-
-  /*
-     * The separation of this method from onItemSearch and the use of
-     * 'showNotFound' argument is only for automatic dispalying vendor items
-     * when vendor logs in.
-     */
-  doItemSearch: function(params, showNotFound) {
-    var me = this
     Web.data.JsonRPC.request({
       method: 'item.search',
       params: params,
@@ -136,7 +110,7 @@ Ext.define('Ecop.widget.ItemBrowser', {
         me.getSelectionModel().deselectAll()
         me.store.loadData(items)
         me.store.commitChanges()
-        if (me.store.getCount() === 0 && showNotFound) {
+        if (me.store.getCount() === 0) {
           Ecop.util.Util.showError('没有找到符合条件的商品。')
         }
       }
