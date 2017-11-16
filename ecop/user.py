@@ -7,7 +7,7 @@ from hm.lib.config import siteConfig
 
 from webmodel.base import DBSession
 from webmodel.party import Party
-from weblibs.jsonrpc import RPCNotAllowedError, RPCUserError, marshall
+from weblibs.jsonrpc import RPCNotAllowedError, RPCUserError
 from weblibs.redis import RedisConn
 
 
@@ -22,23 +22,23 @@ def userLogin(request, login, password): # pylint: disable=W0613
     sess = DBSession()
     user = sess.query(Party).filter_by(login=login).first()
 
-    if user and user.verifyPassword(password):
-        # Only those with defined permission are allowed
-        if not user.extraData or not user.extraData['permission']:
-            raise RPCNotAllowedError('您无权登录大管家ERP。')
+    if not user or not user.verifyPassword(password):
+        raise RPCUserError('登录失败，请检查用户名和密码！')
 
-        token = uuid.uuid4().hex
-        # after user is authenticated, we cache the user object in redis
-        sess.expunge_all()  # detach from session
-        conn = RedisConn()
-        conn.setex('ecop|rpctoken:%s' % token,
-                   int(siteConfig.auth_token_timeout),
-                   pickle.dumps(user))
+    # Only those with defined permission are allowed
+    if not user.extraData or not user.extraData['permission']:
+        raise RPCNotAllowedError('您无权登录大管家ERP。')
 
-        fields = ['partyId', 'login', 'partyName', 'mobile']
-        ret = marshall(user, fields)
-        ret['token'] = token
-        ret['permission'] = user.extraData['permission']
-        return ret
+    token = uuid.uuid4().hex
+    # after user is authenticated, we cache the user object in redis
+    sess.expunge_all()  # detach from session
+    conn = RedisConn()
+    conn.setex('ecop|rpctoken:%s' % token,
+                int(siteConfig.auth_token_timeout),
+                pickle.dumps(user))
 
-    raise RPCUserError('登录失败，请检查用户名和密码！')
+    return {
+        'partyId': user.partyId,
+        'token': token,
+        'permission': user.extraData['permission']
+    }
