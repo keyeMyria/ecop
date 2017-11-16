@@ -23,12 +23,6 @@ Ext.define('Ecop.internal.PartyWindow', {
 
       items: [
         {
-          xtype: 'textfield',
-          name: 'partyName',
-          fieldLabel: '客戶名称',
-          allowBlank: false
-        },
-        {
           xtype: 'numberfield',
           name: 'mobile',
           vtype: 'mobile',
@@ -37,6 +31,11 @@ Ext.define('Ecop.internal.PartyWindow', {
           validateOnChange: false,
           fieldLabel: '手机号码',
           allowBlank: false
+        },
+        {
+          xtype: 'textfield',
+          name: 'partyName',
+          fieldLabel: '客戶名称'
         }
       ],
 
@@ -114,10 +113,10 @@ Ext.define('Ecop.widget.PartyPicker', {
 
   tpl: [
     '<tpl for=".">',
-    '<div class="x-boundlist-item">{partyType}{partyId} - {partyName},{mobile}</div>',
+    '<div class="x-boundlist-item">{partyId} - {partyName},{mobile}</div>',
     '</tpl>'
   ],
-  displayTpl: ['<tpl for=".">', '{partyType}{partyId} - {partyName}', '</tpl>'],
+  displayTpl: ['<tpl for=".">', '{partyId} - {partyName}', '</tpl>'],
 
   validator: function(v) {
     var me = this
@@ -215,7 +214,7 @@ Ext.define('Ecop.widget.PartyPicker', {
     if (form.isValid()) {
       params.partyType = me.getPartyType()
       Web.data.JsonRPC.request({
-        method: 'party.create',
+        method: 'party.upsert',
         params: [params],
         success: function(party) {
           me.setValue(party)

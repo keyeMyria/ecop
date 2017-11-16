@@ -3,7 +3,7 @@ from sqlalchemy import or_
 from pyramid_rpc.jsonrpc import jsonrpc_method
 
 from webmodel.party import Party
-from weblibs.jsonrpc import RPCUserError, marshall
+from weblibs.jsonrpc import marshall, RPCUserError
 
 from .base import RpcBase
 
@@ -12,7 +12,7 @@ class PartyJSON(RpcBase):
 
     @staticmethod
     def partyData(party):
-        fields = ['partyId', 'login', 'partyName', 'mobile', 'partyType']
+        fields = ['partyId', 'login', 'partyName', 'mobile']
         return marshall(party, fields)
 
     @jsonrpc_method(endpoint='rpc', method='party.search')
@@ -45,7 +45,7 @@ class PartyJSON(RpcBase):
 
         return [self.partyData(u) for u in users]
 
-    @jsonrpc_method(endpoint='rpc', method='party.create')
+    @jsonrpc_method(endpoint='rpc', method='party.upsert')
     def createParty(self, data):
         """
         Create a new party. Default type is customer. Now only mobile is
@@ -55,15 +55,19 @@ class PartyJSON(RpcBase):
 
         party = self.sess.query(Party)\
             .filter_by(mobile=data['mobile']).one_or_none()
-        if party:
-            raise RPCUserError('该手机号对应的用户已存在！')
 
-        party = Party(
-            mobile=data['mobile'],
-            partyName=data['partyName'],
-            partyType=data.get('partyType', 'C')
-        )
+        if not party:
+            if not data['partyName']:
+                raise RPCUserError('新顾客必须有名称')
 
-        self.sess.add(party)
+            party = Party(
+                mobile=data['mobile']
+            )
+            self.sess.add(party)
+
+        if data['partyName']:
+            party.partyName = data['partyName'],
+        party.partyType = data.get('partyType', 'C')
+
         self.sess.flush()
         return self.partyData(party)
