@@ -25,7 +25,7 @@
       <pageGraphics>
         <setFont name="simsun" size="8" />
         <drawCentredString x="297.5" y="1cm">
-          上海好买得商贸有限公司  地址：宜山路439号七建大厦1112室  电话：(021)34240987  网址：http://www.homemaster.cn
+          上海好买得商贸有限公司  地址：上海市徐汇区宜山路439号七建大厦1112室  电话：(021)34240987  网址：http://www.homemaster.cn
         </drawCentredString>
         <drawCentredString x="297.5" y="0.6cm">
           开户银行：浙江泰隆商业银行上海市徐汇支行  帐号：3101180120100010241  微信公众号：大管家家居
@@ -33,7 +33,8 @@
         <image file="[ecop]/resources/logo.png" x="1cm" y="28cm" width="4.65cm" height="1.24cm" />
         <setFont name="VeraBoldItalic" size="16" />
         <drawString x="16cm" y="28.8cm">021-34240987</drawString>
-        <setFont name="simhei" size="10" />
+        <setFont name="simhei" size="8" />
+        <drawString x="18cm" y="24.8cm">扫一扫打开订单</drawString>
         <barCode x="18cm" y="25cm" code="qr" height="2cm" width="2cm">${view.siteUrl}/order/${order.orderId}</barCode>
       </pageGraphics>
       <frame id="main" x1="1cm" y1="1.5cm" width="19cm" height="26cm"/>
