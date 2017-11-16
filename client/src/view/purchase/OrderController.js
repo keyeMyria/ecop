@@ -49,6 +49,71 @@ Ext.define('Ecop.view.purchase.OrderController', {
     })
   },
 
+  /*
+   * When `orderEditable` from view model is changed, update the grid view
+   * plugins to be readonly
+   */
+  onOrderEditableChange: function(editable) {
+    var me = this,
+      grid = me.lookup('itemsGrid')
+
+    me.callParent([editable])
+    if (editable) {
+      me.dropZone.unlock()
+    } else {
+      me.dropZone.lock()
+    }
+  },
+
+  onItemsGridRender: function(view) {
+    this.dropZone = new Ext.grid.ViewDropZone({
+      view: view,
+      ddGroup: 'so-2-po',
+
+      handleNodeDrop: function(data, record, position) {
+        var view = this.view,
+          store = view.getStore(),
+          index,
+          records = data.records,
+          i,
+          oi
+
+        if (view !== data.view) {
+          // create a list of new order items without orderItemId
+          for (var i = 0; i < records.length; i++) {
+            oi = records[i].getData()
+            records[i] = Ext.create('Web.model.OrderItem', {
+              itemId: oi.itemId,
+              itemName: oi.itemName,
+              specification: oi.specification,
+              model: oi.model,
+              quantity: oi.quantity,
+              sellingPrice: oi.unitCost,
+              unitId: oi.unitId
+            })
+          }
+        }
+
+        if (record && position) {
+          index = store.indexOf(record)
+
+          // 'after', or undefined (meaning a drop at index -1 on an empty View)...
+          if (position !== 'before') {
+            index++
+          }
+          store.insert(index, records)
+        } else {
+          // No position specified - append.
+          store.add(records)
+        }
+
+        view.getSelectionModel().select(records)
+        // Focus the first dropped node.
+        view.getNavigationModel().setPosition(records[0])
+      }
+    })
+  },
+
   addNewOrder: function() {
     var me = this,
       vm = me.getViewModel(),
@@ -86,23 +151,6 @@ Ext.define('Ecop.view.purchase.OrderController', {
     var me = this
     me.getViewModel().set('currentOrder', record)
     me.loadOrder()
-  },
-
-  /*
-   * When `orderEditable` from view model is changed, update the grid view
-   * plugins to be readonly
-   */
-  onOrderEditableChange: function(editable) {
-    var me = this,
-      grid = me.lookup('itemsGrid')
-
-    if (editable) {
-      grid.getView().plugins[0].enable()
-      grid.getPlugin('edit').enable()
-    } else {
-      grid.getView().plugins[0].disable()
-      grid.getPlugin('edit').disable()
-    }
   },
 
   doSaveOrder: function() {

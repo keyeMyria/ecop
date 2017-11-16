@@ -51,23 +51,6 @@ Ext.define('Ecop.view.sales.OrderController', {
   },
 
   /*
-   * When `orderEditable` from view model is changed, update the grid view
-   * plugins to be readonly
-   */
-  onOrderEditableChange: function(editable) {
-    var me = this,
-      grid = me.lookup('itemsGrid')
-
-    if (editable) {
-      grid.getView().plugins[0].enable()
-      grid.getPlugin('edit').enable()
-    } else {
-      grid.getView().plugins[0].disable()
-      grid.getPlugin('edit').disable()
-    }
-  },
-
-  /*
    * Recalculate the order total amount in the order header
    */
   refreshAmount: function() {

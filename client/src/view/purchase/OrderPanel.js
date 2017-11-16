@@ -215,9 +215,16 @@ Ext.define('Ecop.view.purchase.OrderPanel', {
         plugins: [
           {
             ptype: 'gridviewdragdrop',
+            ddGroup: 'po-items-reorder',
             containerScroll: true
           }
-        ]
+        ],
+        listeners: {
+          render: {
+            fn: 'onItemsGridRender',
+            single: true
+          }
+        }
       },
 
       plugins: [

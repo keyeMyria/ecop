@@ -27,6 +27,23 @@ Ext.define('Ecop.view.sales.OrderControllerBase', {
   },
 
   /*
+   * When `orderEditable` from view model is changed, update the grid view
+   * plugins to be readonly
+   */
+  onOrderEditableChange: function(editable) {
+    var me = this,
+      grid = me.lookup('itemsGrid')
+
+    if (editable) {
+      grid.getView().plugins[0].enable()
+      grid.getPlugin('edit').enable()
+    } else {
+      grid.getView().plugins[0].disable()
+      grid.getPlugin('edit').disable()
+    }
+  },
+
+  /*
    * Set the order header and items data as returned by the json rpc method
    * order.sales.data or order.purchase.data
    */
@@ -60,6 +77,23 @@ Ext.define('Ecop.view.sales.OrderControllerBase', {
     // do not trigger Ctrl+S on sales order
     evt.stopEvent()
     this.doSaveOrder()
+  },
+
+  /*
+   * When `orderEditable` from view model is changed, update the grid view
+   * plugins to be readonly
+   */
+  onOrderEditableChange: function(editable) {
+    var me = this,
+      grid = me.lookup('itemsGrid')
+
+    if (editable) {
+      grid.getView().plugins[0].dropZone.unlock()
+      grid.getPlugin('edit').enable()
+    } else {
+      grid.getView().plugins[0].dropZone.lock()
+      grid.getPlugin('edit').disable()
+    }
   },
 
   /*
@@ -246,7 +280,7 @@ Ext.define('Ecop.view.sales.OrderControllerBase', {
         if (me.orderType === 'S') {
           oi.unitCost = item.get('purchasePrice')
         }
-        me.itemStore.add(Web.model.OrderItem(oi))
+        me.itemStore.add(new Web.model.OrderItem(oi))
       }
     })
   },

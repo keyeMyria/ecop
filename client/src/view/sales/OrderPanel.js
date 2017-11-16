@@ -264,6 +264,7 @@ Ext.define('Ecop.view.sales.OrderPanel', {
             plugins: [
               {
                 ptype: 'gridviewdragdrop',
+                ddGroup: 'so-2-po',
                 containerScroll: true
               }
             ]

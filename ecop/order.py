@@ -66,6 +66,9 @@ class OrderJSON(RpcBase):
             'model', 'quantity', 'unitId', 'sellingPrice', 'unitCost', 'pos']
 
         order.payments.sort(key=lambda op: op.payment.payTime)
+        # a flush won't reload the order, so order item position change will
+        # not automatically be updated, hence sort again
+        order.items.sort(key=lambda oi: oi.pos)
 
         return {
             'header': header,
@@ -356,6 +359,10 @@ class OrderJSON(RpcBase):
         header = marshall(order, fields)
         oi_fields = ['orderItemId', 'itemId', 'itemName', 'specification',
             'model', 'quantity', 'unitId', 'sellingPrice', 'pos']
+
+        # a flush won't reload the order, so order item position change will
+        # not automatically be updated, hence sort again
+        order.items.sort(key=lambda oi: oi.pos)
 
         return {
             'header': header,
