@@ -27,7 +27,7 @@ Ext.define('Ecop.view.purchase.OrderManager', {
   items: [
     {
       xtype: 'grid',
-      height: 200,
+      height: 150,
       reference: 'orderlist',
 
       bind: {
@@ -82,7 +82,7 @@ Ext.define('Ecop.view.purchase.OrderManager', {
           },
           {
             text: '创建时间',
-            width: 160,
+            width: 90,
             dataIndex: 'createTime',
             formatter: 'date("Y-m-d")'
           },

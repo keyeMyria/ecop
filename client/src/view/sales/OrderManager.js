@@ -201,6 +201,21 @@ Ext.define('Ecop.view.sales.OrderManager', {
             width: 80,
             dataIndex: 'margin',
             align: 'right',
+            summaryType: function(data) {
+              var store, amount, profit
+
+              if (data[0]) {
+                store = data[0].store
+                amount = store.sum('amount')
+                if (amount) {
+                  return store.sum('profit') / amount
+                }
+              }
+              return 0
+            },
+            summaryRenderer: function(v) {
+              return Ext.util.Format.percent(v, '0.0')
+            },
             formatter: 'percent("0.00")'
           },
           {
