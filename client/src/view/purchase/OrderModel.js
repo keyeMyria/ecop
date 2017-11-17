@@ -58,13 +58,6 @@ Ext.define('Ecop.view.purchase.OrderModel', {
     showCreatePOButton: function(get) {
       var status = get('relatedOrder.orderStatus')
       return status !== 4 && status !== 5 && !isNaN(get('currentOrder.orderId'))
-    },
-
-    /*
-     * If an order is completed, disable the save button
-     */
-    isCompleted: function(get) {
-      return get('originalStatus') === 4
     }
   }
 })

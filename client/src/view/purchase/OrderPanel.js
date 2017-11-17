@@ -23,10 +23,7 @@ Ext.define('Ecop.view.purchase.OrderPanel', {
     {
       iconCls: 'x-fa fa-save',
       tooltip: '保存订单',
-      handler: 'doSaveOrder',
-      bind: {
-        disabled: '{isCompleted}'
-      }
+      handler: 'doSaveOrder'
     },
     {
       iconCls: 'x-fa fa-plus-circle',
