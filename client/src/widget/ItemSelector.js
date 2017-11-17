@@ -34,7 +34,7 @@ Ext.define('Ecop.widget.ItemSelector', {
       handler: 'onSelect'
     },
     {
-      text: '取消',
+      text: '关闭',
       handler: function() {
         this.up('window').close()
       }
@@ -52,7 +52,10 @@ Ext.define('Ecop.widget.ItemSelector', {
       }
       me.fireEvent('itemselect', items)
     }
-    me.down('itembrowser').getSelectionModel().deselectAll()
-    me.close()
+    me
+      .down('itembrowser')
+      .getSelectionModel()
+      .deselectAll()
+    // me.close()
   }
 })

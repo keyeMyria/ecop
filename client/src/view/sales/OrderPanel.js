@@ -341,7 +341,7 @@ Ext.define('Ecop.view.sales.OrderPanel', {
               },
               {
                 text: '数量',
-                width: 70,
+                width: 60,
                 align: 'center',
                 dataIndex: 'quantity',
                 editor: {
@@ -389,9 +389,9 @@ Ext.define('Ecop.view.sales.OrderPanel', {
                 }
               },
               {
-                text: '毛利率',
-                width: 60,
-                align: 'right',
+                text: '毛利',
+                width: 50,
+                align: 'center',
                 dataIndex: 'margin',
                 formatter: 'percent("0")',
                 bind: {
@@ -478,13 +478,13 @@ Ext.define('Ecop.view.sales.OrderPanel', {
             },
             {
               fieldLabel: '剩余应付',
-              labelWidth: 70,
+              labelWidth: 60,
               bind: '{restAmount}'
             },
             {
               xtype: 'numberfield',
               fieldLabel: '约定付款',
-              labelWidth: 70,
+              labelWidth: 60,
               allowBlank: true,
               minValue: 1,
               hidden: true,
@@ -495,6 +495,15 @@ Ext.define('Ecop.view.sales.OrderPanel', {
                 // installmentAmount should not be equal to restAmount
                 maxValue: '{restAmount - 1}'
               }
+            },
+            {
+              xtype: 'displayfield',
+              bind: {
+                value: '{currentOrder.effectiveCost}',
+                hidden: '{!sidePanelCollapsed}'
+              },
+              fieldLabel: '成本',
+              renderer: Ext.util.Format.numberRenderer('0,000.00')
             },
             {
               xtype: 'displayfield',

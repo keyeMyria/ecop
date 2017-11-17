@@ -59,12 +59,12 @@ Ext.define('Ecop.view.purchase.OrderManager', {
           bind: {
             disabled: '{!showCreatePOButton}'
           }
-        },
+        } /*
         {
           iconCls: 'x-fa fa-refresh',
           tooltip: '刷新',
           handler: 'refreshPOList'
-        }
+        } */
       ],
 
       columns: {
