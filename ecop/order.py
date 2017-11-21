@@ -351,7 +351,7 @@ class OrderJSON(RpcBase):
 
         fields = [
             'orderId', 'supplierId', 'customerId', 'createTime', 'amount',
-            'freight', 'orderStatus', 'regionCode', 'recipientName',
+            'rebate', 'freight', 'orderStatus', 'regionCode', 'recipientName',
             'streetAddress', 'recipientMobile', 'recipientPhone', 'memo',
             'completionDate', 'supplierName', 'creatorName'
         ]
