@@ -65,8 +65,7 @@
       <tr>
         <td>
           <para style="normal" leftIndent="60" firstLineIndent="-60">客户地址：${view.regionName}${order.streetAddress}</para>
-          <para style="normal"
-                py:if="order.customer.partyName != order.recipientName">
+          <para style="normal">
             联系人: $order.recipientName
           </para>
           <para style="normal">联系电话：$view.mobileAndPhone</para>
