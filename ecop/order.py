@@ -485,14 +485,21 @@ class OrderPDFDownload(DocBase):
 
     def __call__(self):
         loader = TemplateLoader([os.path.dirname(__file__)])
-        tmplName = 'sales_order.rml' if isinstance(self.order, SalesOrder) \
-            else 'purchase_order.rml'
+        if self.order.orderType == ORDER_TYPE.SALES:
+            tmplName = 'sales_order.rml'
+            prefix = 'SO'
+        else:
+            tmplName = 'purchase_order.rml'
+            prefix = 'PO'
+
         tmpl = loader.load(tmplName)
         stream = tmpl.generate(order=self.order, view=self)
         body = rml2pdf.parseString(stream.render()).read()
 
         response = Response(
             content_type='application/pdf',
+            content_disposition='filename="%s%s.pdf"' % (
+                prefix, self.order.orderId),
             content_length=len(body),
             body=body)
         return response
