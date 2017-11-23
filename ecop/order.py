@@ -180,6 +180,14 @@ class OrderJSON(RpcBase):
             if not order.completionDate:
                 order.completionDate = date.today()
 
+        elif new == ORDER_STATUS.CLOSED:
+            # we assume that whenever there is non-zero actual cost, there is
+            # some completed purchase order related sales order
+            if order.actualCost:
+                raise RPCUserError('供应商订单已完成，不能关闭销售订单！')
+
+            order.completionDate = None
+
         order.orderStatus = new
 
     @jsonrpc_method(endpoint='rpc', method='order.sales.search')
