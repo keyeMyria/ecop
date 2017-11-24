@@ -9,4 +9,4 @@ change build options and build again.
 
 Then replace the folder `ckeditor` with the downloaded build and move the new
 build config file `build-config.js` out of the ckeditor folder into the
-`lib` folder as `ckeditor-build-config.js`.
+current folder as `ckeditor-build-config.js`.

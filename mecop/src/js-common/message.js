@@ -1,130 +1,140 @@
-import $ from 'jquery'
-import React from 'react'
-import {render} from 'react-dom'
-import delay from 'lodash/delay'
-
-import Dialog from 'material-ui/Dialog'
-import FlatButton from 'material-ui/FlatButton'
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
-import ActionInfo from 'material-ui/svg-icons/action/info'
-import ActionCheckCircle from 'material-ui/svg-icons/action/check-circle'
-import AlertWarning from 'material-ui/svg-icons/alert/warning'
-import AlertError from 'material-ui/svg-icons/alert/error'
-import {orange300, red700, green500, grey400} from 'material-ui/styles/colors'
-
-import defaultTheme from 'js-common/mui-theme'
-
-
-const iconStyles = {
-  width: 48,
-  height: 48
-};
-
-
-class MessageDialog extends React.Component {
-    state = {
-        open: false,
-        icon: null,
-        message: ''
-    }
-
-    handleClose = () => {
-        // clear any pending close timer
-        if (this.timer) {
-            clearTimeout(this.timer);
-            this.timer = null;
-        }
-        this.setState({open: false})
-        this.callback && this.callback();
-    }
-
-    show = (options) => {
-        this.setState({
-            open: true,
-            icon: options.icon,
-            message: options.message
-        });
-
-        if (options.autoHide) {
-            this.timer = delay(this.handleClose, options.autoHide);
-        };
-        this.callback = options.callback;
-    }
-
-    success = (message, options) => {
-        this.show(Object.assign(options || {}, {
-            message: message,
-            icon: <ActionCheckCircle color={green500} style={iconStyles} />
-        }));
-    }
-
-    info = (message, options) => {
-        this.show(Object.assign(options || {}, {
-            message: message,
-            icon: <ActionInfo color={grey400} style={iconStyles} />
-        }));
-    }
-
-    error = (message, options) => {
-        this.show(Object.assign(options || {}, {
-            message: message,
-            icon: <AlertError color={red700} style={iconStyles} />
-        }));
-    }
-
-    warn = (message, options) => {
-        this.show(Object.assign(options || {}, {
-            message: message,
-            icon: <AlertWarning color={orange300} style={iconStyles} />
-        }));
-    }
-
-    render() {
-        const actions = [
-            <FlatButton
-                label="确&nbsp;定"
-                icon={<ActionCheckCircle />}
-                primary
-                onTouchTap={this.handleClose}
-            />,
-        ];
-
-        return (
-            <MuiThemeProvider muiTheme={defaultTheme}>
-                <Dialog
-                    actions={actions}
-                    modal
-                    open={this.state.open}
-                    contentStyle={{maxWidth: 650}}
-                >
-                    <div style={{float: 'left'}}>{this.state.icon}</div>
-                    <div style={{marginLeft: '70px'}}>{this.state.message}</div>
-                </Dialog>
-            </MuiThemeProvider>
-        )
-    }
-}
-
-
 /**
  *
  * The module exports a single object that will be lazily rendered a
  * MessageDialog component into the DOM upon first use.
  *
  *   import message from 'js-common/message'
- *   message.error('Something wrong', {autoHide: 2000})
+ *   message.error('Something wrong', {autoHide: 2000, callback: fn})
+ *
+ *  The callback function will be invoked when the message is closed.
  *
  */
 
-var dialog;
+import React from 'react'
+import { render } from 'react-dom'
+import delay from 'lodash/delay'
 
-function invoke(name, ...args) {
-    if (!dialog) {
-        dialog = render(<MessageDialog />, $('<div role="message"/>').appendTo($('body'))[0]);
-    }
-    dialog[name](...args);
+import Dialog, { DialogContent, DialogActions } from 'material-ui/Dialog'
+import Button from 'material-ui/Button'
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
+import InfoIcon from 'material-ui-icons/Info'
+import CheckCircleIcon from 'material-ui-icons/CheckCircle'
+import WarningIcon from 'material-ui-icons/Warning'
+import ErrorIcon from 'material-ui-icons/Error'
+import { orange, red, green, grey } from 'material-ui/colors'
+
+import theme from 'js-common/mui-theme'
+
+const iconStyles = {
+  width: 48,
+  height: 48
 }
 
-export default ['show', 'success', 'info', 'error', 'warn'].reduce(
-    (o, name) => {o[name] = invoke.bind(null, name); return o}, {}
-);
+class MessageDialog extends React.Component {
+  state = {
+    open: false,
+    icon: null,
+    message: '',
+    callback: null
+  }
+
+  handleClose = () => {
+    // clear any pending close timer
+    if (this.timer) {
+      clearTimeout(this.timer)
+      this.timer = null
+    }
+    this.setState({ open: false })
+  }
+
+  show = options => {
+    this.setState({
+      open: true,
+      icon: options.icon,
+      message: options.message,
+      callback: options.callback
+    })
+
+    if (options.autoHide) {
+      this.timer = delay(this.handleClose, options.autoHide)
+    }
+  }
+
+  success = (message, options) => {
+    this.show(
+      Object.assign(options || {}, {
+        message: message,
+        icon: <CheckCircleIcon color={green[500]} style={iconStyles} />
+      })
+    )
+  }
+
+  info = (message, options) => {
+    this.show(
+      Object.assign(options || {}, {
+        message: message,
+        icon: <InfoIcon color={grey[400]} style={iconStyles} />
+      })
+    )
+  }
+
+  error = (message, options) => {
+    this.show(
+      Object.assign(options || {}, {
+        message: message,
+        icon: <ErrorIcon color={red[700]} style={iconStyles} />
+      })
+    )
+  }
+
+  warn = (message, options) => {
+    this.show(
+      Object.assign(options || {}, {
+        message: message,
+        icon: <WarningIcon color={orange[300]} style={iconStyles} />
+      })
+    )
+  }
+
+  render() {
+    const { open, icon, message, callback } = this.state
+
+    return (
+      <MuiThemeProvider theme={theme}>
+        <Dialog open={open} onExited={callback}>
+          <DialogContent>
+            <div style={{ float: 'left' }}>{icon}</div>
+            <div style={{ marginLeft: '70px' }}>{message}</div>
+          </DialogContent>
+          <DialogActions>
+            <Button color="primary" onClick={this.handleClose}>
+              <CheckCircleIcon />确&nbsp;定
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </MuiThemeProvider>
+    )
+  }
+}
+
+var dialog = null
+
+function invoke(name, ...args) {
+  if (!dialog) {
+    const wrapper = document.createElement('div')
+    document.body.appendChild(wrapper)
+    dialog = render(<MessageDialog />, wrapper)
+  }
+  dialog[name](...args)
+}
+
+export default [
+  'show',
+  'success',
+  'info',
+  'error',
+  'warn'
+].reduce((o, name) => {
+  o[name] = invoke.bind(null, name)
+  return o
+}, {})

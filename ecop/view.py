@@ -67,7 +67,6 @@ class DecopView(BaseEcopView):
                 'ecop/client/build/development/resources/Ecop-all.css',
                 'ecop/client/ext/build/ext.js',
                 'ecop/client/lib/spark-md5.min.js',
-                'ecop/client/lib/jquery-3.1.0.min.js',
                 'ecop/client/lib/ckeditor/ckeditor.js',
                 'ecop/client/app.js'
             ]
@@ -76,7 +75,6 @@ class DecopView(BaseEcopView):
             'head': [
                 'ecop/resources/Ecop-all.css',
                 'ecop/lib/spark-md5.min.js',
-                'ecop/lib/jquery-3.1.0.min.js',
                 'ecop/lib/ckeditor/ckeditor.js',
                 'ecop/app.js'
             ]
