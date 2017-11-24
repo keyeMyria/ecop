@@ -2,11 +2,16 @@ Ext.define('Ecop.view.article.ArticleManagerController', {
   extend: 'Ext.app.ViewController',
   alias: 'controller.article-manager',
 
+  requires: 'Web.model.Article',
+
   onSearchArticle: function() {
     var me = this
 
     params = {
-      text: me.lookup('searchText').getValue().trim(),
+      text: me
+        .lookup('searchText')
+        .getValue()
+        .trim(),
       articleType: me.lookup('articleType').getValue()
     }
 
@@ -44,25 +49,23 @@ Ext.define('Ecop.view.article.ArticleManagerController', {
     if (tab) {
       view.setActiveTab(tab)
     } else {
-      Web.data.JsonRPC
-        .request({
-          method: 'article.data',
-          params: [aid]
-        })
-        .then(function(article) {
-          var p
-          record.set(article)
-          p = Ext.widget('articlepanel', {
-            articleId: aid,
-            viewModel: {
-              data: {
-                article: record
-              }
+      Web.data.JsonRPC.request({
+        method: 'article.data',
+        params: [aid]
+      }).then(function(article) {
+        var p
+        record.set(article)
+        p = Ext.widget('articlepanel', {
+          articleId: aid,
+          viewModel: {
+            data: {
+              article: record
             }
-          })
-          view.add(p)
-          view.setActiveTab(p)
+          }
         })
+        view.add(p)
+        view.setActiveTab(p)
+      })
     }
   }
 })

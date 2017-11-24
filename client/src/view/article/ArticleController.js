@@ -16,7 +16,10 @@ Ext.define('Ecop.view.article.ArticleController', {
       return
     }
 
-    content = f.findField('content').getValue().trim()
+    content = f
+      .findField('content')
+      .getValue()
+      .trim()
     if (!content) {
       return Ecop.util.Util.showError('文章内容不能为空')
     }
@@ -44,7 +47,9 @@ Ext.define('Ecop.view.article.ArticleController', {
   onDelete: function() {
     var article = this.getModel(),
       panel = this.getView()
-    Ext.Msg.confirm('确定删除?', '文章一旦删除将无法恢复,是否继续?', function(btnId) {
+    Ext.Msg.confirm('确定删除?', '文章一旦删除将无法恢复,是否继续?', function(
+      btnId
+    ) {
       if (btnId === 'yes') {
         Web.data.JsonRPC.request({
           method: 'article.delete',
