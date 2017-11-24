@@ -22,9 +22,9 @@ Ext.define('Ecop.widget.CKEditor', {
       removeButtons: 'h4,h5,h6,Strike'
     })
     // the delay is necessary so that when the widget is first intialized
-    // the ckeditor will have enough time to be full initialized so that
+    // the ckeditor will have enough time to be fully initialized so that
     // editor.resize method can be used
-    me.on('resize', me.onTextElResize, me, { delay: 300 })
+    me.on('resize', me.onTextElResize, me, { delay: 500 })
   },
 
   getRawValue: function() {

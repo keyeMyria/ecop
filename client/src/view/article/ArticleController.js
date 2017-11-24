@@ -33,11 +33,28 @@ Ext.define('Ecop.view.article.ArticleController', {
           : article.getData({ changes: true, critical: true })
       ],
       success: function(response) {
+        if (!article.phantom) {
+          setTimeout(me.reloadPreview.bind(me), 1000)
+        }
         Ecop.util.Util.showInfo('文章保存成功。')
         article.set(response)
         article.commit()
       }
     })
+  },
+
+  reloadPreview: function() {
+    var tmp_src,
+      iframe = this.lookup('preview')
+        .getEl()
+        .down('iframe').dom
+
+    // to avoid Cross Domain problem, we do not use window.location.reload
+    if (iframe) {
+      var tmp_src = iframe.src
+      iframe.src = ''
+      iframe.src = tmp_src
+    }
   },
 
   onCancel: function() {

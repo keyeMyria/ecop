@@ -139,12 +139,18 @@ Ext.define('Ecop.view.article.ArticlePanel', {
     },
     {
       xtype: 'panel',
-      collapsible: true,
       collapsed: true,
+      minWidth: 400,
       width: 400,
+      layout: 'fit',
       collapseDirection: 'right',
       reference: 'preview',
-      title: '页面预览'
+      title: '页面预览',
+      bind: {
+        collapsed: '{!previewUrl}',
+        collapsible: '{previewUrl}',
+        html: '<iframe width="100%" height="100%" src="{previewUrl}" />'
+      }
     }
   ]
 })
