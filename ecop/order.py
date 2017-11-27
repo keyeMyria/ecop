@@ -2,7 +2,7 @@ import os.path
 from datetime import date, datetime, timedelta
 from decimal import Decimal
 
-from sqlalchemy.sql import and_, func, select, update
+from sqlalchemy.sql import and_, not_, func, select, update
 from sqlalchemy.orm import eagerload
 from genshi.template import TemplateLoader
 from z3c.rml import rml2pdf
@@ -176,6 +176,15 @@ class OrderJSON(RpcBase):
         if new == ORDER_STATUS.COMPLETED:
             if order.amount != order.paidAmount:
                 raise RPCUserError('订单金额和收款金额不一致，不能完成订单！')
+
+            query = self.sess.query(PurchaseOrder).filter(and_(
+                PurchaseOrder.relatedOrderId == order.orderId,
+                not_(PurchaseOrder.orderStatus.in_(
+                    (ORDER_STATUS.COMPLETED, ORDER_STATUS.CLOSED)))
+            ))
+            orders = query.all()
+            if orders:
+                raise RPCUserError('该订单对应的采购订单未完成！')
 
             if not order.completionDate:
                 order.completionDate = date.today()
