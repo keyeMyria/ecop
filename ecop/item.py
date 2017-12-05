@@ -46,7 +46,7 @@ class ItemJSON(RpcBase):
 
         Returns a list or found Items. If not found, an empty list is returned.
         """
-        query = self.sess.query(Item).order_by(Item.lastModified.desc())
+        query = self.sess.query(Item)
 
         if not (catId or text or brandId):
             raise RPCUserError('请指定搜索条件!')
