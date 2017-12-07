@@ -1,5 +1,12 @@
 {
     /**
+     *  An array of the paths to all the applications present in this workspace
+     */
+    "apps": [
+        "desktop"
+    ],
+
+    /**
      * An object containing key value pair framework descriptors.
      *
      * The value can be a string or an object containing at least one of "dir" or "pkg",
@@ -40,7 +47,7 @@
          * This folder contains all local packages.
          * If a comma-separated string is used as value the first path will be used as the path to generate new packages.
          */
-        "dir": "/home/hong/workspace/web/client/packages/local",
+        "dir": "${workspace.dir}/packages/local,${workspace.dir}/packages",
 
         /**
          * This folder contains all extracted (remote) packages.

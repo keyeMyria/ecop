@@ -35,9 +35,9 @@ rsync -rv --filter '. rsync.rule' . build/ecop/ecop
 
 echo "##################   Building Ecop Client   ##########################"
 rm -fr client/build/production
-cd client
+cd client/desktop
 sencha app build production
-cd ..
+cd ../..
 cp client/build/production/app.js build/asset/ecop
 cp -r client/build/production/resources build/asset/ecop
-cp -r client/lib build/asset/ecop
+cp -r client/desktop/lib build/asset/ecop

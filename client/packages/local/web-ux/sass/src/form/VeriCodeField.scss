@@ -1,0 +1,26 @@
+.ux-vericode {
+  .x-form-trigger-wrap .x-form-text {
+    border-width: 1px;
+    border-style: solid;
+  }
+
+  .x-form-trigger-wrap-default {
+    border: 0;
+
+    .x-form-text {
+      border-color: $form-field-border-color;
+    }
+  }
+
+  .x-form-trigger-wrap-focus {
+    .x-form-text {
+      border-color: $form-field-focus-border-color;
+    }
+  }
+
+  .x-form-trigger-wrap-invalid {
+    .x-form-text {
+      border-color: $form-field-invalid-border-color;
+    }
+  }
+}

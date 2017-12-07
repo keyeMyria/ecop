@@ -1,0 +1,62 @@
+.ux-info-panel {
+
+    min-height: 65px;
+    padding: 5px;
+    margin-bottom: 5px;
+
+    border: 5px solid $panel-frame-border-color;
+    border-radius: 5px;
+
+    .ux-ip-icon {
+        float: left;
+        height: 45px;
+        width: 45px;
+        font: 44px/1 FontAwesome;
+    }
+
+    .ux-ip-info {
+        color: grey;
+        &:before {
+            content: "\f05a";
+        }
+    }
+
+    .ux-ip-error {
+        color: #ee611f;
+        &:before {
+            content: "\f057";
+        }
+    }
+
+    .ux-ip-warning {
+        color: #f8d400
+        &:before {
+            content: "\f071";
+        }
+    }
+
+    .ux-ip-success {
+        color: green;
+        &:before {
+            content: "\f058";
+        }
+    }
+
+    .ux-ip-content {
+        margin-left: 50px;
+
+        font-size: 1.1em;
+        h1 {
+            font-size: 1.3em;
+        }
+
+        ol {
+            padding-left: 10px;
+            list-style: decimal inside;
+            margin: 5px 0px;
+            li {
+                margin-bottom: 5px;
+            }
+        }
+    }
+}

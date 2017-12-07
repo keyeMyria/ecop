@@ -36,6 +36,7 @@ Build (2017-11-)
 Future
 ------
 
+ * Generate Wechat order payment Barcode for sending to customer
  * Make ItemSelector window a global singleton window using utility function
     Ecop.util.Util.selectItem(callback)
  * Share session and login between ecop and web
