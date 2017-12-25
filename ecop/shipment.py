@@ -1,3 +1,5 @@
+""" All shipment related functions are not in current use """
+
 import os
 import re
 import json

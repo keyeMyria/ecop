@@ -23,13 +23,17 @@ Build 31 (2017-8-28)
  * Merge item group management into a tab in ItemWindow
 
 
-Build (2017-11-)
+Build 65 (2017-12-25)
 
  * Add paymentDate to order payment
  * Show photos uploaded into order by customer
  * Send an order url to customer via SMS
  * Generate purchase orders for service order and proper profit accounting
 
+
+Build (2018)
+
+ * Manual supplier payment processing via Wepay
  * Upload photos to order as attachments
 
 
