@@ -100,6 +100,11 @@ Ext.define('Ecop.view.sales.OrderPanel', {
           iconCls: 'x-fa fa-exchange',
           tooltip: '供应商订单',
           handler: 'onOpenPurchase'
+        },
+        {
+          text: '付款测试',
+          tooltip: '供应商订单',
+          handler: 'onPurchasePayment'
         }
       ],
 

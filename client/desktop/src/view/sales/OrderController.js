@@ -237,5 +237,11 @@ Ext.define('Ecop.view.sales.OrderController', {
         Ecop.util.Util.showInfo('信息已发送!', me.closeNotifyWindow, me)
       }
     })
+  },
+
+  onPurchasePayment: function() {
+    Web.data.JsonRPC.request({
+      method: 'order.purchase.pay'
+    })
   }
 })
