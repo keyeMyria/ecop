@@ -2,7 +2,7 @@ Ext.define('Ecop.view.purchase.OrderModel', {
   extend: 'Ext.app.ViewModel',
   alias: 'viewmodel.po-order',
 
-  requires: ['Web.model.OrderItem'],
+  requires: ['Web.model.OrderItem', 'Web.model.OrderPayment'],
 
   data: {
     currentOrder: null,
@@ -27,6 +27,11 @@ Ext.define('Ecop.view.purchase.OrderModel', {
     // the order items of the current purchase order
     items: {
       model: 'Web.model.OrderItem'
+    },
+
+    payments: {
+      model: 'Web.model.OrderPayment',
+      proxy: { type: 'memory', reader: 'array' }
     }
   },
 
@@ -58,6 +63,17 @@ Ext.define('Ecop.view.purchase.OrderModel', {
     showCreatePOButton: function(get) {
       var status = get('relatedOrder.orderStatus')
       return status !== 4 && status !== 5 && !isNaN(get('currentOrder.orderId'))
+    },
+
+    showPaymentGrid: function(get) {
+      return get('currentOrder.paidAmount') > 0
+    },
+
+    payable: function(get) {
+      return (
+        get('originalStatus') === 4 &&
+        get('currentOrder.amount') > get('currentOrder.paidAmount')
+      )
     }
   }
 })

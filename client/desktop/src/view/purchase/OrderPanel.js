@@ -48,6 +48,14 @@ Ext.define('Ecop.view.purchase.OrderPanel', {
         href: '{downloadUrl}',
         disabled: '{isNewOrder}'
       }
+    },
+    {
+      iconCls: 'x-fa fa-yen',
+      tooltip: '订单结算',
+      handler: 'onPurchasePayment',
+      bind: {
+        disabled: '{!payable}'
+      }
     }
   ],
 
@@ -318,6 +326,56 @@ Ext.define('Ecop.view.purchase.OrderPanel', {
             dataIndex: 'amount',
             summaryType: 'sum',
             summaryRenderer: Ext.util.Format.numberRenderer('0,000.00')
+          }
+        ]
+      }
+    },
+    {
+      xtype: 'grid',
+      hidden: true,
+      bind: {
+        store: '{payments}',
+        hidden: '{!showPaymentGrid}'
+      },
+
+      columns: {
+        defaults: {
+          menuDisabled: true,
+          sortable: false,
+          headerAlign: 'center'
+        },
+
+        items: [
+          {
+            text: '付款时间',
+            width: 160,
+            align: 'center',
+            dataIndex: 'payTime',
+            renderer: Ext.util.Format.dateRenderer('Y-m-d H:i:s')
+          },
+          {
+            text: '付款渠道',
+            width: 150,
+            dataIndex: 'paymentMethod',
+            renderer: Ext.util.Format.storeRenderer(
+              'paymentmethod',
+              'id',
+              'text'
+            )
+          },
+          {
+            text: '付款金额',
+            width: 90,
+            align: 'center',
+            dataIndex: 'amount',
+            formatter: 'number("0,000.00")',
+            summaryType: 'sum',
+            summaryRenderer: Ext.util.Format.numberRenderer('0,000.00')
+          },
+          {
+            text: '付款人',
+            align: 'center',
+            dataIndex: 'creatorName'
           }
         ]
       }

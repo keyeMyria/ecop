@@ -371,20 +371,29 @@ class OrderJSON(RpcBase):
             'orderId', 'supplierId', 'customerId', 'createTime', 'amount',
             'rebate', 'freight', 'orderStatus', 'regionCode', 'recipientName',
             'streetAddress', 'recipientMobile', 'recipientPhone', 'memo',
-            'completionDate', 'supplierName', 'creatorName'
+            'completionDate', 'supplierName', 'creatorName', 'paidAmount'
         ]
 
         header = marshall(order, fields)
         oi_fields = ['orderItemId', 'itemId', 'itemName', 'specification',
             'model', 'quantity', 'unitId', 'sellingPrice', 'pos']
 
+        order.payments.sort(key=lambda op: op.payment.payTime)
         # a flush won't reload the order, so order item position change will
         # not automatically be updated, hence sort again
         order.items.sort(key=lambda oi: oi.pos)
 
         return {
             'header': header,
-            'items': [marshall(oi, oi_fields) for oi in order.items]
+            'items': [marshall(oi, oi_fields) for oi in order.items],
+            'payments': [{
+                'paymentId': op.paymentId,
+                'amount': op.amount,
+                'paymentMethod': op.payment.paymentMethod,
+                'payTime': op.payment.payTime,
+                'creatorName': op.payment.creatort.partyName \
+                    if op.payment.creator else None
+            } for op in order.payments]
         }
 
     def changePurchaseOrderStatus(self, order, new):

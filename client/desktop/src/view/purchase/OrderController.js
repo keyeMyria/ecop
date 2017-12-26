@@ -45,6 +45,7 @@ Ext.define('Ecop.view.purchase.OrderController', {
       params: [order.getId()],
       success: function(ret) {
         me.setOrderData(ret)
+        vm.get('payments').loadData(ret.payments)
       }
     })
   },
@@ -168,5 +169,19 @@ Ext.define('Ecop.view.purchase.OrderController', {
         Ecop.util.Util.showInfo('订单保存成功!')
       }
     ])
+  },
+
+  onPurchasePayment: function() {
+    var me = this,
+      vm = me.getViewModel(),
+      order = vm.get('currentOrder')
+
+    Web.data.JsonRPC.request({
+      method: 'order.purchase.pay',
+      params: [order.getId()],
+      success: function() {
+        me.loadOrder()
+      }
+    })
   }
 })
