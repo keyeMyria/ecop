@@ -16,6 +16,7 @@ Ext.define('Ecop.view.purchase.OrderManager', {
   viewModel: {
     type: 'po-order'
   },
+  cls: 'po-manager',
 
   layout: {
     type: 'vbox',
@@ -59,12 +60,7 @@ Ext.define('Ecop.view.purchase.OrderManager', {
           bind: {
             disabled: '{!showCreatePOButton}'
           }
-        } /*
-        {
-          iconCls: 'x-fa fa-refresh',
-          tooltip: '刷新',
-          handler: 'refreshPOList'
-        } */
+        }
       ],
 
       columns: {
@@ -74,6 +70,15 @@ Ext.define('Ecop.view.purchase.OrderManager', {
           align: 'center'
         },
         items: [
+          {
+            xtype: 'templatecolumn',
+            width: 25,
+            tpl: [
+              '<tpl if="!restAmount">',
+              '<span class="x-fa fa-check pay-column"></span>',
+              '</tpl>'
+            ]
+          },
           {
             text: '供应商',
             flex: 1,

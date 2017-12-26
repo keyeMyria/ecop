@@ -46,6 +46,7 @@ Ext.require([
 
   'Ext.grid.column.RowNumberer',
   'Ext.grid.column.Widget',
+  'Ext.grid.column.Template',
   'Ext.grid.plugin.CellEditing',
   'Ext.grid.plugin.DragDrop',
   'Ext.selection.CheckboxModel',
