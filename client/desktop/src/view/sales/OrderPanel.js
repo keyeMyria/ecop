@@ -629,7 +629,7 @@ Ext.define('Ecop.view.sales.OrderPanel', {
                   {
                     text: '收款人',
                     align: 'center',
-                    dataIndex: 'receiverName'
+                    dataIndex: 'creatorName'
                   }
                 ]
               }

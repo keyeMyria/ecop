@@ -78,8 +78,8 @@ class OrderJSON(RpcBase):
                 'amount': op.amount,
                 'paymentMethod': op.payment.paymentMethod,
                 'payTime': op.payment.payTime,
-                'receiverName': op.payment.receiver.partyName \
-                    if op.payment.receiver else None
+                'creatorName': op.payment.creator.partyName \
+                    if op.payment.creator else None
             } for op in order.payments]
         }
 
@@ -296,21 +296,22 @@ class OrderJSON(RpcBase):
         order.paidAmount += amount
         order.installmentAmount = None
 
-        payment = Payment()
-        payment.amount = amount
-        payment.payTime = payDate
-        payment.partyId = order.customerId
-        payment.paymentMethod = method
-        payment.receivedBy = self.request.user.partyId
+        payment = Payment(
+            amount=amount,
+            payTime=payDate,
+            partyId=order.customerId,
+            paymentMethod=method,
+            creatorId=self.request.user.partyId
+        )
 
         self.sess.add(payment)
         self.sess.flush()
 
-        op = OrderPayment()
-        op.orderId = order.orderId
-        op.paymentId = payment.paymentId
-        op.amount = amount
-        self.sess.add(op)
+        self.sess.add(OrderPayment(
+            orderId=order.orderId,
+            paymentId=payment.paymentId,
+            amount=amount
+        ))
 
     @jsonrpc_method(endpoint='rpc', method='order.payment.delete')
     def deleteOrderPayment(self, orderId, paymentId):
@@ -323,7 +324,7 @@ class OrderJSON(RpcBase):
                 break
 
         if op:
-            assert op.payment.receivedBy, 'Payment receiver shall not be none'
+            assert op.payment.creatorId, 'Payment creator shall not be none'
             order.paidAmount -= op.amount
             order.payments.remove(op)
             self.sess.delete(op.payment)

@@ -6,6 +6,6 @@ Ext.define('Web.model.OrderPayment', {
     { name: 'amount', type: 'float', allowNull: true },
     { name: 'paymentMethod', type: 'int', allowNull: true },
     { name: 'payTime', type: 'date', dateFormat: 'Y-m-d H:i:s' },
-    { name: 'receiverName', type: 'string' }
+    { name: 'creatorName', type: 'string' }
   ]
 })

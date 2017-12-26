@@ -71,7 +71,7 @@ Ext.define('Ecop.view.sales.OrderModel', {
      */
     paymentDeletable: function(get) {
       var rec = get('paymentGrid.selection')
-      return rec && rec.get('receiverName')
+      return rec && rec.get('creatorName')
     },
 
     isNewOrder: function(get) {
