@@ -88,7 +88,10 @@ Ext.define('Ecop.view.purchase.OrderPanel', {
           fieldLabel: '供应商',
           allowBlank: false,
           flex: 1,
-          bind: '{currentOrder.supplierId}'
+          bind: {
+            value: '{currentOrder.supplierId}',
+            readOnly: '{!orderEditable}'
+          }
         },
         {
           fieldLabel: '创建时间',
