@@ -401,6 +401,9 @@ class OrderJSON(RpcBase):
         if old == new:
             return
 
+        if new == ORDER_STATUS.CLOSED and order.paidAmount:
+            raise RPCUserError('已结算订单不能关闭！')
+
         if new == ORDER_STATUS.COMPLETED and not order.completionDate:
             order.completionDate = date.today()
 

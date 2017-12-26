@@ -90,7 +90,7 @@ Ext.define('Ecop.view.purchase.OrderPanel', {
           flex: 1,
           bind: {
             value: '{currentOrder.supplierId}',
-            readOnly: '{!orderEditable}'
+            readOnly: '{!supplierEditable}'
           }
         },
         {
@@ -338,7 +338,7 @@ Ext.define('Ecop.view.purchase.OrderPanel', {
       hidden: true,
       bind: {
         store: '{payments}',
-        hidden: '{!showPaymentGrid}'
+        hidden: '{!hasPayment}'
       },
 
       columns: {

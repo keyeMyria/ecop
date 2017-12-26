@@ -65,8 +65,18 @@ Ext.define('Ecop.view.purchase.OrderModel', {
       return status !== 4 && status !== 5 && !isNaN(get('currentOrder.orderId'))
     },
 
-    showPaymentGrid: function(get) {
+    /*
+     * Whether there is any existing payment of the order
+     */
+    hasPayment: function(get) {
       return get('currentOrder.paidAmount') > 0
+    },
+
+    /*
+     * Once an order has payment, we no longer allow change of supplier
+     */
+    supplierEditable: function(get) {
+      return !get('hasPayment') && get('orderEditable')
     },
 
     payable: function(get) {
