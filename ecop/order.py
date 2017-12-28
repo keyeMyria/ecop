@@ -391,7 +391,7 @@ class OrderJSON(RpcBase):
                 'amount': op.amount,
                 'paymentMethod': op.payment.paymentMethod,
                 'payTime': op.payment.payTime,
-                'creatorName': op.payment.creatort.partyName \
+                'creatorName': op.payment.creator.partyName \
                     if op.payment.creator else None
             } for op in order.payments]
         }

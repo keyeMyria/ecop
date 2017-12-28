@@ -24,7 +24,7 @@ class OrderPaymentJSON(RpcBase):
             RPCUserError('订单未完成，不能付款')
 
         openId = order.supplier.wechatOpenId
-        assert openId, RPCUserError('供应商未关联微信')
+        assert openId, RPCUserError('该供应商尚未关联微信')
 
         amount = order.payableAmount
         assert amount, RPCUserError('订单没有未付金额')
