@@ -181,6 +181,7 @@ Ext.define('Ecop.view.purchase.OrderController', {
       params: [order.getId()],
       success: function() {
         me.loadOrder()
+        Ecop.util.Util.showInfo('付款成功!')
       }
     })
   }

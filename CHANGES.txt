@@ -34,6 +34,7 @@ Build 65 (2017-12-25)
 Build (2018)
 
  * Manual supplier payment processing via Wepay
+
  * Upload photos to order as attachments
 
 
