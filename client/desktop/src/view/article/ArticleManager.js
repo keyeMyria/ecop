@@ -19,7 +19,11 @@ Ext.define('Ecop.view.article.ArticleManager', {
       cls: 'cursor-pointer',
 
       store: {
-        model: 'Web.model.Article'
+        model: 'Web.model.Article',
+        sorters: {
+          property: 'updateTime',
+          direction: 'DESC'
+        }
       },
 
       tbar: [
@@ -52,7 +56,6 @@ Ext.define('Ecop.view.article.ArticleManager', {
 
       columns: {
         defaults: {
-          sortable: false,
           menuDisabled: true,
           align: 'left'
         },
