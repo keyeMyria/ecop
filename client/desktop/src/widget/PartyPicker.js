@@ -212,7 +212,9 @@ Ext.define('Ecop.widget.PartyPicker', {
       params = form.getValues()
 
     if (form.isValid()) {
-      params.partyType = me.getPartyType()
+      if (me.getPartyType()) {
+        params.partyType = me.getPartyType()
+      }
       Web.data.JsonRPC.request({
         method: 'party.upsert',
         params: [params],
