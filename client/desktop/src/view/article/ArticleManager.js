@@ -5,7 +5,8 @@ Ext.define('Ecop.view.article.ArticleManager', {
   requires: [
     'Web.model.Article',
     'Ecop.view.article.ArticleManagerController',
-    'Ecop.view.article.ArticlePanel'
+    'Ecop.view.article.ArticlePanel',
+    'Ecop.view.article.CasePanel'
   ],
 
   controller: 'article-manager',
@@ -112,6 +113,12 @@ Ext.define('Ecop.view.article.ArticleManager', {
           text: '添加文章',
           scale: 'medium',
           handler: 'onNewArticle',
+          iconCls: 'x-fa fa-plus-circle'
+        },
+        {
+          text: '添加案例',
+          scale: 'medium',
+          handler: 'onNewCase',
           iconCls: 'x-fa fa-plus-circle'
         }
       ],

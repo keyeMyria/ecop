@@ -3,8 +3,10 @@ import hashlib
 from base64 import b64decode
 from urllib.parse import urljoin
 
+import shortuuid
 import PIL.Image
 from psd_tools import PSDImage
+from elasticsearch_dsl import Search
 
 from pyramid_rpc.jsonrpc import jsonrpc_method
 from pyramid.response import Response
@@ -13,6 +15,8 @@ from pyramid.view import view_config
 from hm.lib.config import siteConfig
 
 from webmodel.resource import Image
+from webmodel.esweb import FileObject
+
 from weblibs.jsonrpc import RPCUserError
 from weblibs.oss import getBucket
 
@@ -20,8 +24,10 @@ from .base import RpcBase
 
 
 def extractTextFromPSD(psd):
-    """ Extract text from recursively from all visible layers of the psd file
-    as one concatenated string """
+    """
+    Extract text from recursively from all visible layers of the psd file
+    as one concatenated string
+    """
     w, h = psd.header.width, psd.header.height
 
     def processLayer(layer):
@@ -45,6 +51,10 @@ def extractTextFromPSD(psd):
 
 
 class ImageJSON(RpcBase):
+    """
+    Note: ONLY operations relating to ITEM images and ITEM description images
+    are handled here.
+    """
     def toJson(self, image):
         return {
             'imageId': image.imageId,
@@ -56,7 +66,8 @@ class ImageJSON(RpcBase):
         }
 
     def findImage(self, data):
-        """ See if the image already exists in the dababase based on the md5
+        """
+        See if the image already exists in the dababase based on the md5
         finger print of the image data.
 
           - `data`: Binary data of the image
@@ -75,7 +86,8 @@ class ImageJSON(RpcBase):
         image.md5 = hashlib.md5(data).digest()
 
     def checkAndConvertImage(self, data, fname, imgType):
-        """ Helper function that returns a **PIL.Image** object and the binary
+        """
+        Helper function that returns a **PIL.Image** object and the binary
         image data of subject to the following transformations:
 
         *  if the images is in PSD format, convert it to PNG and extract text
@@ -135,7 +147,7 @@ class ImageJSON(RpcBase):
         if modified:
             img.format = 'JPEG'
             stream = io.BytesIO()
-            img.save(stream, img.format, quality=95)
+            img.save(stream, img.format, optimize=True, quality=95)
             data = stream.getvalue()
 
         if len(data) > 2 * 1024 * 1024:
@@ -157,7 +169,7 @@ class ImageJSON(RpcBase):
     @jsonrpc_method(endpoint='rpc', method='image.add')
     def addImage(self, data, fname, imgType):
         """
-        Adds an image to the system.
+        Add an item image to the system.
 
           - `image`: Content of the image to add as base64 encoded binary
           - `imgType`: If the image is intended to be used as item image, which
@@ -186,7 +198,8 @@ class ImageJSON(RpcBase):
 
     @jsonrpc_method(endpoint='rpc', method='image.update')
     def updateImage(self, data, fname, imgType, imageId):
-        """ Updates the **content** of an item image to the system.
+        """
+        Updates the **content** of an item image to the system.
 
         if data belongs to another existing image, the call does nothing and
         simply returns the found image. Otherwise the image is updated and
@@ -212,6 +225,75 @@ class ImageJSON(RpcBase):
         return self.toJson(image)
 
 
+class FileOjbectJSON(RpcBase):
+
+    @jsonrpc_method(endpoint='rpc', method='fileobject.get.md5')
+    def getFileObjectByMd5(self, md5):
+        """
+        Check if a file object with the md5 is present. Returns the file object
+        name or None if not found
+        """
+        s = Search(index='web', doc_type='file_object').filter('term', md5=md5)
+        hits = s.execute()
+        return hits[0].name if hits else None
+
+    @jsonrpc_method(endpoint='rpc', method='fileobject.add')
+    def addFileObject(self, data, optimize=True):
+        """
+        Upload the file object to OSS. For now we only accept images.
+
+        - `data`: Content of the data to add as base64 encoded binary
+
+        Returns the name of the uploaded object.
+        """
+        data = b64decode(data)
+        md5 = hashlib.md5(data).hexdigest()
+
+        # first check duplication on the original file
+        fname = self.getFileObjectByMd5(md5)
+        if fname:
+            return fname
+
+        try:
+            img = PIL.Image.open(io.BytesIO(data))
+        except OSError:
+            raise RPCUserError('该文件不是图片格式。')
+
+        if img.format not in ('JPEG', 'PNG', 'GIF'):
+            raise RPCUserError('只支持jpg、png、gif格式的图片。')
+
+        # Lets perform image optimization here, some say quality=85 is good
+        # enough. We use 90. Since resizing is better performed by OSS image
+        # service, we do not do it here.
+        if optimize:
+            if img.format == 'GIF':
+                img.format = 'JPEG'
+            stream = io.BytesIO()
+            img.save(stream, img.format, optimize=True, quality=90)
+            data = stream.getvalue()
+
+        # check duplication again on the optimized file
+        md5 = hashlib.md5(data).hexdigest()
+        fname = self.getFileObjectByMd5(md5)
+        if fname:
+            return fname
+
+        suffix = 'jpg' if img.format == 'JPEG' else img.format.lower()
+        fname = '%s.%s' % (shortuuid.uuid(), suffix)
+
+        bucket = getBucket(siteConfig.image_bucket)
+        bucket.put_object(fname, data)
+
+        fo = FileObject(
+            name=fname,
+            size=len(data),
+            width=img.width,
+            height=img.height,
+            md5=md5)
+        fo.save()
+        return fname
+
+
 upload_template = """
 <script type="text/javascript">
     window.parent.CKEDITOR.tools.callFunction("{funcNum}", "{fileUrl}", "{data}");
@@ -222,7 +304,8 @@ upload_template = """
 def uploadArticleImage(request):
     """
     This handler accepts image upload from CKEditor for use in articles.
-    Note this has nothing to do with the upload of item images
+    Note this has nothing to do with the upload of item images, nor with the
+    upload of order attachemnt images
     """
     f = request.params['upload']
     ret = {

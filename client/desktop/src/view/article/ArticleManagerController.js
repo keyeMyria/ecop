@@ -41,6 +41,19 @@ Ext.define('Ecop.view.article.ArticleManagerController', {
     view.setActiveTab(p)
   },
 
+  onNewCase: function() {
+    var view = this.getView()
+    p = Ext.widget('casepanel', {
+      viewModel: {
+        data: {
+          article: Ext.create('Web.model.Article', { articleType: 'case' })
+        }
+      }
+    })
+    view.add(p)
+    view.setActiveTab(p)
+  },
+
   onOpenArticle: function(view, td, cellIndex, record) {
     var view = this.getView(),
       aid = record.getId(),

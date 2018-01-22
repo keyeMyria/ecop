@@ -17,7 +17,7 @@ Ext.define('Web.store.enum', {
       articletype: Ext.create('Ext.data.ArrayStore', {
         storeId: 'articletype',
         fields: ['id', 'text'],
-        data: [['page', '固定页面'], ['tip', '小贴士']]
+        data: [['page', '固定页面'], ['tip', '小贴士'], ['case', '案例']]
       }),
 
       itemstatus: Ext.create('Ext.data.ArrayStore', {
@@ -29,7 +29,13 @@ Ext.define('Web.store.enum', {
       orderstatus: Ext.create('Ext.data.ArrayStore', {
         storeId: 'orderstatus',
         fields: ['id', 'text'],
-        data: [[1, '待确认'], [2, '已确认'], [3, '部分完成'], [4, '已完成'], [5, '已关闭']]
+        data: [
+          [1, '待确认'],
+          [2, '已确认'],
+          [3, '部分完成'],
+          [4, '已完成'],
+          [5, '已关闭']
+        ]
       }),
 
       shipmentmethod: Ext.create('Ext.data.ArrayStore', {
@@ -47,7 +53,13 @@ Ext.define('Web.store.enum', {
       packagestatus: Ext.create('Ext.data.ArrayStore', {
         storeId: 'packagestatus',
         fields: ['id', 'text'],
-        data: [[1, '已打印'], [2, '已扫描'], [3, '在途中'], [4, '已签收'], [5, '问题件']]
+        data: [
+          [1, '已打印'],
+          [2, '已扫描'],
+          [3, '在途中'],
+          [4, '已签收'],
+          [5, '问题件']
+        ]
       }),
 
       paymentmethod: Ext.create('Ext.data.Store', {
