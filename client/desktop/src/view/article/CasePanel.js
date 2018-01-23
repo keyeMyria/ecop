@@ -58,10 +58,16 @@ Ext.define('Ecop.view.article.CasePanel', {
             {
               xtype: 'textfield',
               bind: '{article.tags}',
-              allowBlank: false,
+              allowOnlyWhitespace: false,
               fieldLabel: '标签',
               cls: 'required',
               minWidth: 150
+            },
+            {
+              xtype: 'textfield',
+              bind: '{article.title}',
+              fieldLabel: '备注',
+              minWidth: 300
             },
             {
               xtype: 'checkboxfield',

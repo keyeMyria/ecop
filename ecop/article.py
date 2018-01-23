@@ -45,7 +45,6 @@ class ArticleJSON(RpcBase):
 
         if is_new:
             if kwargs['articleType'] == 'case':
-                kwargs.pop('url')
                 kwargs.pop('title')
 
             article = Article(**kwargs)

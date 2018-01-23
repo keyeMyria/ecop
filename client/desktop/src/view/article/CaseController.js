@@ -131,10 +131,15 @@ Ext.define('Ecop.view.article.CaseController', {
     params = article.phantom
       ? article.getData()
       : article.getData({ changes: true, critical: true })
-    params.images = []
-    s.each(function(image){
-      params.images.push(image.get('name'))
-    })
+
+    if (me.imageModified) {
+      params.images = []
+      s.each(function(image) {
+        params.images.push(image.get('name'))
+      })
+    } else {
+      delete params.images
+    }
 
     Web.data.JsonRPC.request({
       method: 'article.save',
