@@ -18,9 +18,17 @@ class ArticleJSON(RpcBase):
 
     @jsonrpc_method(endpoint='rpc', method='article.save')
     def save(self, kwargs):
-        """ When creating a new article, if the article id is not given as for
-        help, we fetch a sequence id from postgresql as its articleId """
+        """
+        Creates a new or updates an existing article.
 
+        TODO:
+        The elasticsearch _id field is used to locate the article instead of
+        the articleId field. It's confusing to use two different id for one
+        object.
+
+        When creating a new article, fetch a sequence id from postgresql as its
+        articleId.
+        """
         _id = kwargs.pop('_id')
         is_new = _id.startswith('Web.model')  # is ths a new article?
         kwargs.pop('updateTime', None)  # this shall be automatically set
@@ -36,6 +44,10 @@ class ArticleJSON(RpcBase):
                     raise RPCUserError('文章中不能包含外部图片链接！')
 
         if is_new:
+            if kwargs['articleType'] == 'case':
+                kwargs.pop('url')
+                kwargs.pop('title')
+
             article = Article(**kwargs)
             article.updateTime = datetime.now()
         else:
@@ -60,7 +72,7 @@ class ArticleJSON(RpcBase):
         article.save()
         article._d_['_id'] = article._id
 
-        return article._d_
+        return self.getData(article)
 
     @jsonrpc_method(endpoint='rpc', method='article.search')
     def search(self, text=None, articleType=None):
@@ -86,8 +98,17 @@ class ArticleJSON(RpcBase):
     @jsonrpc_method(endpoint='rpc', method='article.data')
     def data(self, articleId):
         article = Article.get(articleId)
-        return article._d_
+        return self.getData(article)
 
     @jsonrpc_method(endpoint='rpc', method='article.delete')
     def delete(self, articleId):
         Article.get(articleId).delete()
+
+    def getData(self, article):
+        """
+        Depending on the articleType
+        """
+        ret = article._d_
+        if article.articleType == 'case':
+            ret['images'] = [{'name': i} for i in article.images]
+        return ret

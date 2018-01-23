@@ -16,7 +16,7 @@ Ext.define('Ecop.view.article.ArticleManager', {
     {
       xtype: 'grid',
       reference: 'article-list',
-      title: '搜索文章',
+      title: '搜索内容',
       cls: 'cursor-pointer',
 
       store: {
@@ -39,7 +39,7 @@ Ext.define('Ecop.view.article.ArticleManager', {
         {
           xtype: 'combo',
           reference: 'articleType',
-          fieldLabel: '文章类型',
+          fieldLabel: '内容类型',
           labelWidth: 60,
           editable: false,
           value: 'tip',
@@ -76,13 +76,13 @@ Ext.define('Ecop.view.article.ArticleManager', {
             dataIndex: 'url'
           },
           {
-            text: '文章类型',
+            text: '类型',
             width: 80,
             dataIndex: 'articleType',
             formatter: 'store("articletype", "id", "text")'
           },
           {
-            text: '文章标题',
+            text: '标题',
             width: 300,
             dataIndex: 'title'
           },

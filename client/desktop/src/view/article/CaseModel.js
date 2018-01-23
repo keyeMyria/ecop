@@ -19,25 +19,25 @@ Ext.define('Ecop.view.article.CaseModel', {
     },
 
     title: function(get) {
-      return typeof get('article.articleId') === 'string'
+      return !get('article.articleId')
         ? '新案例'
         : '案例' + get('article.articleId')
     },
 
     imageUrl: function(get) {
-      return Ecop.imageUrl + '/' + get('imageList.selection.name')
+      return Ecop.imageUrl + '/' + get('selectedImage.name')
     },
 
     showRight: function(get) {
       var s = get('images'),
-        record = get('selectedImage')
-      return record && s.indexOf(record) < s.getCount() - 1
+        image = get('selectedImage')
+      return image && s.indexOf(image) < s.getCount() - 1
     },
 
     showLeft: function(get) {
       var s = get('images'),
-        record = get('selectedImage')
-      return record && s.indexOf(record) > 0
+        image = get('selectedImage')
+      return image && s.indexOf(image) > 0
     }
   }
 })

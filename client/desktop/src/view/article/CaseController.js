@@ -112,15 +112,11 @@ Ext.define('Ecop.view.article.CaseController', {
     me.doImageMove(image, s.indexOf(image) + 1)
   },
 
-  onImageDownload: function() {
-    var me = this,
-      image = me.lookup('imageList').selection
-    window.open(image.get('url'))
-  },
-
   onSave: function() {
     var me = this,
-      content,
+      params,
+      vm = me.getViewModel(),
+      s = vm.get('images'),
       f = me.getView().getForm(),
       article = me.getModel()
 
@@ -128,22 +124,21 @@ Ext.define('Ecop.view.article.CaseController', {
       return
     }
 
-    content = f
-      .findField('content')
-      .getValue()
-      .trim()
-    if (!content) {
-      return Ecop.util.Util.showError('案例描述不能为空')
+    if (!s.getCount()) {
+      return Ecop.util.Util.showError('案例图片不能为空')
     }
-    article.set('content', content)
+
+    params = article.phantom
+      ? article.getData()
+      : article.getData({ changes: true, critical: true })
+    params.images = []
+    s.each(function(image){
+      params.images.push(image.get('name'))
+    })
 
     Web.data.JsonRPC.request({
       method: 'article.save',
-      params: [
-        article.phantom
-          ? article.getData()
-          : article.getData({ changes: true, critical: true })
-      ],
+      params: [params],
       success: function(response) {
         Ecop.util.Util.showInfo('案例保存成功。')
         article.set(response)

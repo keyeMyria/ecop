@@ -48,16 +48,19 @@ Ext.define('Ecop.view.article.CasePanel', {
           items: [
             {
               xtype: 'displayfield',
+              labelWidth: 60,
+              fieldLabel: '案例编号',
+              width: 150,
               bind: {
                 value: '{article.articleId}'
-              },
-              fieldLabel: '案例Id',
-              width: 150
+              }
             },
             {
               xtype: 'textfield',
               bind: '{article.tags}',
+              allowBlank: false,
               fieldLabel: '标签',
+              cls: 'required',
               minWidth: 150
             },
             {
@@ -77,8 +80,8 @@ Ext.define('Ecop.view.article.CasePanel', {
         {
           xtype: 'textarea',
           name: 'content',
-          maxHeight: 60,
-          margin: 0,
+          height: 60,
+          allowBlank: false,
           bind: '{article.content}',
           labelWidth: 65,
           labelAlign: 'right',
@@ -88,6 +91,8 @@ Ext.define('Ecop.view.article.CasePanel', {
         {
           xtype: 'fieldset',
           title: '案例图片',
+          margin: '10px 0 0 0',
+          padding: '0 5px',
 
           layout: 'fit',
           flex: 1,

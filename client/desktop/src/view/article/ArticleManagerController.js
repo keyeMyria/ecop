@@ -65,17 +65,26 @@ Ext.define('Ecop.view.article.ArticleManagerController', {
       Web.data.JsonRPC.request({
         method: 'article.data',
         params: [aid]
-      }).then(function(article) {
+      }).then(function(data) {
         var p
-        record.set(article)
-        p = Ext.widget('articlepanel', {
-          articleId: aid,
-          viewModel: {
-            data: {
-              article: record
+        record.set(data)
+        p = Ext.widget(
+          data.articleType === 'case' ? 'casepanel' : 'articlepanel',
+          {
+            articleId: aid,
+            viewModel: {
+              data: {
+                article: record
+              }
             }
           }
-        })
+        )
+        if (data.images && data.articleType === 'case') {
+          p
+            .getViewModel()
+            .get('images')
+            .loadData(data.images)
+        }
         view.add(p)
         view.setActiveTab(p)
       })
