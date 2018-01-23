@@ -2,9 +2,7 @@ from datetime import datetime
 from urllib.parse import urlparse
 
 from bs4 import BeautifulSoup
-from dateutil import parser
 from sqlalchemy import Sequence
-from elasticsearch_dsl import Search
 
 from pyramid_rpc.jsonrpc import jsonrpc_method
 
@@ -24,7 +22,9 @@ class ArticleJSON(RpcBase):
         TODO:
         The elasticsearch _id field is used to locate the article instead of
         the articleId field. It's confusing to use two different id for one
-        object.
+        object. A reindex should be able to migrate existing documents to
+        using one articleId. Also the createDate field in the mapping is not
+        used and shall be removed in a reindex.
 
         When creating a new article, fetch a sequence id from postgresql as its
         articleId.
@@ -69,14 +69,12 @@ class ArticleJSON(RpcBase):
                 Sequence('resource_id_seq'))
 
         article.save()
-        article._d_['_id'] = article._id
-
         return self.getData(article)
 
     @jsonrpc_method(endpoint='rpc', method='article.search')
     def search(self, text=None, articleType=None):
-        s = Search(index='web', doc_type='article').\
-            source(exclude=['content']).sort({'updateTime': 'desc'})[:500]
+        s = Article.search().source(exclude=['content'])\
+            .sort({'updateTime': 'desc'})[:500]
 
         if articleType:
             s = s.filter('term', articleType=articleType)
@@ -86,28 +84,23 @@ class ArticleJSON(RpcBase):
         # s = s.filter('term', text=text)
 
         ret = []
-        for hit in s.execute():
-            d = {'_id': hit.meta.id}
-            d.update(hit.to_dict())
-            d['updateTime'] = parser.parse(d['updateTime'])
+        for article in s.execute():
+            d = article.to_dict()
+            d['_id'] = article.meta.id
             ret.append(d)
-
         return ret
 
     @jsonrpc_method(endpoint='rpc', method='article.data')
     def data(self, articleId):
-        article = Article.get(articleId)
-        return self.getData(article)
+        return self.getData(Article.get(articleId))
 
     @jsonrpc_method(endpoint='rpc', method='article.delete')
     def delete(self, articleId):
         Article.get(articleId).delete()
 
     def getData(self, article):
-        """
-        Depending on the articleType
-        """
-        ret = article._d_
+        ret = article.to_dict()
         if article.articleType == 'case':
             ret['images'] = [{'name': i} for i in article.images]
+        ret['_id'] = article.meta.id
         return ret
