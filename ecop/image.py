@@ -6,7 +6,6 @@ from urllib.parse import urljoin
 import shortuuid
 import PIL.Image
 from psd_tools import PSDImage
-from elasticsearch_dsl import Search
 
 from pyramid_rpc.jsonrpc import jsonrpc_method
 from pyramid.response import Response
@@ -225,20 +224,55 @@ class ImageJSON(RpcBase):
         return self.toJson(image)
 
 
-class FileOjbectJSON(RpcBase):
-
-    @jsonrpc_method(endpoint='rpc', method='fileobject.get.md5')
-    def getFileObjectByMd5(self, md5):
+class FileObjectBase(object):
+    def getByMd5(self, md5):
         """
         Check if a file object with the md5 is present. Returns the file object
         name or None if not found
         """
-        s = Search(index='web', doc_type='file_object').filter('term', md5=md5)
-        hits = s.execute()
+        hits = FileObject.search().filter('term', md5=md5).execute()
         return hits[0].name if hits else None
 
+    def addImage(self, img, optimize=True):
+        # Lets perform image optimization here, some say quality=85 is good
+        # enough. We use 90. Since resizing is better performed by OSS image
+        # service, we do not do it here.
+        if optimize:
+            if img.format == 'GIF':
+                img.format = 'JPEG'
+            stream = io.BytesIO()
+            img.save(stream, img.format, optimize=True, quality=90)
+            data = stream.getvalue()
+
+        # check duplication again on the optimized file
+        md5 = hashlib.md5(data).hexdigest()
+        fname = self.getByMd5(md5)
+        if fname:
+            return fname
+
+        suffix = 'jpg' if img.format == 'JPEG' else img.format.lower()
+        fname = '%s.%s' % (shortuuid.uuid(), suffix)
+
+        bucket = getBucket(siteConfig.image_bucket)
+        bucket.put_object(fname, data)
+
+        fo = FileObject(
+            name=fname,
+            size=len(data),
+            width=img.width,
+            height=img.height,
+            md5=md5)
+        fo.save()
+        return fname
+
+
+class FileOjbectJSON(RpcBase, FileObjectBase):
+    @jsonrpc_method(endpoint='rpc', method='fileobject.get.md5')
+    def getFileObjectByMd5(self, md5):
+        return self.getByMd5(b64decode(md5).hex())
+
     @jsonrpc_method(endpoint='rpc', method='fileobject.add')
-    def addFileObject(self, data, optimize=True):
+    def addFileObject(self, data):
         """
         Upload the file object to OSS. For now we only accept images.
 
@@ -262,73 +296,51 @@ class FileOjbectJSON(RpcBase):
         if img.format not in ('JPEG', 'PNG', 'GIF'):
             raise RPCUserError('只支持jpg、png、gif格式的图片。')
 
-        # Lets perform image optimization here, some say quality=85 is good
-        # enough. We use 90. Since resizing is better performed by OSS image
-        # service, we do not do it here.
-        if optimize:
-            if img.format == 'GIF':
-                img.format = 'JPEG'
-            stream = io.BytesIO()
-            img.save(stream, img.format, optimize=True, quality=90)
-            data = stream.getvalue()
-
-        # check duplication again on the optimized file
-        md5 = hashlib.md5(data).hexdigest()
-        fname = self.getFileObjectByMd5(md5)
-        if fname:
-            return fname
-
-        suffix = 'jpg' if img.format == 'JPEG' else img.format.lower()
-        fname = '%s.%s' % (shortuuid.uuid(), suffix)
-
-        bucket = getBucket(siteConfig.image_bucket)
-        bucket.put_object(fname, data)
-
-        fo = FileObject(
-            name=fname,
-            size=len(data),
-            width=img.width,
-            height=img.height,
-            md5=md5)
-        fo.save()
-        return fname
+        return self.addImage(img)
 
 
-upload_template = """
+@view_config(route_name='upload')
+class CKEImageUploader(FileObjectBase):
+    """
+    This handler accepts image upload from CKEditor for use in articles.　The
+    image is looked up and store the same as images used in order attachments
+    and case libraries.
+    """
+
+    __template__ = """
 <script type="text/javascript">
     window.parent.CKEDITOR.tools.callFunction("{funcNum}", "{fileUrl}", "{data}");
 </script>"""
 
+    def __init__(self, context, request):
+        self.context = context
+        self.request = request
 
-@view_config(route_name='upload')
-def uploadArticleImage(request):
-    """
-    This handler accepts image upload from CKEditor for use in articles.
-    Note this has nothing to do with the upload of item images, nor with the
-    upload of order attachemnt images
-    """
-    f = request.params['upload']
-    ret = {
-        'funcNum': request.params['CKEditorFuncNum'],
-        'fileUrl': '',
-        'data': ''
-    }
+    def _doUpload(self, file, ret):
+        try:
+            img = PIL.Image.open(file.file)
+        except OSError:
+            ret['data'] = '无法识别图片格式。'
+            return
 
-    try:
-        img = PIL.Image.open(f.file)
-        if img.format in ('JPEG', 'PNG', 'GIF'):
-            bucket = getBucket(siteConfig.image_bucket)
-            md5 = hashlib.md5(f.value).hexdigest()
-            fname = 'upload/%s.%s' % (md5, img.format.lower())
-            if not bucket.object_exists(fname):
-                bucket.put_object(fname, f.value)
-            ret['fileUrl'] = urljoin(siteConfig.image_url, fname)
-        else:
+        if img.format not in ('JPEG', 'PNG', 'GIF'):
             ret['data'] = '只支持jpg、png、gif格式的图片。'
-    except OSError:
-        ret['data'] = '无法识别图片格式。'
+            return
 
-    body = upload_template.format(**ret)
-    return Response(
-        body=body
-    )
+        fname = FileObjectBase.addImage(self, img)
+        ret['fileUrl'] = urljoin(siteConfig.image_url, fname)
+
+    def __call__(self):
+        f = self.request.params['upload']
+        ret = {
+            'funcNum': self.request.params['CKEditorFuncNum'],
+            'fileUrl': '',
+            'data': ''
+        }
+
+        # Note the return result is changed in the function!!!
+        self._doUpload(f, ret)
+
+        return Response(
+            body=self.__template__.format(**ret)
+        )
