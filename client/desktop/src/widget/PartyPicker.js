@@ -6,7 +6,7 @@ Ext.define('Ecop.internal.PartyWindow', {
   width: 300,
   height: 200,
   layout: 'fit',
-  title: '新增客戶',
+  title: '新增/修改客戶信息',
   closable: true,
   closeAction: 'hide',
   modal: true,

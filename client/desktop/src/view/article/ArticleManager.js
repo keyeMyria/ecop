@@ -31,7 +31,7 @@ Ext.define('Ecop.view.article.ArticleManager', {
         {
           xtype: 'textfield',
           reference: 'searchText',
-          fieldLabel: '标题/内容:',
+          fieldLabel: '标题/标签:',
           labelWidth: 60,
           plugins: 'cleartrigger',
           width: 280
