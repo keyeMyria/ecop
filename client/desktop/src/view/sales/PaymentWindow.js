@@ -50,11 +50,8 @@ Ext.define('Ecop.view.sales.PaymentWindow', {
           fieldLabel: '收款金额',
           allowBlank: false,
           bind: {
-            maxValue: '{restAmount}',
-            value: {
-              bindTo: '{restAmount}',
-              single: true
-            }
+            maxValue: '{payableAmount}',
+            value: '{payableAmount}'
           }
         }
       ],

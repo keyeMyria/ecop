@@ -44,6 +44,10 @@ Ext.define('Ecop.view.sales.OrderModel', {
       )
     },
 
+    payableAmount: function(get) {
+      return get('currentOrder.installmentAmount') || get('restAmount')
+    },
+
     title: function(get) {
       return typeof get('currentOrder.orderId') === 'string'
         ? '新建订单'
