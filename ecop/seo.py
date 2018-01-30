@@ -28,7 +28,7 @@ class SeoJSON(RpcBase):
     @jsonrpc_method(endpoint='rpc', method='seo.entry.get')
     def getEntry(self, url):
         entry = self.sess.query(Seo).get(url)
-        return marshall(entry, ['url', 'title', 'keywords', 'description'])
+        return marshall(entry, ['url', 'title', 'description'])
 
     @jsonrpc_method(endpoint='rpc', method='seo.entry.search')
     def searchEntry(self, url):
@@ -48,5 +48,5 @@ class SeoJSON(RpcBase):
             entries = query.get(url)
             entries = [entries] if entries else []
 
-        return [marshall(i, ['url', 'title', 'keywords', 'description'])
+        return [marshall(i, ['url', 'title', 'description'])
                 for i in entries]

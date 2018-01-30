@@ -91,12 +91,6 @@ Ext.define('Ecop.view.seo.SeoPanel', {
             dataIndex: 'title'
           },
           {
-            text: 'keywords',
-            flex: 1,
-            minWidth: 300,
-            dataIndex: 'keywords'
-          },
-          {
             text: 'description',
             flex: 2,
             dataIndex: 'description'

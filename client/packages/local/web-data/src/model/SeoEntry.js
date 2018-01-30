@@ -12,11 +12,6 @@ Ext.require('Web.data.Converter', function() {
         convert: Web.data.Converter.trimNull
       },
       {
-        name: 'keywords',
-        defaultValue: null,
-        convert: Web.data.Converter.trimNull
-      },
-      {
         name: 'description',
         defaultValue: null,
         convert: Web.data.Converter.trimNull

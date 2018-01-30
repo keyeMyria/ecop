@@ -34,10 +34,6 @@ Ext.define('Ecop.view.seo.EntryForm', {
           bind: '{currentEntry.title}'
         },
         {
-          fieldLabel: 'keywords',
-          bind: '{currentEntry.keywords}'
-        },
-        {
           xtype: 'textarea',
           fieldLabel: 'description',
           anchor: '100% -90',
