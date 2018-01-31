@@ -61,7 +61,7 @@ Ext.define('Ecop.view.article.CasePanel', {
               allowOnlyWhitespace: false,
               fieldLabel: '标签',
               cls: 'required',
-              minWidth: 150
+              flex: 1
             },
             {
               xtype: 'textfield',

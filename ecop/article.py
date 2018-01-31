@@ -79,9 +79,8 @@ class ArticleJSON(RpcBase):
         if articleType:
             s = s.filter('term', articleType=articleType)
 
-        # This does not work now
-        # if text:
-        # s = s.filter('term', text=text)
+        if text:
+            s = s.filter('term', tags=text)
 
         ret = []
         for article in s.execute():
