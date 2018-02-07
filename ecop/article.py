@@ -3,6 +3,7 @@ from urllib.parse import urlparse
 
 from bs4 import BeautifulSoup
 from sqlalchemy import Sequence
+from elasticsearch_dsl import Q
 
 from pyramid_rpc.jsonrpc import jsonrpc_method
 
@@ -80,7 +81,11 @@ class ArticleJSON(RpcBase):
             s = s.filter('term', articleType=articleType)
 
         if text:
-            s = s.filter('term', tags=text)
+            s = s.filter(
+                Q('term', tags=text) |
+                Q('wildcard', **{'title.raw': f'*{text}*'}) |
+                Q('wildcard', url=f'*{text}*')
+            )
 
         ret = []
         for article in s.execute():
