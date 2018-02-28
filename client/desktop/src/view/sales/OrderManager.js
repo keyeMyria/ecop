@@ -111,6 +111,23 @@ Ext.define('Ecop.view.sales.OrderManager', {
                 },
                 {
                   xtype: 'combo',
+                  itemId: 'orderSource',
+                  fieldLabel: '订单来源:',
+                  editable: false,
+                  store: 'ordersource',
+                  valueField: 'id',
+                  plugins: 'cleartrigger'
+                },
+                {
+                  xtype: 'textfield',
+                  itemId: 'externalOrderId',
+                  labelWidth: 70,
+                  width: 250,
+                  fieldLabel: '外部订单号:',
+                  plugins: 'cleartrigger'
+                },
+                {
+                  xtype: 'combo',
                   itemId: 'orderstatus',
                   fieldLabel: '订单状态:',
                   editable: false,
@@ -156,12 +173,6 @@ Ext.define('Ecop.view.sales.OrderManager', {
             width: 160,
             dataIndex: 'createTime',
             formatter: 'date("Y-m-d H:i:s")'
-          },
-          {
-            text: '完成日期',
-            width: 90,
-            dataIndex: 'completionDate',
-            formatter: 'date("Y-m-d")'
           },
           {
             text: '金额',
@@ -228,6 +239,18 @@ Ext.define('Ecop.view.sales.OrderManager', {
             width: 80,
             dataIndex: 'orderStatus',
             formatter: 'store("orderstatus", "id", "text")'
+          },
+          {
+            text: '订单来源',
+            width: 90,
+            dataIndex: 'orderSource',
+            formatter: 'store("ordersource", "id", "text")'
+          },
+          {
+            text: '完成日期',
+            width: 90,
+            dataIndex: 'completionDate',
+            formatter: 'date("Y-m-d")'
           }
         ]
       },

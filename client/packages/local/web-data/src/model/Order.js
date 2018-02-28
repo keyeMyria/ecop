@@ -27,6 +27,7 @@ Ext.require('Web.data.Converter', function() {
       { name: 'freight', type: 'float' },
       { name: 'rebate', type: 'float' },
       { name: 'orderStatus', type: 'int' },
+      { name: 'orderSource', type: 'int' },
       { name: 'regionCode', type: 'int' },
       { name: 'recipientName', type: 'string' },
       { name: 'streetAddress', type: 'string' },
@@ -42,6 +43,7 @@ Ext.require('Web.data.Converter', function() {
       /*
        * fields for sales order
        */
+      { name: 'externalOrderId', type: 'string' },
       { name: 'paidAmount', type: 'float' },
       { name: 'installmentAmount', type: 'float', allowNull: true },
       { name: 'effectiveCost', type: 'float' },
@@ -71,9 +73,12 @@ Ext.require('Web.data.Converter', function() {
           return order.amount - order.paidAmount
         }
       },
-
-      // TODO: `regionName` seems to be only used by mobile
-      { name: 'regionName', type: 'string', persist: false },
+      {
+        name: 'isExternal',
+        calculate: function(order) {
+          return order.orderSource !== 1
+        }
+      },
 
       /*
        * fields for purchase order only

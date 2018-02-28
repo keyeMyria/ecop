@@ -14,7 +14,7 @@ from pyramid_rpc.jsonrpc import jsonrpc_method
 
 from hm.lib.config import siteConfig
 
-from webmodel.consts import ORDER_STATUS, ORDER_TYPE
+from webmodel.consts import ORDER_STATUS, ORDER_TYPE, ORDER_SOURCE
 from webmodel.item import Item
 from webmodel.order import Order, SalesOrder, PurchaseOrder
 from webmodel.payment import Payment, OrderPayment
@@ -57,7 +57,8 @@ class OrderJSON(RpcBase):
             'freight', 'rebate', 'orderStatus', 'regionCode', 'recipientName',
             'streetAddress', 'recipientMobile', 'recipientPhone', 'memo',
             'internalMemo', 'paidAmount', 'completionDate',
-            'installmentAmount', 'attachments', 'effectiveCost'
+            'installmentAmount', 'attachments', 'effectiveCost',
+            'orderSource', 'externalOrderId'
         ]
 
         header = marshall(order, fields, ignoreNone=False)
@@ -158,6 +159,11 @@ class OrderJSON(RpcBase):
 
         self.updateOrderChange(order, modifications)
 
+        # validity check
+        if order.orderSource != ORDER_SOURCE.HOMEMASTER \
+            and not order.externalOrderId:
+            raise RPCUserError('外部订单必须有外部订单号!')
+
         # change of order status needs special handling, and the checking shall
         # be done after all other order changes
         if newStatus:
@@ -211,7 +217,9 @@ class OrderJSON(RpcBase):
             startDate
             endDate
             orderId
+            externalOrderId
             orderStatus
+            orderSource
             customerId
         """
         query = self.sess.query(SalesOrder).options(eagerload('creator'))
@@ -221,6 +229,9 @@ class OrderJSON(RpcBase):
             assert 10000000 <= orderId <= 99999999, '无效订单号。'
             o = query.get(orderId)
             orders = [o] if o else []
+        elif cond.get('externalOrderId'):
+            query = query.filter_by(externalOrderId=cond['externalOrderId'])
+            orders = query.all()
         else:
             if 'startDate' in cond or 'endDate' in cond:
                 # when any date is present, dateType must be present
@@ -248,21 +259,23 @@ class OrderJSON(RpcBase):
             if cond.get('dateType') == 2: # completed
                 query = query.filter_by(orderStatus=ORDER_STATUS.COMPLETED)
             elif cond.get('orderStatus'):
-                query = query.filter(Order.orderStatus == cond['orderStatus'])
+                query = query.filter_by(orderStatus=cond['orderStatus'])
             elif not cond.get('customerId'):
                 query = query.filter(and_(
                     Order.orderStatus != ORDER_STATUS.CLOSED,
                     Order.orderStatus != ORDER_STATUS.COMPLETED))
 
-            if cond['customerId']:
-                query = query.filter(Order.customerId == cond['customerId'])
+            if cond.get('orderSource'):
+                query = query.filter_by(orderSource=cond['orderSource'])
+            if cond.get('customerId'):
+                query = query.filter_by(customerId=cond['customerId'])
 
             orders = query.all()
 
         fields = [
             'orderId', 'createTime', 'completionDate', 'amount', 'paidAmount',
             'orderStatus', 'effectiveCost', 'customerName', 'creatorName',
-            'recipientName'
+            'recipientName', 'orderSource'
         ]
 
         return [marshall(o, fields) for o in orders]

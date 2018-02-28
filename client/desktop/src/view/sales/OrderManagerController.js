@@ -17,8 +17,10 @@ Ext.define('Ecop.view.sales.OrderManagerController', {
           startDate: Ext.util.Format.date(daterange.start, 'Y-m-d'),
           endDate: Ext.util.Format.date(daterange.end, 'Y-m-d'),
           orderStatus: view.down('#orderstatus').getValue(),
+          orderSource: view.down('#orderSource').getValue(),
           customerId: view.down('#customerId').getValue(),
-          orderId: view.down('#orderId').getValue()
+          orderId: view.down('#orderId').getValue(),
+          externalOrderId: view.down('#externalOrderId').getValue()
         }
       ],
       success: function(orders) {
@@ -59,7 +61,8 @@ Ext.define('Ecop.view.sales.OrderManagerController', {
       vm = new Ecop.view.sales.OrderModel({
         data: {
           currentOrder: Ext.create('Web.model.Order', {
-            orderStatus: 1
+            orderStatus: 1,
+            orderSource: 1
           })
         }
       })

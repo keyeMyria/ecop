@@ -78,6 +78,13 @@ Ext.define('Ecop.view.sales.OrderModel', {
       return rec && rec.get('creatorName')
     },
 
+    /*
+     * Payment grid is hidden for external orders or when side panel is open
+     */
+    hidePaymentGrid: function(get) {
+      return !get('sidePanelCollapsed') || get('currentOrder.isExternal')
+    },
+
     isNewOrder: function(get) {
       return isNaN(get('currentOrder.orderId'))
     },

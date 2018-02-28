@@ -149,6 +149,25 @@ Ext.define('Ecop.view.sales.OrderPanel', {
               displayField: 'text',
               bind: '{currentOrder.orderStatus}',
               fieldLabel: '订单状态'
+            },
+            {
+              xtype: 'combo',
+              store: 'ordersource',
+              width: 170,
+              valueField: 'id',
+              editable: false,
+              displayField: 'text',
+              bind: '{currentOrder.orderSource}',
+              fieldLabel: '订单来源'
+            },
+            {
+              xtype: 'textfield',
+              fieldLabel: '外部订单号',
+              labelWidth: 70,
+              width: 200,
+              bind: {
+                value: '{currentOrder.externalOrderId}'
+              }
             }
           ]
         },
@@ -543,7 +562,7 @@ Ext.define('Ecop.view.sales.OrderPanel', {
               reference: 'paymentGrid',
               bind: {
                 store: '{payments}',
-                hidden: '{!sidePanelCollapsed}'
+                hidden: '{hidePaymentGrid}'
               },
 
               flex: 1,

@@ -88,6 +88,19 @@ Ext.define('Web.store.enum', {
         }
       }),
 
+      orderSource: Ext.create('Ext.data.Store', {
+        storeId: 'ordersource',
+        asynchronousLoad: false,
+        fields: [{ name: 'id', type: 'int' }, 'text'],
+        autoLoad: false,
+        proxy: {
+          type: 'jsonrpc',
+          method: 'param.get',
+          async: false,
+          params: ['OrderSource']
+        }
+      }),
+
       country: Ext.create('Ext.data.Store', {
         storeId: 'country',
         asynchronousLoad: false,
