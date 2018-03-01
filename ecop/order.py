@@ -143,7 +143,10 @@ class OrderJSON(RpcBase):
         """
         if isinstance(orderId, str):
             newOrder = True
-            order = SalesOrder(creatorId=self.request.user.partyId)
+            order = SalesOrder(
+                creatorId=self.request.user.partyId,
+                orderSource=ORDER_SOURCE.HOMEMASTER
+            )
             self.sess.add(order)
         else:
             newOrder = False
@@ -165,7 +168,7 @@ class OrderJSON(RpcBase):
             raise RPCUserError('外部订单必须有外部订单号!')
 
         # change of order status needs special handling, and the checking shall
-        # be done after all other order changes
+        # be done after all other order deb
         if newStatus:
             self.changeSalesOrderStatus(order, newStatus)
 

@@ -43,7 +43,11 @@ Ext.require('Web.data.Converter', function() {
       /*
        * fields for sales order
        */
-      { name: 'externalOrderId', type: 'string' },
+      {
+        name: 'externalOrderId',
+        type: 'string',
+        convert: Web.data.Converter.trimNull
+      },
       { name: 'paidAmount', type: 'float' },
       { name: 'installmentAmount', type: 'float', allowNull: true },
       { name: 'effectiveCost', type: 'float' },
