@@ -1,3 +1,6 @@
+/*
+ * The base controller is used for both the sales order and purchase order
+ */
 Ext.define('Ecop.view.sales.OrderControllerBase', {
   extend: 'Ext.app.ViewController',
 
