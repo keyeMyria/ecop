@@ -5,7 +5,7 @@ const extractSass = new ExtractTextPlugin({
   filename: '[name].css'
 })
 
-process.env.BABEL_ENV = 'development';
+process.env.BABEL_ENV = 'development'
 
 module.exports = {
   entry: {
@@ -36,7 +36,7 @@ module.exports = {
         exclude: /node_modules/,
         query: {
           presets: [['es2015', { modules: false }], 'react', 'stage-1'],
-          plugins: ['transform-object-assign']
+          plugins: ['transform-object-assign', 'transform-decorators-legacy']
         }
       },
       {
@@ -63,5 +63,10 @@ module.exports = {
       }
     ]
   },
+
+  resolve: {
+    modules: [path.resolve('.'), 'node_modules']
+  },
+
   plugins: [extractSass]
 }
