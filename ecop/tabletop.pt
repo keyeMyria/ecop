@@ -3,7 +3,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"<name />
-    <title>大管家ERP</title>
+    <title>台面安装流程</title>
 
     <!--! Page custom resources -->
     <link tal:repeat="css view.resources.css"
@@ -15,17 +15,14 @@
 <body>
     <div id="root" class="viewport"></div>
 
-    <!--! note Ecop shall be created before the inclusion of main script -->
     <script type="text/javascript">
-        Ecop = {
+        AppConfig = {
             siteUrl: '${view.siteUrl}',
-            version: '${view.version}',
-            isWeixin: ${str(request.is_weixin).lower()}
+            version: '${view.version}'
         };
     </script>
 
     <script tal:repeat="script view.resources.bodyjs" src="${script}"></script>
-    <script tal:condition="request.is_weixin" src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
 
 </body>
 </html>

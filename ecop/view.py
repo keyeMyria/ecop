@@ -1,16 +1,10 @@
-import logging
 from urllib.parse import urljoin
 
 from pyramid.view import view_config
 from pyramid.httpexceptions import HTTPBadRequest
-from pyramid_rpc.jsonrpc import jsonrpc_method
 
 from hm.lib.config import siteConfig
 from hm.lib.reify import reify
-
-from .base import RpcBase
-
-logger = logging.getLogger('ecop')
 
 
 class BaseEcopView(object):
@@ -59,8 +53,10 @@ class BaseEcopView(object):
         return {}
 
 
-@view_config(route_name='decop', renderer='decop.pt', xhr=False)
+@view_config(route_name='erp', renderer='decop.pt', xhr=False)
 class DecopView(BaseEcopView):
+    title = '大管家ERP'
+
     resourceConfig = {
         'debug': {
             'head': [
@@ -82,33 +78,23 @@ class DecopView(BaseEcopView):
     }
 
 
-# @view_config(route_name='mecop', renderer='mecop.pt', xhr=False)
-class MecopView(BaseEcopView):
+@view_config(route_name='tabletop', renderer='tabletop.pt', xhr=False)
+class TabelTopView(BaseEcopView):
     resourceConfig = {
         'debug': {
             'head': [
-                'ecop/mecop/build/main.css'
+                'ecop/tabletop/build/app.css'
             ],
             'body': [
-                'ecop/mecop/build/main.js'
+                'ecop/tabletop/build/app.js'
             ]
         },
         'deploy': {
             'head': [
-                'mecop/main.css',
+                'tabletop/app.css',
             ],
             'body': [
-                'mecop/main.js'
+                'tabletop/app.js'
             ]
         }
     }
-
-
-class SiteJSON(RpcBase):
-
-    @jsonrpc_method(endpoint='rpc', method='ecop.log')
-    def log(self, message):
-        if isinstance(message, dict):
-            self.request.log(**message)
-        else:
-            logger.info(message)

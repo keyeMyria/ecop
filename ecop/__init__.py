@@ -43,13 +43,9 @@ def main(global_config, **settings):
 
     config.add_route('health_check', '/rpc', request_method='HEAD')
     config.add_route('upload', '/upload', request_method='POST')
-    config.add_route('decop', '/')
+    config.add_route('erp', '/erp')
+    config.add_route('tabletop', '/ikea')
     config.add_route('order_download', '/order/{orderid}.pdf', xhr=False)
-
-    ######### not fully implemented yet ###############3
-    # config.add_route('mecop', '/mecop')
-    # config.add_route('shipment_doc', '/shipment_doc/{shipmentid}.pdf',
-    #                 xhr=False)
 
     config.scan()
     return config.make_wsgi_app()
