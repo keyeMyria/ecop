@@ -14,8 +14,8 @@ import TextField from 'material-ui/TextField'
 import ExitToAppIcon from 'material-ui-icons/ExitToApp'
 import { red } from 'material-ui/colors'
 
+import ValidatedForm from 'jslib/ValidatedForm'
 import jsonrpc from 'jsonrpc'
-import ValidatedForm from 'ValidatedForm'
 
 const styles = {
   paperWidthSm: {
@@ -55,7 +55,8 @@ class LoginDialog extends ValidatedForm {
         jsonrpc({
           method: 'auth.login',
           params: this.state.values,
-          success: () => {
+          success: response => {
+            jsonrpc.csrfToken = response.token
             this.setState({ open: false })
           }
         })
@@ -87,7 +88,7 @@ class LoginDialog extends ValidatedForm {
             fullWidth
             margin="normal"
             placeholder="用户名"
-            label="注册账号"
+            label="用户名"
             onChange={this.handleChange}
             error={!!this.getFieldError('login')}
             helperText={this.getFieldError('login')}
@@ -117,4 +118,5 @@ class LoginDialog extends ValidatedForm {
   }
 }
 
+// validation should come after withStyles
 export default compose(withStyles(styles), validation(strategy))(LoginDialog)

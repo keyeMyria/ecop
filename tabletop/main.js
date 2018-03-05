@@ -2,11 +2,11 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 
-import jsonrpc from './jsonrpc'
-import message from './message'
-import theme from './mui-theme'
-import LoginDialog from 'auth/login'
+import theme from 'jslib/mui-theme'
+import message from 'jslib/message'
 
+import LoginDialog from 'auth/login'
+import jsonrpc from './jsonrpc'
 import './app.scss'
 
 jsonrpc.onerror = error => {
