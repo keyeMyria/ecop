@@ -2,8 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 
-import theme from 'jslib/mui-theme'
-import message from 'jslib/message'
+import { theme, message } from 'homemaster-jslib'
 
 import LoginDialog from 'auth/login'
 import jsonrpc from './jsonrpc'

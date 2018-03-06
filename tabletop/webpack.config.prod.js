@@ -1,11 +1,15 @@
 var path = require('path')
+var webpack = require('webpack')
 var ExtractTextPlugin = require('extract-text-webpack-plugin')
+var BundleAnalyzerPlugin = require('webpack-bundle-analyzer')
+  .BundleAnalyzerPlugin
 
 const extractSass = new ExtractTextPlugin({
   filename: '[name].css'
 })
 
-process.env.BABEL_ENV = 'development'
+// for babel-preset-react-app
+process.env.BABEL_ENV = 'production'
 
 module.exports = {
   entry: {
@@ -32,7 +36,7 @@ module.exports = {
       },
       {
         test: /\.js$/,
-        exclude: /node_modules/,
+        exclude: /node_modules\/(?!(jslib)\/).*/,
         loader: 'babel-loader',
         query: {
           presets: [['es2015', { modules: false }], 'react', 'stage-1'],
@@ -68,5 +72,32 @@ module.exports = {
     modules: [path.resolve('.'), 'node_modules']
   },
 
-  plugins: [extractSass]
+  plugins: [
+    new webpack.DefinePlugin({
+      'process.env': {
+        NODE_ENV: JSON.stringify('production')
+      }
+    }),
+
+    // do not include validatorjs language files
+    new webpack.IgnorePlugin(/^\.\/(?!en)(.+)$/, /validatorjs\/src\/lang/),
+
+    new webpack.optimize.UglifyJsPlugin({
+      compress: {
+        screw_ie8: true, // React doesn't support IE8
+        warnings: false
+      },
+      mangle: {
+        screw_ie8: true
+      },
+      output: {
+        comments: false,
+        screw_ie8: true
+      }
+    }),
+
+    extractSass,
+    // enable this when we need to analyze module size
+    // new BundleAnalyzerPlugin()
+  ]
 }
