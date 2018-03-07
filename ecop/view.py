@@ -2,6 +2,7 @@ from urllib.parse import urljoin
 
 from pyramid.view import view_config
 from pyramid.httpexceptions import HTTPBadRequest
+from pyramid.csrf import get_csrf_token
 
 from hm.lib.config import siteConfig
 from hm.lib.reify import reify
@@ -48,6 +49,11 @@ class BaseEcopView(object):
     @reify
     def imageUrl(self):
         return siteConfig.image_url
+
+    @property
+    def csrfToken(self):
+        return get_csrf_token(self.request) \
+            if self.request.authenticated else None
 
     def __call__(self):
         return {}

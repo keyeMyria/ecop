@@ -34,6 +34,7 @@ Build 65 (2017-12-25)
 Build (2018)
 
  * Manual supplier payment processing via Wepay
+ * Use the same jsonrpc protection mechanism for website and ecop
 
  * Upload photos to order as attachments
 
@@ -49,15 +50,12 @@ Future
  * Switch to ExtJS Modern toolkit with 6.5.2 in preparation for switch to
    ExtReact
  * Move common api between web and ecop into same api domain
-
-
  * Allow staff to add photos to an order on-site
  * Implement order memos for order tracking
  * Prevent images or contents with forbidden words from being published
  * Publish articles to wechat open platform
  * Assign an order to a particular user for tracking
  * Use the same session mechanism for website and ecop
- * Use the same jsonrpc protection mechanism for website and ecop
  * Push / share an order to a friend via wechat message
  * Add permission control mechanism to ecop backend (for order reopen e.g.)
  * Optimize the images sizes when uploading to oss

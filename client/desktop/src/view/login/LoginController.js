@@ -45,11 +45,6 @@ Ext.define('Ecop.view.login.LoginController', {
   onLoginSuccess: function(response, opts) {
     var view = this.getView()
 
-    Web.JsonRPCProxy.token = response.token
-    Web.JsonRPCProxy.tokenHeader = 'Authenticity-Token'
-
-    Web.data.JsonRPC.setToken(response.token)
-    Web.data.JsonRPC.setTokenHeader('Authenticity-Token')
     Web.data.JsonRPC.setVersion(Ecop.version)
 
     Ecop.auth.currentUser = response

@@ -17,7 +17,7 @@ var jsonrpc = function(options) {
     .type('application/json')
     .set('X-Requested-With', 'XMLHttpRequest')
 
-  jsonrpc.csrfToken && req.set('Authenticity-Token', jsonrpc.csrfToken)
+  jsonrpc.csrfToken && req.set('X-CSRF-Token', jsonrpc.csrfToken)
   jsonrpc.version && req.set('X-Client-Version', jsonrpc.version)
 
   req.send(data).end((err, res) => {

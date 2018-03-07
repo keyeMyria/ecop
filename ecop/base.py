@@ -1,47 +1,44 @@
-import pickle
-
 from pyramid.view import view_config
 from pyramid.response import Response
 from pyramid.httpexceptions import HTTPForbidden
+from pyramid.csrf import check_csrf_token
 
 from hm.lib.config import siteConfig
 from webmodel.base import DBSession
-from webmodel.party import Party
-from weblibs.redis import RedisConn
-from weblibs.jsonrpc import RPCNotAllowedError, RPCUserError
+from weblibs.jsonrpc import RPCUserError
 
 
 class RpcBase(object):
     """ Implements request authentication """
     def __init__(self, request):
-        #
-        # TODO: A quick and dirty way to bypass wechat user authentication
-        #
-        if not request.is_weixin:
-            token = request.headers.get('Authenticity-Token')
-            if not token:
-                raise RPCNotAllowedError('无权访问，请登录。')
-
-            conn = RedisConn()
-            key = 'ecop|rpctoken:%s' % token
-            user = conn.get(key)
-            if not user:
-                raise RPCNotAllowedError('您的当前会话已超时,请重新登录。')
-
-            version = request.headers.get('X-Client-Version')
-            if version and version != siteConfig.version:
-                raise RPCUserError('ERP版本已更新，请重新登录。')
-
-            request.user = pickle.loads(user)
-
-            ttl = conn.ttl(key)
-            # if time since last access is more than 5 minutes
-            if int(siteConfig.auth_token_timeout) - ttl > 5 * 60:
-                conn.expire(key, int(siteConfig.auth_token_timeout))
-
         # common class variables
         self.request = request
         self.sess = DBSession()
+
+        # Step 1: check for valid session
+        #
+        # For any rpc request from a client which does not declare itself
+        # as bot, a proper session must be present. Otherwise we treat it
+        # as an attack and will block the ip address
+        if not request.is_bot and (
+            not request.session or request.session.new):
+            #request.log(action='REJECT_RPC', title='RPC no valid session',
+            #    payload=body[:300])
+            raise HTTPForbidden()
+
+        # Step 2: check for valid csfr
+        #
+        # We are not using the csrf checking mechanism of view predicate
+        # provided by pyramid since it does not allow us to block the
+        # malicious IP and log the event.
+        if not check_csrf_token(request, raises=False):
+            #request.log(action='REJECT_RPC', title='RPC bad csrf token',
+            #    payload=body[:300])
+            raise HTTPForbidden()
+
+        version = request.headers.get('X-Client-Version')
+        if version and version != siteConfig.version:
+            raise RPCUserError('ERP版本已更新，请重新登录。')
 
 
 class DocBase(object):
@@ -54,31 +51,21 @@ class DocBase(object):
         self.sess = DBSession()
         self.request = request
 
-        try:
-            uid = int(request.params['uid'])
-            user = self.sess.query(Party).get(uid)
-        except Exception:
-            raise HTTPForbidden()
-        if not user:
+        if not request.authenticated:
             raise HTTPForbidden()
 
         if 'token' not in request.params:
             raise HTTPForbidden()
 
-        conn = RedisConn()
-        user = conn.get('ecop|rpctoken:%s' % request.params['token'])
-        if not user:
-            raise HTTPForbidden()
-        user = pickle.loads(user)
-        if user.partyId != uid:
+        if request.session.get_csrf_token() != request.params['token']:
             raise HTTPForbidden()
 
 
 @view_config(route_name='health_check')
 def health_check(request): #pylint: disable=W0613
     """
-    ecop runs behind the aliyun load balancing service, which performs
-    frequent health check using the HEAD method to /rpc.
+    ecop runs behind the aliyun load balancing service, which is configured to
+    perform frequent health check using the HEAD method to /rpc.
 
     Note the response to HEAD shall contain no body
     """

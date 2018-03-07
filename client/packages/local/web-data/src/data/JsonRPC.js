@@ -37,9 +37,7 @@ Ext.define('Web.data.JsonRPC', {
 
   config: {
     baseUrl: null,
-    token: null,
-    version: null,
-    tokenHeader: 'X-CSRF-Token'
+    version: null
   },
 
   request: function(options) {
@@ -72,9 +70,9 @@ Ext.define('Web.data.JsonRPC', {
     if (!options.headers) {
       options.headers = {}
     }
-    options.headers[
-      me.getTokenHeader() || me.config.tokenHeader
-    ] = me.getToken()
+    if (Ecop.csrfToken) {
+      options.headers['X-CSRF-Token'] = Ecop.csrfToken
+    }
     options.headers['X-Client-Version'] = me.getVersion()
 
     Ext.apply(options, {

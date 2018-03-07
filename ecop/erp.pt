@@ -17,6 +17,9 @@
             imageUrl: '${view.imageUrl}'
         }
     </script>
+    <script tal:condition="request.authenticated">
+        Ecop.csrfToken = '${view.csrfToken}';
+    </script>
     <script tal:repeat="script view.resources.headjs" src="${script}"></script>
 </head>
 

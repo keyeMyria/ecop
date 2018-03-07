@@ -34,9 +34,7 @@ Ext.define('Web.JsonRPCProxy', {
   },
 
   statics: {
-    baseUrl: null,
-    token: null,
-    tokenHeader: 'X-CSRF-Token'
+    baseUrl: null
   },
 
   doRequest: function(operation) {
@@ -69,8 +67,8 @@ Ext.define('Web.JsonRPCProxy', {
     if (me.self.baseUrl && Ext.String.startsWith(url, '/')) {
       config.url = me.self.baseUrl + url
     }
-    // add authenticity token to header
-    config.headers[me.self.tokenHeader] = me.self.token
+    // add csrf token to header
+    config.headers['X-CSRF-Token'] = Ecop.csrfToken
 
     request.setConfig(config)
     return me.sendRequest(request)

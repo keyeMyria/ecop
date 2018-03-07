@@ -56,7 +56,6 @@ class LoginDialog extends ValidatedForm {
           method: 'auth.login',
           params: this.state.values,
           success: response => {
-            jsonrpc.csrfToken = response.token
             this.setState({ open: false })
           }
         })

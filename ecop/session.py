@@ -1,16 +1,10 @@
-import uuid
-import pickle
-
 from pyramid.events import subscriber
 from pyramid.httpexceptions import HTTPBadRequest
 from pyramid_rpc.jsonrpc import jsonrpc_method
 
-from hm.lib.config import siteConfig
-
 from webmodel.base import DBSession
 from webmodel.party import Party
 from weblibs.jsonrpc import RPCNotAllowedError, RPCUserError
-from weblibs.redis import RedisConn
 
 
 @jsonrpc_method(endpoint='rpc', method='auth.login')
@@ -31,17 +25,12 @@ def userLogin(request, login, password): # pylint: disable=W0613
     if not user.extraData or not user.extraData['permission']:
         raise RPCNotAllowedError('您无权登录大管家ERP。')
 
-    token = uuid.uuid4().hex
     # after user is authenticated, we cache the user object in redis
     sess.expunge_all()  # detach from session
-    conn = RedisConn()
-    conn.setex('ecop|rpctoken:%s' % token,
-                int(siteConfig.auth_token_timeout),
-                pickle.dumps(user))
+    request.session['user'] = user
 
     return {
         'partyId': user.partyId,
-        'token': token,
         'permission': user.extraData['permission']
     }
 
@@ -70,5 +59,5 @@ def authenticator(event):
         raise HTTPBadRequest()
 
     session = request.session
-    request.authenticated = 'user' in session
-    request.user = session['user'] if 'user' in session else None
+    request.user = session.get('user')
+    request.authenticated = bool(request.user)

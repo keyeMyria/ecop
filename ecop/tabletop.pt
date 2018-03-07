@@ -16,6 +16,9 @@
             version: '${view.version}'
         };
     </script>
+    <script tal:condition="request.authenticated">
+        AppConfig.csrfToken = '${view.csrfToken}';
+    </script>
     <script tal:repeat="script view.resources.headjs" src="${script}"></script>
 </head>
 
