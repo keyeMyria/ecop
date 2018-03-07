@@ -5,10 +5,9 @@ Ext.define('Ecop.view.shipment.ShipmentModel', {
   formulas: {
     pickingListUrl: function(get) {
       return Ext.String.format(
-        '/shipment_doc/{0}.pdf?uid={1}&token={2}',
+        '/shipment_doc/{0}.pdf?token={1}',
         get('shipment.shipmentId'),
-        Ecop.auth.currentUser.partyId,
-        Web.JsonRPCProxy.token
+        Ecop.csrfToken
       )
     },
 

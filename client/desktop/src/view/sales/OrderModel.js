@@ -56,10 +56,9 @@ Ext.define('Ecop.view.sales.OrderModel', {
 
     downloadUrl: function(get) {
       return Ext.String.format(
-        '/order/{0}.pdf?uid={1}&token={2}',
+        '/order/{0}.pdf?token={1}',
         get('currentOrder.orderId'),
-        Ecop.auth.currentUser.partyId,
-        Web.JsonRPCProxy.token
+        Ecop.csrfToken
       )
     },
 
