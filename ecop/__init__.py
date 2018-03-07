@@ -13,9 +13,11 @@ def main(global_config, **settings):
     siteConfig.debug = global_config.get('debug') == 'true'
 
     config = Configurator(settings=settings)
+
+    config.include('pyramid_session_redis')
     config.include('pyramid_tm')
-    config.include('pyramid_rpc.jsonrpc')
     config.include('pyramid_chameleon')
+    config.include('pyramid_rpc.jsonrpc')
 
     # configure various components
     config.include('weblibs.sqlalchemy')

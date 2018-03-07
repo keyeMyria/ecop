@@ -1,9 +1,10 @@
 from setuptools import setup, find_packages
 
 requires = [
-    'pyramid',
+    'pyramid>1.9',
     'pyramid_tm',
     'pyramid_rpc',  # for json rpc server
+    'pyramid_session_redis',
 
     'beautifulsoup4',
     'elasticsearch-dsl>=5.0.0,<6.0.0',

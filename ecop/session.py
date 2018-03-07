@@ -1,6 +1,8 @@
 import uuid
 import pickle
 
+from pyramid.events import subscriber
+from pyramid.httpexceptions import HTTPBadRequest
 from pyramid_rpc.jsonrpc import jsonrpc_method
 
 from hm.lib.config import siteConfig
@@ -16,8 +18,8 @@ def userLogin(request, login, password): # pylint: disable=W0613
     """
     Verify account password and create authentication token.
 
-    This is the only rpc method that does not subclass RpcBase for it occurs
-    before a current user session is established
+    This and 'auth.logout' are the only rpc methods that does not subclass
+    RpcBase for they must be invoked without valid user session
     """
     sess = DBSession()
     user = sess.query(Party).filter_by(login=login).first()
@@ -42,3 +44,31 @@ def userLogin(request, login, password): # pylint: disable=W0613
         'token': token,
         'permission': user.extraData['permission']
     }
+
+
+@jsonrpc_method(endpoint='rpc', method='auth.logout')
+def userLogout(request):
+    request.session.invalidate()
+
+
+@subscriber('pyramid.events.BeforeTraversal')
+def authenticator(event):
+    """
+    When new quest arrives, we look up the authenticated user from session
+    and put the following attributes in the request for easier reference later:
+
+        authenticated
+        user
+    """
+    request = event.request
+
+    if not getattr(request, 'matched_route', None):
+        return
+
+    # deny bots
+    if request.is_bot:
+        raise HTTPBadRequest()
+
+    session = request.session
+    request.authenticated = 'user' in session
+    request.user = session['user'] if 'user' in session else None
