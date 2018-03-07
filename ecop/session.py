@@ -8,10 +8,8 @@ from weblibs.jsonrpc import RPCNotAllowedError, RPCUserError
 
 
 @jsonrpc_method(endpoint='rpc', method='auth.login')
-def userLogin(request, login, password): # pylint: disable=W0613
+def userLogin(request, login, password):
     """
-    Verify account password and create authentication token.
-
     This and 'auth.logout' are the only rpc methods that does not subclass
     RpcBase for they must be invoked without valid user session
     """
@@ -30,7 +28,6 @@ def userLogin(request, login, password): # pylint: disable=W0613
     request.session['user'] = user
 
     return {
-        'partyId': user.partyId,
         'permission': user.extraData['permission']
     }
 

@@ -29,5 +29,5 @@ class WeixinJSON(RpcBase):
             'nonceStr': od['noncestr'],
             'signature': sha1(bytes(sign_str, 'utf8')).hexdigest()
         }
-        logger.debug('Request jssdk config for %s, returns %s' % (url, ret))
+        logger.debug('Request jssdk config for %s, returns %s', url, ret)
         return ret

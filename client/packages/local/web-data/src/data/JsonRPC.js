@@ -73,7 +73,7 @@ Ext.define('Web.data.JsonRPC', {
     if (Ecop.csrfToken) {
       options.headers['X-CSRF-Token'] = Ecop.csrfToken
     }
-    options.headers['X-Client-Version'] = me.getVersion()
+    options.headers['X-Client-Version'] = Ecop.version
 
     Ext.apply(options, {
       jsonData: {
