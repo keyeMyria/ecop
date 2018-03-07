@@ -21,10 +21,14 @@ Ext.define('Ecop.view.article.ArticleModel', {
 
       switch (articleType) {
         case 'tip':
-          url = Ext.String.format('{0}/tip/{1}', Ecop.siteUrl, articleId)
+          url = Ext.String.format(
+            '{0}/tip/{1}',
+            Ecop.siteUrl.replace('/www.', '/wiki.'),
+            articleId
+          )
           break
         case 'page':
-          var match = articleUrl.match(/^\/service\/(.+?)\|/)
+          var match = articleUrl.match(/^\/service\/(.*)/)
           if (match && match[1]) {
             url = Ext.String.format(
               '{0}/{1}',
