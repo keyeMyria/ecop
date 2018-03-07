@@ -17,10 +17,11 @@
             imageUrl: '${view.imageUrl}'
         }
     </script>
-
     <script tal:repeat="script view.resources.headjs" src="${script}"></script>
 </head>
 
 <body>
+    <div id="app-root" class="viewport"></div>
+    <script tal:repeat="script view.resources.bodyjs" src="${script}"></script>
 </body>
 </html>

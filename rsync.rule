@@ -4,16 +4,13 @@
 - *.sample
 - .*
 - *~
-- *.sql
 - *.txt
 - *.rst
 - *egg*/
-- *.conf
 - *.log
-- docs/
 - build/
-- dist/
 - client/
 - mecop/
+- tabletop/
 - build.sh
 - rsync.rule

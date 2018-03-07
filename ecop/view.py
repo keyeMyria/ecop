@@ -53,8 +53,8 @@ class BaseEcopView(object):
         return {}
 
 
-@view_config(route_name='erp', renderer='decop.pt', xhr=False)
-class DecopView(BaseEcopView):
+@view_config(route_name='erp', renderer='erp.pt', xhr=False)
+class ERPView(BaseEcopView):
     title = '大管家ERP'
 
     resourceConfig = {
@@ -80,6 +80,8 @@ class DecopView(BaseEcopView):
 
 @view_config(route_name='tabletop', renderer='tabletop.pt', xhr=False)
 class TabelTopView(BaseEcopView):
+    title = '台面安装流程'
+
     resourceConfig = {
         'debug': {
             'head': [

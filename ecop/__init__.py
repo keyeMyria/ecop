@@ -43,8 +43,8 @@ def main(global_config, **settings):
 
     config.add_route('health_check', '/rpc', request_method='HEAD')
     config.add_route('upload', '/upload', request_method='POST')
-    config.add_route('erp', '/erp')
-    config.add_route('tabletop', '/ikea')
+    config.add_route('erp', '/erp', xhr=False)
+    config.add_route('tabletop', '/ikea', xhr=False)
     config.add_route('order_download', '/order/{orderid}.pdf', xhr=False)
 
     config.scan()
