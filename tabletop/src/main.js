@@ -6,7 +6,7 @@ import Reboot from 'material-ui/Reboot'
 
 import { theme, message, jsonrpc } from 'homemaster-jslib'
 
-import LoginDialog from './components/LoginDialog'
+import AppFrame from 'components/AppFrame'
 
 Object.assign(jsonrpc, {
   onerror: error => {
@@ -20,7 +20,7 @@ Object.assign(jsonrpc, {
 ReactDOM.render(
   <MuiThemeProvider theme={theme}>
     <Reboot />
-    <LoginDialog />
+    <AppFrame />
   </MuiThemeProvider>,
   document.getElementById('app')
 )
