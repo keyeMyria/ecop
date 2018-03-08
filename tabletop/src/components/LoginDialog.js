@@ -14,8 +14,7 @@ import TextField from 'material-ui/TextField'
 import ExitToAppIcon from 'material-ui-icons/ExitToApp'
 import { red } from 'material-ui/colors'
 
-import jsonrpc from 'jsonrpc'
-import { ValidatedForm } from 'homemaster-jslib'
+import { ValidatedForm, jsonrpc } from 'homemaster-jslib'
 
 const styles = {
   paperWidthSm: {

@@ -27,9 +27,12 @@ class BaseEcopView(object):
 
         cfg = self.resourceConfig['debug' if self.debug else 'deploy']
         ret = {}
-        ret['css'] = [getUrl(r) for r in cfg['head'] if r.endswith('.css')]
-        ret['headjs'] = [getUrl(r) for r in cfg['head'] if r.endswith('.js')]
-        ret['bodyjs'] = [getUrl(r) for r in cfg.get('body', [])]
+        ret['css'] = [
+            getUrl(r) for r in cfg.get('head', []) if r.endswith('.css')]
+        ret['headjs'] = [
+            getUrl(r) for r in cfg.get('head', []) if r.endswith('.js')]
+        ret['bodyjs'] = [
+            getUrl(r) for r in cfg.get('body', [])]
 
         return ret
 
@@ -90,17 +93,11 @@ class TabelTopView(BaseEcopView):
 
     resourceConfig = {
         'debug': {
-            'head': [
-                'ecop/tabletop/build/app.css'
-            ],
             'body': [
                 'ecop/tabletop/build/app.js'
             ]
         },
         'deploy': {
-            'head': [
-                'tabletop/app.css',
-            ],
             'body': [
                 'tabletop/app.js'
             ]

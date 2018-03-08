@@ -1,9 +1,7 @@
 {
   "name": "tabletop",
-  "version": "1.0.0",
-  "description": "",
+  "version": "0.1.0",
   "author": "Homemaster",
-  "license": "ISC",
   "scripts": {
     "build": "webpack --config webpack.config.prod.js",
     "watch": "webpack --config webpack.config.dev.js --watch"
@@ -11,7 +9,7 @@
   "dependencies": {
     "classnames": "^2.2.5",
     "core-js": "^2.5.3",
-    "homemaster-jslib": "^0.2.2",
+    "homemaster-jslib": "^0.2.5",
     "lodash": "^4.17.5",
     "material-ui": "^1.0.0-beta.35",
     "material-ui-icons": "^1.0.0-beta.35",
@@ -22,7 +20,6 @@
     "react-router-dom": "^4.2.2",
     "react-validation-mixin": "^5.4.0",
     "react-validatorjs-strategy": "^0.2.1",
-    "superagent": "^3.8.2",
     "validatorjs": "^3.14.2"
   },
   "devDependencies": {
@@ -35,7 +32,6 @@
     "babel-preset-es2015": "^6.24.1",
     "babel-preset-react": "^6.24.1",
     "babel-preset-stage-1": "^6.24.1",
-    "css-loader": "^0.28.10",
     "eslint": "^4.18.1",
     "eslint-config-react-app": "^2.1.0",
     "eslint-loader": "^2.0.0",
@@ -43,10 +39,6 @@
     "eslint-plugin-import": "^2.9.0",
     "eslint-plugin-jsx-a11y": "^6.0.3",
     "eslint-plugin-react": "^7.7.0",
-    "extract-text-webpack-plugin": "^3.0.2",
-    "node-sass": "^4.7.2",
-    "postcss-loader": "^2.1.1",
-    "sass-loader": "^6.0.6",
     "webpack": "^3.11.0",
     "webpack-bundle-analyzer": "^2.11.1"
   }

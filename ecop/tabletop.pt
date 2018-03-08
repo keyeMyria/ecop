@@ -5,25 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"<name />
     <title>${view.title}</title>
 
-    <!--! Page custom resources -->
-    <link tal:repeat="css view.resources.css"
-        type="text/css" rel="stylesheet" media="all"
-        href="${css}" />
-
     <script type="text/javascript">
-        var AppConfig = {
-            siteUrl: '${view.siteUrl}',
-            version: '${view.version}'
-        };
+        var App = {};
     </script>
     <script tal:condition="request.authenticated">
-        AppConfig.csrfToken = '${view.csrfToken}';
+        App.csrfToken = '${view.csrfToken}';
     </script>
-    <script tal:repeat="script view.resources.headjs" src="${script}"></script>
 </head>
 
 <body>
-    <div id="root" class="viewport"></div>
+    <div id="app" class="viewport"></div>
     <script tal:repeat="script view.resources.bodyjs" src="${script}"></script>
 </body>
 </html>

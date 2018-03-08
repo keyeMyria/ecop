@@ -1,15 +1,10 @@
 var path = require('path')
-var ExtractTextPlugin = require('extract-text-webpack-plugin')
-
-const extractSass = new ExtractTextPlugin({
-  filename: '[name].css'
-})
 
 process.env.BABEL_ENV = 'development'
 
 module.exports = {
   entry: {
-    app: './main.js'
+    app: './src/main.js'
   },
 
   output: {
@@ -38,35 +33,13 @@ module.exports = {
           presets: [['es2015', { modules: false }], 'react', 'stage-1'],
           plugins: ['transform-object-assign']
         }
-      },
-      {
-        test: /\.scss$/,
-        use: extractSass.extract({
-          use: [
-            {
-              loader: 'css-loader'
-            },
-            {
-              loader: 'postcss-loader',
-              options: {
-                plugins: loader => [require('autoprefixer')()]
-              }
-            },
-            {
-              loader: 'sass-loader',
-              options: {
-                includePaths: [path.resolve('./sass')]
-              }
-            }
-          ]
-        })
       }
     ]
   },
 
   resolve: {
-    modules: [path.resolve('.'), 'node_modules']
+    modules: [path.resolve('./src'), 'node_modules']
   },
 
-  plugins: [extractSass]
+  plugins: []
 }
