@@ -10,7 +10,6 @@
 - *.log
 - build/
 - client/
-- mecop/
-- tabletop/
+- worktop/
 - build.sh
 - rsync.rule

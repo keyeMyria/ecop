@@ -116,7 +116,7 @@ class AppFrame extends React.Component {
               <MenuIcon />
             </IconButton>
             <Typography variant="title" color="inherit" noWrap>
-              Table Top Process Control
+              Worktop Process Control
             </Typography>
           </Toolbar>
         </AppBar>
