@@ -76,6 +76,9 @@ const styles = theme => ({
   },
   content: {
     flexGrow: 1
+  },
+  listItemText: {
+    whiteSpace: 'nowrap'
   }
 })
 
@@ -94,6 +97,13 @@ class AppFrame extends React.Component {
 
   render() {
     const { classes } = this.props
+
+    let MenuItem = props => (
+      <ListItem button>
+        <ListItemIcon>{props.icon}</ListItemIcon>
+        <ListItemText className={classes.listItemText} primary={props.text} />
+      </ListItem>
+    )
 
     return (
       <div className={classes.root}>
@@ -137,18 +147,8 @@ class AppFrame extends React.Component {
           </div>
           <Divider />
           <List>
-            <ListItem button>
-              <ListItemIcon>
-                <TaskListIcon />
-              </ListItemIcon>
-              {this.state.open && <ListItemText primary="我的任务" />}
-            </ListItem>
-            <ListItem button>
-              <ListItemIcon>
-                <ExitToAppIcon />
-              </ListItemIcon>
-              {this.state.open && <ListItemText primary="退出登录" />}
-            </ListItem>
+            <MenuItem icon={<TaskListIcon />} text="我的任务" />
+            <MenuItem icon={<ExitToAppIcon />} text="退出登录" />
           </List>
         </Drawer>
         <main className={classes.main}>
