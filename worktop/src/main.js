@@ -8,6 +8,16 @@ import { theme, message, jsonrpc } from 'homemaster-jslib'
 
 import AppFrame from 'components/AppFrame'
 
+// polyfill ie for symbol
+require('core-js/fn/symbol')
+// polyfill ie for promise
+require('core-js/fn/promise')
+// polyfill for String.startsWith
+require('core-js/fn/string/virtual/starts-with')
+// polyfill for Array.findIndex
+require('core-js/fn/array/find-index')
+
+
 Object.assign(jsonrpc, {
   onerror: error => {
     const level = (error.data && error.data.level) || 'error'
