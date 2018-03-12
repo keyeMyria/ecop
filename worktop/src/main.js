@@ -2,7 +2,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
-import Reboot from 'material-ui/Reboot'
+import CssBaseline from 'material-ui/CssBaseline'
 
 import { theme, message, jsonrpc } from 'homemaster-jslib'
 
@@ -29,7 +29,7 @@ Object.assign(jsonrpc, {
 
 ReactDOM.render(
   <MuiThemeProvider theme={theme}>
-    <Reboot />
+    <CssBaseline />
     <AppFrame />
   </MuiThemeProvider>,
   document.getElementById('app')
