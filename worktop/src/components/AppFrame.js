@@ -126,7 +126,7 @@ class AppFrame extends React.Component {
               <MenuIcon />
             </IconButton>
             <Typography variant="title" color="inherit" noWrap>
-              Worktop Process Control
+              IKEA Worktop Process Control
             </Typography>
           </Toolbar>
         </AppBar>

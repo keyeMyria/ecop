@@ -85,21 +85,3 @@ class ERPView(BaseEcopView):
             ]
         }
     }
-
-
-@view_config(route_name='worktop', renderer='worktop.pt', xhr=False)
-class TabelTopView(BaseEcopView):
-    title = '台面安装流程'
-
-    resourceConfig = {
-        'debug': {
-            'body': [
-                'ecop/worktop/build/app.js'
-            ]
-        },
-        'deploy': {
-            'body': [
-                'worktop/app.js'
-            ]
-        }
-    }
