@@ -6,12 +6,12 @@ import compose from 'recompose/compose'
 import { withStyles } from 'material-ui/styles'
 import Button from 'material-ui/Button'
 import TextField from 'material-ui/TextField'
-import SendIcon from 'material-ui-icons/Send'
 import { red } from 'material-ui/colors'
 import { DatePicker } from 'material-ui-pickers'
 import { Typography } from 'material-ui'
 
 import { ValidatedForm, jsonrpc } from 'homemaster-jslib'
+import PaperPlaneIcon from 'homemaster-jslib/svg-icons/PaperPlane'
 
 const styles = {
   root: {
@@ -25,8 +25,8 @@ const styles = {
   buttonRow: {
     textAlign: 'center'
   },
-  sendIcon: {
-    transform: 'rotate(-30deg)'
+  buttonIcon: {
+    marginRight: 10
   }
 }
 
@@ -116,7 +116,7 @@ class StartForm extends ValidatedForm {
             className={classes.submitButton}
             onClick={this.handleSubmit}
           >
-            <SendIcon className={classes.sendIcon} />&nbsp;提交订单
+            <PaperPlaneIcon className={classes.buttonIcon} />提交订单
           </Button>
         </div>
       </div>

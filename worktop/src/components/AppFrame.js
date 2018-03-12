@@ -16,7 +16,7 @@ import ExitToAppIcon from 'material-ui-icons/ExitToApp'
 import AddCircleOutlineIcon from 'material-ui-icons/AddCircleOutline'
 import SearchIcon from 'material-ui-icons/Search'
 
-import TaskListIcon from 'icons/TaskList'
+import TaskListIcon from 'homemaster-jslib/svg-icons/TaskList'
 import StartForm from './StartForm'
 
 const drawerWidth = 180
