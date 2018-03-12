@@ -9,10 +9,12 @@
   "dependencies": {
     "classnames": "^2.2.5",
     "core-js": "^2.5.3",
+    "date-fns": "^2.0.0-alpha.7",
     "homemaster-jslib": "^0.2.6",
     "lodash": "^4.17.5",
     "material-ui": "^1.0.0-beta.37",
     "material-ui-icons": "^1.0.0-beta.36",
+    "material-ui-pickers": "^1.0.0-rc.2",
     "mobx": "^3.6.1",
     "mobx-react": "^4.4.2",
     "react": "^16.2.0",

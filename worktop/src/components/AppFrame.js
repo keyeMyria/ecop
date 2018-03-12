@@ -13,10 +13,13 @@ import IconButton from 'material-ui/IconButton'
 import MenuIcon from 'material-ui-icons/Menu'
 import ChevronLeftIcon from 'material-ui-icons/ChevronLeft'
 import ExitToAppIcon from 'material-ui-icons/ExitToApp'
+import AddCircleOutlineIcon from 'material-ui-icons/AddCircleOutline'
+import SearchIcon from 'material-ui-icons/Search'
 
 import TaskListIcon from 'icons/TaskList'
+import StartForm from './StartForm'
 
-const drawerWidth = 200
+const drawerWidth = 180
 
 const styles = theme => ({
   root: {
@@ -84,7 +87,7 @@ const styles = theme => ({
 
 class AppFrame extends React.Component {
   state = {
-    open: false
+    open: true
   }
 
   handleDrawerOpen = () => {
@@ -147,16 +150,16 @@ class AppFrame extends React.Component {
           </div>
           <Divider />
           <List>
+            <MenuItem icon={<AddCircleOutlineIcon />} text="新增订单" />
             <MenuItem icon={<TaskListIcon />} text="我的任务" />
+            <MenuItem icon={<SearchIcon />} text="订单搜索" />
             <MenuItem icon={<ExitToAppIcon />} text="退出登录" />
           </List>
         </Drawer>
         <main className={classes.main}>
           <div className={classes.toolbar} />
           <div className={classes.content}>
-            <Typography noWrap>
-              {'You think water moves fast? You should see ice.'}
-            </Typography>
+            <StartForm />
           </div>
         </main>
       </div>
