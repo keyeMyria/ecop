@@ -10,7 +10,7 @@ __cached_region__ = None
 
 def regionFactory():
     """ Cache the region dimension instance on the module level　"""
-    global __cached_region__
+    global __cached_region__ #pylint: disable=W0603
 
     if not __cached_region__:
         __cached_region__ = loadRegion(DBSession())
@@ -21,7 +21,7 @@ def regionFactory():
 class RegionJSON(RpcBase):
 
     @jsonrpc_method(endpoint='rpc', method='regions.get.legacy')
-    def getRegionsData(self):
+    def getRegionsDataLegacy(self):
         """ Return a tree structure to be loaded into a Ext.data.TreeStore:
               id: 6-digit region code
               text: text name of the region
@@ -53,6 +53,35 @@ class RegionJSON(RpcBase):
                     addNode(l, c)
 
         addNode(ret, regions.root)
+        return ret
+
+    @jsonrpc_method(endpoint='rpc', method='regions.get')
+    def getRegionsData(self, regionCode):
+        """
+        Return complete region data for the province which the parameter
+        `regionCode` corresponds to. Return format is:
+            {
+                100000: ['北京', pid, [child ids]],
+                310000: ['上海', pid, [child ids]]
+                ...
+            }
+        The children list is optional. If a node is leaf, then it will be
+        missing.
+
+        Note parameter `regionCode` may not be a first level region. Whatever
+        it is, the return value is **all** city and district data for the
+        provice which contains the `regionCode`.
+        """
+        ret = {}
+        region = regionFactory().get(regionCode)
+
+        def addNode(node):
+            d = [node.label, node.parent.key if node.parent else None]
+            if node.children:
+                d.append([c.key for c in node.children])
+            ret[node.key] = d
+
+        (region.ancestors[-1] if region.ancestors else region).walk(addNode)
         return ret
 
 

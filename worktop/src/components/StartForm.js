@@ -6,17 +6,19 @@ import compose from 'recompose/compose'
 import { withStyles } from 'material-ui/styles'
 import Button from 'material-ui/Button'
 import TextField from 'material-ui/TextField'
-import { red } from 'material-ui/colors'
 import { DatePicker } from 'material-ui-pickers'
-import { Typography } from 'material-ui'
+import Grid from 'material-ui/Grid'
+import Paper from 'material-ui/Paper'
 
 import { ValidatedForm, jsonrpc } from 'homemaster-jslib'
+import { RegionPicker } from 'homemaster-jslib/region'
 import PaperPlaneIcon from 'homemaster-jslib/svg-icons/PaperPlane'
 
 const styles = {
   root: {
     maxWidth: 700,
-    padding: 16
+    padding: 16,
+    margin: 16
   },
   submitButton: {
     marginTop: 12,
@@ -32,82 +34,198 @@ const styles = {
 
 class StartForm extends ValidatedForm {
   state = {
-    errMsg: '',
     values: {
+      orderId: null,
       customerName: '',
       customerPhone: '',
-      measureDate: null
+      regionCode: null,
+      street: '',
+      measureDate: null,
+      installDate: null
     }
   }
 
+  // TODO: check unique orderId
   validatorTypes = strategy.createSchema(
     {
-      login: 'required',
-      password: 'required|min:6'
+      orderId: 'required',
+      storeId: 'required',
+      customerName: 'required',
+      customerPhone: 'required',
+      measureDate: 'required',
+      installDate: 'required',
+      regionCode: 'required',
+      street: 'required'
     },
     {
-      'required.login': '用户名必须输入',
-      'required.password': '密码必须输入',
-      'min.password': '密码长度至少为6个字符'
+      'required.customerName': '顾客名称必须输入',
+      'required.customerPhone': '顾客电话必须输入',
+      'required.measureDate': '测量日期必须输入',
+      'required.installDate': '安装日期必须输入'
     }
   )
 
-  handleDateChange = date => {
-    this.setState({ measureDate: date })
-  }
-
   handleSubmit = () => {
     this.props.validate(error => {
-      if (error) {
-        this.setState({ errMsg: '请正确输入用户名及密码' })
-      } else {
-        jsonrpc({
-          method: 'auth.login',
-          params: this.state.values,
-          success: response => {
-            this.setState({ open: false })
-          }
-        })
+      if (!error) {
+        console.log(this.state.values)
       }
     })
   }
 
   render = () => {
     const { classes } = this.props
+    const { values } = this.state
 
     return (
-      <div className={classes.root}>
-        <div style={{ color: red[500] }}>{this.state.errMsg}</div>
-        <TextField
-          name="login"
+      <Paper className={classes.root}>
+        <Grid container justify="space-between">
+          <Grid item xs={4}>
+            <TextField
+              name="orderId"
+              required
+              fullWidth
+              margin="normal"
+              label="宜家订单号"
+              InputLabelProps={{
+                shrink: true
+              }}
+              onChange={this.handleChange}
+              error={!!this.getFieldError('orderId')}
+              helperText={this.getFieldError('orderId')}
+            />
+          </Grid>
+
+          <Grid item xs={4}>
+            <TextField
+              name="storeId"
+              required
+              fullWidth
+              margin="normal"
+              label="宜家商场号"
+              InputLabelProps={{
+                shrink: true
+              }}
+              onChange={this.handleChange}
+              error={!!this.getFieldError('storeId')}
+              helperText={this.getFieldError('storeId')}
+            />
+          </Grid>
+        </Grid>
+
+        <Grid container justify="center" spacing={24}>
+          <Grid item xs={6}>
+            <TextField
+              name="customerName"
+              required
+              margin="normal"
+              fullWidth
+              label="顾客姓名"
+              InputLabelProps={{
+                shrink: true
+              }}
+              onChange={this.handleChange}
+              error={!!this.getFieldError('customerName')}
+              helperText={this.getFieldError('customerName')}
+            />
+          </Grid>
+
+          <Grid item xs={6}>
+            <TextField
+              name="customerPhone"
+              required
+              margin="normal"
+              fullWidth
+              label="顾客电话"
+              InputLabelProps={{
+                shrink: true
+              }}
+              onChange={this.handleChange}
+              error={!!this.getFieldError('customerPhone')}
+              helperText={this.getFieldError('customerPhone')}
+            />
+          </Grid>
+        </Grid>
+
+        <Grid container justify="center" spacing={24}>
+          <Grid item xs={6}>
+            <DatePicker
+              label="测量日期"
+              keyboard
+              required
+              fullWidth
+              name="measureDate"
+              InputLabelProps={{
+                shrink: true
+              }}
+              value={values.measureDate}
+              onChange={date =>
+                this.handleChange({
+                  target: {
+                    value: date,
+                    name: 'measureDate'
+                  }
+                })
+              }
+              error={!!this.getFieldError('measureDate')}
+              helperText={this.getFieldError('measureDate')}
+            />
+          </Grid>
+
+          <Grid item xs={6}>
+            <DatePicker
+              label="安装日期"
+              required
+              fullWidth
+              name="installDate"
+              InputLabelProps={{
+                shrink: true
+              }}
+              value={values.installDate}
+              onChange={date =>
+                this.handleChange({
+                  target: {
+                    value: date,
+                    name: 'installDate'
+                  }
+                })
+              }
+              error={!!this.getFieldError('installDate')}
+              helperText={this.getFieldError('installDate')}
+            />
+          </Grid>
+        </Grid>
+
+        <RegionPicker
+          name="regionCode"
+          required
           fullWidth
           margin="normal"
-          label="顾客姓名"
+          InputLabelProps={{
+            shrink: true
+          }}
+          label="所在地区"
+          value={values.regionCode}
+          onBlur={this.activateValidation}
           onChange={this.handleChange}
-          error={!!this.getFieldError('login')}
-          helperText={this.getFieldError('login')}
+          error={!!this.getFieldError('regionCode')}
+          helperText={this.getFieldError('regionCode')}
         />
 
         <TextField
-          name="password"
+          name="street"
+          required
           fullWidth
           margin="normal"
-          label="顾客电话"
+          InputLabelProps={{
+            shrink: true
+          }}
+          label="详细地址"
+          onBlur={this.activateValidation}
           onChange={this.handleChange}
-          error={!!this.getFieldError('customerPhone')}
-          helperText={this.getFieldError('customerPhone')}
+          error={!!this.getFieldError('street')}
+          helperText={this.getFieldError('street')}
         />
-
-        <div className="picker">
-          <Typography variant="headline" align="center" gutterBottom>
-            测量日期
-          </Typography>
-          <DatePicker
-            name="measureDate"
-            value={this.state.measureDate}
-            onChange={this.handleDateChange}
-          />
-        </div>
 
         <div className={classes.buttonRow}>
           <Button
@@ -119,7 +237,7 @@ class StartForm extends ValidatedForm {
             <PaperPlaneIcon className={classes.buttonIcon} />提交订单
           </Button>
         </div>
-      </div>
+      </Paper>
     )
   }
 }
