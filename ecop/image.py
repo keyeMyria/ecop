@@ -225,6 +225,9 @@ class ImageJSON(RpcBase):
 
 
 class FileObjectBase(object):
+    """ A base class for uploading images via rpc `fileobject.add` as well as
+    `upload` route for CKEditor """
+
     def getByMd5(self, md5):
         """
         Check if a file object with the md5 is present. Returns the file object

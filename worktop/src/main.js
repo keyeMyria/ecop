@@ -8,6 +8,7 @@ import MuiPickersUtilsProvider from 'material-ui-pickers/utils/MuiPickersUtilsPr
 
 import { theme, message, jsonrpc } from 'homemaster-jslib'
 import AppFrame from 'components/AppFrame'
+import LoginDialog from './components/LoginDialog';
 
 // polyfill ie for symbol
 require('core-js/fn/symbol')

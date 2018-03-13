@@ -42,8 +42,8 @@ const styles = theme => ({
     })
   },
   menuButton: {
-    marginLeft: 6,
-    marginRight: 16
+    marginLeft: 12,
+    marginRight: 26
   },
   hide: {
     display: 'none'
@@ -62,7 +62,7 @@ const styles = theme => ({
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen
     }),
-    width: theme.spacing.unit * 7
+    width: theme.spacing.unit * 9
   },
   toolbar: {
     display: 'flex',
@@ -152,7 +152,7 @@ class AppFrame extends React.Component {
           <List>
             <MenuItem icon={<AddCircleOutlineIcon />} text="新增订单" />
             <MenuItem icon={<TaskListIcon />} text="我的任务" />
-            <MenuItem icon={<SearchIcon />} text="订单搜索" />
+            <MenuItem icon={<SearchIcon />} text="订单查询" />
             <MenuItem icon={<ExitToAppIcon />} text="退出登录" />
           </List>
         </Drawer>
