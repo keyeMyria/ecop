@@ -1,14 +1,15 @@
 /* global App */
 import React from 'react'
 import ReactDOM from 'react-dom'
+
+import MuiPickersUtilsProvider from 'material-ui-pickers/utils/MuiPickersUtilsProvider'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 import CssBaseline from 'material-ui/CssBaseline'
-import DateFnsUtils from 'material-ui-pickers/utils/date-fns-utils'
-import MuiPickersUtilsProvider from 'material-ui-pickers/utils/MuiPickersUtilsProvider'
-
 import { theme, message, jsonrpc } from 'homemaster-jslib'
+
+import DateFnsUtils from 'utils/date-fns-utils'
 import AppFrame from 'components/AppFrame'
-import LoginDialog from './components/LoginDialog';
+import LoginDialog from 'components/LoginDialog'
 
 // polyfill ie for symbol
 require('core-js/fn/symbol')

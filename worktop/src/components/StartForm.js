@@ -1,13 +1,17 @@
 import React from 'react'
 import validation from 'react-validation-mixin'
 import compose from 'recompose/compose'
+import format from 'date-fns/format'
+import addDays from 'date-fns/addDays'
 
 import { withStyles } from 'material-ui/styles'
 import Button from 'material-ui/Button'
 import TextField from 'material-ui/TextField'
-import { DatePicker } from 'material-ui-pickers'
+import DatePicker from 'material-ui-pickers/DatePicker'
 import Grid from 'material-ui/Grid'
 import Paper from 'material-ui/Paper'
+import ArrowLeftIcon from 'material-ui-icons/KeyboardArrowLeft'
+import ArrowRightIcon from 'material-ui-icons/KeyboardArrowRight'
 
 import { jsonrpc, RegionPicker } from 'homemaster-jslib'
 import PaperPlaneIcon from 'homemaster-jslib/svg-icons/PaperPlane'
@@ -75,17 +79,10 @@ class StartForm extends ValidatedForm {
     })
   }
 
-  handleChangeOrderId = e => {
-    const { value, name: field } = e.target
-    this.setState(
-      { values: { ...this.state.values, [field]: value.trim() } },
-      this.props.handleValidation(field)
-    )
-  }
-
   render = () => {
     const { classes } = this.props
     const { values } = this.state
+    console.log(values)
 
     return (
       <Paper className={classes.root}>
@@ -163,6 +160,7 @@ class StartForm extends ValidatedForm {
               }}
               onBlur={this.activateValidation}
               onChange={e => {
+                console.log(e)
                 var { value } = e.target
                 // allow only numbers and max 11
                 if (/^1\d{0,10}$/.test(value) || !value) {
@@ -182,14 +180,18 @@ class StartForm extends ValidatedForm {
           <Grid item xs={6}>
             <DatePicker
               label="测量日期"
-              keyboard
               required
               fullWidth
+              autoOk
               name="measureDate"
               InputLabelProps={{
                 shrink: true
               }}
+              minDate={new Date()}
+              leftArrowIcon={<ArrowLeftIcon />}
+              rightArrowIcon={<ArrowRightIcon />}
               value={values.measureDate}
+              labelFunc={date => (date ? format(date, 'YYYY/MM/DD') : '')}
               onChange={date =>
                 this.handleChange({
                   target: {
@@ -208,11 +210,16 @@ class StartForm extends ValidatedForm {
               label="安装日期"
               required
               fullWidth
+              autoOk
               name="installDate"
               InputLabelProps={{
                 shrink: true
               }}
+              leftArrowIcon={<ArrowLeftIcon />}
+              rightArrowIcon={<ArrowRightIcon />}
               value={values.installDate}
+              minDate={addDays(values.measureDate || new Date(), 7)}
+              labelFunc={date => (date ? format(date, 'YYYY/MM/DD') : '')}
               onChange={date =>
                 this.handleChange({
                   target: {
