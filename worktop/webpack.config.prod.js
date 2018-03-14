@@ -1,5 +1,6 @@
 var path = require('path')
 var webpack = require('webpack')
+var ExtractTextPlugin = require('extract-text-webpack-plugin')
 var BundleAnalyzerPlugin = require('webpack-bundle-analyzer')
   .BundleAnalyzerPlugin
 
@@ -37,6 +38,19 @@ module.exports = {
           presets: [['es2015', { modules: false }], 'react', 'stage-1'],
           plugins: ['transform-object-assign']
         }
+      },
+      {
+        test: /\.css$/,
+        use: ExtractTextPlugin.extract({
+          use: ['css-loader']
+        })
+      },
+      {
+        test: /\.(ico|jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2)(\?.*)?$/,
+        loader: 'file-loader',
+        query: {
+          name: 'resources/[name].[hash:8].[ext]'
+        }
       }
     ]
   },
@@ -69,7 +83,9 @@ module.exports = {
       }
     }),
 
+    new ExtractTextPlugin('[name].css'),
+
     // enable this when we need to analyze module size
-    new BundleAnalyzerPlugin()
+    // new BundleAnalyzerPlugin()
   ]
 }

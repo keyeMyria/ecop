@@ -9,6 +9,9 @@ class WorktopView(BaseEcopView):
 
     resourceConfig = {
         'debug': {
+            'head': [
+                'ecop/worktop/build/app.css'
+            ],
             'body': [
                 'ecop/worktop/build/app.js'
             ]

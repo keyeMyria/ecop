@@ -5,11 +5,13 @@ import ReactDOM from 'react-dom'
 import MuiPickersUtilsProvider from 'material-ui-pickers/utils/MuiPickersUtilsProvider'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 import CssBaseline from 'material-ui/CssBaseline'
-import { theme, message, jsonrpc } from 'homemaster-jslib'
+import 'typeface-roboto'
 
+import { message, jsonrpc } from 'homemaster-jslib'
 import DateFnsUtils from 'utils/date-fns-utils'
 import AppFrame from 'components/AppFrame'
 import LoginDialog from 'components/LoginDialog'
+import theme from './theme'
 
 // polyfill ie for symbol
 require('core-js/fn/symbol')

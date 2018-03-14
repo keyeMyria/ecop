@@ -1,5 +1,5 @@
 var path = require('path')
-
+var ExtractTextPlugin = require('extract-text-webpack-plugin')
 process.env.BABEL_ENV = 'development'
 
 module.exports = {
@@ -33,6 +33,19 @@ module.exports = {
           presets: [['es2015', { modules: false }], 'react', 'stage-1'],
           plugins: ['transform-object-assign', 'transform-decorators-legacy']
         }
+      },
+      {
+        test: /\.css$/,
+        use: ExtractTextPlugin.extract({
+          use: ['css-loader']
+        })
+      },
+      {
+        test: /\.(ico|jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2)(\?.*)?$/,
+        loader: 'file-loader',
+        query: {
+          name: 'resources/[name].[hash:8].[ext]'
+        }
       }
     ]
   },
@@ -41,5 +54,5 @@ module.exports = {
     modules: [path.resolve('./src'), 'node_modules']
   },
 
-  plugins: []
+  plugins: [new ExtractTextPlugin('[name].css')]
 }
