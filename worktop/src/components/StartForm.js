@@ -21,8 +21,7 @@ import { strategy, ValidatedForm } from 'form'
 const styles = {
   root: {
     maxWidth: 700,
-    padding: 16,
-    margin: 16
+    padding: 16
   },
   orderId: {
     fontSize: 24,

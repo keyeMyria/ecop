@@ -62,7 +62,10 @@ const styles = theme => ({
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen
     }),
-    width: theme.spacing.unit * 9
+    width: theme.spacing.unit * 9,
+    [theme.breakpoints.down('sm')]: {
+      width: 0
+    }
   },
   toolbar: {
     display: 'flex',
@@ -80,8 +83,10 @@ const styles = theme => ({
   content: {
     flexGrow: 1,
     overflowY: 'auto',
+    padding: theme.spacing.unit,
     maxHeight: `calc(100vh - ${theme.mixins.toolbar.minHeight}px)`,
     [theme.breakpoints.up('sm')]: {
+      padding: theme.spacing.unit * 2,
       maxHeight: `calc(100vh - ${
         theme.mixins.toolbar[theme.breakpoints.up('sm')].minHeight
       }px)`
