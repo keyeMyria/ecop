@@ -10,8 +10,7 @@ import { DatePicker } from 'material-ui-pickers'
 import Grid from 'material-ui/Grid'
 import Paper from 'material-ui/Paper'
 
-import { ValidatedForm, jsonrpc } from 'homemaster-jslib'
-import { RegionPicker } from 'homemaster-jslib/region'
+import { jsonrpc, RegionPicker, ValidatedForm } from 'homemaster-jslib'
 import PaperPlaneIcon from 'homemaster-jslib/svg-icons/PaperPlane'
 
 const styles = {
