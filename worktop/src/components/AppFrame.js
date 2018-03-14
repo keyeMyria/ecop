@@ -78,7 +78,14 @@ const styles = theme => ({
     backgroundColor: theme.palette.background.default
   },
   content: {
-    flexGrow: 1
+    flexGrow: 1,
+    overflowY: 'auto',
+    maxHeight: `calc(100vh - ${theme.mixins.toolbar.minHeight}px)`,
+    [theme.breakpoints.up('sm')]: {
+      maxHeight: `calc(100vh - ${
+        theme.mixins.toolbar[theme.breakpoints.up('sm')].minHeight
+      }px)`
+    }
   },
   listItemText: {
     whiteSpace: 'nowrap'
