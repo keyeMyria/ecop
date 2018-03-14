@@ -24,6 +24,10 @@ const styles = {
     padding: 16,
     margin: 16
   },
+  orderId: {
+    fontSize: 24,
+    fontWeight: 'bold'
+  },
   submitButton: {
     marginTop: 12,
     width: '50%'
@@ -40,6 +44,7 @@ class StartForm extends ValidatedForm {
   state = {
     values: {
       orderId: '',
+      storeId: '',
       customerName: '',
       customerMobile: '',
       regionCode: null,
@@ -53,7 +58,7 @@ class StartForm extends ValidatedForm {
   validatorTypes = strategy.createInactiveSchema(
     {
       orderId: 'required|size:9',
-      storeId: 'required',
+      storeId: 'required|size:3',
       customerName: 'required',
       customerMobile: 'required|mobile',
       measureDate: 'required',
@@ -64,10 +69,14 @@ class StartForm extends ValidatedForm {
     {
       'required.orderId': '宜家订单号必须输入',
       'size.orderId': '宜家订单号长度为9',
+      'required.storeId': '宜家商场号必须输入',
+      'size.storeId': '宜家商场号长度为3',
       'required.customerName': '顾客名称必须输入',
       'required.customerMobile': '顾客手机必须输入',
       'required.measureDate': '测量日期必须输入',
-      'required.installDate': '安装日期必须输入'
+      'required.installDate': '安装日期必须输入',
+      'required.street': '详细地址必须输入',
+      'required.regionCode': '所在地区必须输入'
     }
   )
 
@@ -82,12 +91,11 @@ class StartForm extends ValidatedForm {
   render = () => {
     const { classes } = this.props
     const { values } = this.state
-    console.log(values)
 
     return (
       <Paper className={classes.root}>
         <Grid container justify="space-between">
-          <Grid item xs={4}>
+          <Grid item xs={5}>
             <TextField
               name="orderId"
               required
@@ -97,6 +105,7 @@ class StartForm extends ValidatedForm {
               InputLabelProps={{
                 shrink: true
               }}
+              InputProps={{ classes: { input: classes.orderId } }}
               value={values.orderId}
               onBlur={this.activateValidation}
               onChange={e => {
@@ -123,7 +132,17 @@ class StartForm extends ValidatedForm {
               InputLabelProps={{
                 shrink: true
               }}
-              onChange={this.handleChange}
+              value={values.storeId}
+              onBlur={this.activateValidation}
+              onChange={e => {
+                var { value } = e.target
+                if (/^\d{0,3}$/.test(value) || !value) {
+                  this.setState(
+                    { values: { ...values, storeId: value } },
+                    this.props.handleValidation('storeId')
+                  )
+                }
+              }}
               error={!!this.getFieldError('storeId')}
               helperText={this.getFieldError('storeId')}
             />
@@ -160,7 +179,6 @@ class StartForm extends ValidatedForm {
               }}
               onBlur={this.activateValidation}
               onChange={e => {
-                console.log(e)
                 var { value } = e.target
                 // allow only numbers and max 11
                 if (/^1\d{0,10}$/.test(value) || !value) {
@@ -244,6 +262,7 @@ class StartForm extends ValidatedForm {
           }}
           label="所在地区"
           value={values.regionCode}
+          preSelect={310100}
           onBlur={this.activateValidation}
           onChange={this.handleChange}
           error={!!this.getFieldError('regionCode')}
