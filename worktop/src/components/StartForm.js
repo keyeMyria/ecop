@@ -208,7 +208,7 @@ class StartForm extends ValidatedForm {
               InputLabelProps={{
                 shrink: true
               }}
-              minDate={new Date()}
+              disablePast
               maxDate={values.installDate ? addDays(values.installDate, -7) : '2100-01-01'}
               leftArrowIcon={<ArrowLeftIcon />}
               rightArrowIcon={<ArrowRightIcon />}
