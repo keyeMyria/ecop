@@ -24,10 +24,9 @@ export default class ValidatedForm extends Component {
 
   getFieldError = field => this.props.getValidationMessages(field)[0]
 
-  handleChange = e => {
-    const { value, name: field } = e.target
+  handleChange = field => e => {
     this.setState(
-      { values: { ...this.state.values, [field]: value } },
+      { values: { ...this.state.values, [field]: e.target.value } },
       this.props.handleValidation(field)
     )
   }
@@ -41,17 +40,4 @@ export default class ValidatedForm extends Component {
     }
   }
 
-  /*
-   * A separate handleChange for mobile field to enable input mask
-   */
-  handleChangeMobile = e => {
-    var { value } = e.target
-    // allow only numbers and max 11
-    if (/^1\d{0,10}$/.test(value)) {
-      this.setState(
-        { values: { ...this.state.values, mobile: value } },
-        this.props.handleValidation('mobile')
-      )
-    }
-  }
 }

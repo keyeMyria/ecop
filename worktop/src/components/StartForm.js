@@ -10,6 +10,8 @@ import TextField from 'material-ui/TextField'
 import DatePicker from 'material-ui-pickers/DatePicker'
 import Grid from 'material-ui/Grid'
 import Paper from 'material-ui/Paper'
+import { FormGroup, FormControlLabel } from 'material-ui/Form';
+import Checkbox from 'material-ui/Checkbox';
 import ArrowLeftIcon from 'material-ui-icons/KeyboardArrowLeft'
 import ArrowRightIcon from 'material-ui-icons/KeyboardArrowRight'
 
@@ -49,7 +51,9 @@ class StartForm extends ValidatedForm {
       regionCode: null,
       street: '',
       measureDate: null,
-      installDate: null
+      installDate: null,
+      installFaucet: false,
+      installSink: false
     }
   }
 
@@ -159,7 +163,7 @@ class StartForm extends ValidatedForm {
               InputLabelProps={{
                 shrink: true
               }}
-              onChange={this.handleChange}
+              onChange={this.handleChange('customerName')}
               error={!!this.getFieldError('customerName')}
               helperText={this.getFieldError('customerName')}
             />
@@ -205,15 +209,15 @@ class StartForm extends ValidatedForm {
                 shrink: true
               }}
               minDate={new Date()}
+              maxDate={values.installDate ? addDays(values.installDate, -7) : '2100-01-01'}
               leftArrowIcon={<ArrowLeftIcon />}
               rightArrowIcon={<ArrowRightIcon />}
               value={values.measureDate}
               labelFunc={date => (date ? format(date, 'YYYY/MM/DD') : '')}
               onChange={date =>
-                this.handleChange({
+                this.handleChange('measureDate')({
                   target: {
-                    value: date,
-                    name: 'measureDate'
+                    value: date
                   }
                 })
               }
@@ -238,10 +242,9 @@ class StartForm extends ValidatedForm {
               minDate={addDays(values.measureDate || new Date(), 7)}
               labelFunc={date => (date ? format(date, 'YYYY/MM/DD') : '')}
               onChange={date =>
-                this.handleChange({
+                this.handleChange('installDate')({
                   target: {
-                    value: date,
-                    name: 'installDate'
+                    value: date
                   }
                 })
               }
@@ -263,7 +266,7 @@ class StartForm extends ValidatedForm {
           value={values.regionCode}
           preSelect={310100}
           onBlur={this.activateValidation}
-          onChange={this.handleChange}
+          onChange={this.handleChange('regionCode')}
           error={!!this.getFieldError('regionCode')}
           helperText={this.getFieldError('regionCode')}
         />
@@ -278,11 +281,34 @@ class StartForm extends ValidatedForm {
           }}
           label="详细地址"
           onBlur={this.activateValidation}
-          onChange={this.handleChange}
+          onChange={this.handleChange('street')}
           error={!!this.getFieldError('street')}
           helperText={this.getFieldError('street')}
         />
 
+        <FormGroup row>
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={values.installFaucet}
+              onChange={this.handleChange('installFaucet')}
+              value="installFaucet"
+            />
+          }
+          label="Secondary"
+        />
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={values.installSink}
+              onChange={this.handleChange('installSink')}
+              value="installSink"
+              color="primary"
+            />
+          }
+          label="Primary"
+        />
+        </FormGroup>
         <div className={classes.buttonRow}>
           <Button
             variant="raised"
