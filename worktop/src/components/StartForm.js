@@ -198,9 +198,7 @@ class StartForm extends ValidatedForm {
               name="measureDate"
               disablePast
               maxDate={
-                values.installDate
-                  ? addDays(values.installDate, -7)
-                  : '2100-01-01'
+                values.installDate ? addDays(values.installDate, -7) : undefined
               }
               leftArrowIcon={<ArrowLeftIcon />}
               rightArrowIcon={<ArrowRightIcon />}
