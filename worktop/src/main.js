@@ -35,7 +35,7 @@ ReactDOM.render(
   <MuiThemeProvider theme={theme}>
     <CssBaseline />
     <MuiPickersUtilsProvider utils={DateFnsUtils}>
-      <AppFrame />
+      {App.csrfToken ? <AppFrame /> : <LoginDialog />}
     </MuiPickersUtilsProvider>
   </MuiThemeProvider>,
   document.getElementById('app')

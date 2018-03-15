@@ -16,6 +16,7 @@ import ExitToAppIcon from 'material-ui-icons/ExitToApp'
 import AddCircleOutlineIcon from 'material-ui-icons/AddCircleOutline'
 import SearchIcon from 'material-ui-icons/Search'
 
+import { jsonrpc } from 'homemaster-jslib'
 import TaskListIcon from 'homemaster-jslib/svg-icons/TaskList'
 import StartForm from './StartForm'
 
@@ -110,15 +111,28 @@ class AppFrame extends React.Component {
     this.setState({ open: false })
   }
 
+  handleLogout = () => {
+    console.log('Logging out')
+    jsonrpc({
+      method: 'auth.logout',
+      success: () => {
+        window.location.reload()
+      }
+    })
+  }
+
   render() {
     const { classes } = this.props
 
-    let MenuItem = props => (
-      <ListItem button>
-        <ListItemIcon>{props.icon}</ListItemIcon>
-        <ListItemText className={classes.listItemText} primary={props.text} />
-      </ListItem>
-    )
+    let MenuItem = props => {
+      const { icon, text, onClick } = props
+      return (
+        <ListItem button onClick={onClick}>
+          <ListItemIcon>{icon}</ListItemIcon>
+          <ListItemText className={classes.listItemText} primary={text} />
+        </ListItem>
+      )
+    }
 
     return (
       <div className={classes.root}>
@@ -165,7 +179,11 @@ class AppFrame extends React.Component {
             <MenuItem icon={<AddCircleOutlineIcon />} text="新增订单" />
             <MenuItem icon={<TaskListIcon />} text="我的任务" />
             <MenuItem icon={<SearchIcon />} text="订单查询" />
-            <MenuItem icon={<ExitToAppIcon />} text="退出登录" />
+            <MenuItem
+              icon={<ExitToAppIcon />}
+              onClick={this.handleLogout}
+              text="退出登录"
+            />
           </List>
         </Drawer>
         <main className={classes.main}>

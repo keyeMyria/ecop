@@ -26,7 +26,6 @@ const Transition = props => <Slide direction="down" {...props} />
 
 class LoginDialog extends ValidatedForm {
   state = {
-    open: true,
     errMsg: '',
     values: {
       login: '',
@@ -54,8 +53,8 @@ class LoginDialog extends ValidatedForm {
         jsonrpc({
           method: 'auth.login',
           params: this.state.values,
-          success: response => {
-            this.setState({ open: false })
+          success: () => {
+            window.location.reload()
           }
         })
       }
@@ -65,7 +64,7 @@ class LoginDialog extends ValidatedForm {
   render = () => {
     return (
       <Dialog
-        open={this.state.open}
+        open
         classes={{ paperWidthSm: this.props.classes.paperWidthSm }}
         transition={Transition} // never use inline function here!!
       >
