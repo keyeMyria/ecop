@@ -10,8 +10,8 @@ import TextField from 'material-ui/TextField'
 import DatePicker from 'material-ui-pickers/DatePicker'
 import Grid from 'material-ui/Grid'
 import Paper from 'material-ui/Paper'
-import { FormGroup, FormControlLabel } from 'material-ui/Form';
-import Checkbox from 'material-ui/Checkbox';
+import { FormGroup, FormControlLabel } from 'material-ui/Form'
+import Checkbox from 'material-ui/Checkbox'
 import ArrowLeftIcon from 'material-ui-icons/KeyboardArrowLeft'
 import ArrowRightIcon from 'material-ui-icons/KeyboardArrowRight'
 
@@ -38,23 +38,24 @@ const styles = {
   },
   buttonIcon: {
     marginRight: 10
+  },
+  checkBoxContainer: {
+    flexBasis: '50%'
   }
 }
 
 class StartForm extends ValidatedForm {
-  state = {
-    values: {
-      orderId: '',
-      storeId: '',
-      customerName: '',
-      customerMobile: '',
-      regionCode: null,
-      street: '',
-      measureDate: null,
-      installDate: null,
-      installFaucet: false,
-      installSink: false
-    }
+  defaultValues = {
+    orderId: '',
+    storeId: '',
+    customerName: '',
+    customerMobile: '',
+    regionCode: null,
+    street: '',
+    measureDate: null,
+    installDate: null,
+    installFaucet: false,
+    installSink: false
   }
 
   // TODO: check unique orderId
@@ -83,10 +84,20 @@ class StartForm extends ValidatedForm {
     }
   )
 
+  constructor(props) {
+    super(props)
+    this.state = { values: this.defaultValues }
+  }
+
+  resetForm = () => {
+    this.setState({ values: this.defaultValues })
+  }
+
   handleSubmit = () => {
     this.props.validate(error => {
       if (!error) {
-        console.log(this.state.values)
+        console.log('Submitting form', this.state.values)
+        this.resetForm()
       }
     })
   }
@@ -160,6 +171,7 @@ class StartForm extends ValidatedForm {
               margin="normal"
               fullWidth
               label="顾客姓名"
+              value={values.customerName}
               InputLabelProps={{
                 shrink: true
               }}
@@ -209,7 +221,11 @@ class StartForm extends ValidatedForm {
                 shrink: true
               }}
               disablePast
-              maxDate={values.installDate ? addDays(values.installDate, -7) : '2100-01-01'}
+              maxDate={
+                values.installDate
+                  ? addDays(values.installDate, -7)
+                  : '2100-01-01'
+              }
               leftArrowIcon={<ArrowLeftIcon />}
               rightArrowIcon={<ArrowRightIcon />}
               value={values.measureDate}
@@ -280,6 +296,7 @@ class StartForm extends ValidatedForm {
             shrink: true
           }}
           label="详细地址"
+          value={values.street}
           onBlur={this.activateValidation}
           onChange={this.handleChange('street')}
           error={!!this.getFieldError('street')}
@@ -287,28 +304,31 @@ class StartForm extends ValidatedForm {
         />
 
         <FormGroup row>
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={values.installFaucet}
-              onChange={this.handleChange('installFaucet')}
-              value="installFaucet"
+          <div className={classes.checkBoxContainer}>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={values.installFaucet}
+                  onChange={this.handleChange('installFaucet', 'checkbox')}
+                />
+              }
+              label={(values.installFaucet ? '' : '不') + '需要安装水槽'}
             />
-          }
-          label="Secondary"
-        />
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={values.installSink}
-              onChange={this.handleChange('installSink')}
-              value="installSink"
-              color="primary"
+          </div>
+          <div className={classes.checkBoxContainer}>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={values.installSink}
+                  onChange={this.handleChange('installSink', 'checkbox')}
+                  color="primary"
+                />
+              }
+              label={(values.installSink ? '' : '不') + '需要安装龙头'}
             />
-          }
-          label="Primary"
-        />
+          </div>
         </FormGroup>
+
         <div className={classes.buttonRow}>
           <Button
             variant="raised"

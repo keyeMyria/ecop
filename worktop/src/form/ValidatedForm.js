@@ -24,9 +24,14 @@ export default class ValidatedForm extends Component {
 
   getFieldError = field => this.props.getValidationMessages(field)[0]
 
-  handleChange = field => e => {
+  handleChange = (field, type) => e => {
     this.setState(
-      { values: { ...this.state.values, [field]: e.target.value } },
+      {
+        values: {
+          ...this.state.values,
+          [field]: type === 'checkbox' ? e.target.checked : e.target.value
+        }
+      },
       this.props.handleValidation(field)
     )
   }
@@ -39,5 +44,4 @@ export default class ValidatedForm extends Component {
       this.props.handleValidation(field)()
     }
   }
-
 }
