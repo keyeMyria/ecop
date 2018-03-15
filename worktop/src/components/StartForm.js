@@ -18,7 +18,7 @@ import ArrowRightIcon from 'material-ui-icons/KeyboardArrowRight'
 import { jsonrpc, RegionPicker } from 'homemaster-jslib'
 import PaperPlaneIcon from 'homemaster-jslib/svg-icons/PaperPlane'
 
-import { strategy, ValidatedForm } from 'form'
+import { strategy, ValidatedForm, Field } from 'form'
 
 const styles = {
   root: {
@@ -110,18 +110,13 @@ class StartForm extends ValidatedForm {
       <Paper className={classes.root}>
         <Grid container justify="space-between">
           <Grid item xs={5}>
-            <TextField
+            <Field
+              component={TextField}
               name="orderId"
-              required
-              fullWidth
-              margin="normal"
               label="宜家订单号"
-              InputLabelProps={{
-                shrink: true
-              }}
               InputProps={{ classes: { input: classes.orderId } }}
               value={values.orderId}
-              onBlur={this.activateValidation}
+              onBlur={this.activateValidation('orderId')}
               onChange={e => {
                 var { value } = e.target
                 if (/^\d{0,9}$/.test(value) || !value) {
@@ -137,17 +132,12 @@ class StartForm extends ValidatedForm {
           </Grid>
 
           <Grid item xs={4}>
-            <TextField
+            <Field
+              component={TextField}
               name="storeId"
-              required
-              fullWidth
-              margin="normal"
               label="宜家商场号"
-              InputLabelProps={{
-                shrink: true
-              }}
               value={values.storeId}
-              onBlur={this.activateValidation}
+              onBlur={this.activateValidation('storeId')}
               onChange={e => {
                 var { value } = e.target
                 if (/^\d{0,3}$/.test(value) || !value) {
@@ -165,16 +155,11 @@ class StartForm extends ValidatedForm {
 
         <Grid container justify="center" spacing={24}>
           <Grid item xs={6}>
-            <TextField
+            <Field
+              component={TextField}
               name="customerName"
-              required
-              margin="normal"
-              fullWidth
               label="顾客姓名"
               value={values.customerName}
-              InputLabelProps={{
-                shrink: true
-              }}
               onChange={this.handleChange('customerName')}
               error={!!this.getFieldError('customerName')}
               helperText={this.getFieldError('customerName')}
@@ -182,17 +167,12 @@ class StartForm extends ValidatedForm {
           </Grid>
 
           <Grid item xs={6}>
-            <TextField
+            <Field
+              component={TextField}
               name="customerMobile"
-              required
-              margin="normal"
-              fullWidth
               label="顾客手机"
               value={values.customerMobile}
-              InputLabelProps={{
-                shrink: true
-              }}
-              onBlur={this.activateValidation}
+              onBlur={this.activateValidation('customerMobile')}
               onChange={e => {
                 var { value } = e.target
                 // allow only numbers and max 11
@@ -211,15 +191,11 @@ class StartForm extends ValidatedForm {
 
         <Grid container justify="center" spacing={24}>
           <Grid item xs={6}>
-            <DatePicker
+            <Field
+              component={DatePicker}
               label="测量日期"
-              required
-              fullWidth
               autoOk
               name="measureDate"
-              InputLabelProps={{
-                shrink: true
-              }}
               disablePast
               maxDate={
                 values.installDate
@@ -230,74 +206,46 @@ class StartForm extends ValidatedForm {
               rightArrowIcon={<ArrowRightIcon />}
               value={values.measureDate}
               labelFunc={date => (date ? format(date, 'YYYY/MM/DD') : '')}
-              onChange={date =>
-                this.handleChange('measureDate')({
-                  target: {
-                    value: date
-                  }
-                })
-              }
+              onChange={this.handleChange('measureDate', 'datepicker')}
               error={!!this.getFieldError('measureDate')}
               helperText={this.getFieldError('measureDate')}
             />
           </Grid>
 
           <Grid item xs={6}>
-            <DatePicker
-              label="安装日期"
-              required
-              fullWidth
-              autoOk
+            <Field
+              component={DatePicker}
               name="installDate"
-              InputLabelProps={{
-                shrink: true
-              }}
+              label="安装日期"
+              autoOk
               leftArrowIcon={<ArrowLeftIcon />}
               rightArrowIcon={<ArrowRightIcon />}
               value={values.installDate}
               minDate={addDays(values.measureDate || new Date(), 7)}
               labelFunc={date => (date ? format(date, 'YYYY/MM/DD') : '')}
-              onChange={date =>
-                this.handleChange('installDate')({
-                  target: {
-                    value: date
-                  }
-                })
-              }
+              onChange={this.handleChange('installDate', 'datepicker')}
               error={!!this.getFieldError('installDate')}
               helperText={this.getFieldError('installDate')}
             />
           </Grid>
         </Grid>
 
-        <RegionPicker
+        <Field
+          component={RegionPicker}
           name="regionCode"
-          required
-          fullWidth
-          margin="normal"
-          InputLabelProps={{
-            shrink: true
-          }}
           label="所在地区"
           value={values.regionCode}
           preSelect={310100}
-          onBlur={this.activateValidation}
           onChange={this.handleChange('regionCode')}
           error={!!this.getFieldError('regionCode')}
           helperText={this.getFieldError('regionCode')}
         />
 
-        <TextField
+        <Field
+          component={TextField}
           name="street"
-          required
-          fullWidth
-          margin="normal"
-          InputLabelProps={{
-            shrink: true
-          }}
           label="详细地址"
           value={values.street}
-          onBlur={this.activateValidation}
           onChange={this.handleChange('street')}
           error={!!this.getFieldError('street')}
           helperText={this.getFieldError('street')}

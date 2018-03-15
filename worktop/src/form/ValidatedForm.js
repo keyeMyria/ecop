@@ -10,7 +10,6 @@ import strategy from 'react-validatorjs-strategy'
  * following shape:
  *
  *   state = {
- *     errMsg: '',
  *     values: {
  *       mobile: '',
  *       vericode: ''
@@ -25,19 +24,33 @@ export default class ValidatedForm extends Component {
   getFieldError = field => this.props.getValidationMessages(field)[0]
 
   handleChange = (field, type) => e => {
+    var value
+
+    switch (type) {
+      case 'checkbox':
+        value = e.target.checked
+        break
+      case 'datepicker':
+        value = e
+        break
+      default:
+        value = e.target.value
+    }
+
     this.setState(
       {
         values: {
           ...this.state.values,
-          [field]: type === 'checkbox' ? e.target.checked : e.target.value
+          [field]: value
         }
       },
       this.props.handleValidation(field)
     )
   }
 
-  activateValidation = e => {
-    const { value, name: field } = e.target
+  activateValidation = field => e => {
+    // note that this won't work well for checkbox, which always have a value
+    const { value } = e.target
     if (value && this.activatedFields.indexOf(field) === -1) {
       strategy.activateRule(this.validatorTypes, field)
       this.activatedFields.push(field)
