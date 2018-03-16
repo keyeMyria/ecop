@@ -1,3 +1,4 @@
+/* global App */
 import React from 'react'
 import PropTypes from 'prop-types'
 import { withStyles } from 'material-ui/styles'
@@ -26,6 +27,9 @@ const styles = theme => ({
   root: {
     position: 'relative',
     display: 'flex'
+  },
+  appName: {
+    paddingLeft: theme.spacing.unit
   },
   appBar: {
     zIndex: theme.zIndex.drawer + 1,
@@ -72,7 +76,6 @@ const styles = theme => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'flex-end',
-    padding: '0 8px',
     ...theme.mixins.toolbar
   },
   main: {
@@ -170,6 +173,14 @@ class AppFrame extends React.Component {
           open={this.state.open}
         >
           <div className={classes.toolbar}>
+            <div className={classes.appName}>
+              <Typography variant="title" color="inherit" noWrap>
+                BE Worktop
+              </Typography>
+              <Typography variant="subheading" color="inherit" noWrap>
+                v1.0.{App.version}
+              </Typography>
+            </div>
             <IconButton onClick={this.handleDrawerClose}>
               <ChevronLeftIcon />
             </IconButton>

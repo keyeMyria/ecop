@@ -10,7 +10,9 @@
         href="${css}" />
 
     <script type="text/javascript">
-        var App = {};
+        var App = {
+            version: ${view.version},
+        };
     </script>
     <script tal:condition="request.authenticated">
         App.csrfToken = '${view.csrfToken}';
