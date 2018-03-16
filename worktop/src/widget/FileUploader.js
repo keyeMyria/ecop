@@ -1,40 +1,39 @@
 /* global App */
-import isEmpty from 'lodash/isEmpty'
 import styled from 'styled-components'
 import SparkMD5 from 'spark-md5'
 
 import React, { Component } from 'react'
+import PropTypes from 'prop-types'
 
 import { withStyles } from 'material-ui/styles'
-import Toolbar from 'material-ui/Toolbar'
+import FormControl from 'material-ui/Form/FormControl'
+import FormHelperText from 'material-ui/Form/FormHelperText'
 import Button from 'material-ui/Button'
 import { InputLabel } from 'material-ui/Input'
-import PhotoCameraIcon from 'material-ui-icons/PhotoCamera'
+import AddIcon from 'material-ui-icons/Add'
+import DeleteIcon from 'material-ui-icons/Delete'
 
 import { jsonrpc, arrayBufferToBase64, compressImage } from 'homemaster-jslib'
 
 const styles = theme => ({
-  toolbar: {
-    paddingLeft: 0,
-    paddingRight: 0
-  },
-  fileInput: {
-    display: 'none'
+  actionBar: {
+    'label + &': {
+      marginTop: theme.spacing.unit * 2
+    }
   },
   button: {
-    width: '100%',
-    flex: 1,
-    marginLeft: theme.spacing.unit,
-    marginRight: theme.spacing.unit
+    margin: theme.spacing.unit
+  },
+  hidden: {
+    display: 'none'
+  },
+  thumbsContainer: {
+    display: 'flex',
+    flexDdirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-around'
   }
 })
-
-const AttachmentWrapper = styled.div`
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: space-around;
-`
 
 const ThumbWrapper = styled.div`
   margin: 5px 0;
@@ -68,16 +67,16 @@ const ThumbWrapper = styled.div`
   }
 `
 
-/*
+/**
  * {
  *   name: the name of the fileobject to be uploaded
  *   dataUrl: the dataurl of the preview image of the file, compressed to max
  *            300x300
  * }
  */
-const AttachmentThumb = props => {
-  const { attachment, ...other } = props
-  const uploading = attachment.progress || attachment.dataUrl
+const FileThumb = props => {
+  const { file, ...other } = props
+  const uploading = file.progress || file.dataUrl
 
   return (
     <ThumbWrapper {...other}>
@@ -85,17 +84,14 @@ const AttachmentThumb = props => {
         <div
           className="uploading"
           style={{
-            backgroundImage: `url(${attachment.dataUrl})`
+            backgroundImage: `url(${file.dataUrl})`
           }}
         >
-          <div> {`${attachment.progress.toFixed(0)}%`} </div>
+          <div> {`${file.progress.toFixed(0)}%`} </div>
         </div>
       ) : (
         <div>
-          <img
-            alt=""
-            src={`${App.imageUrl}/${attachment.name}@!attachment_thumb`}
-          />
+          <img alt="" src={`${App.imageUrl}/${file.name}@!attachment_thumb`} />
         </div>
       )}
     </ThumbWrapper>
@@ -104,7 +100,7 @@ const AttachmentThumb = props => {
 
 class FileUploader extends Component {
   state = {
-    imageIdx: null
+    selectedFile: null
   }
 
   handleImageUpload = e => {
@@ -113,12 +109,9 @@ class FileUploader extends Component {
     }
 
     const file = e.target.files[0]
-    const { order, dispatch } = this.props
-    const { attachments } = order.header
-    const index = isEmpty(attachments) ? 0 : attachments.length
-    var fileContent
+    var fileContent, files
 
-    const uploadAttachment = content => {
+    const uploadFile = content => {
       return compressImage(file, {
         maxWidth: 300,
         maxHeight: 300,
@@ -135,14 +128,14 @@ class FileUploader extends Component {
             })
         )
         .then(dataUrl => {
-          dispatch(uploadOrderAttachment(index, dataUrl))
+          // dispatch(uploadOrderAttachment(index, dataUrl))
           return jsonrpc({
             method: 'fileobject.add',
             params: [arrayBufferToBase64(content)],
             on: {
               progress: function(e) {
                 // note percent could be missing if file size
-                dispatch(updateAttachmentUploadProgress(index, e.percent || 0))
+                // dispatch(updateAttachmentUploadProgress(index, e.percent || 0))
               }
             }
           })
@@ -176,21 +169,20 @@ class FileUploader extends Component {
       })
       .then(fname => {
         if (fname) {
-          // check to see if the image is already in attachments
-          if (attachments && attachments.find(el => el.name === fname)) {
-            throw new Error('File already in attachemnts')
+          // check to see if the file is already in the control
+          if (files && files.find(el => el.name === fname)) {
+            throw new Error('File already exist')
           }
           return fname
         } else {
-          return uploadAttachment(fileContent)
+          return uploadFile(fileContent)
         }
       })
       .then(fname => {
         jsonrpc({
           method: 'order.attachment.add',
-          params: [order.header.orderId, fname],
           success: () => {
-            dispatch(orderAttachmentAdded(index, fname))
+            // dispatch(orderAttachmentAdded(index, fname))
           }
         })
       })
@@ -198,57 +190,103 @@ class FileUploader extends Component {
   }
 
   render() {
-    const { order, classes, history, location } = this.props
-    // do not render till order is loaded
-    if (!order) {
-      return null
-    }
+    var files
 
-    const ActionToolbar = (
-      <Toolbar className={classes.toolbar}>
-        <Button
-          variant="raised"
-          component="label"
-          htmlFor="image-upload"
-          color="primary"
-          className={classes.button}
-        >
-          <PhotoCameraIcon />&nbsp;上传照片
-          <input
-            accept="image/*"
-            className={classes.fileInput}
-            id="image-upload"
-            type="file"
-            onChange={this.handleImageUpload}
-          />
-        </Button>
-      </Toolbar>
-    )
+    const {
+      classes,
+      helperText,
+      FormHelperTextProps,
+      InputLabelProps,
+      label,
+      onChange,
+      value,
+      ...other
+    } = this.props
 
     return (
-      <div className={classes.root}>
-        {attachments && (
-          <div style={{ padding: '0 0.5em', margin: '0.5em 0' }}>
-            <InputLabel shrink={true} style={{ display: 'block' }}>
-              相关照片
-            </InputLabel>
-            <AttachmentWrapper>
-              {attachments.map((a, i) => (
-                <AttachmentThumb
-                  key={i}
-                  attachment={a}
-                  onClick={() => {
-                    history.push(location.pathname, 'showImages')
-                    this.setState({ imageOpen: true, imageIdx: i })
-                  }}
-                />
-              ))}
-            </AttachmentWrapper>
+      <FormControl {...other}>
+        {label && <InputLabel {...InputLabelProps}>{label}</InputLabel>}
+
+        <div className={classes.actionBar}>
+          <Button
+            component="label"
+            variant="fab"
+            mini
+            color="primary"
+            htmlFor="file-upload"
+            className={classes.button}
+          >
+            <AddIcon />
+            <input
+              accept="image/*"
+              className={classes.hidden}
+              id="file-upload"
+              type="file"
+              onChange={this.handleImageUpload}
+            />
+          </Button>
+          <Button
+            variant="fab"
+            mini
+            color="primary"
+            disabled
+            className={classes.button}
+          >
+            <DeleteIcon />
+          </Button>
+        </div>
+
+        {files && (
+          <div className={classes.thumbsContainer}>
+            {files.map((f, i) => <FileThumb key={i} file={f} />)}
           </div>
         )}
-      </div>
+
+        {helperText && (
+          <FormHelperText {...FormHelperTextProps}>{helperText}</FormHelperText>
+        )}
+      </FormControl>
     )
   }
+}
+
+FileUploader.propTypes = {
+  /**
+   * If `true`, the input will indicate an error. This is normally obtained via context from
+   * FormControl.
+   */
+  error: PropTypes.bool,
+  /**
+   * If `true`, the input will take up the full width of its container.
+   */
+  fullWidth: PropTypes.bool,
+  /**
+   * The helper text content.
+   */
+  helperText: PropTypes.node,
+  /**
+   * Properties applied to the `InputLabel` element.
+   */
+  InputLabelProps: PropTypes.object,
+  /**
+   * The label content.
+   */
+  label: PropTypes.string,
+  /**
+   * If `dense` or `normal`, will adjust vertical spacing of this and contained
+   * components.
+   */
+  margin: PropTypes.oneOf(['none', 'dense', 'normal']),
+  /**
+   * Callback fired when the value is changed.
+   *
+   * @param {object} event The event source of the callback
+   */
+  onChange: PropTypes.func,
+  /**
+   * The value of the `Input` element, required for a controlled component.
+   */
+  value: PropTypes.arrayOf(PropTypes.string)
 }
 
 export default withStyles(styles)(FileUploader)

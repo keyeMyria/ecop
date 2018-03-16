@@ -19,6 +19,7 @@ import { jsonrpc, RegionPicker } from 'homemaster-jslib'
 import PaperPlaneIcon from 'homemaster-jslib/svg-icons/PaperPlane'
 
 import { strategy, ValidatedForm, Field } from 'form'
+import FileUploader from 'widget/FileUploader'
 
 const styles = {
   root: {
@@ -55,7 +56,8 @@ class StartForm extends ValidatedForm {
     measureDate: null,
     installDate: null,
     installFaucet: false,
-    installSink: false
+    installSink: false,
+    files: null
   }
 
   // TODO: check unique orderId
@@ -68,7 +70,8 @@ class StartForm extends ValidatedForm {
       measureDate: 'required',
       installDate: 'required',
       regionCode: 'required',
-      street: 'required'
+      street: 'required',
+      files: 'required'
     },
     {
       'required.orderId': '宜家订单号必须输入',
@@ -80,7 +83,8 @@ class StartForm extends ValidatedForm {
       'required.measureDate': '测量日期必须输入',
       'required.installDate': '安装日期必须输入',
       'required.street': '详细地址必须输入',
-      'required.regionCode': '所在地区必须输入'
+      'required.regionCode': '所在地区必须输入',
+      'required.files': '原始图纸必须上传'
     }
   )
 
@@ -274,6 +278,13 @@ class StartForm extends ValidatedForm {
             />
           </div>
         </FormGroup>
+
+        <Field
+          component={FileUploader}
+          label="原始图纸"
+          error={!!this.getFieldError('files')}
+          helperText={this.getFieldError('files')}
+        />
 
         <div className={classes.buttonRow}>
           <Button
