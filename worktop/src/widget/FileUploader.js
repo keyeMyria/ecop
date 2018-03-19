@@ -22,8 +22,14 @@ import { InputLabel } from 'material-ui/Input'
 import AddIcon from 'material-ui-icons/Add'
 import DeleteIcon from 'material-ui-icons/Delete'
 import FileDownloadIcon from 'material-ui-icons/FileDownload'
+import PreviewIcon from 'material-ui-icons/RemoveRedEye'
 
-import { jsonrpc, arrayBufferToBase64, compressImage } from 'homemaster-jslib'
+import {
+  jsonrpc,
+  arrayBufferToBase64,
+  Gallery,
+  compressImage
+} from 'homemaster-jslib'
 
 const styles = theme => ({
   actionBar: {
@@ -121,6 +127,7 @@ const FileThumb = props => {
 
 class FileUploader extends Component {
   state = {
+    previewOpen: false,
     selected: null,
     /**
      * [{progress: 0.5, dataUrl: 'xxxx'}, ...]
@@ -218,7 +225,7 @@ class FileUploader extends Component {
         value: update(value, { $splice: [[this.state.selected, 1]] })
       }
     }
-    this.setState({selected: null})
+    this.setState({ selected: null })
     onChange(event)
   }
 
@@ -285,6 +292,16 @@ class FileUploader extends Component {
           >
             <FileDownloadIcon />
           </Button>
+          <Button
+            variant="fab"
+            mini
+            color="primary"
+            disabled={!files.length}
+            className={classes.button}
+            onClick={() => this.setState({ previewOpen: true })}
+          >
+            <PreviewIcon />
+          </Button>
         </div>
 
         {files && (
@@ -309,6 +326,17 @@ class FileUploader extends Component {
         {helperText && (
           <FormHelperText {...FormHelperTextProps}>{helperText}</FormHelperText>
         )}
+        <Gallery
+          fullScreen
+          open={this.state.previewOpen}
+          images={files.map(a => ({
+            url: `${App.imageUrl}/${a.name}`
+          }))}
+          initialImage={this.state.selected}
+          onClose={() => {
+            this.setState({ previewOpen: false })
+          }}
+        />
       </FormControl>
     )
   }
