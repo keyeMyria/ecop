@@ -12,6 +12,7 @@
     <script type="text/javascript">
         var App = {
             version: ${view.version},
+            imageUrl: '${view.imageUrl}'
         };
     </script>
     <script tal:condition="request.authenticated">

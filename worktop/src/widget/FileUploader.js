@@ -1,6 +1,15 @@
 /* global App */
-import styled from 'styled-components'
+
+/**
+ * The FileUploader widget is a **controlled* form component that display an
+ * array of files in the `value` prop plus files that are being uploaded.
+ * Image files are represented as a thumb, and other files as an icon.
+ * For files being uploaded, a progress indicator will be shown on top of the
+ * thumb or icon.
+ */
 import SparkMD5 from 'spark-md5'
+import update from 'immutability-helper'
+import classNames from 'classnames'
 
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
@@ -12,6 +21,7 @@ import Button from 'material-ui/Button'
 import { InputLabel } from 'material-ui/Input'
 import AddIcon from 'material-ui-icons/Add'
 import DeleteIcon from 'material-ui-icons/Delete'
+import FileDownloadIcon from 'material-ui-icons/FileDownload'
 
 import { jsonrpc, arrayBufferToBase64, compressImage } from 'homemaster-jslib'
 
@@ -29,60 +39,67 @@ const styles = theme => ({
   },
   thumbsContainer: {
     display: 'flex',
-    flexDdirection: 'row',
+    flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-around'
+  },
+  thumbRoot: {
+    margin: '5px 0',
+    flexBasis: '30%',
+    cursor: 'pointer'
+  },
+  imageWrapper: {
+    paddingBottom: '100%',
+    position: 'relative'
+  },
+  thumbImage: {
+    position: 'absolute',
+    top: 0,
+    width: '100%'
+  },
+  uploading: {
+    backgroundSize: 'contain',
+    backgroundRepeat: 'no-repeat',
+    backgroundPosition: 'center center',
+    opacity: 0.5
+  },
+  selected: {
+    border: '1px solid grey'
+  },
+  progress: {
+    textAlign: 'center',
+    width: '100%',
+    position: 'absolute',
+    top: '50%',
+    transform: 'translateY(-50%)'
   }
 })
 
-const ThumbWrapper = styled.div`
-  margin: 5px 0;
-  flex-basis: 30%;
-  cursor: zoom-in;
-
-  > div {
-    padding-bottom: 100%;
-    position: relative;
-
-    &.uploading {
-      background-size: contain;
-      background-repeat: no-repeat;
-      background-position: center center;
-      opacity: 0.5;
-    }
-
-    img {
-      position: absolute;
-      top: 0;
-      width: 100%;
-    }
-
-    div {
-      text-align: center;
-      width: 100%;
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-    }
-  }
-`
-
 /**
+ * Displays a thumb for the file already uploaded or being uploaded. Prop
+ * `file` is an objec with the format:
+ *
  * {
- *   name: the name of the fileobject to be uploaded
- *   dataUrl: the dataurl of the preview image of the file, compressed to max
- *            300x300
+ *   name: the name of the fileobject for existing files
+ *   progress: upload progress percentage
+ *   dataUrl: the dataurl of the preview image of the file being uploaded
+ *     compressed to max 300x300
  * }
  */
 const FileThumb = props => {
-  const { file, ...other } = props
+  const { file, selected, classes, ...other } = props
   const uploading = file.progress || file.dataUrl
 
   return (
-    <ThumbWrapper {...other}>
+    <div
+      className={classNames(classes.thumbRoot, {
+        [classes.selected]: selected
+      })}
+      {...other}
+    >
       {uploading ? (
         <div
-          className="uploading"
+          className={[classes.uploading, classes.imageWrapper]}
           style={{
             backgroundImage: `url(${file.dataUrl})`
           }}
@@ -90,20 +107,28 @@ const FileThumb = props => {
           <div> {`${file.progress.toFixed(0)}%`} </div>
         </div>
       ) : (
-        <div>
-          <img alt="" src={`${App.imageUrl}/${file.name}@!attachment_thumb`} />
+        <div className={classes.imageWrapper}>
+          <img
+            alt=""
+            className={classes.thumbImage}
+            src={`${App.imageUrl}/${file.name}@!attachment_thumb`}
+          />
         </div>
       )}
-    </ThumbWrapper>
+    </div>
   )
 }
 
 class FileUploader extends Component {
   state = {
-    selectedFile: null
+    selected: null,
+    /**
+     * [{progress: 0.5, dataUrl: 'xxxx'}, ...]
+     */
+    uploding: []
   }
 
-  handleImageUpload = e => {
+  handleUpload = e => {
     if (e.target.files.length === 0) {
       return
     }
@@ -140,6 +165,9 @@ class FileUploader extends Component {
             }
           })
         })
+        .then(() => {
+          console.log('File upload finished')
+        })
     }
 
     compressImage(file, {
@@ -169,7 +197,7 @@ class FileUploader extends Component {
       })
       .then(fname => {
         if (fname) {
-          // check to see if the file is already in the control
+          // check to see if the file is already in the widget
           if (files && files.find(el => el.name === fname)) {
             throw new Error('File already exist')
           }
@@ -178,30 +206,43 @@ class FileUploader extends Component {
           return uploadFile(fileContent)
         }
       })
-      .then(fname => {
-        jsonrpc({
-          method: 'order.attachment.add',
-          success: () => {
-            // dispatch(orderAttachmentAdded(index, fname))
-          }
-        })
-      })
       .catch(e => console.log(e))
   }
 
-  render() {
-    var files
+  handleDownload = () => {}
 
+  handleDelete = () => {
+    const { value, onChange } = this.props
+    const event = {
+      target: {
+        value: update(value, { $splice: [[this.state.selected, 1]] })
+      }
+    }
+    this.setState({selected: null})
+    onChange(event)
+  }
+
+  handleSelect = idx => e => {
+    if (idx === this.state.selected) {
+      this.setState({ selected: null })
+    } else if (idx < this.props.value.length) {
+      this.setState({ selected: idx })
+    }
+    e.stopPropagation()
+  }
+
+  render() {
     const {
       classes,
       helperText,
       FormHelperTextProps,
       InputLabelProps,
       label,
-      onChange,
       value,
       ...other
     } = this.props
+
+    var files = value.map(f => ({ name: f }))
 
     return (
       <FormControl {...other}>
@@ -222,23 +263,46 @@ class FileUploader extends Component {
               className={classes.hidden}
               id="file-upload"
               type="file"
-              onChange={this.handleImageUpload}
+              onChange={this.handleUpload}
             />
           </Button>
           <Button
             variant="fab"
             mini
             color="primary"
-            disabled
+            disabled={this.state.selected === null}
+            onClick={this.handleDelete}
             className={classes.button}
           >
             <DeleteIcon />
           </Button>
+          <Button
+            variant="fab"
+            mini
+            color="primary"
+            disabled={this.state.selected === null}
+            className={classes.button}
+          >
+            <FileDownloadIcon />
+          </Button>
         </div>
 
         {files && (
-          <div className={classes.thumbsContainer}>
-            {files.map((f, i) => <FileThumb key={i} file={f} />)}
+          <div
+            className={classes.thumbsContainer}
+            onClick={() => {
+              this.setState({ selected: null })
+            }}
+          >
+            {files.map((f, i) => (
+              <FileThumb
+                key={i}
+                file={f}
+                selected={i === this.state.selected}
+                classes={classes}
+                onClick={this.handleSelect(i)}
+              />
+            ))}
           </div>
         )}
 
@@ -284,7 +348,7 @@ FileUploader.propTypes = {
    */
   onChange: PropTypes.func,
   /**
-   * The value of the `Input` element, required for a controlled component.
+   * The files that the control represents, used for controlled mode.
    */
   value: PropTypes.arrayOf(PropTypes.string)
 }

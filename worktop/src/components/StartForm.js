@@ -57,7 +57,7 @@ class StartForm extends ValidatedForm {
     installDate: null,
     installFaucet: false,
     installSink: false,
-    files: null
+    files: ['27URUapXsNrUxnskCm2tUJ.png', '2PEkgchQZmX58imzzT852W.jpg']
   }
 
   // TODO: check unique orderId
@@ -284,6 +284,8 @@ class StartForm extends ValidatedForm {
           label="原始图纸"
           error={!!this.getFieldError('files')}
           helperText={this.getFieldError('files')}
+          onChange={this.handleChange('files')}
+          value={values.files}
         />
 
         <div className={classes.buttonRow}>
