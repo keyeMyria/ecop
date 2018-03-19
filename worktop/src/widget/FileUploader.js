@@ -83,10 +83,13 @@ const styles = theme => ({
 
 /**
  * Displays a thumb for the file already uploaded or being uploaded. Prop
- * `file` is an objec with the format:
- *
+ * `file` is either an object for existing file:
  * {
  *   name: the name of the fileobject for existing files
+ * }
+ *
+ * or for an uploading file:
+ * {
  *   progress: upload progress percentage
  *   dataUrl: the dataurl of the preview image of the file being uploaded
  *     compressed to max 300x300
@@ -110,7 +113,9 @@ const FileThumb = props => {
             backgroundImage: `url(${file.dataUrl})`
           }}
         >
-          <div> {`${file.progress.toFixed(0)}%`} </div>
+          <div className={classes.progress}>
+            {`${file.progress.toFixed(0)}%`}
+          </div>
         </div>
       ) : (
         <div className={classes.imageWrapper}>
@@ -216,7 +221,14 @@ class FileUploader extends Component {
       .catch(e => console.log(e))
   }
 
-  handleDownload = () => {}
+  handleDownload = () => {
+    const fileName = this.props.value[this.state.selected]
+    const url = `${App.imageUrl}/${fileName}`
+    var a = document.createElement('a')
+    a.href = url
+    a.download = fileName
+    a.click()
+  }
 
   handleDelete = () => {
     const { value, onChange } = this.props
@@ -277,9 +289,9 @@ class FileUploader extends Component {
             variant="fab"
             mini
             color="primary"
+            className={classes.button}
             disabled={this.state.selected === null}
             onClick={this.handleDelete}
-            className={classes.button}
           >
             <DeleteIcon />
           </Button>
@@ -287,8 +299,9 @@ class FileUploader extends Component {
             variant="fab"
             mini
             color="primary"
-            disabled={this.state.selected === null}
             className={classes.button}
+            disabled={this.state.selected === null}
+            onClick={this.handleDownload}
           >
             <FileDownloadIcon />
           </Button>
@@ -296,8 +309,8 @@ class FileUploader extends Component {
             variant="fab"
             mini
             color="primary"
-            disabled={!files.length}
             className={classes.button}
+            disabled={!files.length}
             onClick={() => this.setState({ previewOpen: true })}
           >
             <PreviewIcon />
