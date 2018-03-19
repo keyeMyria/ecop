@@ -200,12 +200,12 @@ class AppFrame extends React.Component {
             />
           </List>
         </Drawer>
-        <main className={classes.main}>
+        <div className={classes.main}>
           <div className={classes.toolbar} />
           <div className={classes.content}>
             <StartForm />
           </div>
-        </main>
+        </div>
       </div>
     )
   }

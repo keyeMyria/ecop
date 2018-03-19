@@ -28,7 +28,8 @@ import {
   jsonrpc,
   arrayBufferToBase64,
   Gallery,
-  compressImage
+  compressImage,
+  downloadFile
 } from 'homemaster-jslib'
 
 const styles = theme => ({
@@ -223,11 +224,7 @@ class FileUploader extends Component {
 
   handleDownload = () => {
     const fileName = this.props.value[this.state.selected]
-    const url = `${App.imageUrl}/${fileName}`
-    var a = document.createElement('a')
-    a.href = url
-    a.download = fileName
-    a.click()
+    downloadFile(`${App.imageUrl}/${fileName}`, fileName)
   }
 
   handleDelete = () => {
