@@ -17,7 +17,7 @@ import ExitToAppIcon from 'material-ui-icons/ExitToApp'
 import AddCircleOutlineIcon from 'material-ui-icons/AddCircleOutline'
 import SearchIcon from 'material-ui-icons/Search'
 
-import { jsonrpc } from 'homemaster-jslib'
+import { jsonrpc, screen } from 'homemaster-jslib'
 import TaskListIcon from 'homemaster-jslib/svg-icons/TaskList'
 import StartForm from './StartForm'
 
@@ -102,20 +102,23 @@ const styles = theme => ({
 })
 
 class AppFrame extends React.Component {
-  state = {
-    open: true
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      drawerOpen: !screen.isMobile()
+    }
   }
 
   handleDrawerOpen = () => {
-    this.setState({ open: true })
+    this.setState({ drawerOpen: true })
   }
 
   handleDrawerClose = () => {
-    this.setState({ open: false })
+    this.setState({ drawerOpen: false })
   }
 
   handleLogout = () => {
-    console.log('Logging out')
     jsonrpc({
       method: 'auth.logout',
       success: () => {
@@ -143,16 +146,16 @@ class AppFrame extends React.Component {
           position="absolute"
           className={classNames(
             classes.appBar,
-            this.state.open && classes.appBarShift
+            this.state.drawerOpen && classes.appBarShift
           )}
         >
-          <Toolbar disableGutters={!this.state.open}>
+          <Toolbar disableGutters={!this.state.drawerOpen}>
             <IconButton
               color="inherit"
               onClick={this.handleDrawerOpen}
               className={classNames(
                 classes.menuButton,
-                this.state.open && classes.hide
+                this.state.drawerOpen && classes.hide
               )}
             >
               <MenuIcon />
@@ -167,10 +170,10 @@ class AppFrame extends React.Component {
           classes={{
             paper: classNames(
               classes.drawerPaper,
-              !this.state.open && classes.drawerPaperClose
+              !this.state.drawerOpen && classes.drawerPaperClose
             )
           }}
-          open={this.state.open}
+          open={this.state.drawerOpen}
         >
           <div className={classes.toolbar}>
             <div className={classes.appName}>

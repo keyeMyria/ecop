@@ -12,7 +12,8 @@
     <script type="text/javascript">
         var App = {
             version: ${view.version},
-            imageUrl: '${view.imageUrl}'
+            imageUrl: '${view.imageUrl}',
+            isMobile: ${str(request.is_mobile).lower()}
         };
     </script>
     <script tal:condition="request.authenticated">
