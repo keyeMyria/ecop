@@ -29,7 +29,8 @@ import {
   arrayBufferToBase64,
   Gallery,
   compressImage,
-  downloadFile
+  downloadFile,
+  uniqueId
 } from 'homemaster-jslib'
 
 const styles = theme => ({
@@ -132,71 +133,82 @@ const FileThumb = props => {
 }
 
 class FileUploader extends Component {
-  state = {
-    previewOpen: false,
-    selected: null,
-    /**
-     * [{progress: 0.5, dataUrl: 'xxxx'}, ...]
-     */
-    uploding: []
+  constructor(props) {
+    super(props)
+    this.state = {
+      previewOpen: false,
+      selected: null,
+      /**
+       * [{progress: 0.5, dataUrl: 'xxxx'}, ...]
+       */
+      uploding: []
+    }
+    // generate unique id for input control widget
+    this._id = `FileUploader-${uniqueId()}`
+  }
+
+  uploadFile = (file, content) => {
+    return compressImage(file, {
+      maxWidth: 300,
+      maxHeight: 300,
+      quality: 0.8
+    })
+      .then(
+        thumb =>
+          new Promise(resolve => {
+            var reader = new FileReader()
+            reader.onload = function() {
+              resolve(reader.result)
+            }
+            reader.readAsDataURL(thumb)
+          })
+      )
+      .then(thumbDataUrl => {
+        // dispatch(uploadOrderAttachment(index, thumbDataUrl))
+        return jsonrpc({
+          method: 'fileobject.add',
+          params: [arrayBufferToBase64(content)],
+          on: {
+            progress: function(e) {
+              // note percent could be missing if file size
+              // dispatch(updateAttachmentUploadProgress(index, e.percent || 0))
+            }
+          }
+        })
+      })
   }
 
   handleUpload = e => {
+    var fileContent, files
+    e.stopPropagation()
+
     if (e.target.files.length === 0) {
       return
     }
 
     const file = e.target.files[0]
-    var fileContent, files
+    const compressOptions = Object.assign(
+      {},
+      FileUploader.defaultProps.imageCompressOptions,
+      this.props.imageCompressOptions
+    )
+    console.log(compressOptions)
 
-    const uploadFile = content => {
-      return compressImage(file, {
-        maxWidth: 300,
-        maxHeight: 300,
-        quality: 0.8
-      })
-        .then(
-          image =>
-            new Promise(resolve => {
-              var reader = new FileReader()
-              reader.onload = function() {
-                resolve(reader.result)
-              }
-              reader.readAsDataURL(image)
-            })
-        )
-        .then(dataUrl => {
-          // dispatch(uploadOrderAttachment(index, dataUrl))
-          return jsonrpc({
-            method: 'fileobject.add',
-            params: [arrayBufferToBase64(content)],
-            on: {
-              progress: function(e) {
-                // note percent could be missing if file size
-                // dispatch(updateAttachmentUploadProgress(index, e.percent || 0))
-              }
-            }
-          })
-        })
-        .then(() => {
-          console.log('File upload finished')
-        })
-    }
+    var p = this.props.compressImage
+      ? compressImage(file, compressOptions)
+      : Promise.resolve(file)
 
-    compressImage(file, {
-      maxWidth: 2048,
-      maxHeight: 2048,
-      quality: 0.8
-    })
+    p
       .then(
-        image =>
+        file =>
           new Promise(function(resolve) {
             var reader = new FileReader()
             reader.onload = function() {
+              // keep the result in outer scope var fileContent
               fileContent = reader.result
               resolve(fileContent)
             }
-            reader.readAsArrayBuffer(image)
+            reader.readAsArrayBuffer(file)
           })
       )
       .then(content => {
@@ -211,13 +223,23 @@ class FileUploader extends Component {
       .then(fname => {
         if (fname) {
           // check to see if the file is already in the widget
-          if (files && files.find(el => el.name === fname)) {
+          if (files && files.find(item => item.name === fname)) {
             throw new Error('File already exist')
           }
           return fname
         } else {
-          return uploadFile(fileContent)
+          return this.uploadFile(file, fileContent)
         }
+      })
+      .then(fname => {
+        const event = {
+          target: {
+            value: update(this.props.value, {
+              $push: [fname]
+            })
+          }
+        }
+        this.props.onChange(event)
       })
       .catch(e => console.log(e))
   }
@@ -239,12 +261,12 @@ class FileUploader extends Component {
   }
 
   handleSelect = idx => e => {
+    e.stopPropagation()
     if (idx === this.state.selected) {
       this.setState({ selected: null })
     } else if (idx < this.props.value.length) {
       this.setState({ selected: idx })
     }
-    e.stopPropagation()
   }
 
   render() {
@@ -252,6 +274,8 @@ class FileUploader extends Component {
       classes,
       helperText,
       FormHelperTextProps,
+      compressImage,
+      imageCompressOptions,
       InputLabelProps,
       label,
       value,
@@ -270,14 +294,14 @@ class FileUploader extends Component {
             variant="fab"
             mini
             color="primary"
-            htmlFor="file-upload"
+            htmlFor={this._id}
             className={classes.button}
           >
             <AddIcon />
             <input
               accept="image/*"
               className={classes.hidden}
-              id="file-upload"
+              id={this._id}
               type="file"
               onChange={this.handleUpload}
             />
@@ -354,6 +378,10 @@ class FileUploader extends Component {
 
 FileUploader.propTypes = {
   /**
+   * If `true`, images will be compressed before uploaded.
+   */
+  compressImage: PropTypes.bool,
+  /**
    * If `true`, the input will indicate an error. This is normally obtained via context from
    * FormControl.
    */
@@ -366,6 +394,10 @@ FileUploader.propTypes = {
    * The helper text content.
    */
   helperText: PropTypes.node,
+  /**
+   * Configuration object to be passed to compressImage method
+   */
+  imageCompressOptions: PropTypes.object,
   /**
    * Properties applied to the `InputLabel` element.
    */
@@ -389,6 +421,15 @@ FileUploader.propTypes = {
    * The files that the control represents, used for controlled mode.
    */
   value: PropTypes.arrayOf(PropTypes.string)
+}
+
+FileUploader.defaultProps = {
+  compressImage: true,
+  imageCompressOptions: {
+    maxWidth: 2048,
+    maxHeight: 2048,
+    quality: 0.8
+  }
 }
 
 export default withStyles(styles)(FileUploader)
