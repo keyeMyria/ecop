@@ -10,7 +10,7 @@
     "classnames": "^2.2.5",
     "core-js": "^2.5.3",
     "date-fns": "^2.0.0-alpha.7",
-    "homemaster-jslib": "^0.4.7",
+    "homemaster-jslib": "^0.4.9",
     "immutability-helper": "^2.6.6",
     "lodash": "^4.17.5",
     "material-ui": "^1.0.0-beta.37",
@@ -25,7 +25,6 @@
     "react-validation-mixin": "^5.4.0",
     "react-validatorjs-strategy": "^0.2.1",
     "spark-md5": "^3.0.0",
-    "styled-components": "^3.2.1",
     "typeface-roboto": "0.0.54",
     "validatorjs": "^3.14.2"
   },
