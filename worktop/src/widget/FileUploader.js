@@ -271,13 +271,16 @@ class FileUploader extends Component {
 
   render() {
     const {
+      allowDelete,
+      allowDownload,
       classes,
-      helperText,
-      FormHelperTextProps,
       compressImage,
+      FormHelperTextProps,
+      helperText,
       imageCompressOptions,
       InputLabelProps,
       label,
+      readOnly,
       value,
       ...other
     } = this.props
@@ -306,26 +309,33 @@ class FileUploader extends Component {
               onChange={this.handleUpload}
             />
           </Button>
-          <Button
-            variant="fab"
-            mini
-            color="primary"
-            className={classes.button}
-            disabled={this.state.selected === null}
-            onClick={this.handleDelete}
-          >
-            <DeleteIcon />
-          </Button>
-          <Button
-            variant="fab"
-            mini
-            color="primary"
-            className={classes.button}
-            disabled={this.state.selected === null}
-            onClick={this.handleDownload}
-          >
-            <FileDownloadIcon />
-          </Button>
+
+          {allowDelete && (
+            <Button
+              variant="fab"
+              mini
+              color="primary"
+              className={classes.button}
+              disabled={this.state.selected === null}
+              onClick={this.handleDelete}
+            >
+              <DeleteIcon />
+            </Button>
+          )}
+
+          {allowDownload && (
+            <Button
+              variant="fab"
+              mini
+              color="primary"
+              className={classes.button}
+              disabled={this.state.selected === null}
+              onClick={this.handleDownload}
+            >
+              <FileDownloadIcon />
+            </Button>
+          )}
+
           <Button
             variant="fab"
             mini
@@ -378,6 +388,14 @@ class FileUploader extends Component {
 
 FileUploader.propTypes = {
   /**
+   * Wheter deleting selected file from the control is allowed
+   */
+  allowDelete: PropTypes.bool,
+  /**
+   * Whether downloading selected file is allowed
+   */
+  allowDownload: PropTypes.bool,
+  /**
    * If `true`, images will be compressed before uploaded.
    */
   compressImage: PropTypes.bool,
@@ -424,6 +442,8 @@ FileUploader.propTypes = {
 }
 
 FileUploader.defaultProps = {
+  allowDelete: true,
+  allowDownload: true,
   compressImage: true,
   imageCompressOptions: {
     maxWidth: 2048,
