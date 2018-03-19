@@ -236,14 +236,14 @@ class FileObjectBase(object):
         hits = FileObject.search().filter('term', md5=md5).execute()
         return hits[0].name if hits else None
 
-    def addImage(self, img, optimize=True):
+    def addImage(self, img, optimize=True, data=None):
         # Lets perform image optimization here, some say quality=85 is good
         # enough. We use 90. Since resizing is better performed by OSS image
         # service, we do not do it here.
+        stream = io.BytesIO()
         if optimize:
             if img.format == 'GIF':
                 img.format = 'JPEG'
-            stream = io.BytesIO()
             img.save(stream, img.format, optimize=True, quality=90)
             data = stream.getvalue()
 
@@ -299,7 +299,9 @@ class FileOjbectJSON(RpcBase, FileObjectBase):
         if img.format not in ('JPEG', 'PNG', 'GIF'):
             raise RPCUserError('只支持jpg、png、gif格式的图片。')
 
-        return self.addImage(img)
+        # images uploaded via `fileobject.add` shall already be optimized on
+        # the client side and hence should not be optimized again
+        return self.addImage(img, optimize=False, data=data)
 
 
 @view_config(route_name='upload')
