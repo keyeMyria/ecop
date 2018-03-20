@@ -1,7 +1,6 @@
 from urllib.parse import urljoin
 
 from pyramid.view import view_config
-from pyramid.httpexceptions import HTTPBadRequest
 from pyramid.csrf import get_csrf_token
 
 from hm.lib.config import siteConfig
