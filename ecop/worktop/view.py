@@ -17,6 +17,9 @@ class WorktopView(BaseEcopView):
             ]
         },
         'deploy': {
+            'head': [
+                'worktop/app.css'
+            ],
             'body': [
                 'worktop/app.js'
             ]

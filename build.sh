@@ -11,12 +11,13 @@
 # │   ├── weblibs
 # │   └── ecop
 # └─asset
-#     └─ecop
+#     ├── erp
+#     └── worktop
 
 PY_MODULE_BASE=/home/hong/workspace/web
 
 rm -fr build
-mkdir -p build/ecop build/asset/ecop
+mkdir -p build/ecop build/asset/erp build/asset/worktop
 
 # for hm.lib we use the latest master of git repository
 wget https://github.com/hongyuan1306/hm.lib/archive/master.zip
@@ -33,11 +34,19 @@ rsync -rv --filter '. rsync.rule' . build/ecop/ecop
 
 # Now we start to build Sencha products
 
-echo "##################   Building Ecop Client   ##########################"
+echo "##################   Building ERP Client   ##########################"
 rm -fr client/build/production
 cd client/desktop
 sencha app build production
 cd ../..
-cp client/build/production/app.js build/asset/ecop
-cp -r client/build/production/resources build/asset/ecop
-cp -r client/desktop/lib build/asset/ecop
+cp client/build/production/app.js build/asset/erp
+cp -r client/build/production/resources build/asset/erp
+cp -r client/desktop/lib build/asset/erp
+
+
+# build worktop
+cd worktop
+rm -fr build
+npm run build
+cd ..
+cp -r worktop/build/* build/asset/worktop

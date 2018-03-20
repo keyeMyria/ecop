@@ -78,10 +78,10 @@ class ERPView(BaseEcopView):
         },
         'deploy': {
             'head': [
-                'ecop/resources/Ecop-all.css',
-                'ecop/lib/spark-md5.min.js',
-                'ecop/lib/ckeditor/ckeditor.js',
-                'ecop/app.js'
+                'erp/resources/Ecop-all.css',
+                'erp/lib/spark-md5.min.js',
+                'erp/lib/ckeditor/ckeditor.js',
+                'erp/app.js'
             ]
         }
     }
