@@ -48,7 +48,7 @@ const styles = {
 
 class StartForm extends ValidatedForm {
   defaultValues = {
-    orderId: '',
+    externalOrderId: '',
     storeId: '',
     customerName: '',
     customerMobile: '',
@@ -61,10 +61,9 @@ class StartForm extends ValidatedForm {
     files: []
   }
 
-  // TODO: check unique orderId
   validatorTypes = strategy.createInactiveSchema(
     {
-      orderId: 'required|size:9',
+      externalOrderId: 'required|size:9',
       storeId: 'required|size:3|in:856,885,247',
       customerName: 'required',
       customerMobile: 'required|mobile',
@@ -75,8 +74,8 @@ class StartForm extends ValidatedForm {
       files: 'required'
     },
     {
-      'required.orderId': '宜家订单号必须输入',
-      'size.orderId': '宜家订单号长度为9位',
+      'required.externalOrderId': '宜家订单号必须输入',
+      'size.externalOrderId': '宜家订单号长度为9位',
       'required.storeId': '宜家商场号必须输入',
       'in.storeId': '商场号错误',
       'size.storeId': '宜家商场号长度为3位',
@@ -123,22 +122,22 @@ class StartForm extends ValidatedForm {
           <Grid item xs={5}>
             <Field
               component={TextField}
-              name="orderId"
+              name="externalOrderId"
               label="宜家订单号"
               InputProps={{ classes: { input: classes.orderId } }}
-              value={values.orderId}
-              onBlur={this.activateValidation('orderId')}
+              value={values.externalOrderId}
+              onBlur={this.activateValidation('externalOrderId')}
               onChange={e => {
                 var { value } = e.target
                 if (/^\d{0,9}$/.test(value) || !value) {
                   this.setState(
-                    { values: { ...values, orderId: value } },
-                    this.props.handleValidation('orderId')
+                    { values: { ...values, externalOrderId: value } },
+                    this.props.handleValidation('externalOrderId')
                   )
                 }
               }}
-              error={!!this.getFieldError('orderId')}
-              helperText={this.getFieldError('orderId')}
+              error={!!this.getFieldError('externalOrderId')}
+              helperText={this.getFieldError('externalOrderId')}
             />
           </Grid>
 
@@ -209,15 +208,17 @@ class StartForm extends ValidatedForm {
               name="scheduledMeasureDate"
               disablePast
               maxDate={
-                values.installDate ? addDays(values.installDate, -7) : undefined
+                values.scheduledInstallDate
+                  ? addDays(values.scheduledInstallDate, -7)
+                  : undefined
               }
               leftArrowIcon={<ArrowLeftIcon />}
               rightArrowIcon={<ArrowRightIcon />}
               value={values.scheduledMeasureDate}
               labelFunc={date => (date ? format(date, 'YYYY/MM/DD') : '')}
               onChange={this.handleChange('scheduledMeasureDate', 'datepicker')}
-              error={!!this.getFieldError('scheduledMmeasureDate')}
-              helperText={this.getFieldError('scheduledMmeasureDate')}
+              error={!!this.getFieldError('scheduledMeasureDate')}
+              helperText={this.getFieldError('scheduledMeasureDate')}
             />
           </Grid>
 
@@ -230,7 +231,7 @@ class StartForm extends ValidatedForm {
               leftArrowIcon={<ArrowLeftIcon />}
               rightArrowIcon={<ArrowRightIcon />}
               value={values.scheduledInstallDate}
-              minDate={addDays(values.measureDate || new Date(), 7)}
+              minDate={addDays(values.scheduledMeasureDate || new Date(), 7)}
               labelFunc={date => (date ? format(date, 'YYYY/MM/DD') : '')}
               onChange={this.handleChange('scheduledInstallDate', 'datepicker')}
               error={!!this.getFieldError('scheduledInstallDate')}
