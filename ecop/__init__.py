@@ -22,7 +22,6 @@ def main(global_config, **settings):
     # configure various components
     config.include('weblibs.sqlalchemy')
     config.include('weblibs.redis')
-    config.include('weblibs.rabbitmq')
     config.include('weblibs.elasticsearch')
     config.include('weblibs.oss')
     config.include('weblibs.wepay')

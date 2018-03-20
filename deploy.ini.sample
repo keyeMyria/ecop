@@ -15,8 +15,6 @@ pyramid.debug_routematch = false
 sqlalchemy.url = postgresql://hmweb:hmweb@localhost/homemaster
 sqlalchemy.echo = false
 
-rabbitmq.url = amqp://guest:guest@localhost:5672
-
 redis.web.url = redis://localhost:6379/0
 # the default pool size of redis.py
 redis.web.max_connections = 50
