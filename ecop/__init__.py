@@ -27,6 +27,7 @@ def main(global_config, **settings):
     config.include('weblibs.oss')
     config.include('weblibs.wepay')
     config.include('weblibs.sms')
+    config.include('weblibs.camunda')
 
     # This tween can only be added after session is also enabled for ecop
     # config.include('weblibs.weixin')

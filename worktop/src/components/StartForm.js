@@ -15,7 +15,7 @@ import Checkbox from 'material-ui/Checkbox'
 import ArrowLeftIcon from 'material-ui-icons/KeyboardArrowLeft'
 import ArrowRightIcon from 'material-ui-icons/KeyboardArrowRight'
 
-import { jsonrpc } from 'homemaster-jslib'
+import { jsonrpc, message } from 'homemaster-jslib'
 import RegionPicker from 'homemaster-jslib/region/RegionPicker'
 import PaperPlaneIcon from 'homemaster-jslib/svg-icons/PaperPlane'
 
@@ -54,35 +54,36 @@ class StartForm extends ValidatedForm {
     customerMobile: '',
     regionCode: null,
     street: '',
-    measureDate: null,
-    installDate: null,
+    scheduledMeasureDate: null,
+    scheduledInstallDate: null,
     installFaucet: false,
     installSink: false,
-    files: ['27URUapXsNrUxnskCm2tUJ.png', '2PEkgchQZmX58imzzT852W.jpg']
+    files: []
   }
 
   // TODO: check unique orderId
   validatorTypes = strategy.createInactiveSchema(
     {
       orderId: 'required|size:9',
-      storeId: 'required|size:3',
+      storeId: 'required|size:3|in:856,885,247',
       customerName: 'required',
       customerMobile: 'required|mobile',
-      measureDate: 'required',
-      installDate: 'required',
+      scheduledMeasureDate: 'required',
+      scheduledInstallDate: 'required',
       regionCode: 'required',
       street: 'required',
       files: 'required'
     },
     {
       'required.orderId': '宜家订单号必须输入',
-      'size.orderId': '宜家订单号长度为9',
+      'size.orderId': '宜家订单号长度为9位',
       'required.storeId': '宜家商场号必须输入',
-      'size.storeId': '宜家商场号长度为3',
+      'in.storeId': '商场号错误',
+      'size.storeId': '宜家商场号长度为3位',
       'required.customerName': '顾客名称必须输入',
       'required.customerMobile': '顾客手机必须输入',
-      'required.measureDate': '测量日期必须输入',
-      'required.installDate': '安装日期必须输入',
+      'required.scheduledMeasureDate': '测量日期必须输入',
+      'required.scheduledInstallDate': '安装日期必须输入',
       'required.street': '详细地址必须输入',
       'required.regionCode': '所在地区必须输入',
       'required.files': '原始图纸必须上传'
@@ -101,8 +102,13 @@ class StartForm extends ValidatedForm {
   handleSubmit = () => {
     this.props.validate(error => {
       if (!error) {
-        console.log('Submitting form', this.state.values)
-        this.resetForm()
+        jsonrpc({
+          method: 'bpmn.process.start',
+          params: [this.state.values]
+        }).then(() => {
+          message.success('订单提交成功')
+          this.resetForm()
+        })
       }
     })
   }
@@ -200,35 +206,35 @@ class StartForm extends ValidatedForm {
               component={DatePicker}
               label="测量日期"
               autoOk
-              name="measureDate"
+              name="scheduledMeasureDate"
               disablePast
               maxDate={
                 values.installDate ? addDays(values.installDate, -7) : undefined
               }
               leftArrowIcon={<ArrowLeftIcon />}
               rightArrowIcon={<ArrowRightIcon />}
-              value={values.measureDate}
+              value={values.scheduledMeasureDate}
               labelFunc={date => (date ? format(date, 'YYYY/MM/DD') : '')}
-              onChange={this.handleChange('measureDate', 'datepicker')}
-              error={!!this.getFieldError('measureDate')}
-              helperText={this.getFieldError('measureDate')}
+              onChange={this.handleChange('scheduledMeasureDate', 'datepicker')}
+              error={!!this.getFieldError('scheduledMmeasureDate')}
+              helperText={this.getFieldError('scheduledMmeasureDate')}
             />
           </Grid>
 
           <Grid item xs={6}>
             <Field
               component={DatePicker}
-              name="installDate"
+              name="scheduledInstallDate"
               label="安装日期"
               autoOk
               leftArrowIcon={<ArrowLeftIcon />}
               rightArrowIcon={<ArrowRightIcon />}
-              value={values.installDate}
+              value={values.scheduledInstallDate}
               minDate={addDays(values.measureDate || new Date(), 7)}
               labelFunc={date => (date ? format(date, 'YYYY/MM/DD') : '')}
-              onChange={this.handleChange('installDate', 'datepicker')}
-              error={!!this.getFieldError('installDate')}
-              helperText={this.getFieldError('installDate')}
+              onChange={this.handleChange('scheduledInstallDate', 'datepicker')}
+              error={!!this.getFieldError('scheduledInstallDate')}
+              helperText={this.getFieldError('scheduledInstallDate')}
             />
           </Grid>
         </Grid>
