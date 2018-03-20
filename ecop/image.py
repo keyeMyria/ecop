@@ -272,7 +272,7 @@ class FileObjectBase(object):
 class FileOjbectJSON(RpcBase, FileObjectBase):
     @jsonrpc_method(endpoint='rpc', method='fileobject.get.md5')
     def getFileObjectByMd5(self, md5):
-        return self.getByMd5(b64decode(md5).hex())
+        return self.getByMd5(md5)
 
     @jsonrpc_method(endpoint='rpc', method='fileobject.add')
     def addFileObject(self, data):

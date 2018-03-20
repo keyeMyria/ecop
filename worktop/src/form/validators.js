@@ -1,5 +1,5 @@
 import Validator from 'validatorjs'
-import { getRegionDepth } from 'homemaster-jslib'
+import { getRegionDepth } from 'homemaster-jslib/region'
 
 Validator.register(
   'mobile',

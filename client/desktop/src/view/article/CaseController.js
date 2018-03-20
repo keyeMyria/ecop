@@ -26,7 +26,7 @@ Ext.define('Ecop.view.article.CaseController', {
         hash.append(value.content)
         return Web.data.JsonRPC.request({
           method: 'fileobject.get.md5',
-          params: [btoa(hash.end(true))]
+          params: [hash.end()]
         })
       })
       .then(function(image) {

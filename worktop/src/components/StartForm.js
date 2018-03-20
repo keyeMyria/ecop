@@ -15,7 +15,8 @@ import Checkbox from 'material-ui/Checkbox'
 import ArrowLeftIcon from 'material-ui-icons/KeyboardArrowLeft'
 import ArrowRightIcon from 'material-ui-icons/KeyboardArrowRight'
 
-import { jsonrpc, RegionPicker } from 'homemaster-jslib'
+import { jsonrpc } from 'homemaster-jslib'
+import RegionPicker from 'homemaster-jslib/region/RegionPicker'
 import PaperPlaneIcon from 'homemaster-jslib/svg-icons/PaperPlane'
 
 import { strategy, ValidatedForm, Field } from 'form'

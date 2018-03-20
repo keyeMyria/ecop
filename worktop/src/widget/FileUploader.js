@@ -27,11 +27,12 @@ import PreviewIcon from 'material-ui-icons/RemoveRedEye'
 import {
   jsonrpc,
   arrayBufferToBase64,
-  Gallery,
   compressImage,
   downloadFile,
-  uniqueId
+  uniqueId,
+  message
 } from 'homemaster-jslib'
+import Gallery from 'homemaster-jslib/Gallery'
 
 const styles = theme => ({
   actionBar: {
@@ -179,7 +180,7 @@ class FileUploader extends Component {
   }
 
   handleUpload = e => {
-    var fileContent, files
+    var fileContent
     e.stopPropagation()
 
     if (e.target.files.length === 0) {
@@ -192,7 +193,6 @@ class FileUploader extends Component {
       FileUploader.defaultProps.imageCompressOptions,
       this.props.imageCompressOptions
     )
-    console.log(compressOptions)
 
     var p = this.props.compressImage
       ? compressImage(file, compressOptions)
@@ -221,27 +221,24 @@ class FileUploader extends Component {
         })
       })
       .then(fname => {
-        if (fname) {
-          // check to see if the file is already in the widget
-          if (files && files.find(item => item.name === fname)) {
-            throw new Error('File already exist')
-          }
-          return fname
-        } else {
-          return this.uploadFile(file, fileContent)
-        }
+        return fname || this.uploadFile(file, fileContent)
       })
       .then(fname => {
-        const event = {
-          target: {
-            value: update(this.props.value, {
-              $push: [fname]
-            })
+        // check to see if the file is already in the widget
+        const { value: files } = this.props
+        if (files && files.indexOf(fname) !== -1) {
+          message.error('文件已存在')
+        } else {
+          const event = {
+            target: {
+              value: update(files, {
+                $push: [fname]
+              })
+            }
           }
+          this.props.onChange(event)
         }
-        this.props.onChange(event)
       })
-      .catch(e => console.log(e))
   }
 
   handleDownload = () => {
