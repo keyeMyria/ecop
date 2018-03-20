@@ -52,7 +52,7 @@ def authenticator(event):
         return
 
     # deny bots
-    if request.is_bot:
+    if request.is_bot and 'health_check' not in request.params:
         raise HTTPBadRequest()
 
     session = request.session

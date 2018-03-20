@@ -1,5 +1,3 @@
-from pyramid.view import view_config
-from pyramid.response import Response
 from pyramid.httpexceptions import HTTPForbidden
 from pyramid.csrf import check_csrf_token
 
@@ -59,14 +57,3 @@ class DocBase(object):
 
         if request.session.get_csrf_token() != request.params['token']:
             raise HTTPForbidden()
-
-
-@view_config(route_name='health_check')
-def health_check(request): #pylint: disable=W0613
-    """
-    ecop runs behind the aliyun load balancing service, which is configured to
-    perform frequent health check using the HEAD method to /rpc.
-
-    Note the response to HEAD shall contain no body
-    """
-    return Response(status_code=200)

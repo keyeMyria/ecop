@@ -12,9 +12,6 @@ class BaseEcopView(object):
     """Defines resources needed for the ecop app """
 
     def __init__(self, context, request):
-        if request.is_bot:
-            raise HTTPBadRequest()
-
         self.context = context
         self.request = request
 
