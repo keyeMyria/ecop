@@ -87,6 +87,7 @@ class LoginDialog extends ValidatedForm {
             margin="normal"
             placeholder="用户名"
             label="用户名"
+            autoFocus
             onChange={this.handleChange}
             error={!!this.getFieldError('login')}
             helperText={this.getFieldError('login')}

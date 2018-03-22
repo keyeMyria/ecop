@@ -124,6 +124,7 @@ class StartForm extends ValidatedForm {
               component={TextField}
               name="externalOrderId"
               label="宜家订单号"
+              autoFocus
               InputProps={{ classes: { input: classes.orderId } }}
               value={values.externalOrderId}
               onBlur={this.activateValidation('externalOrderId')}
