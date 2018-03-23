@@ -277,6 +277,7 @@ class FileUploader extends Component {
       imageCompressOptions,
       InputLabelProps,
       label,
+      maximalFiles,
       readOnly,
       value,
       ...other
@@ -294,6 +295,7 @@ class FileUploader extends Component {
             variant="fab"
             mini
             color="primary"
+            disabled={files.length === maximalFiles}
             htmlFor={this._id}
             className={classes.button}
           >
@@ -426,6 +428,10 @@ FileUploader.propTypes = {
    * components.
    */
   margin: PropTypes.oneOf(['none', 'dense', 'normal']),
+  /**
+   * If defined, limits the files that can be uploaded
+   */
+  maximalFiles: PropTypes.number,
   /**
    * Callback fired when the value is changed.
    *

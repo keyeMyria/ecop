@@ -292,6 +292,7 @@ class StartForm extends ValidatedForm {
         <Field
           component={FileUploader}
           label="原始图纸"
+          maximalFiles={2}
           imageCompressOptions={{ quality: 0.9 }}
           error={!!this.getFieldError('files')}
           helperText={this.getFieldError('files')}
