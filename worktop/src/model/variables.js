@@ -6,20 +6,17 @@ const variables = {
   externalOrderId: {
     label: '宜家订单号'
   },
-  storeId: {
-    label: '宜家商场号'
+  confirmedInstallDate: {
+    label: '确认安装日期'
   },
-  customerName: {
-    label: '顾客姓名'
+  confirmedMeasureDate: {
+    label: '确认测量日期'
   },
   customerMobile: {
     label: '顾客手机'
   },
-  scheduledMeasureDate: {
-    label: '预约测量日期'
-  },
-  scheduledInstallDate: {
-    label: '预约安装日期'
+  customerName: {
+    label: '顾客姓名'
   },
   customerRegionCode: {
     label: '所在地区'
@@ -35,6 +32,15 @@ const variables = {
   },
   orderFile: {
     label: '原始订单'
+  },
+  scheduledInstallDate: {
+    label: '预约安装日期'
+  },
+  scheduledMeasureDate: {
+    label: '预约测量日期'
+  },
+  storeId: {
+    label: '宜家商场号'
   }
 }
 
