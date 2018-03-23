@@ -11,7 +11,7 @@ from ecop.base import RpcBase
 
 class PorcessJSON(RpcBase):
     @jsonrpc_method(endpoint='rpc', method='bpmn.process.start')
-    def startProcess(self, params):
+    def startProcess(self, processKey, params):
         params = parseDate(params,
             fields=['scheduledMeasureDate', 'scheduledInstallDate'])
 
@@ -22,7 +22,7 @@ class PorcessJSON(RpcBase):
         ).all():
             raise RPCUserError('该订单号已存在，不能重复提交')
 
-        cc.makeRequest('/process-definition/key/worktop/start', 'post', {
+        cc.makeRequest(f'/process-definition/key/{processKey}/start', 'post', {
             'businessKey': externalOrderId,
             },
             variables=params

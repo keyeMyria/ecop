@@ -1,3 +1,4 @@
+/* global App */
 import React from 'react'
 import validation from 'react-validation-mixin'
 import compose from 'recompose/compose'
@@ -103,10 +104,10 @@ class StartForm extends ValidatedForm {
       if (!error) {
         jsonrpc({
           method: 'bpmn.process.start',
-          params: [this.state.values]
+          params: [App.processKey, this.state.values]
         }).then(() => {
           message.success('订单提交成功')
-          this.resetForm()
+          // this.resetForm()
         })
       }
     })
