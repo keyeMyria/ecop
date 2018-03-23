@@ -271,7 +271,7 @@ class FileUploader extends Component {
       allowDelete,
       allowDownload,
       classes,
-      compressImage,
+      compressImage: compressImageProp,
       FormHelperTextProps,
       helperText,
       imageCompressOptions,

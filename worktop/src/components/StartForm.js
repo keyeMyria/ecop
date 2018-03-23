@@ -53,13 +53,13 @@ class StartForm extends ValidatedForm {
     storeId: '',
     customerName: '',
     customerMobile: '',
-    regionCode: null,
-    street: '',
+    customerRegionCode: null,
+    customerStreet: '',
     scheduledMeasureDate: null,
     scheduledInstallDate: null,
     installFaucet: false,
     installSink: false,
-    files: []
+    orderFile: []
   }
 
   validatorTypes = strategy.createInactiveSchema(
@@ -68,11 +68,11 @@ class StartForm extends ValidatedForm {
       storeId: 'required|size:3|in:856,885,247',
       customerName: 'required',
       customerMobile: 'required|mobile',
+      customerRegionCode: 'required',
+      customerStreet: 'required',
       scheduledMeasureDate: 'required',
       scheduledInstallDate: 'required',
-      regionCode: 'required',
-      street: 'required',
-      files: 'required'
+      orderFile: 'required'
     },
     {
       'required.externalOrderId': '宜家订单号必须输入',
@@ -82,11 +82,11 @@ class StartForm extends ValidatedForm {
       'size.storeId': '宜家商场号长度为3位',
       'required.customerName': '顾客名称必须输入',
       'required.customerMobile': '顾客手机必须输入',
+      'required.customerStreet': '详细地址必须输入',
+      'required.customerRegionCode': '所在地区必须输入',
       'required.scheduledMeasureDate': '测量日期必须输入',
       'required.scheduledInstallDate': '安装日期必须输入',
-      'required.street': '详细地址必须输入',
-      'required.regionCode': '所在地区必须输入',
-      'required.files': '原始图纸必须上传'
+      'required.orderFile': '原始图纸必须上传'
     }
   )
 
@@ -244,23 +244,23 @@ class StartForm extends ValidatedForm {
 
         <Field
           component={RegionPicker}
-          name="regionCode"
+          name="customerRegionCode"
           label="所在地区"
-          value={values.regionCode}
+          value={values.customerRegionCode}
           preSelect={310100}
-          onChange={this.handleChange('regionCode')}
-          error={!!this.getFieldError('regionCode')}
-          helperText={this.getFieldError('regionCode')}
+          onChange={this.handleChange('customerRegionCode')}
+          error={!!this.getFieldError('customerRegionCode')}
+          helperText={this.getFieldError('customerRegionCode')}
         />
 
         <Field
           component={TextField}
-          name="street"
+          name="customerStreet"
           label="详细地址"
-          value={values.street}
-          onChange={this.handleChange('street')}
-          error={!!this.getFieldError('street')}
-          helperText={this.getFieldError('street')}
+          value={values.customerStreet}
+          onChange={this.handleChange('customerStreet')}
+          error={!!this.getFieldError('customerStreet')}
+          helperText={this.getFieldError('customerStreet')}
         />
 
         <FormGroup row>
@@ -291,13 +291,14 @@ class StartForm extends ValidatedForm {
 
         <Field
           component={FileUploader}
-          label="原始图纸"
-          maximalFiles={2}
-          imageCompressOptions={{ quality: 0.9 }}
-          error={!!this.getFieldError('files')}
-          helperText={this.getFieldError('files')}
-          onChange={this.handleChange('files')}
-          value={values.files}
+          name="orderFile"
+          label="原始订单"
+          maximalFiles={1}
+          compressImage={false}
+          error={!!this.getFieldError('orderFile')}
+          helperText={this.getFieldError('orderFile')}
+          onChange={this.handleChange('orderFile')}
+          value={values.orderFile}
         />
 
         <div className={classes.buttonRow}>

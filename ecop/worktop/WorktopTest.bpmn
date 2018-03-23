@@ -9,7 +9,7 @@
         <bpmn:childLaneSet xsi:type="bpmn:tLaneSet" />
       </bpmn:lane>
       <bpmn:lane id="Lane_0ejdw6u" name="办公室">
-        <bpmn:flowNodeRef>IntermediateThrowEvent_1opz8hg</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>TimeToComfirmMeasure</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>EndEvent_0r6yu9z</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>IntermediateThrowEvent_1d9taiv</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>UserTask_0438ej8</bpmn:flowNodeRef>
@@ -19,14 +19,14 @@
         <bpmn:childLaneSet xsi:type="bpmn:tLaneSet" />
       </bpmn:lane>
     </bpmn:laneSet>
-    <bpmn:intermediateCatchEvent id="IntermediateThrowEvent_1opz8hg" name="约定测量日期前一天">
+    <bpmn:intermediateCatchEvent id="TimeToComfirmMeasure" name="约定测量日期前一天">
       <bpmn:incoming>SequenceFlow_10rze2z</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_17js67p</bpmn:outgoing>
       <bpmn:timerEventDefinition>
         <bpmn:timeDate xsi:type="bpmn:tFormalExpression">${scheduledMeasureDate}</bpmn:timeDate>
       </bpmn:timerEventDefinition>
     </bpmn:intermediateCatchEvent>
-    <bpmn:sequenceFlow id="SequenceFlow_10rze2z" sourceRef="StartEvent_1" targetRef="IntermediateThrowEvent_1opz8hg" />
+    <bpmn:sequenceFlow id="SequenceFlow_10rze2z" sourceRef="StartEvent_1" targetRef="TimeToComfirmMeasure" />
     <bpmn:sequenceFlow id="SequenceFlow_1lc8y9j" sourceRef="IntermediateThrowEvent_1d9taiv" targetRef="EndEvent_0r6yu9z" />
     <bpmn:endEvent id="EndEvent_0r6yu9z" name="流程结束">
       <bpmn:incoming>SequenceFlow_1lc8y9j</bpmn:incoming>
@@ -40,7 +40,7 @@
       <bpmn:incoming>SequenceFlow_17js67p</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0jti927</bpmn:outgoing>
     </bpmn:userTask>
-    <bpmn:sequenceFlow id="SequenceFlow_17js67p" sourceRef="IntermediateThrowEvent_1opz8hg" targetRef="UserTask_0438ej8" />
+    <bpmn:sequenceFlow id="SequenceFlow_17js67p" sourceRef="TimeToComfirmMeasure" targetRef="UserTask_0438ej8" />
     <bpmn:sequenceFlow id="SequenceFlow_0jti927" sourceRef="UserTask_0438ej8" targetRef="IntermediateThrowEvent_1d9taiv" />
     <bpmn:startEvent id="StartEvent_1" name="发起安装流程">
       <bpmn:outgoing>SequenceFlow_10rze2z</bpmn:outgoing>
@@ -48,7 +48,7 @@
     <bpmn:textAnnotation id="TextAnnotation_1to51ij">
       <bpmn:text>M0: 流程激活</bpmn:text>
     </bpmn:textAnnotation>
-    <bpmn:association id="Association_0xzqm9j" sourceRef="IntermediateThrowEvent_1opz8hg" targetRef="TextAnnotation_1to51ij" />
+    <bpmn:association id="Association_0xzqm9j" sourceRef="TimeToComfirmMeasure" targetRef="TextAnnotation_1to51ij" />
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_1mrwdza">
@@ -71,7 +71,7 @@
           <dc:Bounds x="82" y="638" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="IntermediateCatchEvent_0ytxnlq_di" bpmnElement="IntermediateThrowEvent_1opz8hg">
+      <bpmndi:BPMNShape id="IntermediateCatchEvent_0ytxnlq_di" bpmnElement="TimeToComfirmMeasure">
         <dc:Bounds x="94" y="448" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="72" y="413" width="79" height="25" />
