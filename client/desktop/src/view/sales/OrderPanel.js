@@ -154,6 +154,7 @@ Ext.define('Ecop.view.sales.OrderPanel', {
               xtype: 'combo',
               store: 'ordersource',
               width: 170,
+              readOnly: true,
               valueField: 'id',
               editable: false,
               displayField: 'text',
@@ -161,7 +162,7 @@ Ext.define('Ecop.view.sales.OrderPanel', {
               fieldLabel: '订单来源'
             },
             {
-              xtype: 'textfield',
+              xtype: 'displayfield',
               fieldLabel: '外部订单号',
               labelWidth: 70,
               width: 200,
