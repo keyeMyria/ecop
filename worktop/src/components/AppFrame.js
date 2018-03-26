@@ -106,7 +106,7 @@ const styles = theme => ({
 class AppFrame extends React.Component {
   state = {
     drawerOpen: !screen.isMobile(),
-    currentFrame: 'start'
+    currentFrame: 'tasks'
   }
 
   handleDrawerOpen = () => {

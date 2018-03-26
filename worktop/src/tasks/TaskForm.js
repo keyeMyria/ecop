@@ -1,4 +1,4 @@
-import React, { createElement } from 'react'
+import React, { Component, createElement } from 'react'
 import PropTypes from 'prop-types'
 import AppBar from 'material-ui/AppBar'
 import Dialog from 'material-ui/Dialog'
@@ -17,9 +17,10 @@ const forms = {
   ConfirmMeasurementDate: ConfirmMeasurementDate
 }
 
-const styles = {
+const styles = theme => ({
   paperWidthSm: {
-    width: 700
+    width: 700,
+    maxWidth: 700
   },
   appbar: {
     position: 'relative'
@@ -31,38 +32,58 @@ const styles = {
   title: {
     flex: 1,
     marginLeft: 16
+  },
+  content: {
+    overflowY: 'auto',
+    maxHeight: `calc(100vh - ${theme.mixins.toolbar.minHeight}px)`,
+    [theme.breakpoints.up('sm')]: {
+      maxHeight: `calc(100vh - ${
+        theme.mixins.toolbar[theme.breakpoints.up('sm')].minHeight
+      }px)`
+    }
   }
-}
+})
 
-function TaskForm(props) {
-  const { task, classes, ...other } = props
+class TaskForm extends Component {
+  componentWillReceiveProps = nextProps => {
+    if (this.props.task !== nextProps.task) {
+      console.log('Start loading new task', nextProps.task)
+    }
+  }
 
-  return (
-    task && (
-      <Dialog
-        classes={{ paperWidthSm: classes.paperWidthSm }}
-        fullScreen={screen.isMobile()}
-        {...other}
-      >
-        <AppBar className={classes.appbar}>
-          <Toolbar className={classes.toolbar}>
-            <TaskListIcon />
-            <Typography
-              variant="title"
-              color="inherit"
-              className={classes.title}
-            >
-              {task.name}
-            </Typography>
-            <IconButton color="inherit" onClick={props.onClose}>
-              <CloseIcon />
-            </IconButton>
-          </Toolbar>
-        </AppBar>
-        {createElement(forms[task.taskDefinitionKey], { task })}
-      </Dialog>
+  render = () => {
+    const { task, classes, ...other } = this.props
+
+    return (
+      task && (
+        <Dialog
+          classes={{ paperWidthSm: classes.paperWidthSm }}
+          fullScreen={screen.isMobile()}
+          {...other}
+        >
+          <AppBar className={classes.appbar}>
+            <Toolbar className={classes.toolbar}>
+              <TaskListIcon />
+              <Typography
+                variant="title"
+                color="inherit"
+                className={classes.title}
+              >
+                {task.name}
+              </Typography>
+              <IconButton color="inherit" onClick={other.onClose}>
+                <CloseIcon />
+              </IconButton>
+            </Toolbar>
+          </AppBar>
+          <div className={classes.content}>
+            <div>Taks ID: {task.id}</div>
+            {createElement(forms[task.taskDefinitionKey], { task })}
+          </div>
+        </Dialog>
+      )
     )
-  )
+  }
 }
 
 TaskForm.propTypes = {

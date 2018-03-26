@@ -70,7 +70,7 @@ class LoginDialog extends ValidatedForm {
         transition={Transition} // never use inline function here!!
       >
         <AppBar style={{ position: 'relative' }}>
-          <Toolbar style={{ paddingRight: 0 }}>
+          <Toolbar>
             <Typography variant="title" color="inherit">
               请登录
             </Typography>
