@@ -12,9 +12,11 @@ import { screen } from 'homemaster-jslib'
 import TaskListIcon from 'homemaster-jslib/svg-icons/TaskList'
 
 import ConfirmMeasurementDate from './ConfirmMeasurementDate'
+import TakeMeasurement from './TakeMeasurement'
 
 const forms = {
-  ConfirmMeasurementDate: ConfirmMeasurementDate
+  ConfirmMeasurementDate: ConfirmMeasurementDate,
+  TakeMeasurement: TakeMeasurement
 }
 
 const styles = theme => ({
