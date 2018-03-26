@@ -40,3 +40,9 @@ class PorcessJSON(RpcBase):
             {'businessKey': externalOrderId},
             variables=params
         )
+
+    @jsonrpc_method(endpoint='rpc', method='bpmn.task.get')
+    def getUserTask(self, processKey):
+        return cc.makeRequest('/task', 'post', {
+            'processDefinitionKey': processKey
+        })

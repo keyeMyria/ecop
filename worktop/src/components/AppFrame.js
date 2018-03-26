@@ -20,6 +20,7 @@ import SearchIcon from 'material-ui-icons/Search'
 import { jsonrpc, screen } from 'homemaster-jslib'
 import TaskListIcon from 'homemaster-jslib/svg-icons/TaskList'
 import StartForm from './StartForm'
+import TaskList from './TaskList'
 
 const drawerWidth = 180
 
@@ -203,7 +204,7 @@ class AppFrame extends React.Component {
         <div className={classes.main}>
           <div className={classes.toolbar} />
           <div className={classes.content}>
-            <StartForm />
+            <TaskList />
           </div>
         </div>
       </div>

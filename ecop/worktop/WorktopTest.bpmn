@@ -28,11 +28,11 @@
       <bpmn:incoming>SequenceFlow_0h9i4j9</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0su7mxf</bpmn:outgoing>
     </bpmn:intermediateThrowEvent>
-    <bpmn:userTask id="Installation" name="安装" camunda:candidateGroups="installer">
+    <bpmn:userTask id="Installation" name="安装" camunda:candidateGroups="installer" camunda:dueDate="${dateTime().plusDays(1).toDate()}">
       <bpmn:incoming>SequenceFlow_12rfy1l</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0dc63xi</bpmn:outgoing>
     </bpmn:userTask>
-    <bpmn:userTask id="TakeMeasurement" name="测量" camunda:candidateGroups="installer">
+    <bpmn:userTask id="TakeMeasurement" name="测量" camunda:candidateGroups="installer" camunda:dueDate="${dateTime().plusDays(1).toDate()}">
       <bpmn:incoming>SequenceFlow_0jti927</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0h9i4j9</bpmn:outgoing>
     </bpmn:userTask>
@@ -40,7 +40,7 @@
       <bpmn:incoming>SequenceFlow_0dc63xi</bpmn:incoming>
       <bpmn:terminateEventDefinition />
     </bpmn:endEvent>
-    <bpmn:userTask id="MakeDrawing" name="制作图纸" camunda:candidateGroups="office">
+    <bpmn:userTask id="MakeDrawing" name="制作图纸" camunda:candidateGroups="office" camunda:dueDate="${dateTime().plusDays(1).toDate()}">
       <bpmn:incoming>SequenceFlow_0su7mxf</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0pet5kx</bpmn:outgoing>
     </bpmn:userTask>
@@ -68,7 +68,7 @@
       <bpmn:outgoing>SequenceFlow_0h0xqyd</bpmn:outgoing>
       <bpmn:signalEventDefinition signalRef="Signal_1ngybbx" />
     </bpmn:intermediateCatchEvent>
-    <bpmn:userTask id="CheckDrawing" name="审核图纸" camunda:candidateGroups="factory">
+    <bpmn:userTask id="CheckDrawing" name="审核图纸" camunda:candidateGroups="factory" camunda:dueDate="${dateTime().plusDays(1).toDate()}">
       <bpmn:incoming>SequenceFlow_0pet5kx</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_19twd4r</bpmn:outgoing>
     </bpmn:userTask>
