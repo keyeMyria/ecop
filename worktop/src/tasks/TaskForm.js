@@ -13,6 +13,7 @@ import TaskListIcon from 'homemaster-jslib/svg-icons/TaskList'
 
 import ConfirmMeasurementDate from './ConfirmMeasurementDate'
 import TakeMeasurement from './TakeMeasurement'
+import TaskHeader from './TaskHeader'
 
 const forms = {
   ConfirmMeasurementDate: ConfirmMeasurementDate,
@@ -37,6 +38,7 @@ const styles = theme => ({
   },
   content: {
     overflowY: 'auto',
+    padding: 16,
     maxHeight: `calc(100vh - ${theme.mixins.toolbar.minHeight}px)`,
     [theme.breakpoints.up('sm')]: {
       maxHeight: `calc(100vh - ${
@@ -79,7 +81,7 @@ class TaskForm extends Component {
             </Toolbar>
           </AppBar>
           <div className={classes.content}>
-            <div>Taks ID: {task.id}</div>
+            <TaskHeader task={task} />
             {createElement(forms[task.taskDefinitionKey], { task })}
           </div>
         </Dialog>
@@ -98,8 +100,8 @@ TaskForm.propTypes = {
    */
   open: PropTypes.bool.isRequired,
   /**
-   * Name of the task form to load. This should be the same as the
-   * `taskDefinitionKey` of the bpmn definition
+   * The task object to load. The form is derived from the `taskDefinitionKey`
+   * attribute of the task object
    */
   task: PropTypes.object
 }

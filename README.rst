@@ -30,16 +30,6 @@ Once verified, the user associated with the token is placed on the request
 object as `request.user`. This is to be used for authorization later.
 
 
-Session
-=======
-
-** No session is used. **
-
-Every API invocation is independent of the others, there is no session support
-in the package. Cookies are not used in either request or response for session.
-Only the authentication ticket can be used to correlate multiple calls.
-
-
 CORS
 ====
 

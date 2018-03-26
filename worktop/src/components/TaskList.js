@@ -63,7 +63,7 @@ class TaskList extends Component {
   }
 
   render() {
-    const { classes, userTasks: tasks } = this.props
+    const { classes, tasks } = this.props
     const { currentTask, taskOpen } = this.state
 
     return (
@@ -92,7 +92,7 @@ class TaskList extends Component {
 
 const mapStateToProps = state => {
   return {
-    ...state.task
+    tasks: state.task.userTasks
   }
 }
 
