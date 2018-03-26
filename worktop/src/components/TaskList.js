@@ -1,5 +1,5 @@
 /* global App */
-import React, { Component } from 'react'
+import React, { Component, Fragment } from 'react'
 import compose from 'recompose/compose'
 import format from 'date-fns/format'
 
@@ -9,10 +9,12 @@ import Typography from 'material-ui/Typography'
 import Button from 'material-ui/Button'
 
 import { jsonrpc } from 'homemaster-jslib'
+import TaskForm from 'tasks/TaskForm'
 
 const styles = {
   root: {
-    display: 'flex'
+    display: 'flex',
+    flexWrap: 'wrap'
   },
 
   taskItem: {
@@ -25,7 +27,7 @@ const styles = {
 }
 
 const TaskItem = props => {
-  const { classes, task } = props
+  const { classes, task, onOpenTask } = props
 
   return (
     <Card className={classes.taskItem}>
@@ -34,11 +36,13 @@ const TaskItem = props => {
           {task.name}
         </Typography>
         <Typography className={classes.due} color="textSecondary">
-          {format(new Date(task.due), 'YYYY/MM/DD HH:MM:SS')}
+          {format(new Date(task.due), 'YYYY/MM/DD HH:MM')}
         </Typography>
       </CardContent>
       <CardActions>
-        <Button size="small">处理任务</Button>
+        <Button size="small" color="primary" onClick={onOpenTask}>
+          处理任务
+        </Button>
       </CardActions>
     </Card>
   )
@@ -46,7 +50,9 @@ const TaskItem = props => {
 
 class TaskList extends Component {
   state = {
-    tasks: []
+    tasks: [],
+    taskOpen: false,
+    task: null
   }
 
   componentDidMount = () => {
@@ -64,13 +70,26 @@ class TaskList extends Component {
 
   render() {
     const { classes } = this.props
+    const { task: currentTask, taskOpen } = this.state
 
     return (
-      <div className={classes.root}>
-        {this.state.tasks.map((task, i) => (
-          <TaskItem classes={classes} key={i} task={task} />
-        ))}
-      </div>
+      <Fragment>
+        <div className={classes.root}>
+          {this.state.tasks.map((task, i) => (
+            <TaskItem
+              classes={classes}
+              key={i}
+              task={task}
+              onOpenTask={() => this.setState({ task, taskOpen: true })}
+            />
+          ))}
+        </div>
+        <TaskForm
+          open={taskOpen}
+          task={currentTask}
+          onClose={() => this.setState({ taskOpen: false })}
+        />
+      </Fragment>
     )
   }
 }
