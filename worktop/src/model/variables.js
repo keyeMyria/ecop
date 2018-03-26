@@ -6,10 +6,10 @@ const variables = {
   externalOrderId: {
     label: '宜家订单号'
   },
-  confirmedInstallDate: {
+  confirmedInstallationDate: {
     label: '确认安装日期'
   },
-  confirmedMeasureDate: {
+  confirmedMeasurementDate: {
     label: '确认测量日期'
   },
   customerMobile: {
@@ -33,10 +33,10 @@ const variables = {
   orderFile: {
     label: '原始订单'
   },
-  scheduledInstallDate: {
+  scheduledInstallationDate: {
     label: '预约安装日期'
   },
-  scheduledMeasureDate: {
+  scheduledMeasurementDate: {
     label: '预约测量日期'
   },
   storeId: {

@@ -5,148 +5,195 @@
   </bpmn:collaboration>
   <bpmn:process id="worktop" name="Worktop Test" isExecutable="true" camunda:versionTag="0.1">
     <bpmn:laneSet>
-      <bpmn:lane id="Lane_0anavyb" name="安装队">
-        <bpmn:flowNodeRef>Task_0l4yxvg</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>IntermediateThrowEvent_0zds626</bpmn:flowNodeRef>
-        <bpmn:childLaneSet xsi:type="bpmn:tLaneSet" />
-      </bpmn:lane>
-      <bpmn:lane id="Lane_0o170zv" name="工厂">
-        <bpmn:flowNodeRef>StartEvent_1</bpmn:flowNodeRef>
-        <bpmn:childLaneSet xsi:type="bpmn:tLaneSet" />
-      </bpmn:lane>
-      <bpmn:lane id="Lane_0ejdw6u" name="办公室">
-        <bpmn:flowNodeRef>ConfirmMeasureDate</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Task_0m3phwk</bpmn:flowNodeRef>
+      <bpmn:lane id="Installer" name="安装队">
+        <bpmn:flowNodeRef>Installation</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>TakeMeasurement</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>MeasurementCompleted</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>EndEvent_0r6yu9z</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>IntermediateThrowEvent_1d9taiv</bpmn:flowNodeRef>
+        <bpmn:childLaneSet xsi:type="bpmn:tLaneSet" />
+      </bpmn:lane>
+      <bpmn:lane id="Office" name="办公室">
+        <bpmn:flowNodeRef>MakeDrawing</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>ConfirmInstallationDate</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>ConfirmMeasurementDate</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Factory" name="工厂">
+        <bpmn:flowNodeRef>CheckDrawing</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>StartEvent_1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>WorktopShipped</bpmn:flowNodeRef>
+        <bpmn:childLaneSet xsi:type="bpmn:tLaneSet" />
       </bpmn:lane>
     </bpmn:laneSet>
-    <bpmn:sequenceFlow id="SequenceFlow_0jti927" sourceRef="ConfirmMeasureDate" targetRef="Task_0l4yxvg" />
-    <bpmn:sequenceFlow id="SequenceFlow_0h9i4j9" sourceRef="Task_0l4yxvg" targetRef="IntermediateThrowEvent_0zds626" />
-    <bpmn:sequenceFlow id="SequenceFlow_0su7mxf" sourceRef="IntermediateThrowEvent_0zds626" targetRef="Task_0m3phwk" />
-    <bpmn:sequenceFlow id="SequenceFlow_10rze2z" sourceRef="StartEvent_1" targetRef="ConfirmMeasureDate" />
-    <bpmn:sequenceFlow id="SequenceFlow_13cvnwf" sourceRef="Task_0m3phwk" targetRef="IntermediateThrowEvent_1d9taiv" />
-    <bpmn:userTask id="Task_0m3phwk" name="制作图纸" camunda:candidateGroups="office">
-      <bpmn:incoming>SequenceFlow_0su7mxf</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_13cvnwf</bpmn:outgoing>
-    </bpmn:userTask>
-    <bpmn:startEvent id="StartEvent_1" name="发起安装流程">
-      <bpmn:outgoing>SequenceFlow_10rze2z</bpmn:outgoing>
-    </bpmn:startEvent>
-    <bpmn:userTask id="ConfirmMeasureDate" name="确认测量时间" camunda:candidateGroups="office" camunda:dueDate="${dateTime().plusDays(3).toDate()}">
-      <bpmn:incoming>SequenceFlow_10rze2z</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_0jti927</bpmn:outgoing>
-    </bpmn:userTask>
-    <bpmn:endEvent id="EndEvent_0r6yu9z" name="流程结束">
-      <bpmn:incoming>SequenceFlow_1lc8y9j</bpmn:incoming>
-      <bpmn:terminateEventDefinition />
-    </bpmn:endEvent>
-    <bpmn:intermediateThrowEvent id="IntermediateThrowEvent_1d9taiv" name="M5: 安装完成">
-      <bpmn:incoming>SequenceFlow_13cvnwf</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_1lc8y9j</bpmn:outgoing>
-    </bpmn:intermediateThrowEvent>
-    <bpmn:sequenceFlow id="SequenceFlow_1lc8y9j" sourceRef="IntermediateThrowEvent_1d9taiv" targetRef="EndEvent_0r6yu9z" />
-    <bpmn:userTask id="Task_0l4yxvg" name="测量" camunda:candidateGroups="installer">
-      <bpmn:incoming>SequenceFlow_0jti927</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_0h9i4j9</bpmn:outgoing>
-    </bpmn:userTask>
-    <bpmn:intermediateThrowEvent id="IntermediateThrowEvent_0zds626" name="M1: 测量完成">
+    <bpmn:intermediateThrowEvent id="MeasurementCompleted" name="M1: 测量完成">
       <bpmn:incoming>SequenceFlow_0h9i4j9</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0su7mxf</bpmn:outgoing>
     </bpmn:intermediateThrowEvent>
+    <bpmn:userTask id="Installation" name="安装" camunda:candidateGroups="installer">
+      <bpmn:incoming>SequenceFlow_12rfy1l</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0dc63xi</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="TakeMeasurement" name="测量" camunda:candidateGroups="installer">
+      <bpmn:incoming>SequenceFlow_0jti927</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0h9i4j9</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="EndEvent_0r6yu9z" name="流程结束">
+      <bpmn:incoming>SequenceFlow_0dc63xi</bpmn:incoming>
+      <bpmn:terminateEventDefinition />
+    </bpmn:endEvent>
+    <bpmn:userTask id="MakeDrawing" name="制作图纸" camunda:candidateGroups="office">
+      <bpmn:incoming>SequenceFlow_0su7mxf</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0pet5kx</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="ConfirmInstallationDate" name="确认安装时间" camunda:candidateGroups="office">
+      <bpmn:incoming>SequenceFlow_0h0xqyd</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_12rfy1l</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="ConfirmMeasurementDate" name="确认测量时间" camunda:candidateGroups="office" camunda:dueDate="${dateTime().plusDays(3).toDate()}">
+      <bpmn:incoming>SequenceFlow_10rze2z</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0jti927</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="SequenceFlow_0h9i4j9" sourceRef="TakeMeasurement" targetRef="MeasurementCompleted" />
+    <bpmn:sequenceFlow id="SequenceFlow_0su7mxf" sourceRef="MeasurementCompleted" targetRef="MakeDrawing" />
+    <bpmn:sequenceFlow id="SequenceFlow_12rfy1l" sourceRef="ConfirmInstallationDate" targetRef="Installation" />
+    <bpmn:sequenceFlow id="SequenceFlow_0dc63xi" sourceRef="Installation" targetRef="EndEvent_0r6yu9z" />
+    <bpmn:sequenceFlow id="SequenceFlow_0jti927" sourceRef="ConfirmMeasurementDate" targetRef="TakeMeasurement" />
+    <bpmn:sequenceFlow id="SequenceFlow_0pet5kx" sourceRef="MakeDrawing" targetRef="CheckDrawing" />
+    <bpmn:sequenceFlow id="SequenceFlow_0h0xqyd" sourceRef="WorktopShipped" targetRef="ConfirmInstallationDate" />
+    <bpmn:sequenceFlow id="SequenceFlow_10rze2z" sourceRef="StartEvent_1" targetRef="ConfirmMeasurementDate" />
+    <bpmn:startEvent id="StartEvent_1" name="发起安装流程">
+      <bpmn:outgoing>SequenceFlow_10rze2z</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:intermediateCatchEvent id="WorktopShipped" name="已发货">
+      <bpmn:incoming>SequenceFlow_19twd4r</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0h0xqyd</bpmn:outgoing>
+      <bpmn:signalEventDefinition signalRef="Signal_1ngybbx" />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:userTask id="CheckDrawing" name="审核图纸" camunda:candidateGroups="factory">
+      <bpmn:incoming>SequenceFlow_0pet5kx</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_19twd4r</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="SequenceFlow_19twd4r" sourceRef="CheckDrawing" targetRef="WorktopShipped" />
   </bpmn:process>
+  <bpmn:signal id="Signal_1ngybbx" name="WorktopShipped" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_1mrwdza">
       <bpmndi:BPMNShape id="Participant_0k1dc17_di" bpmnElement="Participant_0k1dc17">
-        <dc:Bounds x="8" y="3" width="753" height="908" />
+        <dc:Bounds x="8" y="3" width="656" height="608" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Lane_0anavyb_di" bpmnElement="Lane_0anavyb">
-        <dc:Bounds x="38" y="3" width="723" height="271" />
+      <bpmndi:BPMNShape id="Lane_0anavyb_di" bpmnElement="Installer">
+        <dc:Bounds x="38" y="3" width="626" height="223" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Lane_0ejdw6u_di" bpmnElement="Lane_0ejdw6u">
-        <dc:Bounds x="38" y="274" width="723" height="414" />
+      <bpmndi:BPMNShape id="Lane_0ejdw6u_di" bpmnElement="Office">
+        <dc:Bounds x="38" y="226" width="626" height="219" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Lane_0o170zv_di" bpmnElement="Lane_0o170zv">
-        <dc:Bounds x="38" y="688" width="723" height="223" />
+      <bpmndi:BPMNShape id="Lane_0o170zv_di" bpmnElement="Factory">
+        <dc:Bounds x="38" y="445" width="626" height="166" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_10rze2z_di" bpmnElement="SequenceFlow_10rze2z">
-        <di:waypoint xsi:type="dc:Point" x="112" y="804" />
-        <di:waypoint xsi:type="dc:Point" x="112" y="466" />
-        <di:waypoint xsi:type="dc:Point" x="200" y="466" />
+        <di:waypoint xsi:type="dc:Point" x="161" y="513" />
+        <di:waypoint xsi:type="dc:Point" x="161" y="368" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="82" y="629" width="90" height="12" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="IntermediateThrowEvent_1d9taiv_di" bpmnElement="IntermediateThrowEvent_1d9taiv">
-        <dc:Bounds x="579" y="448" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="604" y="413" width="68" height="12" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_1lc8y9j_di" bpmnElement="SequenceFlow_1lc8y9j">
-        <di:waypoint xsi:type="dc:Point" x="615" y="466" />
-        <di:waypoint xsi:type="dc:Point" x="695" y="466" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="610" y="445" width="90" height="12" />
+          <dc:Bounds x="131" y="434.5" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="EndEvent_1d1ybfl_di" bpmnElement="EndEvent_0r6yu9z">
-        <dc:Bounds x="695" y="448" width="36" height="36" />
+        <dc:Bounds x="585" y="81" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="690" y="488" width="46" height="13" />
+          <dc:Bounds x="580" y="121" width="46" height="13" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="UserTask_0438ej8_di" bpmnElement="ConfirmMeasureDate">
-        <dc:Bounds x="200" y="426" width="100" height="80" />
+      <bpmndi:BPMNShape id="UserTask_0438ej8_di" bpmnElement="ConfirmMeasurementDate">
+        <dc:Bounds x="111" y="288" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_0jti927_di" bpmnElement="SequenceFlow_0jti927">
-        <di:waypoint xsi:type="dc:Point" x="250" y="426" />
-        <di:waypoint xsi:type="dc:Point" x="250" y="187" />
+        <di:waypoint xsi:type="dc:Point" x="161" y="288" />
+        <di:waypoint xsi:type="dc:Point" x="161" y="139" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="220" y="300.5" width="90" height="12" />
+          <dc:Bounds x="131" y="207.5" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="StartEvent_1an7qie_di" bpmnElement="StartEvent_1">
-        <dc:Bounds x="94" y="804" width="36" height="36" />
+        <dc:Bounds x="143" y="513" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="78" y="853" width="68" height="13" />
+          <dc:Bounds x="127" y="562" width="68" height="13" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="UserTask_0zvy0w7_di" bpmnElement="Task_0l4yxvg">
-        <dc:Bounds x="200" y="107" width="100" height="80" />
+      <bpmndi:BPMNShape id="UserTask_0zvy0w7_di" bpmnElement="TakeMeasurement">
+        <dc:Bounds x="111" y="59" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="IntermediateThrowEvent_0zds626_di" bpmnElement="IntermediateThrowEvent_0zds626">
-        <dc:Bounds x="377.8461538461538" y="129" width="36" height="36" />
+      <bpmndi:BPMNShape id="IntermediateThrowEvent_0zds626_di" bpmnElement="MeasurementCompleted">
+        <dc:Bounds x="300" y="81" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="442" y="141" width="68" height="12" />
+          <dc:Bounds x="284" y="50" width="68" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_0h9i4j9_di" bpmnElement="SequenceFlow_0h9i4j9">
-        <di:waypoint xsi:type="dc:Point" x="300" y="147" />
-        <di:waypoint xsi:type="dc:Point" x="338" y="147" />
-        <di:waypoint xsi:type="dc:Point" x="338" y="147" />
-        <di:waypoint xsi:type="dc:Point" x="378" y="147" />
+        <di:waypoint xsi:type="dc:Point" x="211" y="99" />
+        <di:waypoint xsi:type="dc:Point" x="300" y="99" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="353" y="141" width="0" height="12" />
+          <dc:Bounds x="210.5" y="78" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_0su7mxf_di" bpmnElement="SequenceFlow_0su7mxf">
-        <di:waypoint xsi:type="dc:Point" x="396" y="165" />
-        <di:waypoint xsi:type="dc:Point" x="395" y="426" />
+        <di:waypoint xsi:type="dc:Point" x="318" y="117" />
+        <di:waypoint xsi:type="dc:Point" x="317" y="288" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="395.5" y="274.5" width="0" height="12" />
+          <dc:Bounds x="272.5" y="181.5" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="UserTask_0rv95c9_di" bpmnElement="Task_0m3phwk">
-        <dc:Bounds x="346" y="426" width="100" height="80" />
+      <bpmndi:BPMNShape id="UserTask_0rv95c9_di" bpmnElement="MakeDrawing">
+        <dc:Bounds x="268" y="288" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_13cvnwf_di" bpmnElement="SequenceFlow_13cvnwf">
-        <di:waypoint xsi:type="dc:Point" x="446" y="466" />
-        <di:waypoint xsi:type="dc:Point" x="579" y="466" />
+      <bpmndi:BPMNEdge id="SequenceFlow_0pet5kx_di" bpmnElement="SequenceFlow_0pet5kx">
+        <di:waypoint xsi:type="dc:Point" x="318" y="368" />
+        <di:waypoint xsi:type="dc:Point" x="318" y="491" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="512.5" y="445" width="0" height="12" />
+          <dc:Bounds x="333" y="423.5" width="0" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="UserTask_1wlbd02_di" bpmnElement="CheckDrawing">
+        <dc:Bounds x="269" y="491" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_19twd4r_di" bpmnElement="SequenceFlow_19twd4r">
+        <di:waypoint xsi:type="dc:Point" x="369" y="531" />
+        <di:waypoint xsi:type="dc:Point" x="454" y="531" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="411.5" y="510" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="UserTask_1ilcl8o_di" bpmnElement="ConfirmInstallationDate">
+        <dc:Bounds x="422" y="288" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_12rfy1l_di" bpmnElement="SequenceFlow_12rfy1l">
+        <di:waypoint xsi:type="dc:Point" x="472" y="288" />
+        <di:waypoint xsi:type="dc:Point" x="472" y="139" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="487" y="207.5" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="UserTask_00d55pg_di" bpmnElement="Installation">
+        <dc:Bounds x="422" y="59" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0dc63xi_di" bpmnElement="SequenceFlow_0dc63xi">
+        <di:waypoint xsi:type="dc:Point" x="522" y="99" />
+        <di:waypoint xsi:type="dc:Point" x="585" y="99" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="553.5" y="78" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0h0xqyd_di" bpmnElement="SequenceFlow_0h0xqyd">
+        <di:waypoint xsi:type="dc:Point" x="472" y="513" />
+        <di:waypoint xsi:type="dc:Point" x="472" y="368" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="487" y="434.5" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="IntermediateCatchEvent_1p46o00_di" bpmnElement="WorktopShipped">
+        <dc:Bounds x="454" y="513" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="455" y="553" width="34" height="13" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>

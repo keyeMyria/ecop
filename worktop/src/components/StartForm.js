@@ -55,8 +55,8 @@ class StartForm extends ValidatedForm {
     customerMobile: '',
     customerRegionCode: null,
     customerStreet: '',
-    scheduledMeasureDate: null,
-    scheduledInstallDate: null,
+    scheduledMeasurementDate: null,
+    scheduledInstallationDate: null,
     installFaucet: false,
     installSink: false,
     orderFile: []
@@ -70,8 +70,8 @@ class StartForm extends ValidatedForm {
       customerMobile: 'required|mobile',
       customerRegionCode: 'required',
       customerStreet: 'required',
-      scheduledMeasureDate: 'required',
-      scheduledInstallDate: 'required',
+      scheduledMeasurementDate: 'required',
+      scheduledInstallationDate: 'required',
       orderFile: 'required'
     },
     {
@@ -84,8 +84,8 @@ class StartForm extends ValidatedForm {
       'required.customerMobile': '顾客手机必须输入',
       'required.customerStreet': '详细地址必须输入',
       'required.customerRegionCode': '所在地区必须输入',
-      'required.scheduledMeasureDate': '测量日期必须输入',
-      'required.scheduledInstallDate': '安装日期必须输入',
+      'required.scheduledMeasurementDate': '测量日期必须输入',
+      'required.scheduledInstallationDate': '安装日期必须输入',
       'required.orderFile': '原始图纸必须上传'
     }
   )
@@ -207,37 +207,46 @@ class StartForm extends ValidatedForm {
               component={DatePicker}
               label="测量日期"
               autoOk
-              name="scheduledMeasureDate"
+              name="scheduledMeasurementDate"
               disablePast
               maxDate={
-                values.scheduledInstallDate
-                  ? addDays(values.scheduledInstallDate, -7)
+                values.scheduledInstallationDate
+                  ? addDays(values.scheduledInstallationDate, -7)
                   : undefined
               }
               leftArrowIcon={<ArrowLeftIcon />}
               rightArrowIcon={<ArrowRightIcon />}
-              value={values.scheduledMeasureDate}
+              value={values.scheduledMeasurementDate}
               labelFunc={date => (date ? format(date, 'YYYY/MM/DD') : '')}
-              onChange={this.handleChange('scheduledMeasureDate', 'datepicker')}
-              error={!!this.getFieldError('scheduledMeasureDate')}
-              helperText={this.getFieldError('scheduledMeasureDate')}
+              onChange={this.handleChange(
+                'scheduledMeasurementDate',
+                'datepicker'
+              )}
+              error={!!this.getFieldError('scheduledMeasurementDate')}
+              helperText={this.getFieldError('scheduledMeasurementDate')}
             />
           </Grid>
 
           <Grid item xs={6}>
             <Field
               component={DatePicker}
-              name="scheduledInstallDate"
+              name="scheduledInstallationDate"
               label="安装日期"
               autoOk
               leftArrowIcon={<ArrowLeftIcon />}
               rightArrowIcon={<ArrowRightIcon />}
-              value={values.scheduledInstallDate}
-              minDate={addDays(values.scheduledMeasureDate || new Date(), 7)}
+              value={values.scheduledInstallationDate}
+              minDate={addDays(
+                values.scheduledMeasurementDate || new Date(),
+                7
+              )}
               labelFunc={date => (date ? format(date, 'YYYY/MM/DD') : '')}
-              onChange={this.handleChange('scheduledInstallDate', 'datepicker')}
-              error={!!this.getFieldError('scheduledInstallDate')}
-              helperText={this.getFieldError('scheduledInstallDate')}
+              onChange={this.handleChange(
+                'scheduledInstallationDate',
+                'datepicker'
+              )}
+              error={!!this.getFieldError('scheduledInstallationDate')}
+              helperText={this.getFieldError('scheduledInstallationDate')}
             />
           </Grid>
         </Grid>
