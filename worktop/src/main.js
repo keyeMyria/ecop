@@ -1,6 +1,7 @@
 /* global App */
 import React from 'react'
 import ReactDOM from 'react-dom'
+import { Provider } from 'react-redux'
 
 import MuiPickersUtilsProvider from 'material-ui-pickers/utils/MuiPickersUtilsProvider'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
@@ -12,6 +13,7 @@ import DateFnsUtils from 'utils/date-fns-utils'
 import AppFrame from 'components/AppFrame'
 import LoginDialog from 'components/LoginDialog'
 import theme from './theme'
+import store from './model/store'
 
 // polyfill ie for symbol
 require('core-js/fn/symbol')
@@ -34,11 +36,13 @@ Object.assign(jsonrpc, {
 })
 
 ReactDOM.render(
-  <MuiThemeProvider theme={theme}>
-    <CssBaseline />
-    <MuiPickersUtilsProvider utils={DateFnsUtils}>
-      {App.csrfToken ? <AppFrame /> : <LoginDialog />}
-    </MuiPickersUtilsProvider>
-  </MuiThemeProvider>,
+  <Provider store={store}>
+    <MuiThemeProvider theme={theme}>
+      <CssBaseline />
+      <MuiPickersUtilsProvider utils={DateFnsUtils}>
+        {App.csrfToken ? <AppFrame /> : <LoginDialog />}
+      </MuiPickersUtilsProvider>
+    </MuiThemeProvider>
+  </Provider>,
   document.getElementById('app')
 )

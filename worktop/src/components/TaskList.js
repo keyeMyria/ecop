@@ -1,5 +1,5 @@
-/* global App */
 import React, { Component, Fragment } from 'react'
+import { connect } from 'react-redux'
 import compose from 'recompose/compose'
 import format from 'date-fns/format'
 
@@ -8,7 +8,7 @@ import Card, { CardActions, CardContent } from 'material-ui/Card'
 import Typography from 'material-ui/Typography'
 import Button from 'material-ui/Button'
 
-import { jsonrpc } from 'homemaster-jslib'
+import { fetchUserTasks } from 'model/actions'
 import TaskForm from 'tasks/TaskForm'
 
 const styles = {
@@ -50,9 +50,8 @@ const TaskItem = props => {
 
 class TaskList extends Component {
   state = {
-    tasks: [],
     taskOpen: false,
-    task: null
+    currentTask: null
   }
 
   componentDidMount = () => {
@@ -60,27 +59,24 @@ class TaskList extends Component {
   }
 
   getTasks = () => {
-    jsonrpc({
-      method: 'bpmn.task.get',
-      params: [App.processKey]
-    }).then(ret => {
-      this.setState({ tasks: ret })
-    })
+    this.props.dispatch(fetchUserTasks())
   }
 
   render() {
-    const { classes } = this.props
-    const { task: currentTask, taskOpen } = this.state
+    const { classes, userTasks: tasks } = this.props
+    const { currentTask, taskOpen } = this.state
 
     return (
       <Fragment>
         <div className={classes.root}>
-          {this.state.tasks.map((task, i) => (
+          {tasks.map((task, i) => (
             <TaskItem
               classes={classes}
               key={i}
               task={task}
-              onOpenTask={() => this.setState({ task, taskOpen: true })}
+              onOpenTask={() =>
+                this.setState({ currentTask: task, taskOpen: true })
+              }
             />
           ))}
         </div>
@@ -94,4 +90,10 @@ class TaskList extends Component {
   }
 }
 
-export default compose(withStyles(styles))(TaskList)
+const mapStateToProps = state => {
+  return {
+    ...state.task
+  }
+}
+
+export default compose(connect(mapStateToProps), withStyles(styles))(TaskList)
