@@ -102,13 +102,11 @@ const styles = theme => ({
   }
 })
 
-class AppFrame extends React.Component {
-  constructor(props) {
-    super(props)
 
-    this.state = {
-      drawerOpen: !screen.isMobile()
-    }
+class AppFrame extends React.Component {
+  state = {
+    drawerOpen: !screen.isMobile(),
+    currentFrame: 'start'
   }
 
   handleDrawerOpen = () => {
@@ -130,6 +128,7 @@ class AppFrame extends React.Component {
 
   render() {
     const { classes } = this.props
+    const { currentFrame, drawerOpen } = this.state
 
     let MenuItem = props => {
       const { icon, text, onClick } = props
@@ -147,16 +146,16 @@ class AppFrame extends React.Component {
           position="absolute"
           className={classNames(
             classes.appBar,
-            this.state.drawerOpen && classes.appBarShift
+            drawerOpen && classes.appBarShift
           )}
         >
-          <Toolbar disableGutters={!this.state.drawerOpen}>
+          <Toolbar disableGutters={!drawerOpen}>
             <IconButton
               color="inherit"
               onClick={this.handleDrawerOpen}
               className={classNames(
                 classes.menuButton,
-                this.state.drawerOpen && classes.hide
+                drawerOpen && classes.hide
               )}
             >
               <MenuIcon />
@@ -171,10 +170,10 @@ class AppFrame extends React.Component {
           classes={{
             paper: classNames(
               classes.drawerPaper,
-              !this.state.drawerOpen && classes.drawerPaperClose
+              !drawerOpen && classes.drawerPaperClose
             )
           }}
-          open={this.state.drawerOpen}
+          open={drawerOpen}
         >
           <div className={classes.toolbar}>
             <div className={classes.appName}>
@@ -191,8 +190,16 @@ class AppFrame extends React.Component {
           </div>
           <Divider />
           <List>
-            <MenuItem icon={<AddCircleOutlineIcon />} text="新增订单" />
-            <MenuItem icon={<TaskListIcon />} text="我的任务" />
+            <MenuItem
+              icon={<AddCircleOutlineIcon />}
+              text="新增订单"
+              onClick={() => this.setState({ currentFrame: 'start' })}
+            />
+            <MenuItem
+              icon={<TaskListIcon />}
+              text="我的任务"
+              onClick={() => this.setState({ currentFrame: 'tasks' })}
+            />
             <MenuItem icon={<SearchIcon />} text="订单查询" />
             <MenuItem
               icon={<ExitToAppIcon />}
@@ -204,7 +211,8 @@ class AppFrame extends React.Component {
         <div className={classes.main}>
           <div className={classes.toolbar} />
           <div className={classes.content}>
-            <TaskList />
+            {currentFrame === 'start' && <StartForm />}
+            {currentFrame === 'tasks' && <TaskList />}
           </div>
         </div>
       </div>
