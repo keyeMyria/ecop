@@ -11,13 +11,14 @@ import IconButton from 'material-ui/IconButton'
 import CloseIcon from 'material-ui-icons/Close'
 import { withStyles } from 'material-ui/styles'
 
-import { screen } from 'homemaster-jslib'
+import { screen, message } from 'homemaster-jslib'
 import TaskListIcon from 'homemaster-jslib/svg-icons/TaskList'
 
 import { fetchProcessVariables } from 'model/actions'
 import ConfirmMeasurementDate from './ConfirmMeasurementDate'
 import TakeMeasurement from './TakeMeasurement'
 import TaskHeader from './TaskHeader'
+
 const forms = {
   ConfirmMeasurementDate: ConfirmMeasurementDate,
   TakeMeasurement: TakeMeasurement
@@ -63,6 +64,11 @@ class TaskForm extends Component {
     }
   }
 
+  submitTask = values => {
+    message.success('当前任务提交成功')
+    this.props.onClose()
+  }
+
   render = () => {
     const { task, variables, dispatch, classes, ...other } = this.props
 
@@ -90,7 +96,11 @@ class TaskForm extends Component {
           </AppBar>
           <div className={classes.content}>
             <TaskHeader task={task} variables={variables} />
-            {createElement(forms[task.taskDefinitionKey], { task })}
+            {createElement(forms[task.taskDefinitionKey], {
+              task,
+              variables,
+              submitTask: this.submitTask
+            })}
           </div>
         </Dialog>
       )

@@ -2,12 +2,23 @@ import React, { Fragment } from 'react'
 import PropTypes from 'prop-types'
 
 function TaskHeader(props) {
-  const { variables } = props
+  const {
+    externalOrderId,
+    customerName,
+    customerMobile,
+    customerRegionCode,
+    customerStreet
+  } = props.variables
 
   return (
     <Fragment>
-      <div>宜家订单号: {variables.externalOrderId}</div>
-      <div>顾客姓名: {variables.customerName}</div>
+      <div>宜家订单号: {externalOrderId}</div>
+      <div>顾客姓名: {customerName}</div>
+      <div>顾客手机: {customerMobile}</div>
+      <div>
+        顾客地址: {customerRegionCode}
+        {customerStreet}
+      </div>
     </Fragment>
   )
 }
