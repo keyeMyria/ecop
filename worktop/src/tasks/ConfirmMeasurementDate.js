@@ -42,6 +42,17 @@ class ConfirmMeasurementDate extends ValidatedForm {
     }
   )
 
+  componentWillReceiveProps = nextProps => {
+    // set default value for confirmedMeasurementDate
+    if (this.props.variables !== nextProps.variables) {
+      this.setState({
+        values: {
+          confirmedMeasurementDate: nextProps.variables.scheduledMeasurementDate
+        }
+      })
+    }
+  }
+
   handleSubmit = () => {
     this.props.validate(error => {
       if (!error) {
@@ -51,7 +62,7 @@ class ConfirmMeasurementDate extends ValidatedForm {
   }
 
   render = () => {
-    const { task, variables, classes } = this.props
+    const { variables, classes } = this.props
     const { values } = this.state
 
     return (

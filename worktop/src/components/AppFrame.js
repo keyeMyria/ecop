@@ -102,7 +102,6 @@ const styles = theme => ({
   }
 })
 
-
 class AppFrame extends React.Component {
   state = {
     drawerOpen: !screen.isMobile(),
@@ -200,7 +199,7 @@ class AppFrame extends React.Component {
               text="我的任务"
               onClick={() => this.setState({ currentFrame: 'tasks' })}
             />
-            <MenuItem icon={<SearchIcon />} text="订单查询" />
+            {/* <MenuItem icon={<SearchIcon />} text="订单查询" /> */}
             <MenuItem
               icon={<ExitToAppIcon />}
               onClick={this.handleLogout}

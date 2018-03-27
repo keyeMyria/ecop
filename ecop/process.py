@@ -50,6 +50,17 @@ class PorcessJSON(RpcBase):
     @jsonrpc_method(endpoint='rpc', method='bpmn.variable.get')
     def getProcessVariables(self, processId):
         ret = cc.makeRequest('/variable-instance', 'post', {
-                'processInstanceIdIn': [processId]
-            }, urlParams={'deserializeValues': 'false'})
+            'processInstanceIdIn': [processId]
+        }, urlParams={'deserializeValues': 'false'})
         return cc.parseVariables(ret)
+
+    @jsonrpc_method(endpoint='rpc', method='bpmn.task.complete')
+    def completeTask(self, taskId, variables):
+        # parse all variable fields whose name ends with Date as date
+        # we'd better check against a process variable repository to find
+        # the type in stead of relying on variable naming
+        variables = parseDate(
+            variables,
+            fields=[fname for fname in variables if fname.endswith('Date')]
+        )
+        cc.makeRequest(f'/task/{taskId}/complete', 'post', variables=variables)

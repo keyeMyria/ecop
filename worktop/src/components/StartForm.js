@@ -107,7 +107,7 @@ class StartForm extends ValidatedForm {
           params: [App.processKey, this.state.values]
         }).then(() => {
           message.success('订单提交成功')
-          // this.resetForm()
+          this.resetForm()
         })
       }
     })
@@ -205,7 +205,7 @@ class StartForm extends ValidatedForm {
           <Grid item xs={6}>
             <Field
               component={DatePicker}
-              label="测量日期"
+              label="预约测量日期"
               autoOk
               name="scheduledMeasurementDate"
               disablePast
@@ -231,7 +231,7 @@ class StartForm extends ValidatedForm {
             <Field
               component={DatePicker}
               name="scheduledInstallationDate"
-              label="安装日期"
+              label="预约安装日期"
               autoOk
               leftArrowIcon={<ArrowLeftIcon />}
               rightArrowIcon={<ArrowRightIcon />}

@@ -11,10 +11,10 @@ import IconButton from 'material-ui/IconButton'
 import CloseIcon from 'material-ui-icons/Close'
 import { withStyles } from 'material-ui/styles'
 
-import { screen, message } from 'homemaster-jslib'
+import { jsonrpc, screen, message } from 'homemaster-jslib'
 import TaskListIcon from 'homemaster-jslib/svg-icons/TaskList'
 
-import { fetchProcessVariables } from 'model/actions'
+import { fetchProcessVariables, fetchUserTasks } from 'model/actions'
 import ConfirmMeasurementDate from './ConfirmMeasurementDate'
 import TakeMeasurement from './TakeMeasurement'
 import TaskHeader from './TaskHeader'
@@ -65,8 +65,14 @@ class TaskForm extends Component {
   }
 
   submitTask = values => {
-    message.success('当前任务提交成功')
-    this.props.onClose()
+    jsonrpc({
+      method: 'bpmn.task.complete',
+      params: [this.props.task.id, values]
+    }).then(() => {
+      message.success('当前任务提交成功')
+      this.props.onClose()
+      this.props.dispatch(fetchUserTasks())
+    })
   }
 
   render = () => {
@@ -97,7 +103,6 @@ class TaskForm extends Component {
           <div className={classes.content}>
             <TaskHeader task={task} variables={variables} />
             {createElement(forms[task.taskDefinitionKey], {
-              task,
               variables,
               submitTask: this.submitTask
             })}
