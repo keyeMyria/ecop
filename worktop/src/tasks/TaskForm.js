@@ -1,5 +1,8 @@
 import React, { Component, createElement } from 'react'
 import PropTypes from 'prop-types'
+import compose from 'recompose/compose'
+import { connect } from 'react-redux'
+
 import AppBar from 'material-ui/AppBar'
 import Dialog from 'material-ui/Dialog'
 import Toolbar from 'material-ui/Toolbar'
@@ -11,10 +14,10 @@ import { withStyles } from 'material-ui/styles'
 import { screen } from 'homemaster-jslib'
 import TaskListIcon from 'homemaster-jslib/svg-icons/TaskList'
 
+import { fetchProcessVariables } from 'model/actions'
 import ConfirmMeasurementDate from './ConfirmMeasurementDate'
 import TakeMeasurement from './TakeMeasurement'
 import TaskHeader from './TaskHeader'
-
 const forms = {
   ConfirmMeasurementDate: ConfirmMeasurementDate,
   TakeMeasurement: TakeMeasurement
@@ -49,14 +52,19 @@ const styles = theme => ({
 })
 
 class TaskForm extends Component {
+  /**
+   * Whenever the taks form is opened, we load the process variables
+   */
   componentWillReceiveProps = nextProps => {
-    if (this.props.task !== nextProps.task) {
-      console.log('Start loading new task', nextProps.task)
+    if (!this.props.open && nextProps.open) {
+      this.props.dispatch(
+        fetchProcessVariables(nextProps.task.processInstanceId)
+      )
     }
   }
 
   render = () => {
-    const { task, classes, ...other } = this.props
+    const { task, variables, dispatch, classes, ...other } = this.props
 
     return (
       task && (
@@ -81,7 +89,7 @@ class TaskForm extends Component {
             </Toolbar>
           </AppBar>
           <div className={classes.content}>
-            <TaskHeader task={task} />
+            <TaskHeader task={task} variables={variables} />
             {createElement(forms[task.taskDefinitionKey], { task })}
           </div>
         </Dialog>
@@ -103,6 +111,15 @@ TaskForm.propTypes = {
    * The task object to load. The form is derived from the `taskDefinitionKey`
    * attribute of the task object
    */
-  task: PropTypes.object
+  task: PropTypes.object,
+  /**
+   * An object containing all the process instance variables
+   */
+  variables: PropTypes.object
 }
-export default withStyles(styles)(TaskForm)
+
+const mapStateToProps = state => ({
+  variables: state.task.processVariables
+})
+
+export default compose(connect(mapStateToProps), withStyles(styles))(TaskForm)

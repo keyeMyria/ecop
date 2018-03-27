@@ -1,4 +1,5 @@
 import React, { Component, Fragment } from 'react'
+import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import compose from 'recompose/compose'
 import format from 'date-fns/format'
@@ -69,16 +70,18 @@ class TaskList extends Component {
     return (
       <Fragment>
         <div className={classes.root}>
-          {tasks.map((task, i) => (
-            <TaskItem
-              classes={classes}
-              key={i}
-              task={task}
-              onOpenTask={() =>
-                this.setState({ currentTask: task, taskOpen: true })
-              }
-            />
-          ))}
+          {tasks.length === 0 && <p>当前任务清单为空。</p>}
+          {tasks &&
+            tasks.map((task, i) => (
+              <TaskItem
+                classes={classes}
+                key={i}
+                task={task}
+                onOpenTask={() =>
+                  this.setState({ currentTask: task, taskOpen: true })
+                }
+              />
+            ))}
         </div>
         <TaskForm
           open={taskOpen}
@@ -90,10 +93,15 @@ class TaskList extends Component {
   }
 }
 
-const mapStateToProps = state => {
-  return {
-    tasks: state.task.userTasks
-  }
+TaskList.propTypes = {
+  /**
+   * The `TaskList` accepts a list of camunda `task` objects in prop `tasks`
+   */
+  tasks: PropTypes.arrayOf(PropTypes.object)
 }
+
+const mapStateToProps = state => ({
+  tasks: state.task.userTasks
+})
 
 export default compose(connect(mapStateToProps), withStyles(styles))(TaskList)

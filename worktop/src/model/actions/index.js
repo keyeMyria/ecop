@@ -1,1 +1,1 @@
-export { fetchUserTasks } from './task'
+export { fetchUserTasks, fetchProcessVariables } from './task'

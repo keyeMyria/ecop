@@ -14,10 +14,10 @@ class PorcessJSON(RpcBase):
     def startProcess(self, processKey, params):
         params = parseDate(
             params,
-            fields=['scheduledMeasureDate', 'scheduledInstallDate']
+            fields=['scheduledMeasurementDate', 'scheduledInstallationDate']
         )
 
-        externalOrderId = params.pop('externalOrderId')
+        externalOrderId = params.get('externalOrderId')
         if self.sess.query(SalesOrder).filter_by(
             orderSource=ORDER_SOURCE.IKEA,
             externalOrderId=externalOrderId
@@ -46,3 +46,10 @@ class PorcessJSON(RpcBase):
         return cc.makeRequest('/task', 'post', {
             'processDefinitionKey': processKey
         })
+
+    @jsonrpc_method(endpoint='rpc', method='bpmn.variable.get')
+    def getProcessVariables(self, processId):
+        ret = cc.makeRequest('/variable-instance', 'post', {
+                'processInstanceIdIn': [processId]
+            }, urlParams={'deserializeValues': 'false'})
+        return cc.parseVariables(ret)

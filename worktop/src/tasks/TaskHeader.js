@@ -1,12 +1,22 @@
 import React, { Fragment } from 'react'
+import PropTypes from 'prop-types'
 
-export default function TaskHeader(props) {
-  const { task } = props
+function TaskHeader(props) {
+  const { variables } = props
 
   return (
     <Fragment>
-      <div>Taks ID: {task.id}</div>
-      <div>Process Id: {task.processInstanceId}</div>
+      <div>宜家订单号: {variables.externalOrderId}</div>
+      <div>顾客姓名: {variables.customerName}</div>
     </Fragment>
   )
 }
+
+TaskHeader.propTypes = {
+  /**
+   * An object containing all the process instance variables
+   */
+  variables: PropTypes.object.isRequired
+}
+
+export default TaskHeader
