@@ -67,11 +67,11 @@
     <bpmn:sequenceFlow id="SequenceFlow_0asw71l" name="no" sourceRef="IsDrawingOK" targetRef="MakeDrawing">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${productionDrawingConfirmed==false}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:userTask id="InstallWorktop" name="安装" camunda:candidateGroups="installer" camunda:dueDate="${dateTime().plusDays(1).toDate()}">
+    <bpmn:userTask id="InstallWorktop" name="安装台面" camunda:candidateGroups="installer" camunda:dueDate="${dateTime().plusDays(1).toDate()}">
       <bpmn:incoming>SequenceFlow_12rfy1l</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1fj7chv</bpmn:outgoing>
     </bpmn:userTask>
-    <bpmn:userTask id="ConfirmInstallationDate" name="确认安装时间" camunda:candidateGroups="office">
+    <bpmn:userTask id="ConfirmInstallationDate" name="确认安装时间" camunda:candidateGroups="office" camunda:dueDate="${dateTime().plusDays(1).toDate()}">
       <bpmn:incoming>SequenceFlow_0h0xqyd</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_12rfy1l</bpmn:outgoing>
     </bpmn:userTask>
@@ -88,7 +88,7 @@
       <bpmn:incoming>SequenceFlow_164kmk1</bpmn:incoming>
       <bpmn:terminateEventDefinition />
     </bpmn:endEvent>
-    <bpmn:userTask id="CompleteERPOrder" name="完成ERP订单">
+    <bpmn:userTask id="CompleteERPOrder" name="完成ERP订单" camunda:candidateGroups="office" camunda:dueDate="${dateTime().plusDays(1).toDate()}">
       <bpmn:incoming>SequenceFlow_1fj7chv</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_164kmk1</bpmn:outgoing>
     </bpmn:userTask>

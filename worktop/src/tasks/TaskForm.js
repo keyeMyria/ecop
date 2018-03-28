@@ -22,12 +22,14 @@ import TakeMeasurement from './TakeMeasurement'
 import TaskHeader from './TaskHeader'
 import MakeDrawing from './MakeDrawing'
 import CheckDrawing from './CheckDrawing'
+import ConfirmInstallationDate from './ConfirmInstallationDate'
 
 const forms = {
   ConfirmMeasurementDate,
   TakeMeasurement,
   MakeDrawing,
-  CheckDrawing
+  CheckDrawing,
+  ConfirmInstallationDate
 }
 
 const styles = theme => ({
