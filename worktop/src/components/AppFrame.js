@@ -160,7 +160,7 @@ class AppFrame extends React.Component {
               <MenuIcon />
             </IconButton>
             <Typography variant="title" color="inherit" noWrap>
-              IKEA Worktop Process Control
+              台面安装流程
             </Typography>
           </Toolbar>
         </AppBar>
@@ -177,7 +177,7 @@ class AppFrame extends React.Component {
           <div className={classes.toolbar}>
             <div className={classes.appName}>
               <Typography variant="title" color="inherit" noWrap>
-                BE Worktop
+                Worktop
               </Typography>
               <Typography variant="subheading" color="inherit" noWrap>
                 v1.0.{App.version}
@@ -199,7 +199,7 @@ class AppFrame extends React.Component {
               text="我的任务"
               onClick={() => this.setState({ currentFrame: 'tasks' })}
             />
-            {/* <MenuItem icon={<SearchIcon />} text="订单查询" /> */}
+            {/* <MenuItem icon={<SearchIcon />} text="流程查询" /> */}
             <MenuItem
               icon={<ExitToAppIcon />}
               onClick={this.handleLogout}

@@ -17,9 +17,7 @@ export default class ConfirmMeasurementDate extends Component {
     // set default value for confirmedMeasurementDate
     if (this.props.variables !== nextProps.variables) {
       this.setState({
-        values: {
-          confirmedMeasurementDate: nextProps.variables.scheduledMeasurementDate
-        }
+        confirmedMeasurementDate: nextProps.variables.scheduledMeasurementDate
       })
     }
   }
