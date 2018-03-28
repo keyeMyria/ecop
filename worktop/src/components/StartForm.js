@@ -10,8 +10,6 @@ import TextField from 'material-ui/TextField'
 import DatePicker from 'material-ui-pickers/DatePicker'
 import Grid from 'material-ui/Grid'
 import Paper from 'material-ui/Paper'
-import { FormGroup, FormControlLabel } from 'material-ui/Form'
-import Checkbox from 'material-ui/Checkbox'
 import ArrowLeftIcon from 'material-ui-icons/KeyboardArrowLeft'
 import ArrowRightIcon from 'material-ui-icons/KeyboardArrowRight'
 
@@ -56,8 +54,6 @@ class StartForm extends ValidatedForm {
     customerStreet: '',
     scheduledMeasurementDate: null,
     scheduledInstallationDate: null,
-    installFaucet: false,
-    installSink: false,
     orderFile: []
   }
 
@@ -263,32 +259,6 @@ class StartForm extends ValidatedForm {
           error={!!this.getFieldError('customerStreet')}
           helperText={this.getFieldError('customerStreet')}
         />
-
-        <FormGroup row>
-          <div className={classes.checkBoxContainer}>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={values.installFaucet}
-                  onChange={this.handleChange('installFaucet', 'checkbox')}
-                />
-              }
-              label={(values.installFaucet ? '' : '不') + '需要安装水槽'}
-            />
-          </div>
-          <div className={classes.checkBoxContainer}>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={values.installSink}
-                  onChange={this.handleChange('installSink', 'checkbox')}
-                  color="primary"
-                />
-              }
-              label={(values.installSink ? '' : '不') + '需要安装龙头'}
-            />
-          </div>
-        </FormGroup>
 
         <Field
           component={FileUploader}

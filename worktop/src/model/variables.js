@@ -31,17 +31,25 @@ const variables = {
     label: '详细地址',
     type: 'String'
   },
-  installFaucet: {
-    label: '是否需要安装龙头',
-    type: 'Boolean'
-  },
-  installSink: {
-    label: '是否需要安装水槽',
-    type: 'Boolean'
+  measurementFile: {
+    label: '测量文件',
+    type: 'Json'
   },
   orderFile: {
     label: '原始订单',
     type: 'Json'
+  },
+  productionDrawing: {
+    label: '生产图纸',
+    type: 'Json'
+  },
+  productionDrawingConfirmed: {
+    label: '图纸审核通过',
+    type: 'Boolean'
+  },
+  reasonDrawingRejected: {
+    label: '图纸审核未通过原因',
+    type: 'String'
   },
   scheduledInstallationDate: {
     label: '预约安装日期',
