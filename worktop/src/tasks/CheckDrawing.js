@@ -116,8 +116,8 @@ class MakeDrawing extends ValidatedForm {
 
         {variables.productionDrawingConfirmed === false && (
           <Typography variant="headline" color="error">
-            该订单前次审核未通过，请注意审核。拒绝原因:<br />
-            ${variables.reasonDrawingRejected}
+            前次审核未通过，拒绝原因:<br />
+            {variables.reasonDrawingRejected}
           </Typography>
         )}
 

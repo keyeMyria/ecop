@@ -38,9 +38,6 @@ const styles = {
   },
   buttonIcon: {
     marginRight: 10
-  },
-  checkBoxContainer: {
-    flexBasis: '50%'
   }
 }
 

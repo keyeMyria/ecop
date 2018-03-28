@@ -74,7 +74,7 @@ class MakeDrawing extends ValidatedForm {
               该图纸审核未通过，被拒绝原因:
             </Typography>
             <Typography variant="headline" color="error">
-              ${variables.reasonDrawingRejected}
+              {variables.reasonDrawingRejected}
             </Typography>
           </FormControl>
         )}
