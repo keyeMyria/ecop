@@ -20,10 +20,12 @@ import { fetchProcessVariables, fetchUserTasks } from 'model/actions'
 import ConfirmMeasurementDate from './ConfirmMeasurementDate'
 import TakeMeasurement from './TakeMeasurement'
 import TaskHeader from './TaskHeader'
+import MakeDrawing from './MakeDrawing'
 
 const forms = {
-  ConfirmMeasurementDate: ConfirmMeasurementDate,
-  TakeMeasurement: TakeMeasurement
+  ConfirmMeasurementDate,
+  TakeMeasurement,
+  MakeDrawing
 }
 
 const styles = theme => ({
