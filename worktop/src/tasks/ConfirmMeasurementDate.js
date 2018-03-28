@@ -1,6 +1,4 @@
-import React, { Fragment } from 'react'
-import validation from 'react-validation-mixin'
-import compose from 'recompose/compose'
+import React, { Fragment, Component } from 'react'
 import format from 'date-fns/format'
 
 import { withStyles } from 'material-ui/styles'
@@ -11,7 +9,7 @@ import ArrowLeftIcon from 'material-ui-icons/KeyboardArrowLeft'
 import ArrowRightIcon from 'material-ui-icons/KeyboardArrowRight'
 
 import PaperPlaneIcon from 'homemaster-jslib/svg-icons/PaperPlane'
-import { strategy, ValidatedForm, Field } from 'form'
+import { Field } from 'form'
 
 const styles = {
   submitButton: {
@@ -26,44 +24,26 @@ const styles = {
   }
 }
 
-class ConfirmMeasurementDate extends ValidatedForm {
+class ConfirmMeasurementDate extends Component {
   state = {
-    values: {
-      confirmedMeasurementDate: null
-    }
+    confirmedMeasurementDate: null
   }
-
-  validatorTypes = strategy.createSchema(
-    {
-      confirmedMeasurementDate: 'required'
-    },
-    {
-      'required.confirmedMeasurementDate': '确认日期必须输入'
-    }
-  )
 
   componentWillReceiveProps = nextProps => {
     // set default value for confirmedMeasurementDate
     if (this.props.variables !== nextProps.variables) {
       this.setState({
-        values: {
-          confirmedMeasurementDate: nextProps.variables.scheduledMeasurementDate
-        }
+        confirmedMeasurementDate: nextProps.variables.scheduledMeasurementDate
       })
     }
   }
 
   handleSubmit = () => {
-    this.props.validate(error => {
-      if (!error) {
-        this.props.submitTask(this.state.values)
-      }
-    })
+    this.props.submitTask(this.state)
   }
 
   render = () => {
     const { variables, classes } = this.props
-    const { values } = this.state
 
     return (
       <Fragment>
@@ -82,11 +62,9 @@ class ConfirmMeasurementDate extends ValidatedForm {
           disablePast
           leftArrowIcon={<ArrowLeftIcon />}
           rightArrowIcon={<ArrowRightIcon />}
-          value={values.confirmedMeasurementDate}
+          value={this.state.confirmedMeasurementDate}
           labelFunc={date => (date ? format(date, 'YYYY/MM/DD') : '')}
-          onChange={this.handleChange('confirmedMeasurementDate', 'datepicker')}
-          error={!!this.getFieldError('confirmedMeasurementDate')}
-          helperText={this.getFieldError('confirmedMeasurementDate')}
+          onChange={date => this.setState({ confirmedMeasurementDate: date })}
         />
 
         <div className={classes.buttonRow}>
@@ -96,7 +74,7 @@ class ConfirmMeasurementDate extends ValidatedForm {
             className={classes.submitButton}
             onClick={this.handleSubmit}
           >
-            <PaperPlaneIcon className={classes.buttonIcon} />提交数据
+            <PaperPlaneIcon className={classes.buttonIcon} />提交任务
           </Button>
         </div>
       </Fragment>
@@ -104,6 +82,4 @@ class ConfirmMeasurementDate extends ValidatedForm {
   }
 }
 
-export default compose(withStyles(styles), validation(strategy))(
-  ConfirmMeasurementDate
-)
+export default withStyles(styles)(ConfirmMeasurementDate)
