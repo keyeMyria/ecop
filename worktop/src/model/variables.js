@@ -4,7 +4,7 @@
 
 const variables = {
   externalOrderId: {
-    label: '宜家订单号',
+    label: '订单号',
     type: 'String'
   },
   confirmedInstallationDate: {

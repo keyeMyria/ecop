@@ -12,7 +12,7 @@ function TaskHeader(props) {
 
   return (
     <Fragment>
-      <div>宜家订单号: {externalOrderId}</div>
+      <div>订单号: {externalOrderId}</div>
       <div>顾客姓名: {customerName}</div>
       <div>顾客手机: {customerMobile}</div>
       <div>

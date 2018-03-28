@@ -18,26 +18,33 @@ class PorcessJSON(RpcBase):
         )
 
         externalOrderId = params.get('externalOrderId')
-        if self.sess.query(SalesOrder).filter_by(
-            orderSource=ORDER_SOURCE.IKEA,
-            externalOrderId=externalOrderId
-        ).all():
+        if externalOrderId and \
+                self.sess.query(SalesOrder).filter_by(
+                    orderSource=ORDER_SOURCE.IKEA,
+                    externalOrderId=externalOrderId
+                ).all():
             raise RPCUserError('该订单号已存在，不能重复提交')
 
-        self.sess.add(SalesOrder(
+        order = SalesOrder(
             customerId=int(SPECIAL_PARTY.BE),
             creatorId=self.request.user.partyId,
             regionCode=params['customerRegionCode'],
             streetAddress=params['customerStreet'],
             recipientName=params['customerName'],
             recipientMobile=params['customerMobile'],
-            externalOrderId=externalOrderId,
             orderSource=ORDER_SOURCE.IKEA
-        ))
+        )
+        self.sess.add(order)
+        self.sess.flush()
+
+        if externalOrderId:
+            order.externalOrderId = externalOrderId
+        else:
+            params['externalOrderId'] = str(order.orderId)
 
         cc.makeRequest(
             f'/process-definition/key/{processKey}/start', 'post',
-            {'businessKey': externalOrderId},
+            {'businessKey': order.orderId},
             variables=params
         )
 

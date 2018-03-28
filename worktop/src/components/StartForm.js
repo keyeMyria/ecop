@@ -3,7 +3,6 @@ import React from 'react'
 import validation from 'react-validation-mixin'
 import compose from 'recompose/compose'
 import format from 'date-fns/format'
-import addDays from 'date-fns/addDays'
 
 import { withStyles } from 'material-ui/styles'
 import Button from 'material-ui/Button'
@@ -64,7 +63,7 @@ class StartForm extends ValidatedForm {
 
   validatorTypes = strategy.createInactiveSchema(
     {
-      externalOrderId: 'required|size:9',
+      externalOrderId: 'size:9',
       storeId: 'required|size:3|in:856,885,247',
       customerName: 'required',
       customerMobile: 'required|mobile',
@@ -75,7 +74,6 @@ class StartForm extends ValidatedForm {
       orderFile: 'required'
     },
     {
-      'required.externalOrderId': '宜家订单号必须输入',
       'size.externalOrderId': '宜家订单号长度为9位',
       'required.storeId': '宜家商场号必须输入',
       'in.storeId': '商场号错误',
@@ -124,7 +122,8 @@ class StartForm extends ValidatedForm {
             <Field
               component={TextField}
               name="externalOrderId"
-              label="宜家订单号"
+              label="订单号"
+              required={false}
               autoFocus
               InputProps={{ classes: { input: classes.orderId } }}
               value={values.externalOrderId}
@@ -209,11 +208,7 @@ class StartForm extends ValidatedForm {
               autoOk
               name="scheduledMeasurementDate"
               disablePast
-              maxDate={
-                values.scheduledInstallationDate
-                  ? addDays(values.scheduledInstallationDate, -7)
-                  : undefined
-              }
+              maxDate={values.scheduledInstallationDate || undefined}
               leftArrowIcon={<ArrowLeftIcon />}
               rightArrowIcon={<ArrowRightIcon />}
               value={values.scheduledMeasurementDate}
@@ -236,10 +231,7 @@ class StartForm extends ValidatedForm {
               leftArrowIcon={<ArrowLeftIcon />}
               rightArrowIcon={<ArrowRightIcon />}
               value={values.scheduledInstallationDate}
-              minDate={addDays(
-                values.scheduledMeasurementDate || new Date(),
-                7
-              )}
+              minDate={values.scheduledMeasurementDate || new Date()}
               labelFunc={date => (date ? format(date, 'YYYY/MM/DD') : '')}
               onChange={this.handleChange(
                 'scheduledInstallationDate',
