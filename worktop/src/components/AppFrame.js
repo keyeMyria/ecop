@@ -15,12 +15,13 @@ import MenuIcon from 'material-ui-icons/Menu'
 import ChevronLeftIcon from 'material-ui-icons/ChevronLeft'
 import ExitToAppIcon from 'material-ui-icons/ExitToApp'
 import AddCircleOutlineIcon from 'material-ui-icons/AddCircleOutline'
-import SearchIcon from 'material-ui-icons/Search'
+import LocalShipping from 'material-ui-icons/LocalShipping'
 
 import { jsonrpc, screen } from 'homemaster-jslib'
 import TaskListIcon from 'homemaster-jslib/svg-icons/TaskList'
 import StartForm from './StartForm'
 import TaskList from './TaskList'
+import ShipmentForm from './ShipmentForm'
 
 const drawerWidth = 180
 
@@ -199,7 +200,11 @@ class AppFrame extends React.Component {
               text="我的任务"
               onClick={() => this.setState({ currentFrame: 'tasks' })}
             />
-            {/* <MenuItem icon={<SearchIcon />} text="流程查询" /> */}
+            <MenuItem
+              icon={<LocalShipping />}
+              text="工厂发货"
+              onClick={() => this.setState({ currentFrame: 'shipping' })}
+            />
             <MenuItem
               icon={<ExitToAppIcon />}
               onClick={this.handleLogout}
@@ -212,6 +217,7 @@ class AppFrame extends React.Component {
           <div className={classes.content}>
             {currentFrame === 'start' && <StartForm />}
             {currentFrame === 'tasks' && <TaskList />}
+            {currentFrame === 'shipping' && <ShipmentForm />}
           </div>
         </div>
       </div>
