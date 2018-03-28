@@ -1,13 +1,16 @@
 import React, { Fragment } from 'react'
 import validation from 'react-validation-mixin'
 
+import { FormControl } from 'material-ui/Form'
+import Typography from 'material-ui/Typography'
+
 import { strategy, ValidatedForm, Field } from 'form'
 import FileUploader from 'widget/FileUploader'
 
 class MakeDrawing extends ValidatedForm {
   state = { values: {} }
 
-  validatorTypes = strategy.createInactiveSchema(
+  validatorTypes = strategy.createSchema(
     {
       productionDrawing: 'required'
     },
@@ -15,6 +18,17 @@ class MakeDrawing extends ValidatedForm {
       'required.productionDrawing': '生产图纸必须上传'
     }
   )
+
+  componentWillReceiveProps = nextProps => {
+    // load previous drawing in case of a rejection
+    if (this.props.variables !== nextProps.variables) {
+      this.setState({
+        values: {
+          productionDrawing: nextProps.variables.productionDrawing
+        }
+      })
+    }
+  }
 
   submitForm = () => {
     this.props.validate(error => {
@@ -53,6 +67,17 @@ class MakeDrawing extends ValidatedForm {
           }}
           value={variables.measurementFile}
         />
+
+        {variables.productionDrawingConfirmed === false && (
+          <FormControl>
+            <Typography variant="display1" color="error">
+              该图纸审核未通过，被拒绝原因:
+            </Typography>
+            <Typography variant="headline" color="error">
+              ${variables.reasonDrawingRejected}
+            </Typography>
+          </FormControl>
+        )}
 
         <Field
           component={FileUploader}

@@ -21,11 +21,13 @@ import ConfirmMeasurementDate from './ConfirmMeasurementDate'
 import TakeMeasurement from './TakeMeasurement'
 import TaskHeader from './TaskHeader'
 import MakeDrawing from './MakeDrawing'
+import CheckDrawing from './CheckDrawing'
 
 const forms = {
   ConfirmMeasurementDate,
   TakeMeasurement,
-  MakeDrawing
+  MakeDrawing,
+  CheckDrawing
 }
 
 const styles = theme => ({
@@ -72,6 +74,9 @@ class TaskForm extends Component {
    */
   componentWillReceiveProps = nextProps => {
     if (!this.props.open && nextProps.open) {
+      this.form = null
+      this.innerForm = null
+
       this.props.dispatch(
         fetchProcessVariables(nextProps.task.processInstanceId)
       )
@@ -95,57 +100,65 @@ class TaskForm extends Component {
    * then call the `submitForm` funciton passed as a prop to the form.
    */
   handleSubmit = () => {
-    ;(this.form.submitForm || this.form.refs.component.submitForm)()
+    const form = this.innerForm || this.form
+    ;(form.submitForm || form.refs.component.submitForm)()
   }
 
   render = () => {
     const { task, variables, dispatch, classes, ...other } = this.props
 
-    return (
-      task && (
-        <Dialog
-          classes={{ paperWidthSm: classes.paperWidthSm }}
-          fullScreen={screen.isMobile()}
-          {...other}
-        >
-          <AppBar className={classes.appbar}>
-            <Toolbar className={classes.toolbar}>
-              <TaskListIcon />
-              <Typography
-                variant="title"
-                color="inherit"
-                className={classes.title}
-              >
-                {task.name}
-              </Typography>
-              <IconButton color="inherit" onClick={other.onClose}>
-                <CloseIcon />
-              </IconButton>
-            </Toolbar>
-          </AppBar>
-          <div className={classes.content}>
-            <TaskHeader task={task} variables={variables} />
-            {createElement(forms[task.taskDefinitionKey], {
-              variables,
-              submitForm: this.submitForm,
-              ref: form => {
-                this.form = form
-              }
-            })}
+    if (!task) return null
 
-            <div className={classes.buttonRow}>
-              <Button
-                variant="raised"
-                color="primary"
-                className={classes.submitButton}
-                onClick={this.handleSubmit}
-              >
-                <PaperPlaneIcon className={classes.buttonIcon} />提交任务
-              </Button>
-            </div>
+    return (
+      <Dialog
+        classes={{ paperWidthSm: classes.paperWidthSm }}
+        fullScreen={screen.isMobile()}
+        {...other}
+      >
+        <AppBar className={classes.appbar}>
+          <Toolbar className={classes.toolbar}>
+            <TaskListIcon />
+            <Typography
+              variant="title"
+              color="inherit"
+              className={classes.title}
+            >
+              {task.name}
+            </Typography>
+            <IconButton color="inherit" onClick={other.onClose}>
+              <CloseIcon />
+            </IconButton>
+          </Toolbar>
+        </AppBar>
+
+        <div className={classes.content}>
+          <TaskHeader task={task} variables={variables} />
+
+          {createElement(forms[task.taskDefinitionKey], {
+            variables,
+            submitForm: this.submitForm,
+            // for use with validation
+            ref: form => {
+              this.form = form
+            },
+            // for use with withStyles
+            innerRef: form => {
+              this.innerForm = form
+            }
+          })}
+
+          <div className={classes.buttonRow}>
+            <Button
+              variant="raised"
+              color="primary"
+              className={classes.submitButton}
+              onClick={this.handleSubmit}
+            >
+              <PaperPlaneIcon className={classes.buttonIcon} />提交任务
+            </Button>
           </div>
-        </Dialog>
-      )
+        </div>
+      </Dialog>
     )
   }
 }
