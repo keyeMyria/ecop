@@ -8,10 +8,12 @@ import Dialog from 'material-ui/Dialog'
 import Toolbar from 'material-ui/Toolbar'
 import Typography from 'material-ui/Typography'
 import IconButton from 'material-ui/IconButton'
+import Button from 'material-ui/Button'
 import CloseIcon from 'material-ui-icons/Close'
 import { withStyles } from 'material-ui/styles'
 
 import { jsonrpc, screen, message } from 'homemaster-jslib'
+import PaperPlaneIcon from 'homemaster-jslib/svg-icons/PaperPlane'
 import TaskListIcon from 'homemaster-jslib/svg-icons/TaskList'
 
 import { fetchProcessVariables, fetchUserTasks } from 'model/actions'
@@ -49,6 +51,16 @@ const styles = theme => ({
         theme.mixins.toolbar[theme.breakpoints.up('sm')].minHeight
       }px)`
     }
+  },
+  submitButton: {
+    marginTop: 12,
+    width: '50%'
+  },
+  buttonRow: {
+    textAlign: 'center'
+  },
+  buttonIcon: {
+    marginRight: 10
   }
 })
 
@@ -64,15 +76,19 @@ class TaskForm extends Component {
     }
   }
 
-  submitTask = values => {
-    jsonrpc({
-      method: 'bpmn.task.complete',
-      params: [this.props.task.id, values]
-    }).then(() => {
-      message.success('当前任务提交成功')
-      this.props.onClose()
-      this.props.dispatch(fetchUserTasks())
-    })
+  handleSubmit = () => {
+    const values = this.form.getFormValues()
+    // false mean the form input is yet invalid
+    if (values !== false) {
+      jsonrpc({
+        method: 'bpmn.task.complete',
+        params: [this.props.task.id, values]
+      }).then(() => {
+        message.success('当前任务提交成功')
+        this.props.onClose()
+        this.props.dispatch(fetchUserTasks())
+      })
+    }
   }
 
   render = () => {
@@ -104,8 +120,21 @@ class TaskForm extends Component {
             <TaskHeader task={task} variables={variables} />
             {createElement(forms[task.taskDefinitionKey], {
               variables,
-              submitTask: this.submitTask
+              ref: form => {
+                this.form = form
+              }
             })}
+
+            <div className={classes.buttonRow}>
+              <Button
+                variant="raised"
+                color="primary"
+                className={classes.submitButton}
+                onClick={this.handleSubmit}
+              >
+                <PaperPlaneIcon className={classes.buttonIcon} />提交任务
+              </Button>
+            </div>
           </div>
         </Dialog>
       )
