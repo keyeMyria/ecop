@@ -5,11 +5,7 @@ import { strategy, ValidatedForm, Field } from 'form'
 import FileUploader from 'widget/FileUploader'
 
 class MakeDrawing extends ValidatedForm {
-  state = {
-    values: {
-      productionDrawing: []
-    }
-  }
+  state = { values: {} }
 
   validatorTypes = strategy.createInactiveSchema(
     {

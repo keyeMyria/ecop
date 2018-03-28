@@ -1,15 +1,14 @@
 import React, { Fragment } from 'react'
 import validation from 'react-validation-mixin'
+import format from 'date-fns/format'
+
+import TextField from 'material-ui/TextField'
 
 import { strategy, ValidatedForm, Field } from 'form'
 import FileUploader from 'widget/FileUploader'
 
 class TakeMeasurement extends ValidatedForm {
-  state = {
-    values: {
-      measurementFile: []
-    }
-  }
+  state = { values: {} }
 
   validatorTypes = strategy.createInactiveSchema(
     {
@@ -34,6 +33,13 @@ class TakeMeasurement extends ValidatedForm {
 
     return (
       <Fragment>
+        <Field
+          label="确认测量日期"
+          component={TextField}
+          disabled
+          value={format(variables.scheduledMeasurementDate, 'YYYY/MM/DD')}
+        />
+
         <FileUploader
           label="订单文件"
           fullWidth

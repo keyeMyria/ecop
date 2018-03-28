@@ -231,9 +231,11 @@ class FileUploader extends Component {
         } else {
           const event = {
             target: {
-              value: update(files, {
-                $push: [fname]
-              })
+              value: files
+                ? update(files, {
+                    $push: [fname]
+                  })
+                : [fname]
             }
           }
           this.props.onChange(event)

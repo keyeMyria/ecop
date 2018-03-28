@@ -9,9 +9,7 @@ import ArrowRightIcon from 'material-ui-icons/KeyboardArrowRight'
 import { Field } from 'form'
 
 export default class ConfirmMeasurementDate extends Component {
-  state = {
-    confirmedMeasurementDate: null
-  }
+  state = {}
 
   componentWillReceiveProps = nextProps => {
     // set default value for confirmedMeasurementDate
