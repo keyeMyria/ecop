@@ -1,5 +1,7 @@
 /**
  * This a complete list of all process variables of the worktop process.
+ *
+ * The file serves only as documentation for the moment
  */
 
 const variables = {
@@ -30,6 +32,10 @@ const variables = {
   customerStreet: {
     label: '详细地址',
     type: 'String'
+  },
+  installationFile: {
+    label: '安装文件',
+    type: 'Json'
   },
   measurementFile: {
     label: '测量文件',

@@ -23,13 +23,15 @@ import TaskHeader from './TaskHeader'
 import MakeDrawing from './MakeDrawing'
 import CheckDrawing from './CheckDrawing'
 import ConfirmInstallationDate from './ConfirmInstallationDate'
+import InstallWorktop from './InstallWorktop'
 
 const forms = {
   ConfirmMeasurementDate,
   TakeMeasurement,
   MakeDrawing,
   CheckDrawing,
-  ConfirmInstallationDate
+  ConfirmInstallationDate,
+  InstallWorktop
 }
 
 const styles = theme => ({
