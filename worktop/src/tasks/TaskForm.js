@@ -76,19 +76,24 @@ class TaskForm extends Component {
     }
   }
 
+  submitForm = values => {
+    jsonrpc({
+      method: 'bpmn.task.complete',
+      params: [this.props.task.id, values]
+    }).then(() => {
+      message.success('当前任务提交成功')
+      this.props.onClose()
+      this.props.dispatch(fetchUserTasks())
+    })
+  }
+
+  /**
+   * When submit button is clicked, the submitForm method of the form is invoked
+   * to perform the validation. And if no errors are found, the the form will
+   * then call the `submitForm` funciton passed as a prop to the form.
+   */
   handleSubmit = () => {
-    const values = this.form.getFormValues()
-    // false mean the form input is yet invalid
-    if (values !== false) {
-      jsonrpc({
-        method: 'bpmn.task.complete',
-        params: [this.props.task.id, values]
-      }).then(() => {
-        message.success('当前任务提交成功')
-        this.props.onClose()
-        this.props.dispatch(fetchUserTasks())
-      })
-    }
+    ;(this.form.submitForm || this.form.refs.component.submitForm)()
   }
 
   render = () => {
@@ -120,6 +125,7 @@ class TaskForm extends Component {
             <TaskHeader task={task} variables={variables} />
             {createElement(forms[task.taskDefinitionKey], {
               variables,
+              submitForm: this.submitForm,
               ref: form => {
                 this.form = form
               }

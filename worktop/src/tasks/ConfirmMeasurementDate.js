@@ -10,9 +10,7 @@ import { Field } from 'form'
 
 export default class ConfirmMeasurementDate extends Component {
   state = {
-    values: {
-      confirmedMeasurementDate: null
-    }
+    confirmedMeasurementDate: null
   }
 
   componentWillReceiveProps = nextProps => {
@@ -26,11 +24,12 @@ export default class ConfirmMeasurementDate extends Component {
     }
   }
 
-  getFormValues = () => this.state.values
+  submitForm = () => {
+    this.props.submitForm(this.state)
+  }
 
   render = () => {
     const { variables } = this.props
-    const { values } = this.state
 
     return (
       <Fragment>
@@ -49,11 +48,9 @@ export default class ConfirmMeasurementDate extends Component {
           disablePast
           leftArrowIcon={<ArrowLeftIcon />}
           rightArrowIcon={<ArrowRightIcon />}
-          value={values.confirmedMeasurementDate}
+          value={this.state.confirmedMeasurementDate}
           labelFunc={date => (date ? format(date, 'YYYY/MM/DD') : '')}
-          onChange={date =>
-            this.setState({ values: { confirmedMeasurementDate: date } })
-          }
+          onChange={date => this.setState({ confirmedMeasurementDate: date })}
         />
       </Fragment>
     )
