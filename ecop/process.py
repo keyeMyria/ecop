@@ -84,10 +84,14 @@ class PorcessJSON(RpcBase):
 
         :param orderIds:
             A list of externalOrderId
-        :returns:
-            An error message if any
+        :raises RPCUserError:
+            Raises RPCUserError if any order can not be shipped or if any error
+            occurs during the signal sending to any order.
         """
         errors = []
+        executionIds = []
+        extOrderIds = set(extOrderIds) # deduplicate
+
         for externalOrderId in extOrderIds:
             ret = cc.makeRequest('/execution', 'post', params={
                 'signalEventSubscriptionName': 'WorktopShipped',
@@ -101,21 +105,21 @@ class PorcessJSON(RpcBase):
 
             if not ret:
                 errors.append(f'未找到待发货的订单{externalOrderId}')
-                continue
+            elif len(ret) != 1:
+                errors.append(f'订单{externalOrderId}无法发货发货')
+            else:
+                executionIds.append(ret[0]['id'])
 
-            if len(ret) != 1:
-                logger.error(
-                    f'Multiple executions found for externalOrderId '
-                    '{externalOrderId}')
-                errors.append(f'订单{externalOrderId}发货错误')
-                continue
+        if errors:
+            raise RPCUserError('\n'.join(errors))
 
+        for (idx, exid) in enumerate(executionIds):
             try:
                 cc.makeRequest('/signal', 'post', params={
                     'name': 'WorktopShipped',
-                    'executionId': ret[0]['id']
-                })
+                    'executionId': exid})
             except CamundaRESTError:
-                errors.append(f'订单{externalOrderId}发货错误')
+                errors.append(f'订单{extOrderIds[idx]}发货错误')
 
-        return '\n'.join(errors) if errors else None
+        if errors:
+            raise RPCUserError('\n'.join(errors))

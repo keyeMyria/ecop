@@ -54,12 +54,9 @@ class ShipmentForm extends Component {
     jsonrpc({
       method: 'bpmn.worktop.ship',
       params: [lines]
-    }).then(err => {
-      if (err) {
-        message.warn(err)
-      } else {
-        message.success('发货成功')
-      }
+    }).then(ret => {
+      message.success('发货成功')
+      this.setState({ orderIds: '' })
     })
   }
 
@@ -92,8 +89,6 @@ class ShipmentForm extends Component {
 
   render = () => {
     const { classes } = this.props
-
-    console.log(this.context)
 
     return (
       <Paper className={classes.root}>
