@@ -21,6 +21,7 @@
         <bpmn:flowNodeRef>StartEvent_1</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>CheckDrawing</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>IsDrawingOK</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>WorktopShipped</bpmn:flowNodeRef>
         <bpmn:childLaneSet xsi:type="bpmn:tLaneSet" />
       </bpmn:lane>
     </bpmn:laneSet>
@@ -54,9 +55,7 @@
       <bpmn:outgoing>SequenceFlow_10b65bl</bpmn:outgoing>
       <bpmn:outgoing>SequenceFlow_0asw71l</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:sequenceFlow id="SequenceFlow_10b65bl" name="yes" sourceRef="IsDrawingOK" targetRef="ConfirmInstallationDate">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${productionDrawingConfirmed==true}</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SequenceFlow_10b65bl" name="yes" sourceRef="IsDrawingOK" targetRef="WorktopShipped" />
     <bpmn:sequenceFlow id="SequenceFlow_0asw71l" name="no" sourceRef="IsDrawingOK" targetRef="MakeDrawing">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${productionDrawingConfirmed==false}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
@@ -65,7 +64,7 @@
       <bpmn:outgoing>SequenceFlow_1fj7chv</bpmn:outgoing>
     </bpmn:userTask>
     <bpmn:userTask id="ConfirmInstallationDate" name="确认安装时间" camunda:candidateGroups="office" camunda:dueDate="${dateTime().plusDays(1).toDate()}">
-      <bpmn:incoming>SequenceFlow_10b65bl</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_126m8i0</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_12rfy1l</bpmn:outgoing>
     </bpmn:userTask>
     <bpmn:sequenceFlow id="SequenceFlow_12rfy1l" sourceRef="ConfirmInstallationDate" targetRef="InstallWorktop" />
@@ -79,6 +78,12 @@
       <bpmn:incoming>SequenceFlow_1fj7chv</bpmn:incoming>
       <bpmn:terminateEventDefinition />
     </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_126m8i0" sourceRef="WorktopShipped" targetRef="ConfirmInstallationDate" />
+    <bpmn:intermediateCatchEvent id="WorktopShipped">
+      <bpmn:incoming>SequenceFlow_10b65bl</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_126m8i0</bpmn:outgoing>
+      <bpmn:signalEventDefinition signalRef="Signal_1ngybbx" />
+    </bpmn:intermediateCatchEvent>
   </bpmn:process>
   <bpmn:signal id="Signal_1ngybbx" name="WorktopShipped" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
@@ -175,8 +180,7 @@
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_10b65bl_di" bpmnElement="SequenceFlow_10b65bl">
         <di:waypoint xsi:type="dc:Point" x="477" y="531" />
-        <di:waypoint xsi:type="dc:Point" x="576" y="531" />
-        <di:waypoint xsi:type="dc:Point" x="576" y="368" />
+        <di:waypoint xsi:type="dc:Point" x="558" y="531" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="505" y="507" width="20" height="12" />
         </bpmndi:BPMNLabel>
@@ -209,6 +213,19 @@
           <dc:Bounds x="273" y="182" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_126m8i0_di" bpmnElement="SequenceFlow_126m8i0">
+        <di:waypoint xsi:type="dc:Point" x="576" y="513" />
+        <di:waypoint xsi:type="dc:Point" x="576" y="368" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="591" y="434.5" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="IntermediateCatchEvent_1ypcibt_di" bpmnElement="WorktopShipped">
+        <dc:Bounds x="558" y="513" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="576" y="553" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>

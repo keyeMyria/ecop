@@ -33,20 +33,44 @@ class ShipmentForm extends Component {
   state = { orderIds: '', errorMessage: '' }
 
   handleSubmit = () => {
-    const value = this.state.orderIds
+    const value = this.state.orderIds.trim()
     const lines = value.split('\n')
+    let lastline = null
 
-    // any non-empty line must be 8 or 9 characters
+    if (!value) {
+      this.setState({ errorMessage: '订单号必须输入' })
+      return
+    }
+
+    lines.sort()
     for (let i = 0; i < lines.length; i++) {
-      let l = lines[i].length
-      if (l && l < 8) {
+      let line = lines[i]
+
+      // check for duplicate lines
+      if (line === lastline) {
+        this.setState({ errorMessage: `订单号${line}重复` })
+        return
+      }
+      lastline = line
+
+      // any non-empty line must be 8 or 9 characters
+      if (line.length > 0 && line.length < 8) {
         this.setState({ errorMessage: '订单号长度错误' })
         return
       }
     }
 
     this.setState({ errorMessage: '' })
-    console.log('Submittig form ')
+    jsonrpc({
+      method: 'bpmn.worktop.ship',
+      params: [lines]
+    }).then(err => {
+      if (err) {
+        message.warn(err)
+      } else {
+        message.success('发货成功')
+      }
+    })
   }
 
   handleChange = e => {
@@ -57,9 +81,10 @@ class ShipmentForm extends Component {
     if (char && char !== '\n' && (char < '0' || char > '9')) return
 
     const lines = value.split('\n')
-    // Do not allow any line to exceed 9 characters
+
+    // Do not allow any line to exceed 9 characters and disallow non numbers
     for (let i = 0; i < lines.length; i++) {
-      if (lines[i].length > 9) return
+      if (!/^\d{0,9}$/.test(lines[i])) return
     }
 
     /**
@@ -72,7 +97,7 @@ class ShipmentForm extends Component {
       }
     }
 
-    this.setState({ orderIds: value.replace('\n\n', '\n') })
+    this.setState({ orderIds: value.replace('\n\n', '\n'), errorMessage: '' })
   }
 
   render = () => {
