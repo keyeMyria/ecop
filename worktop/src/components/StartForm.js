@@ -25,7 +25,7 @@ const styles = theme => ({
     maxWidth: 700,
     padding: 16
   },
-  orderId: theme.orderId,
+  orderId: theme.custom.orderId,
   submitButton: theme.custom.submitButton,
   buttonRow: theme.custom.buttonRow,
   buttonIcon: theme.custom.buttonIcon
@@ -65,9 +65,9 @@ class StartForm extends ValidatedForm {
       'required.customerMobile': '顾客手机必须输入',
       'required.customerStreet': '详细地址必须输入',
       'required.customerRegionCode': '所在地区必须输入',
-      'required.scheduledMeasurementDate': '测量日期必须输入',
-      'required.scheduledInstallationDate': '安装日期必须输入',
-      'required.orderFile': '原始图纸必须上传'
+      'required.scheduledMeasurementDate': '预约测量日期必须输入',
+      'required.scheduledInstallationDate': '预约安装日期必须输入',
+      'required.orderFile': '原始订单文件必须上传'
     }
   )
 
@@ -152,7 +152,7 @@ class StartForm extends ValidatedForm {
             <Field
               component={TextField}
               name="customerName"
-              label="顾客姓名"
+              label="顾客名称"
               value={values.customerName}
               onChange={this.handleChange('customerName')}
               error={!!this.getFieldError('customerName')}

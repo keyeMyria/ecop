@@ -22,7 +22,7 @@ const variables = {
     type: 'String'
   },
   customerName: {
-    label: '顾客姓名',
+    label: '顾客名称',
     type: 'String'
   },
   customerRegionCode: {
