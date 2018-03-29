@@ -50,7 +50,7 @@
       <bpmn:outgoing>SequenceFlow_19twd4r</bpmn:outgoing>
     </bpmn:userTask>
     <bpmn:sequenceFlow id="SequenceFlow_19twd4r" sourceRef="CheckDrawing" targetRef="IsDrawingOK" />
-    <bpmn:exclusiveGateway id="IsDrawingOK" name="图纸OK?">
+    <bpmn:exclusiveGateway id="IsDrawingOK" name="图纸OK?" default="SequenceFlow_10b65bl">
       <bpmn:incoming>SequenceFlow_19twd4r</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_10b65bl</bpmn:outgoing>
       <bpmn:outgoing>SequenceFlow_0asw71l</bpmn:outgoing>
@@ -79,7 +79,7 @@
       <bpmn:terminateEventDefinition />
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="SequenceFlow_126m8i0" sourceRef="WorktopShipped" targetRef="ConfirmInstallationDate" />
-    <bpmn:intermediateCatchEvent id="WorktopShipped">
+    <bpmn:intermediateCatchEvent id="WorktopShipped" name="发货">
       <bpmn:incoming>SequenceFlow_10b65bl</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_126m8i0</bpmn:outgoing>
       <bpmn:signalEventDefinition signalRef="Signal_1ngybbx" />
@@ -223,7 +223,7 @@
       <bpmndi:BPMNShape id="IntermediateCatchEvent_1ypcibt_di" bpmnElement="WorktopShipped">
         <dc:Bounds x="558" y="513" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="576" y="553" width="0" height="12" />
+          <dc:Bounds x="564" y="553" width="24" height="13" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
