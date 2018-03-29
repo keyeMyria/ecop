@@ -20,26 +20,16 @@ import PaperPlaneIcon from 'homemaster-jslib/svg-icons/PaperPlane'
 import { strategy, ValidatedForm, Field } from 'form'
 import FileUploader from 'widget/FileUploader'
 
-const styles = {
+const styles = theme => ({
   root: {
     maxWidth: 700,
     padding: 16
   },
-  orderId: {
-    fontSize: 24,
-    fontWeight: 'bold'
-  },
-  submitButton: {
-    marginTop: 12,
-    width: '50%'
-  },
-  buttonRow: {
-    textAlign: 'center'
-  },
-  buttonIcon: {
-    marginRight: 10
-  }
-}
+  orderId: theme.orderId,
+  submitButton: theme.custom.submitButton,
+  buttonRow: theme.custom.buttonRow,
+  buttonIcon: theme.custom.buttonIcon
+})
 
 class StartForm extends ValidatedForm {
   defaultValues = {
@@ -261,7 +251,6 @@ class StartForm extends ValidatedForm {
           component={FileUploader}
           name="orderFile"
           label="原始订单"
-          maximalFiles={1}
           compressImage={false}
           error={!!this.getFieldError('orderFile')}
           helperText={this.getFieldError('orderFile')}

@@ -8,26 +8,16 @@ import Paper from 'material-ui/Paper'
 import { jsonrpc, message } from 'homemaster-jslib'
 import PaperPlaneIcon from 'homemaster-jslib/svg-icons/PaperPlane'
 
-const styles = {
+const styles = theme => ({
   root: {
     maxWidth: 700,
     padding: 16
   },
-  orderId: {
-    fontSize: 24,
-    fontWeight: 'bold'
-  },
-  submitButton: {
-    marginTop: 12,
-    width: '50%'
-  },
-  buttonRow: {
-    textAlign: 'center'
-  },
-  buttonIcon: {
-    marginRight: 10
-  }
-}
+  orderId: theme.custom.orderId,
+  submitButton: theme.custom.submitButton,
+  buttonRow: theme.custom.buttonRow,
+  buttonIcon: theme.custom.buttonIcon
+})
 
 class ShipmentForm extends Component {
   state = { orderIds: '', errorMessage: '' }
@@ -102,6 +92,8 @@ class ShipmentForm extends Component {
 
   render = () => {
     const { classes } = this.props
+
+    console.log(this.context)
 
     return (
       <Paper className={classes.root}>

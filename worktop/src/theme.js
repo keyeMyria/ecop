@@ -18,6 +18,22 @@ const theme = createMuiTheme({
   },
   typography: {
     fontFamily: '"roboto", "Helvetica", "Arial", "微软雅黑"'
+  },
+  custom: {
+    orderId: {
+      fontSize: 24,
+      fontWeight: 'bold'
+    },
+    submitButton: {
+      marginTop: 12,
+      width: '50%'
+    },
+    buttonRow: {
+      textAlign: 'center'
+    },
+    buttonIcon: {
+      marginRight: 10
+    }
   }
 })
 

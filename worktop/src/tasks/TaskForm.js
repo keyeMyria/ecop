@@ -60,16 +60,9 @@ const styles = theme => ({
       }px)`
     }
   },
-  submitButton: {
-    marginTop: 12,
-    width: '50%'
-  },
-  buttonRow: {
-    textAlign: 'center'
-  },
-  buttonIcon: {
-    marginRight: 10
-  }
+  submitButton: theme.custom.submitButton,
+  buttonRow: theme.custom.buttonRow,
+  buttonIcon: theme.custom.buttonIcon
 })
 
 class TaskForm extends Component {
