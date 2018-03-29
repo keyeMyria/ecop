@@ -1,31 +1,37 @@
-import React, { Fragment, Component } from 'react'
+import React, { Fragment } from 'react'
 import format from 'date-fns/format'
+import validation from 'react-validation-mixin'
 
 import TextField from 'material-ui/TextField'
 import DatePicker from 'material-ui-pickers/DatePicker'
 import ArrowLeftIcon from 'material-ui-icons/KeyboardArrowLeft'
 import ArrowRightIcon from 'material-ui-icons/KeyboardArrowRight'
 
-import { Field } from 'form'
+import { strategy, Field, ValidatedForm } from 'form'
 
-export default class ConfirmMeasurementDate extends Component {
-  state = {}
+class ConfirmMeasurementDate extends ValidatedForm {
+  state = { values: {} }
 
-  componentWillReceiveProps = nextProps => {
-    // set default value for confirmedMeasurementDate
-    if (this.props.variables !== nextProps.variables) {
-      this.setState({
-        confirmedMeasurementDate: nextProps.variables.scheduledMeasurementDate
-      })
+  validatorTypes = strategy.createInactiveSchema(
+    {
+      confirmedMeasurementDate: 'required'
+    },
+    {
+      'required.confirmedMeasurementDate': '确认测量日期必须输入'
     }
-  }
+  )
 
   submitForm = () => {
-    this.props.submitForm(this.state)
+    this.props.validate(error => {
+      if (!error) {
+        this.props.submitForm(this.state.values)
+      }
+    })
   }
 
   render = () => {
     const { variables } = this.props
+    const { confirmedMeasurementDate } = this.state.values
 
     return (
       <Fragment>
@@ -44,11 +50,19 @@ export default class ConfirmMeasurementDate extends Component {
           disablePast
           leftArrowIcon={<ArrowLeftIcon />}
           rightArrowIcon={<ArrowRightIcon />}
-          value={this.state.confirmedMeasurementDate}
-          labelFunc={date => (date ? format(date, 'YYYY/MM/DD') : '')}
-          onChange={date => this.setState({ confirmedMeasurementDate: date })}
+          value={confirmedMeasurementDate}
+          labelFunc={() =>
+            confirmedMeasurementDate
+              ? format(confirmedMeasurementDate, 'YYYY/MM/DD')
+              : ''
+          }
+          error={!!this.getFieldError('confirmedMeasurementDate')}
+          helperText={this.getFieldError('confirmedMeasurementDate')}
+          onChange={this.handleChange('confirmedMeasurementDate', 'datepicker')}
         />
       </Fragment>
     )
   }
 }
+
+export default validation(strategy)(ConfirmMeasurementDate)
