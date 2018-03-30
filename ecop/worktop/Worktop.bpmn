@@ -50,12 +50,14 @@
       <bpmn:outgoing>SequenceFlow_19twd4r</bpmn:outgoing>
     </bpmn:userTask>
     <bpmn:sequenceFlow id="SequenceFlow_19twd4r" sourceRef="CheckDrawing" targetRef="IsDrawingOK" />
-    <bpmn:exclusiveGateway id="IsDrawingOK" name="图纸OK?" default="SequenceFlow_10b65bl">
+    <bpmn:exclusiveGateway id="IsDrawingOK" name="图纸OK?">
       <bpmn:incoming>SequenceFlow_19twd4r</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_10b65bl</bpmn:outgoing>
       <bpmn:outgoing>SequenceFlow_0asw71l</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:sequenceFlow id="SequenceFlow_10b65bl" name="yes" sourceRef="IsDrawingOK" targetRef="WorktopShipped" />
+    <bpmn:sequenceFlow id="SequenceFlow_10b65bl" name="yes" sourceRef="IsDrawingOK" targetRef="WorktopShipped">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${productionDrawingConfirmed==true}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="SequenceFlow_0asw71l" name="no" sourceRef="IsDrawingOK" targetRef="MakeDrawing">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${productionDrawingConfirmed==false}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
