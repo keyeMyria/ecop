@@ -52,11 +52,26 @@ class PorcessJSON(RpcBase):
             variables=params
         )
 
-    @jsonrpc_method(endpoint='rpc', method='bpmn.task.get')
-    def getUserTask(self, processKey):
+    @jsonrpc_method(endpoint='rpc', method='bpmn.task.getList')
+    def getTaskList(self, processKey):
+        """ Return all active tasks of a process key"""
         return cc.makeRequest('/task', 'post', {
             'processDefinitionKey': processKey
         })
+
+    @jsonrpc_method(endpoint='rpc', method='bpmn.task.get')
+    def getTask(self, taskId):
+        """ Return a single task by task id. Used to check if a task is still
+        active. If the task can no longer be found, maybe completed by someone
+        else, return None """
+        try:
+            task = cc.makeRequest(f'/task/{taskId}', 'get')
+        except CamundaRESTError as e:
+            if e.status == 404:
+                task = None
+            else:
+                raise
+        return task
 
     @jsonrpc_method(endpoint='rpc', method='bpmn.variable.get')
     def getProcessVariables(self, processId):
@@ -66,15 +81,35 @@ class PorcessJSON(RpcBase):
         return cc.parseVariables(ret)
 
     @jsonrpc_method(endpoint='rpc', method='bpmn.task.complete')
-    def completeTask(self, taskId, variables):
+    def completeTask(self, taskId, variables=None):
+        """ Complete the given task and change the process variables.
+
+        :return:
+            True if task completes successfully.
+            False if status 500 is returned by camunda, usually because the
+                task is already completed by some other user
+
+        :raises:
+            RPCUserError when anything else happens
+        """
         # parse all variable fields whose name ends with Date as date
         # we'd better check against a process variable repository to find
         # the type in stead of relying on variable naming
-        variables = parseDate(
-            variables,
-            fields=[fname for fname in variables if fname.endswith('Date')]
-        )
-        cc.makeRequest(f'/task/{taskId}/complete', 'post', variables=variables)
+        if variables:
+            variables = parseDate(
+                variables,
+                fields=[fname for fname in variables if fname.endswith('Date')]
+            )
+
+        try:
+            cc.makeRequest(f'/task/{taskId}/complete',
+                           'post', variables=variables)
+        except CamundaRESTError as e:
+            if e.status == 500:
+                return False
+            else:
+                raise RPCUserError('无法完成该任务，请联系技术支持')
+        return True
 
     @jsonrpc_method(endpoint='rpc', method='bpmn.worktop.ship')
     def shipWorktop(self, extOrderIds):
@@ -90,7 +125,7 @@ class PorcessJSON(RpcBase):
         """
         errors = []
         executionIds = []
-        extOrderIds = set(extOrderIds) # deduplicate
+        extOrderIds = set(extOrderIds)  # deduplicate
 
         for externalOrderId in extOrderIds:
             ret = cc.makeRequest('/execution', 'post', params={

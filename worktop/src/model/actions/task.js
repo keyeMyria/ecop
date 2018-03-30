@@ -14,7 +14,7 @@ export const processVariablesReceived = variables => dispatch => {
 
 export const fetchUserTasks = () => dispatch => {
   jsonrpc({
-    method: 'bpmn.task.get',
+    method: 'bpmn.task.getList',
     params: [App.processKey]
   }).then(tasks => {
     dispatch(userTasksReceived(tasks))

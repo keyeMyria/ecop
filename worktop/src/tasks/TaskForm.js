@@ -84,8 +84,12 @@ class TaskForm extends Component {
     jsonrpc({
       method: 'bpmn.task.complete',
       params: [this.props.task.id, values]
-    }).then(() => {
-      message.success('当前任务提交成功')
+    }).then(success => {
+      if (success) {
+        message.success('当前任务提交成功')
+      } else {
+        message.error('该任务可能已被其他用户完成!')
+      }
       this.props.onClose()
       this.props.dispatch(fetchUserTasks())
     })

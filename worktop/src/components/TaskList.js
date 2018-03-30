@@ -9,6 +9,8 @@ import Card, { CardActions, CardContent } from 'material-ui/Card'
 import Typography from 'material-ui/Typography'
 import Button from 'material-ui/Button'
 
+import { jsonrpc, message } from 'homemaster-jslib'
+
 import { fetchUserTasks } from 'model/actions'
 import TaskForm from 'tasks/TaskForm'
 
@@ -63,6 +65,21 @@ class TaskList extends Component {
     this.props.dispatch(fetchUserTasks())
   }
 
+  onOpenTask = task => {
+    jsonrpc({
+      method: 'bpmn.task.get',
+      params: [task.id]
+    }).then(task => {
+      if (task) {
+        this.setState({ currentTask: task, taskOpen: true })
+      } else {
+        message.error('该任务可能已被其他用户完成!', {
+          callback: this.getTasks
+        })
+      }
+    })
+  }
+
   render() {
     const { classes, tasks } = this.props
     const { currentTask, taskOpen } = this.state
@@ -77,9 +94,7 @@ class TaskList extends Component {
                 classes={classes}
                 key={i}
                 task={task}
-                onOpenTask={() =>
-                  this.setState({ currentTask: task, taskOpen: true })
-                }
+                onOpenTask={() => this.onOpenTask(task)}
               />
             ))}
         </div>
