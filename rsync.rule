@@ -13,5 +13,6 @@
 - build/
 - client/
 - worktop/
+- dist/
 - build.sh
 - rsync.rule

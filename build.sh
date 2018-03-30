@@ -14,22 +14,16 @@
 #     ├── erp
 #     └── worktop
 
-PY_MODULE_BASE=/home/hong/workspace/web
+PY_MODULE_BASE=/home/hong/workspace
 
 rm -fr build
 mkdir -p build/ecop build/asset/erp build/asset/worktop
 
-# for hm.lib we use the latest master of git repository
-wget https://github.com/hongyuan1306/hm.lib/archive/master.zip
-unzip master.zip
-mkdir build/ecop/hm.lib
-cp -r hm.lib-master/* build/ecop/hm.lib
-rm -fr *.zip hm.lib-master
-
-# For the web python package we copy from the local workspace.
+# For the in-house developed python package we copy from the local workspace.
 # So be sure to build from a clean release branch.
-rsync -rv --filter '. rsync.rule' $PY_MODULE_BASE/weblibs build/ecop
-rsync -rv --filter '. rsync.rule' $PY_MODULE_BASE/webmodel build/ecop
+rsync -rv --filter '. rsync.rule' $PY_MODULE_BASE/hm.lib build/ecop
+rsync -rv --filter '. rsync.rule' $PY_MODULE_BASE/web/weblibs build/ecop
+rsync -rv --filter '. rsync.rule' $PY_MODULE_BASE/web/webmodel build/ecop
 rsync -rv --filter '. rsync.rule' . build/ecop/ecop
 
 # Now we start to build Sencha products
