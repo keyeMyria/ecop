@@ -47,13 +47,14 @@ class LoginDialog extends ValidatedForm {
   )
 
   handleLogin = () => {
+    const { login, password } = this.state.values
     this.props.validate(error => {
       if (error) {
         this.setState({ errMsg: '请正确输入用户名及密码' })
       } else {
         jsonrpc({
           method: 'auth.login',
-          params: this.state.values,
+          params: [login, password, 'worktop'],
           success: () => {
             window.location.reload()
           }

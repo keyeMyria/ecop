@@ -8,10 +8,10 @@ from weblibs.jsonrpc import RPCNotAllowedError, RPCUserError
 
 
 @jsonrpc_method(endpoint='rpc', method='auth.login')
-def userLogin(request, login, password):
+def userLogin(request, login, password, appName):
     """
     This and 'auth.logout' are the only rpc methods that does not subclass
-    RpcBase for they must be invoked without valid user session
+    RpcBase for they must be invoked without valid user session.
     """
     sess = DBSession()
     user = sess.query(Party).filter_by(login=login).first()
@@ -20,15 +20,15 @@ def userLogin(request, login, password):
         raise RPCUserError('登录失败，请检查用户名和密码！')
 
     # Only those with defined permission are allowed
-    if not user.extraData or not user.extraData['permission']:
-        raise RPCNotAllowedError('您无权登录大管家ERP。')
+    if not user.extraData or appName not in user.extraData:
+        raise RPCNotAllowedError('您无权登录当前应用。')
 
     # after user is authenticated, we cache the user object in redis
     sess.expunge_all()  # detach from session
     request.session['user'] = user
 
     return {
-        'permission': user.extraData['permission']
+        'permission': user.extraData[appName]['permission']
     }
 
 

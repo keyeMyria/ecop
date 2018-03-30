@@ -22,7 +22,7 @@ Ext.define('Ecop.view.login.LoginController', {
 
     Web.data.JsonRPC.request({
       method: 'auth.login',
-      params: [values.user, values.password],
+      params: [values.user, values.password, 'erp'],
       scope: me,
       success: 'onLoginSuccess',
       failure: function(error) {
