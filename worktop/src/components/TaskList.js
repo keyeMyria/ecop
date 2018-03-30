@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import compose from 'recompose/compose'
 import format from 'date-fns/format'
+import find from 'lodash.find'
 
 import { withStyles } from 'material-ui/styles'
 import Card, { CardActions, CardContent } from 'material-ui/Card'
@@ -19,15 +20,15 @@ const styles = {
     display: 'flex',
     flexWrap: 'wrap'
   },
-
   taskItem: {
     flexBasis: 250
   },
-
   due: {
     margin: '6px 0'
   }
 }
+
+const TASK_REFRESH_INTERVAL = 1000 * 60
 
 const TaskItem = props => {
   const { classes, task, onOpenTask } = props
@@ -53,15 +54,33 @@ const TaskItem = props => {
 
 class TaskList extends Component {
   state = {
-    taskOpen: false,
     currentTask: null
   }
 
   componentDidMount = () => {
-    this.getTasks()
+    this.refreshTasks()
+    this.timer = setInterval(this.refreshTasks, TASK_REFRESH_INTERVAL)
   }
 
-  getTasks = () => {
+  componentWillUnmount = () => {
+    clearInterval(this.timer)
+  }
+
+  componentWillReceiveProps = nextProps => {
+    /**
+     * When tasks is refreshed and the current open task is no longer in the
+     * list, current task shall abort.
+     */
+    if (this.state.currentTask && this.props.tasks !== nextProps.tasks) {
+      if (!find(nextProps.tasks, o => o.id === this.state.currentTask.id)) {
+        message.error('当前任务已被其他用户完成，请中断执行', {
+          callback: this.setState({ currentTask: null })
+        })
+      }
+    }
+  }
+
+  refreshTasks = () => {
     this.props.dispatch(fetchUserTasks())
   }
 
@@ -71,10 +90,10 @@ class TaskList extends Component {
       params: [task.id]
     }).then(task => {
       if (task) {
-        this.setState({ currentTask: task, taskOpen: true })
+        this.setState({ currentTask: task })
       } else {
         message.error('该任务可能已被其他用户完成!', {
-          callback: this.getTasks
+          callback: this.refreshTasks
         })
       }
     })
@@ -82,7 +101,7 @@ class TaskList extends Component {
 
   render() {
     const { classes, tasks } = this.props
-    const { currentTask, taskOpen } = this.state
+    const { currentTask } = this.state
 
     return (
       <Fragment>
@@ -99,9 +118,9 @@ class TaskList extends Component {
             ))}
         </div>
         <TaskForm
-          open={taskOpen}
+          open={!!currentTask}
           task={currentTask}
-          onClose={() => this.setState({ taskOpen: false })}
+          onClose={() => this.setState({ currentTask: null })}
         />
       </Fragment>
     )
