@@ -224,7 +224,7 @@ class ShipmentJSON(RpcBase):
                     headers={
                         'x-delay': int(siteConfig.package_scan_delay) * 1000
                     },
-                    delivery_mode=2,  # make message persistent
+                    delivery_mode=2  # make message persistent
                 )
             )
 

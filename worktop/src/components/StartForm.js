@@ -67,7 +67,7 @@ class StartForm extends ValidatedForm {
       'required.customerRegionCode': '所在地区必须输入',
       'required.scheduledMeasurementDate': '预约测量日期必须输入',
       'required.scheduledInstallationDate': '预约安装日期必须输入',
-      'required.orderFile': '原始订单文件必须上传'
+      'required.orderFile': '原始订单必须上传'
     }
   )
 

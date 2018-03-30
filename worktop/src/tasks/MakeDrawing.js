@@ -45,7 +45,7 @@ class MakeDrawing extends ValidatedForm {
     return (
       <Fragment>
         <FileUploader
-          label="订单文件"
+          label="原始订单"
           fullWidth
           margin="normal"
           allowUpload={false}

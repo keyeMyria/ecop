@@ -41,7 +41,7 @@ class TakeMeasurement extends ValidatedForm {
         />
 
         <FileUploader
-          label="订单文件"
+          label="原始订单"
           fullWidth
           margin="normal"
           allowUpload={false}
