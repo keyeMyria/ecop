@@ -1,11 +1,21 @@
 /* global App */
 import React, { Component, Fragment } from 'react'
+
+import { withStyles } from 'material-ui/styles'
 import { jsonrpc } from 'homemaster-jslib'
 
 import AppFrame from 'components/AppFrame'
 import LoginDialog from 'components/LoginDialog'
 
-export default class AppMain extends Component {
+const styles = theme => ({
+  '@global': {
+    body: {
+      fontFamily: theme.typography.fontFamily
+    }
+  }
+})
+
+class AppMain extends Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -35,3 +45,5 @@ export default class AppMain extends Component {
     )
   }
 }
+
+export default withStyles(styles)(AppMain)
