@@ -14,14 +14,16 @@ import IconButton from 'material-ui/IconButton'
 import MenuIcon from 'material-ui-icons/Menu'
 import ChevronLeftIcon from 'material-ui-icons/ChevronLeft'
 import ExitToAppIcon from 'material-ui-icons/ExitToApp'
-import AddCircleOutlineIcon from 'material-ui-icons/AddCircleOutline'
+import AddCircleIcon from 'material-ui-icons/AddCircle'
 import LocalShipping from 'material-ui-icons/LocalShipping'
+import WorkIcon from 'material-ui-icons/Work'
 
 import { jsonrpc, screen } from 'homemaster-jslib'
 import TaskListIcon from 'homemaster-jslib/svg-icons/TaskList'
 import StartForm from './StartForm'
 import TaskList from './TaskList'
 import ShipmentForm from './ShipmentForm'
+import ProcessManageList from './ProcessManageList'
 
 const drawerWidth = 180
 
@@ -191,12 +193,12 @@ class AppFrame extends React.Component {
           <Divider />
           <List>
             <MenuItem
-              icon={<AddCircleOutlineIcon />}
+              icon={<AddCircleIcon />}
               text="新增订单"
               onClick={() => this.setState({ currentFrame: 'start' })}
             />
             <MenuItem
-              icon={<TaskListIcon />}
+              icon={<WorkIcon />}
               text="我的任务"
               onClick={() => this.setState({ currentFrame: 'tasks' })}
             />
@@ -204,6 +206,11 @@ class AppFrame extends React.Component {
               icon={<LocalShipping />}
               text="工厂发货"
               onClick={() => this.setState({ currentFrame: 'shipping' })}
+            />
+            <MenuItem
+              icon={<TaskListIcon />}
+              text="流程管理"
+              onClick={() => this.setState({ currentFrame: 'manage' })}
             />
             <MenuItem
               icon={<ExitToAppIcon />}
@@ -218,6 +225,7 @@ class AppFrame extends React.Component {
             {currentFrame === 'start' && <StartForm />}
             {currentFrame === 'tasks' && <TaskList />}
             {currentFrame === 'shipping' && <ShipmentForm />}
+            {currentFrame === 'manage' && <ProcessManageList />}
           </div>
         </div>
       </div>

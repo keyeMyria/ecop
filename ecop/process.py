@@ -67,7 +67,7 @@ class PorcessJSON(RpcBase):
             variables=params
         )
 
-    @jsonrpc_method(endpoint='rpc', method='bpmn.task.getList')
+    @jsonrpc_method(endpoint='rpc', method='bpmn.task.list')
     def getTaskList(self, processKey):
         """ Return all active tasks of a process key"""
         return cc.makeRequest('/task', 'post', {
@@ -125,6 +125,12 @@ class PorcessJSON(RpcBase):
             else:
                 raise RPCUserError('无法完成该任务，请联系技术支持')
         return True
+
+    @jsonrpc_method(endpoint='rpc', method='bpmn.process.list')
+    def getProcessList(self, processKey, params):
+        params['processDefinitionKey'] = processKey
+        return cc.makeRequest('/history/process-instance', 'post',
+                              params, urlParams={'maxResults': 50})
 
     @jsonrpc_method(endpoint='rpc', method='bpmn.worktop.ship')
     def shipWorktop(self, extOrderIds):
