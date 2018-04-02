@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import compose from 'recompose/compose'
+import dateFormat from 'date-fns/format'
 
 import { withStyles } from 'material-ui/styles'
 import Table, {
@@ -109,9 +110,13 @@ class ProcessManageList extends Component {
           {data.map(n => (
             <TableRow hover role="checkbox" tabIndex={-1} key={n.id}>
               <TableCell padding="none">{n.businessKey}</TableCell>
-              <TableCell>{n.startTime}</TableCell>
-              <TableCell>{n.endTime}</TableCell>
-              <TableCell numeric>{n.status}</TableCell>
+              <TableCell>
+                {dateFormat(n.startTime, 'YYYY/MM/DD HH:mm:ss')}
+              </TableCell>
+              <TableCell>
+                {dateFormat(n.endTime, 'YYYY/MM/DD HH:mm:ss')}
+              </TableCell>
+              <TableCell numeric>{n.state}</TableCell>
             </TableRow>
           ))}
         </TableBody>

@@ -21,7 +21,8 @@ const styles = {
     flexWrap: 'wrap'
   },
   taskItem: {
-    flexBasis: 250
+    flexBasis: 250,
+    marginRight: 16
   },
   due: {
     margin: '6px 0'
@@ -40,7 +41,7 @@ const TaskItem = props => {
           {task.name}
         </Typography>
         <Typography className={classes.due} color="textSecondary">
-          {format(new Date(task.due), 'YYYY/MM/DD HH:MM')}
+          {format(new Date(task.due), 'YYYY/MM/DD HH:mm')}
         </Typography>
       </CardContent>
       <CardActions>
