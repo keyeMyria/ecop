@@ -70,9 +70,13 @@ class PorcessJSON(RpcBase):
     @jsonrpc_method(endpoint='rpc', method='bpmn.task.list')
     def getTaskList(self, processKey):
         """ Return all active tasks of a process key"""
-        return cc.makeRequest('/task', 'post', {
+        params = {
             'processDefinitionKey': processKey
-        })
+        }
+        userGroup = self.request.user.extraData[processKey].get('group')
+        if userGroup:
+            params['candidateGroup'] = userGroup
+        return cc.makeRequest('/task', 'post', params)
 
     @jsonrpc_method(endpoint='rpc', method='bpmn.task.get')
     def getTask(self, taskId):
