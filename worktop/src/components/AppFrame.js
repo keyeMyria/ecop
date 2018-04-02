@@ -24,6 +24,7 @@ import StartForm from './StartForm'
 import TaskList from './TaskList'
 import ShipmentForm from './ShipmentForm'
 import ProcessManageList from './ProcessManageList'
+import hasPermission from 'permission'
 
 const drawerWidth = 180
 
@@ -207,11 +208,13 @@ class AppFrame extends React.Component {
               text="工厂发货"
               onClick={() => this.setState({ currentFrame: 'shipping' })}
             />
-            <MenuItem
-              icon={<TaskListIcon />}
-              text="流程管理"
-              onClick={() => this.setState({ currentFrame: 'manage' })}
-            />
+            {hasPermission('process.manage') && (
+              <MenuItem
+                icon={<TaskListIcon />}
+                text="流程管理"
+                onClick={() => this.setState({ currentFrame: 'manage' })}
+              />
+            )}
             <MenuItem
               icon={<ExitToAppIcon />}
               onClick={this.handleLogout}

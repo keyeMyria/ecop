@@ -18,6 +18,7 @@
     </script>
     <script tal:condition="request.authenticated">
         App.csrfToken = '${view.csrfToken}';
+        App.userInfo = ${view.userInfo('worktop')}
     </script>
 </head>
 

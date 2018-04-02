@@ -28,7 +28,8 @@ def userLogin(request, login, password, appName):
     sess.expunge_all()  # detach from session
     request.session['user'] = user
 
-    ret = user.extraData[appName]
+    # copy so that we do not persist the token in the session user object
+    ret = user.extraData[appName].copy()
     ret['csrfToken'] = get_csrf_token(request)
     return ret
 

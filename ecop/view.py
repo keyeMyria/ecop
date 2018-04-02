@@ -1,3 +1,4 @@
+import json
 from urllib.parse import urljoin
 
 from pyramid.view import view_config
@@ -53,6 +54,9 @@ class BaseEcopView(object):
     def csrfToken(self):
         return get_csrf_token(self.request) \
             if self.request.authenticated else None
+
+    def userInfo(self, appName):
+        return json.dumps(self.request.user.extraData[appName])
 
     def __call__(self):
         return {}
