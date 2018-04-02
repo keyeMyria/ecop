@@ -18,11 +18,14 @@ import { withStyles } from 'material-ui/styles'
 import FormControl from 'material-ui/Form/FormControl'
 import FormHelperText from 'material-ui/Form/FormHelperText'
 import Button from 'material-ui/Button'
+import IconButton from 'material-ui/IconButton'
 import { InputLabel } from 'material-ui/Input'
 import AddIcon from 'material-ui-icons/Add'
 import DeleteIcon from 'material-ui-icons/Delete'
 import FileDownloadIcon from 'material-ui-icons/FileDownload'
 import PreviewIcon from 'material-ui-icons/RemoveRedEye'
+import ExpandMoreIcon from 'material-ui-icons/ExpandMore'
+import ExpandLessIcon from 'material-ui-icons/ExpandLess'
 
 import {
   jsonrpc,
@@ -36,6 +39,8 @@ import Gallery from 'homemaster-jslib/Gallery'
 
 const styles = theme => ({
   actionBar: {
+    display: 'flex',
+    flexDirection: 'row',
     'label + &': {
       marginTop: theme.spacing.unit * 2
     }
@@ -74,6 +79,9 @@ const styles = theme => ({
   },
   selected: {
     border: '1px solid grey'
+  },
+  spacer: {
+    flex: 1
   },
   progress: {
     textAlign: 'center',
@@ -136,9 +144,11 @@ const FileThumb = props => {
 class FileUploader extends Component {
   constructor(props) {
     super(props)
+
     this.state = {
       previewOpen: false,
       selected: null,
+      expanded: props.initiallyExpanded,
       /**
        * [{progress: 0.5, dataUrl: 'xxxx'}, ...]
        */
@@ -149,6 +159,8 @@ class FileUploader extends Component {
   }
 
   uploadFile = (file, content) => {
+    this.setState({ expanded: true })
+
     return compressImage(file, {
       maxWidth: 300,
       maxHeight: 300,
@@ -278,6 +290,7 @@ class FileUploader extends Component {
       FormHelperTextProps,
       helperText,
       imageCompressOptions,
+      initiallyExpanded,
       InputLabelProps,
       label,
       maximalFiles,
@@ -286,6 +299,7 @@ class FileUploader extends Component {
       ...other
     } = this.props
 
+    const { selected, expanded } = this.state
     var files = value ? value.map(f => ({ name: f })) : []
 
     return (
@@ -320,7 +334,7 @@ class FileUploader extends Component {
               mini
               color="primary"
               className={classes.button}
-              disabled={this.state.selected === null}
+              disabled={selected === null || !expanded}
               onClick={this.handleDelete}
             >
               <DeleteIcon />
@@ -333,7 +347,7 @@ class FileUploader extends Component {
               mini
               color="primary"
               className={classes.button}
-              disabled={this.state.selected === null}
+              disabled={selected === null || !expanded}
               onClick={this.handleDownload}
             >
               <FileDownloadIcon />
@@ -350,26 +364,35 @@ class FileUploader extends Component {
           >
             <PreviewIcon />
           </Button>
+
+          <div className={classes.spacer} />
+
+          {files.length > 0 && (
+            <IconButton onClick={() => this.setState({ expanded: !expanded })}>
+              {expanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+            </IconButton>
+          )}
         </div>
 
-        {files && (
-          <div
-            className={classes.thumbsContainer}
-            onClick={() => {
-              this.setState({ selected: null })
-            }}
-          >
-            {files.map((f, i) => (
-              <FileThumb
-                key={i}
-                file={f}
-                selected={i === this.state.selected}
-                classes={classes}
-                onClick={this.handleSelect(i)}
-              />
-            ))}
-          </div>
-        )}
+        {expanded &&
+          files.length > 0 && (
+            <div
+              className={classes.thumbsContainer}
+              onClick={() => {
+                this.setState({ selected: null })
+              }}
+            >
+              {files.map((f, i) => (
+                <FileThumb
+                  key={i}
+                  file={f}
+                  selected={i === selected}
+                  classes={classes}
+                  onClick={this.handleSelect(i)}
+                />
+              ))}
+            </div>
+          )}
 
         {helperText && (
           <FormHelperText {...FormHelperTextProps}>{helperText}</FormHelperText>
@@ -380,7 +403,7 @@ class FileUploader extends Component {
           images={files.map(a => ({
             url: `${App.imageUrl}/${a.name}`
           }))}
-          initialImage={this.state.selected}
+          initialImage={selected}
           onClose={() => {
             this.setState({ previewOpen: false })
           }}
@@ -425,6 +448,10 @@ FileUploader.propTypes = {
    */
   imageCompressOptions: PropTypes.object,
   /**
+   * Whether the `FileUploader` should be initially displayed as expaned
+   */
+  initiallyExpanded: PropTypes.bool,
+  /**
    * Properties applied to the `InputLabel` element.
    */
   InputLabelProps: PropTypes.object,
@@ -462,7 +489,8 @@ FileUploader.defaultProps = {
     maxWidth: 2048,
     maxHeight: 2048,
     quality: 0.8
-  }
+  },
+  initiallyExpanded: true
 }
 
 export default withStyles(styles)(FileUploader)

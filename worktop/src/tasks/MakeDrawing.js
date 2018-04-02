@@ -50,6 +50,7 @@ class MakeDrawing extends ValidatedForm {
           margin="normal"
           allowUpload={false}
           allowDelete={false}
+          initiallyExpanded={false}
           InputLabelProps={{
             shrink: true
           }}
