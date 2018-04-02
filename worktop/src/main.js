@@ -10,8 +10,7 @@ import 'typeface-roboto'
 
 import { message, jsonrpc } from 'homemaster-jslib'
 import DateFnsUtils from 'utils/date-fns-utils'
-import AppFrame from 'components/AppFrame'
-import LoginDialog from 'components/LoginDialog'
+import AppMain from 'components/AppMain'
 import theme from './theme'
 import store from './model/store'
 
@@ -40,7 +39,7 @@ ReactDOM.render(
     <MuiThemeProvider theme={theme}>
       <CssBaseline />
       <MuiPickersUtilsProvider utils={DateFnsUtils}>
-        {App.csrfToken ? <AppFrame /> : <LoginDialog />}
+        <AppMain />
       </MuiPickersUtilsProvider>
     </MuiThemeProvider>
   </Provider>,

@@ -29,7 +29,7 @@ const columns = [
   { id: 'status', numeric: true, disablePadding: false, label: '状态' }
 ]
 
-class EnhancedTableHead extends React.Component {
+class EnhancedTableHead extends Component {
   createSortHandler = property => event => {
     this.props.onRequestSort(event, property)
   }

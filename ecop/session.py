@@ -1,5 +1,6 @@
 from pyramid.events import subscriber
 from pyramid.httpexceptions import HTTPBadRequest
+from pyramid.csrf import get_csrf_token
 from pyramid_rpc.jsonrpc import jsonrpc_method
 
 from webmodel.base import DBSession
@@ -27,9 +28,9 @@ def userLogin(request, login, password, appName):
     sess.expunge_all()  # detach from session
     request.session['user'] = user
 
-    return {
-        'permission': user.extraData[appName]['permission']
-    }
+    ret = user.extraData[appName]
+    ret['csrfToken'] = get_csrf_token(request)
+    return ret
 
 
 @jsonrpc_method(endpoint='rpc', method='auth.logout')

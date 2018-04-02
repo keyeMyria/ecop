@@ -2,6 +2,7 @@ import React from 'react'
 import validation from 'react-validation-mixin'
 import strategy from 'react-validatorjs-strategy'
 import compose from 'recompose/compose'
+import PropTypes from 'prop-types'
 
 import Dialog from 'material-ui/Dialog'
 import Toolbar from 'material-ui/Toolbar'
@@ -55,9 +56,7 @@ class LoginDialog extends ValidatedForm {
         jsonrpc({
           method: 'auth.login',
           params: [login, password, 'worktop'],
-          success: () => {
-            window.location.reload()
-          }
+          success: this.props.onLoginSuccess
         })
       }
     })
@@ -116,6 +115,13 @@ class LoginDialog extends ValidatedForm {
       </Dialog>
     )
   }
+}
+
+LoginDialog.propTypes = {
+  /**
+   * Function to invoke after successful login
+   */
+  onLoginSuccess: PropTypes.func.isRequired
 }
 
 // validation should come after withStyles
