@@ -28,7 +28,7 @@ const styles = {
   }
 }
 
-const TASK_REFRESH_INTERVAL = 1000 * 60
+const TASK_REFRESH_INTERVAL = 1000 * 10
 
 const TaskItem = props => {
   const { classes, task, onOpenTask } = props

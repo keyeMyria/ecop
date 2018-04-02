@@ -12,6 +12,21 @@ from ecop.base import RpcBase
 
 logger = logging.getLogger(__name__)
 
+"""
+In case a process instance needs manual correction, use:
+
+POST /process-instance/abe0b544-33f3-11e8-8a21-0242ac110005/modification
+{
+  "instructions": [{
+    "type": "startAfterActivity",
+    "activityId": "ConfirmMeasurementDate"
+  },{
+    "type": "cancel",
+    "activityId": "MakeDrawing"
+  }]
+}
+"""
+
 
 class PorcessJSON(RpcBase):
     @jsonrpc_method(endpoint='rpc', method='bpmn.process.start')
