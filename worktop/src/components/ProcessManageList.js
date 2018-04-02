@@ -21,13 +21,12 @@ const styles = {
 const columns = [
   {
     id: 'externalOrderId',
-    numeric: false,
     disablePadding: true,
     label: '订单号'
   },
-  { id: 'startTime', numeric: true, disablePadding: false, label: '开始时间' },
-  { id: 'endTime', numeric: true, disablePadding: false, label: '完成时间' },
-  { id: 'status', numeric: true, disablePadding: false, label: '状态' }
+  { id: 'startTime', disablePadding: false, label: '开始时间' },
+  { id: 'endTime', disablePadding: false, label: '完成时间' },
+  { id: 'status', disablePadding: false, label: '状态' }
 ]
 
 class EnhancedTableHead extends Component {
@@ -45,7 +44,6 @@ class EnhancedTableHead extends Component {
             return (
               <TableCell
                 key={column.id}
-                numeric={column.numeric}
                 padding={column.disablePadding ? 'none' : 'default'}
                 sortDirection={orderBy === column.id ? order : false}
               >
@@ -114,9 +112,9 @@ class ProcessManageList extends Component {
                 {dateFormat(n.startTime, 'YYYY/MM/DD HH:mm:ss')}
               </TableCell>
               <TableCell>
-                {dateFormat(n.endTime, 'YYYY/MM/DD HH:mm:ss')}
+                {n.endTime ? dateFormat(n.endTime, 'YYYY/MM/DD HH:mm:ss') : ''}
               </TableCell>
-              <TableCell numeric>{n.state}</TableCell>
+              <TableCell>{n.state}</TableCell>
             </TableRow>
           ))}
         </TableBody>
