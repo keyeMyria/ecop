@@ -5,31 +5,32 @@
   xmlns:py="http://genshi.edgewall.org/" title="台面测量单${variables['externalOrderId']}">
 
   <docinit displayDocTitle="true">
-    <registerTTFont faceName="VeraBoldItalic" fileName="[reportlab]/fonts/VeraBI.ttf"/>
-    <registerTTFont faceName="simsun" fileName="[ecop]/resources/simsun.ttc" />
-    <registerTTFont faceName="simhei" fileName="[ecop]/resources/simhei.ttf" />
-    <addMapping faceName="times" bold="0" italic="0" psName="simsun" />
-    <addMapping faceName="times" bold="1" italic="0" psName="simhei" />
+    <registerTTFont faceName="VeraBold" fileName="[reportlab]/fonts/VeraBd.ttf"/>
+    <registerTTFont faceName="msyh" fileName="[ecop]/resources/msyh.ttf" />
+    <registerTTFont faceName="msyhbd" fileName="[ecop]/resources/msyhbd.ttf" />
   </docinit>
 
   <template pagesize="a4" allowSplitting="1">
     <pageTemplate id="first">
       <pageGraphics>
-        <setFont name="simhei" size="8" />
-        <drawString x="1.3cm" y="23.5cm">测量草图</drawString>
-        <rect x="1cm" y="1cm" width="19cm" height="23cm"/>
+        <setFont name="msyh" size="8" />
+        <drawString x="1.8cm" y="23.5cm">测量草图</drawString>
+        <rect x="1.5cm" y="1cm" width="18.5cm" height="23cm"/>
+        <translate dx="1cm" dy="1cm"/>
+        <rotate degrees="90" />
+        <setFont name="Helvetica" size="6"/>
+        <drawString x="0" y="0">© Inter IKEA Systems B.V. 2018</drawString>
       </pageGraphics>
-      <frame id="header" x1="1cm" y1="24.5cm" width="19cm" height="4cm"/>
+      <frame id="header" x1="1.5cm" y1="23.5cm" width="18.5cm" height="5cm"/>
     </pageTemplate>
   </template>
 
   <stylesheet>
-    <paraStyle name="base" fontName="simsun" fontSize="12" leading="15" />
-    <paraStyle name="normal" parent="base" fontName="simhei" spaceBefore="3" spaceAfter="3" wordWrap="CJK" />
+    <paraStyle name="normal" fontSize="12" leading="15" fontName="msyh" spaceBefore="3" spaceAfter="3" wordWrap="CJK" />
   </stylesheet>
 
   <story>
-    <para fontSize="22" fontName="simhei" alignment="center">台面测量单</para>
+    <para fontSize="20" fontName="msyhbd">IKEA台面测量单</para>
     <spacer length="30" />
     <blockTable colWidths="60% 40%">
       <blockTableStyle id="dummy">
@@ -44,7 +45,7 @@
           <para style="normal">联系电话：${variables['customerMobile']}</para>
         </td>
         <td>
-          <para style="normal">订单编号：<font size="16">${variables['externalOrderId']}</font></para>
+          <para style="normal">订单编号：<font fontName="VeraBold" size="18">${variables['externalOrderId']}</font></para>
           <para style="normal">测量日期：${variables['confirmedMeasurementDate'].strftime('%Y/%m/%d')}</para>
         </td>
       </tr>
