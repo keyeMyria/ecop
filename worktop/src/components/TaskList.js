@@ -41,7 +41,7 @@ const TaskItem = props => {
           {task.name}
         </Typography>
         <Typography className={classes.due} color="textSecondary">
-          {format(new Date(task.due), 'YYYY/MM/DD HH:mm')}
+          {format(task.due, 'YYYY/MM/DD HH:mm')}
         </Typography>
       </CardContent>
       <CardActions>
