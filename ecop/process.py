@@ -9,6 +9,7 @@ from webmodel.consts import ORDER_SOURCE, SPECIAL_PARTY
 from webmodel.order import SalesOrder
 
 from ecop.base import RpcBase
+from ecop.region import getRegionName
 
 logger = logging.getLogger(__name__)
 
@@ -88,12 +89,15 @@ class PorcessJSON(RpcBase):
         for v in cc.makeRequest('/variable-instance', 'post', {
             'processInstanceIdIn': processInstanceIds
         }):
-            if v['name'] in ('externalOrderId', 'customerName'):
+            if v['name'] in ('externalOrderId', 'customerName',
+                             'customerRegionCode'):
                 processVars[v['processInstanceId']].append(v)
 
         for t in tasks:
-            t['processVariables'] = cc.parseVariables(
+            var = t['processVariables'] = cc.parseVariables(
                 processVars[t['processInstanceId']])
+            var['customerRegionName'] = getRegionName(
+                var['customerRegionCode'])
 
         return tasks
 

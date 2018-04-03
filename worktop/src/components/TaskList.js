@@ -37,11 +37,14 @@ const TaskItem = props => {
   return (
     <Card className={classes.taskItem}>
       <CardContent>
+        <Typography className={classes.due} color="textSecondary">
+          {variables.externalOrderId}
+        </Typography>
         <Typography variant="headline" component="h2">
           {task.name}
         </Typography>
         <Typography className={classes.due} color="textSecondary">
-          {variables.externalOrderId} {variables.customerName}
+          {variables.customerRegionName} {variables.customerName}
         </Typography>
       </CardContent>
       <CardActions>
@@ -113,6 +116,7 @@ class TaskList extends Component {
               <TaskItem
                 classes={classes}
                 key={i}
+                index={i}
                 task={task}
                 onOpenTask={() => this.onOpenTask(task)}
               />

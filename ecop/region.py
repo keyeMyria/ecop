@@ -70,7 +70,7 @@ class RegionJSON(RpcBase):
 
         Note parameter `regionCode` may not be a first level region. Whatever
         it is, the return value is **all** city and district data for the
-        provice which contains the `regionCode`.
+        provice which **contains** the `regionCode`.
         """
         ret = {}
         region = regionFactory().get(regionCode)
