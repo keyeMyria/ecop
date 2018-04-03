@@ -86,7 +86,7 @@ class PorcessJSON(RpcBase):
         processVars = dict([(pid, []) for pid in processInstanceIds])
 
         for v in cc.makeRequest('/variable-instance', 'post', {
-            'processInstanceIdId': processInstanceIds
+            'processInstanceIdIn': processInstanceIds
         }):
             if v['name'] in ('externalOrderId', 'customerName'):
                 processVars[v['processInstanceId']].append(v)
