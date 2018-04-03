@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react'
 import PropTypes from 'prop-types'
 
-import AddressText from 'widget/AddressText'
+import RegionName from 'widget/RegionName'
 
 function TaskHeader(props) {
   const {
@@ -19,7 +19,8 @@ function TaskHeader(props) {
       <div>顾客手机:{customerMobile}</div>
       <div>
         顾客地址:
-        <AddressText regionCode={customerRegionCode} street={customerStreet} />
+        <RegionName regionCode={customerRegionCode} />
+        {customerStreet}
       </div>
     </Fragment>
   )

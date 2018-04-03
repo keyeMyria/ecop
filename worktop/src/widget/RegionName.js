@@ -5,9 +5,18 @@ import { getRegionName, loadRegion } from 'homemaster-jslib/region'
 /**
  * For lazy rendering an address text with correct region name
  */
-export default class AddressText extends Component {
-  state = {
-    regionName: ''
+export default class RegionName extends Component {
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      regionName: ''
+    }
+
+    props.regionCode &&
+      loadRegion(props.regionCode).then(() => {
+        this.setState({ regionName: getRegionName(props.regionCode) })
+      })
   }
 
   componentWillReceiveProps = nextProps => {
@@ -19,16 +28,10 @@ export default class AddressText extends Component {
   }
 
   render() {
-    return (
-      <Fragment>
-        {this.state.regionName}
-        {this.props.street}
-      </Fragment>
-    )
+    return <Fragment>{this.state.regionName}</Fragment>
   }
 }
 
-AddressText.props = {
-  regionCode: PropTypes.number,
-  street: PropTypes.street
+RegionName.props = {
+  regionCode: PropTypes.number.isRequired
 }
