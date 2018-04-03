@@ -88,7 +88,7 @@ class PorcessJSON(RpcBase):
 
         for v in cc.makeRequest('/variable-instance', 'post', {
             'processInstanceIdIn': processInstanceIds
-        }):
+        }, urlParams={'deserializeValues': 'false'}):
             if v['name'] in ('externalOrderId', 'customerName',
                              'customerRegionCode'):
                 processVars[v['processInstanceId']].append(v)

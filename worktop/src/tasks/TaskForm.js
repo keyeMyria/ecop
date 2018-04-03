@@ -137,6 +137,7 @@ class TaskForm extends Component {
 
           {createElement(forms[task.taskDefinitionKey], {
             variables,
+            task,
             submitForm: this.submitForm,
             // for use with validation
             ref: form => {

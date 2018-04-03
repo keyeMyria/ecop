@@ -45,8 +45,11 @@ def main(global_config, **settings):
 
     config.add_route('upload', '/upload', request_method='POST')
     config.add_route('erp', '/', xhr=False)
-    config.add_route('worktop', '/ikea', xhr=False)
     config.add_route('order_download', '/order/{orderid}.pdf', xhr=False)
+
+    # ikea worktop related
+    config.add_route('forms', '/ikea/forms/{processId}/{form}.pdf', xhr=False)
+    config.add_route('worktop', '/ikea', xhr=False)
 
     config.scan()
     return config.make_wsgi_app()

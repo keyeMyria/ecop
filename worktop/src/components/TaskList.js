@@ -21,7 +21,8 @@ const styles = {
   },
   taskItem: {
     flexBasis: 250,
-    marginRight: 16
+    marginRight: 16,
+    marginBottom: 16
   },
   due: {
     margin: '6px 0'

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE document SYSTEM "rml.dtd">
+<document
+  xmlns:doc="http://namespaces.zope.org/rml/doc"
+  xmlns:py="http://genshi.edgewall.org/" title="台面测量单${variables['externalOrderId']}">
+
+  <docinit displayDocTitle="true">
+    <registerTTFont faceName="VeraBoldItalic" fileName="[reportlab]/fonts/VeraBI.ttf"/>
+    <registerTTFont faceName="simsun" fileName="[ecop]/resources/simsun.ttc" />
+    <registerTTFont faceName="simhei" fileName="[ecop]/resources/simhei.ttf" />
+    <addMapping faceName="times" bold="0" italic="0" psName="simsun" />
+    <addMapping faceName="times" bold="1" italic="0" psName="simhei" />
+  </docinit>
+
+  <template pagesize="a4" allowSplitting="1">
+    <pageTemplate id="first">
+      <pageGraphics>
+        <setFont name="simhei" size="8" />
+        <drawString x="1.3cm" y="23.5cm">测量草图</drawString>
+        <rect x="1cm" y="1cm" width="19cm" height="23cm"/>
+      </pageGraphics>
+      <frame id="header" x1="1cm" y1="24.5cm" width="19cm" height="4cm"/>
+    </pageTemplate>
+  </template>
+
+  <stylesheet>
+    <paraStyle name="base" fontName="simsun" fontSize="12" leading="15" />
+    <paraStyle name="normal" parent="base" fontName="simhei" spaceBefore="3" spaceAfter="3" wordWrap="CJK" />
+  </stylesheet>
+
+  <story>
+    <para fontSize="22" fontName="simhei" alignment="center">台面测量单</para>
+    <spacer length="30" />
+    <blockTable colWidths="60% 40%">
+      <blockTableStyle id="dummy">
+        <blockValign value="top" />
+      </blockTableStyle>
+      <tr>
+        <td>
+          <para style="normal" leftIndent="60" firstLineIndent="-60">
+            顾客地址：${view.getRegionName(variables['customerRegionCode'])}${variables['customerStreet']}
+          </para>
+          <para style="normal">顾客姓名: ${variables['customerName']}</para>
+          <para style="normal">联系电话：${variables['customerMobile']}</para>
+        </td>
+        <td>
+          <para style="normal">订单编号：<font size="16">${variables['externalOrderId']}</font></para>
+          <para style="normal">测量日期：${variables['confirmedMeasurementDate'].strftime('%Y/%m/%d')}</para>
+        </td>
+      </tr>
+    </blockTable>
+  </story>
+</document>
