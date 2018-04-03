@@ -69,14 +69,33 @@ class PorcessJSON(RpcBase):
 
     @jsonrpc_method(endpoint='rpc', method='bpmn.task.list')
     def getTaskList(self, processKey):
-        """ Return all active tasks of a process key"""
+        """ Return all active tasks of a process key. In additional to the
+        properties of the Camunda task object, we also return serveral
+        additional process variables related to the task, like externalOrderId
+        and customerName in a `processVariables` attribute.
+        """
         params = {
             'processDefinitionKey': processKey
         }
         userGroup = self.request.user.extraData[processKey].get('group')
         if userGroup:
             params['candidateGroup'] = userGroup
-        return cc.makeRequest('/task', 'post', params)
+        tasks = cc.makeRequest('/task', 'post', params)
+
+        processInstanceIds = [t['processInstanceId'] for t in tasks]
+        processVars = dict([(pid, []) for pid in processInstanceIds])
+
+        for v in cc.makeRequest('/variable-instance', 'post', {
+            'processInstanceIdId': processInstanceIds
+        }):
+            if v['name'] in ('externalOrderId', 'customerName'):
+                processVars[v['processInstanceId']].append(v)
+
+        for t in tasks:
+            t['processVariables'] = cc.parseVariables(
+                processVars[t['processInstanceId']])
+
+        return tasks
 
     @jsonrpc_method(endpoint='rpc', method='bpmn.task.get')
     def getTask(self, taskId):
@@ -117,7 +136,8 @@ class PorcessJSON(RpcBase):
         if variables:
             variables = parseDate(
                 variables,
-                fields=[fname for fname in variables if fname.endswith('Date')]
+                fields=[
+                    fname for fname in variables if fname.endswith('Date')]
             )
 
         try:

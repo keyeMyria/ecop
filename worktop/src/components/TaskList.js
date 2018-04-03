@@ -2,7 +2,6 @@ import React, { Component, Fragment } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import compose from 'recompose/compose'
-import format from 'date-fns/format'
 import find from 'lodash.find'
 
 import { withStyles } from 'material-ui/styles'
@@ -33,6 +32,7 @@ const TASK_REFRESH_INTERVAL = 1000 * 60
 
 const TaskItem = props => {
   const { classes, task, onOpenTask } = props
+  const { processVariables: variables } = task
 
   return (
     <Card className={classes.taskItem}>
@@ -41,7 +41,7 @@ const TaskItem = props => {
           {task.name}
         </Typography>
         <Typography className={classes.due} color="textSecondary">
-          {format(task.due, 'YYYY/MM/DD HH:mm')}
+          {variables.externalOrderId} {variables.customerName}
         </Typography>
       </CardContent>
       <CardActions>
