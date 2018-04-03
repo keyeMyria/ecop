@@ -6,7 +6,6 @@ import PropTypes from 'prop-types'
 
 import Dialog from 'material-ui/Dialog'
 import Toolbar from 'material-ui/Toolbar'
-import Slide from 'material-ui/transitions/Slide'
 import AppBar from 'material-ui/AppBar'
 import Typography from 'material-ui/Typography'
 import { withStyles } from 'material-ui/styles'
@@ -23,8 +22,6 @@ const styles = {
     maxWidth: 400
   }
 }
-
-const Transition = props => <Slide direction="down" {...props} />
 
 class LoginDialog extends ValidatedForm {
   state = {
@@ -64,11 +61,7 @@ class LoginDialog extends ValidatedForm {
 
   render = () => {
     return (
-      <Dialog
-        open
-        classes={{ paperWidthSm: this.props.classes.paperWidthSm }}
-        transition={Transition} // never use inline function here!!
-      >
+      <Dialog open classes={{ paperWidthSm: this.props.classes.paperWidthSm }}>
         <AppBar style={{ position: 'relative' }}>
           <Toolbar>
             <Typography variant="title" color="inherit">
