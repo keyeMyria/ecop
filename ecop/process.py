@@ -70,7 +70,8 @@ class PorcessJSON(RpcBase):
 
     @jsonrpc_method(endpoint='rpc', method='bpmn.task.list')
     def getTaskList(self, processKey):
-        """ Return all active tasks of a process key. In additional to the
+        """
+        Return all active tasks of a process key. In additional to the
         properties of the Camunda task object, we also return serveral
         additional process variables related to the task, like externalOrderId
         and customerName in a `processVariables` attribute.
@@ -81,21 +82,12 @@ class PorcessJSON(RpcBase):
         userGroup = self.request.user.extraData[processKey].get('group')
         if userGroup:
             params['candidateGroup'] = userGroup
-        tasks = cc.makeRequest('/task', 'post', params)
-
-        processInstanceIds = [t['processInstanceId'] for t in tasks]
-        processVars = dict([(pid, []) for pid in processInstanceIds])
-
-        for v in cc.makeRequest('/variable-instance', 'post', {
-            'processInstanceIdIn': processInstanceIds
-        }, urlParams={'deserializeValues': 'false'}):
-            if v['name'] in ('externalOrderId', 'customerName',
-                             'customerRegionCode'):
-                processVars[v['processInstanceId']].append(v)
-
+        tasks = cc.makeRequest(
+            '/task', 'post', params,
+            withProcessVariables=('externalOrderId', 'customerName',
+                                  'customerRegionCode'))
         for t in tasks:
-            var = t['processVariables'] = cc.parseVariables(
-                processVars[t['processInstanceId']])
+            var = t['processVariables']
             var['customerRegionName'] = getRegionName(
                 var['customerRegionCode'])
 
@@ -103,9 +95,11 @@ class PorcessJSON(RpcBase):
 
     @jsonrpc_method(endpoint='rpc', method='bpmn.task.get')
     def getTask(self, taskId):
-        """ Return a single task by task id. Used to check if a task is still
+        """
+        Return a single task by task id. Used to check if a task is still
         active. If the task can no longer be found, maybe completed by someone
-        else, return None """
+        else, return None
+        """
         try:
             task = cc.makeRequest(f'/task/{taskId}', 'get')
         except CamundaRESTError as e:
@@ -157,8 +151,21 @@ class PorcessJSON(RpcBase):
     @jsonrpc_method(endpoint='rpc', method='bpmn.process.list')
     def getProcessList(self, processKey, params):
         params['processDefinitionKey'] = processKey
-        return cc.makeRequest('/history/process-instance', 'post',
-                              params, urlParams={'maxResults': 50})
+        ret = cc.makeRequest(
+            '/history/process-instance', 'post',
+            params, urlParams={'maxResults': 50},
+            withProcessVariables=(
+                'externalOrderId', 'customerName', 'storeId',
+                'customerRegionCode'),
+            processInstanceIdField='id', hoistProcessVariables=True
+        )
+
+        for t in ret:
+            if 'customerRegionCode' in t:
+                t['customerRegionName'] = getRegionName(
+                    t['customerRegionCode'])
+                del t['customerRegionCode']
+        return ret
 
     @jsonrpc_method(endpoint='rpc', method='bpmn.worktop.ship')
     def shipWorktop(self, extOrderIds):

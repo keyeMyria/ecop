@@ -15,16 +15,18 @@ import Table, {
 import { searchProcess } from 'model/actions'
 
 const styles = {
-  root: {}
+  rowNumber: {
+    textAlign: 'center'
+  }
 }
 
 const columns = [
-  {
-    id: 'externalOrderId',
-    disablePadding: true,
-    label: '订单号'
-  },
-  { id: 'startTime', disablePadding: false, label: '开始时间' },
+  { id: 'rowNumber', disablePadding: true, label: '' },
+  { id: 'externalOrderId', disablePadding: true, label: '订单号' },
+  { id: 'storeId', disablePadding: true, label: '商场号' },
+  { id: 'customerName', disablePadding: false, label: '顾客姓名' },
+  { id: 'customerRegionName', disablePadding: false, label: '顾客地区' },
+  { id: 'startTime', disablePadding: false, label: '发起时间' },
   { id: 'endTime', disablePadding: false, label: '完成时间' },
   { id: 'status', disablePadding: false, label: '状态' }
 ]
@@ -91,7 +93,26 @@ class ProcessManageList extends Component {
     this.props.dispatch(searchProcess())
   }
 
-  handleRequestSort = () => {}
+  handleRequestSort = (event, property) => {
+    const orderBy = property
+    let order = 'desc'
+
+    if (this.state.orderBy === property && this.state.order === 'desc') {
+      order = 'asc'
+    }
+
+    const data =
+      order === 'desc'
+        ? this.state.data.sort(
+            (a, b) =>
+              b[orderBy] < a[orderBy] || b[orderBy] === undefined ? -1 : 1
+          )
+        : this.state.data.sort((a, b) => {
+            return a[orderBy] < b[orderBy] || b[orderBy] === undefined ? -1 : 1
+          })
+
+    this.setState({ data, order, orderBy })
+  }
 
   render() {
     const { classes } = this.props
@@ -105,16 +126,28 @@ class ProcessManageList extends Component {
           onRequestSort={this.handleRequestSort}
         />
         <TableBody>
-          {data.map(n => (
-            <TableRow hover role="checkbox" tabIndex={-1} key={n.id}>
-              <TableCell padding="none">{n.businessKey}</TableCell>
-              <TableCell>
-                {dateFormat(n.startTime, 'YYYY/MM/DD HH:mm:ss')}
+          {data.map((p, idx) => (
+            <TableRow hover tabIndex={-1} key={idx}>
+              <TableCell className={classes.rowNumber} padding="none">
+                {idx + 1}
+              </TableCell>
+              <TableCell padding="none">
+                {p.externalOrderId}
+              </TableCell>
+              <TableCell padding="none">{p.storeId}</TableCell>
+              <TableCell padding="none">
+                {p.customerName}
+              </TableCell>
+              <TableCell padding="none">
+                {p.customerRegionName}
               </TableCell>
               <TableCell>
-                {n.endTime ? dateFormat(n.endTime, 'YYYY/MM/DD HH:mm:ss') : ''}
+                {dateFormat(p.startTime, 'YYYY/MM/DD HH:mm:ss')}
               </TableCell>
-              <TableCell>{n.state}</TableCell>
+              <TableCell>
+                {p.endTime ? dateFormat(p.endTime, 'YYYY/MM/DD HH:mm:ss') : ''}
+              </TableCell>
+              <TableCell>{p.state}</TableCell>
             </TableRow>
           ))}
         </TableBody>
