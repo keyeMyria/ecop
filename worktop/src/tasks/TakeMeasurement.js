@@ -2,7 +2,6 @@
 import React, { Fragment } from 'react'
 import compose from 'recompose/compose'
 import validation from 'react-validation-mixin'
-import format from 'date-fns/format'
 
 import { withStyles } from 'material-ui/styles'
 import TextField from 'material-ui/TextField'
@@ -11,6 +10,7 @@ import PrintIcon from 'material-ui-icons/Print'
 
 import { strategy, ValidatedForm, Field } from 'form'
 import FileUploader from 'widget/FileUploader'
+import dateFormat from 'utils/date-fns'
 
 const styles = theme => ({
   submitButton: theme.custom.submitButton,
@@ -48,7 +48,7 @@ class TakeMeasurement extends ValidatedForm {
           label="确认测量日期"
           component={TextField}
           disabled
-          value={format(variables.scheduledMeasurementDate, 'YYYY/MM/DD')}
+          value={dateFormat(variables.scheduledMeasurementDate, 'YYYY/MM/DD')}
         />
 
         <FileUploader

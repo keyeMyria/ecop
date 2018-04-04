@@ -2,7 +2,6 @@
 import React from 'react'
 import validation from 'react-validation-mixin'
 import compose from 'recompose/compose'
-import format from 'date-fns/format'
 
 import { withStyles } from 'material-ui/styles'
 import Button from 'material-ui/Button'
@@ -19,6 +18,7 @@ import PaperPlaneIcon from 'homemaster-jslib/svg-icons/PaperPlane'
 
 import { strategy, ValidatedForm, Field } from 'form'
 import FileUploader from 'widget/FileUploader'
+import dateFormat from 'utils/date-fns'
 
 const styles = theme => ({
   root: {
@@ -195,7 +195,7 @@ class StartForm extends ValidatedForm {
               leftArrowIcon={<ArrowLeftIcon />}
               rightArrowIcon={<ArrowRightIcon />}
               value={values.scheduledMeasurementDate}
-              labelFunc={date => (date ? format(date, 'YYYY/MM/DD') : '')}
+              labelFunc={date => dateFormat(date, 'YYYY/MM/DD')}
               onChange={this.handleChange(
                 'scheduledMeasurementDate',
                 'datepicker'
@@ -215,7 +215,7 @@ class StartForm extends ValidatedForm {
               rightArrowIcon={<ArrowRightIcon />}
               value={values.scheduledInstallationDate}
               minDate={values.scheduledMeasurementDate || new Date()}
-              labelFunc={date => (date ? format(date, 'YYYY/MM/DD') : '')}
+              labelFunc={date => dateFormat(date, 'YYYY/MM/DD')}
               onChange={this.handleChange(
                 'scheduledInstallationDate',
                 'datepicker'

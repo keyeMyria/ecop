@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import compose from 'recompose/compose'
-import dateFormat from 'date-fns/format'
 
 import { withStyles } from 'material-ui/styles'
 import Table, {
@@ -12,7 +11,9 @@ import Table, {
   TableRow,
   TableSortLabel
 } from 'material-ui/Table'
+
 import { searchProcess } from 'model/actions'
+import dateFormat from 'utils/date-fns'
 
 const styles = {
   rowNumber: {
@@ -140,14 +141,10 @@ class ProcessManageList extends Component {
                 {dateFormat(p.startTime, 'YYYY/MM/DD HH:mm:ss')}
               </TableCell>
               <TableCell>
-                {p.confirmedMeasurementDate
-                  ? dateFormat(p.confirmedMeasurementDate, 'YYYY/MM/DD')
-                  : ''}
+                {dateFormat(p.confirmedMeasurementDate, 'YYYY/MM/DD')}
               </TableCell>
               <TableCell>
-                {p.confirmedInstallationDate
-                  ? dateFormat(p.confirmedInstallationDate, 'YYYY/MM/DD')
-                  : ''}
+                {dateFormat(p.confirmedInstallationDate, 'YYYY/MM/DD')}
               </TableCell>
               <TableCell>{p.state}</TableCell>
             </TableRow>

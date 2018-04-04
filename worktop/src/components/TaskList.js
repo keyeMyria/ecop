@@ -117,7 +117,6 @@ class TaskList extends Component {
               <TaskItem
                 classes={classes}
                 key={i}
-                index={i}
                 task={task}
                 onOpenTask={() => this.onOpenTask(task)}
               />

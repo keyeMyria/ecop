@@ -1,5 +1,4 @@
 import React, { Fragment } from 'react'
-import format from 'date-fns/format'
 import validation from 'react-validation-mixin'
 
 import TextField from 'material-ui/TextField'
@@ -8,6 +7,7 @@ import ArrowLeftIcon from 'material-ui-icons/KeyboardArrowLeft'
 import ArrowRightIcon from 'material-ui-icons/KeyboardArrowRight'
 
 import { strategy, Field, ValidatedForm } from 'form'
+import dateFormat from 'utils/date-fns'
 
 class ConfirmInstallationDate extends ValidatedForm {
   state = { values: {} }
@@ -39,7 +39,7 @@ class ConfirmInstallationDate extends ValidatedForm {
           label="预约安装日期"
           component={TextField}
           disabled
-          value={format(variables.scheduledInstallationDate, 'YYYY/MM/DD')}
+          value={dateFormat(variables.scheduledInstallationDate, 'YYYY/MM/DD')}
         />
 
         <Field
@@ -51,11 +51,7 @@ class ConfirmInstallationDate extends ValidatedForm {
           leftArrowIcon={<ArrowLeftIcon />}
           rightArrowIcon={<ArrowRightIcon />}
           value={confirmedInstallationDate}
-          labelFunc={() =>
-            confirmedInstallationDate
-              ? format(confirmedInstallationDate, 'YYYY/MM/DD')
-              : ''
-          }
+          labelFunc={() => dateFormat(confirmedInstallationDate, 'YYYY/MM/DD')}
           error={!!this.getFieldError('confirmedInstallationDate')}
           helperText={this.getFieldError('confirmedInstallationDate')}
           onChange={this.handleChange(
