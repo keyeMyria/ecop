@@ -74,7 +74,7 @@ EnhancedTableHead.propTypes = {
 class ProcessManageList extends Component {
   state = {
     data: [],
-    order: 'asc',
+    order: 'desc',
     orderBy: 'startTime'
   }
 

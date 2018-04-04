@@ -12,7 +12,7 @@ export const searchProcess = () => dispatch => {
         sorting: [
           {
             sortBy: 'startTime',
-            sortOrder: 'asc'
+            sortOrder: 'desc'
           }
         ]
       }
