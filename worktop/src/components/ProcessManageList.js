@@ -27,7 +27,8 @@ const columns = [
   { id: 'customerName', disablePadding: false, label: '顾客姓名' },
   { id: 'customerRegionName', disablePadding: false, label: '顾客地区' },
   { id: 'startTime', disablePadding: false, label: '发起时间' },
-  { id: 'endTime', disablePadding: false, label: '完成时间' },
+  { id: 'confirmedMeasurementDate', disablePadding: false, label: '测量日期' },
+  { id: 'confirmedInstallationDate', disablePadding: false, label: '安装日期' },
   { id: 'status', disablePadding: false, label: '状态' }
 ]
 
@@ -131,21 +132,22 @@ class ProcessManageList extends Component {
               <TableCell className={classes.rowNumber} padding="none">
                 {idx + 1}
               </TableCell>
-              <TableCell padding="none">
-                {p.externalOrderId}
-              </TableCell>
+              <TableCell padding="none">{p.externalOrderId}</TableCell>
               <TableCell padding="none">{p.storeId}</TableCell>
-              <TableCell padding="none">
-                {p.customerName}
-              </TableCell>
-              <TableCell padding="none">
-                {p.customerRegionName}
-              </TableCell>
+              <TableCell padding="none">{p.customerName}</TableCell>
+              <TableCell padding="none">{p.customerRegionName}</TableCell>
               <TableCell>
                 {dateFormat(p.startTime, 'YYYY/MM/DD HH:mm:ss')}
               </TableCell>
               <TableCell>
-                {p.endTime ? dateFormat(p.endTime, 'YYYY/MM/DD HH:mm:ss') : ''}
+                {p.confirmedMeasurementDate
+                  ? dateFormat(p.confirmedMeasurementDate, 'YYYY/MM/DD')
+                  : ''}
+              </TableCell>
+              <TableCell>
+                {p.confirmedInstallationDate
+                  ? dateFormat(p.confirmedInstallationDate, 'YYYY/MM/DD')
+                  : ''}
               </TableCell>
               <TableCell>{p.state}</TableCell>
             </TableRow>
