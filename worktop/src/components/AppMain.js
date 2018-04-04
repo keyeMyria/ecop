@@ -28,6 +28,7 @@ class AppMain extends Component {
     Object.assign(jsonrpc, {
       csrfToken: ret.csrfToken
     })
+    App.csrfToken = ret.csrfToken
     delete ret.csrfToken
     App.userInfo = ret
     this.setState({ loggedIn: true })
