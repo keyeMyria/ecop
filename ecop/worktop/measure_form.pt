@@ -10,7 +10,7 @@
     <registerTTFont faceName="msyhbd" fileName="[ecop]/resources/msyhbd.ttf" />
   </docinit>
 
-  <template pagesize="a4" allowSplitting="1">
+  <template pagesize="a4" allowSplitting="0">
     <pageTemplate id="first">
       <pageGraphics>
         <setFont name="msyh" size="8" />
@@ -30,7 +30,7 @@
   </stylesheet>
 
   <story>
-    <para fontSize="20" fontName="msyhbd">IKEA台面测量单</para>
+    <para fontSize="20" fontName="msyhbd">IKEA厨房台面测量单</para>
     <spacer length="30" />
     <blockTable colWidths="60% 40%">
       <blockTableStyle id="dummy">
@@ -39,7 +39,7 @@
       <tr>
         <td>
           <para style="normal" leftIndent="60" firstLineIndent="-60">
-            顾客地址：${view.getRegionName(variables['customerRegionCode'])}${variables['customerStreet']}
+            顾客地址：${view.customerAddress}
           </para>
           <para style="normal">顾客姓名: ${variables['customerName']}</para>
           <para style="normal">联系电话：${variables['customerMobile']}</para>

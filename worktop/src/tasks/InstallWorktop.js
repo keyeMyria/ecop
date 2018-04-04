@@ -1,11 +1,22 @@
+/* global App */
 import React, { Fragment } from 'react'
 import validation from 'react-validation-mixin'
+import compose from 'recompose/compose'
 import format from 'date-fns/format'
 
+import { withStyles } from 'material-ui/styles'
 import TextField from 'material-ui/TextField'
+import Button from 'material-ui/Button'
+import PrintIcon from 'material-ui-icons/Print'
 
 import { strategy, ValidatedForm, Field } from 'form'
 import FileUploader from 'widget/FileUploader'
+
+const styles = theme => ({
+  submitButton: theme.custom.submitButton,
+  buttonRow: theme.custom.buttonRow,
+  buttonIcon: theme.custom.buttonIcon
+})
 
 class InstallWorktop extends ValidatedForm {
   state = { values: {} }
@@ -30,7 +41,7 @@ class InstallWorktop extends ValidatedForm {
 
   render = () => {
     const { values } = this.state
-    const { variables } = this.props
+    const { classes, task, variables } = this.props
 
     return (
       <Fragment>
@@ -53,6 +64,20 @@ class InstallWorktop extends ValidatedForm {
           value={variables.productionDrawing}
         />
 
+        <div className={classes.buttonRow}>
+          <Button
+            variant="raised"
+            color="primary"
+            className={classes.submitButton}
+            target="_blank"
+            href={`/ikea/forms/${
+              task.processInstanceId
+            }/install_form.pdf?token=${App.csrfToken}`}
+          >
+            <PrintIcon className={classes.buttonIcon} />打印签收单
+          </Button>
+        </div>
+
         <Field
           component={FileUploader}
           name="installationFile"
@@ -67,4 +92,4 @@ class InstallWorktop extends ValidatedForm {
   }
 }
 
-export default validation(strategy)(InstallWorktop)
+export default compose(withStyles(styles), validation(strategy))(InstallWorktop)

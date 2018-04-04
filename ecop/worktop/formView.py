@@ -25,9 +25,10 @@ class ProcessForm(DocBase):
         except TemplateNotFound:
             raise HTTPNotFound()
 
-    @staticmethod
-    def getRegionName(regionCode):
-        return getRegionName(regionCode)
+    @property
+    def customerAddress(self):
+        return getRegionName(self.variables['customerRegionCode']) + \
+            self.variables['customerStreet']
 
     def __call__(self):
         request = self.request
@@ -38,15 +39,15 @@ class ProcessForm(DocBase):
         if not ret:
             raise HTTPNotFound()
 
-        variables = cc.parseVariables(ret)
+        self.variables = cc.parseVariables(ret)
 
-        stream = self.template.generate(variables=variables, view=self)
+        stream = self.template.generate(variables=self.variables, view=self)
         body = rml2pdf.parseString(stream.render()).read()
 
         response = Response(
             content_type='application/pdf',
             content_disposition='filename="%s_%s.pdf"' % (
-                variables['externalOrderId'], request.matchdict['form']),
+                self.variables['externalOrderId'], request.matchdict['form']),
             content_length=len(body),
             body=body)
         return response
