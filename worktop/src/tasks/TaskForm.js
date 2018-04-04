@@ -51,14 +51,18 @@ const styles = theme => ({
     marginLeft: 16
   },
   content: {
+    paddingBottom: 16,
     overflowY: 'auto',
-    padding: 16,
     maxHeight: `calc(100vh - ${theme.mixins.toolbar.minHeight}px)`,
     [theme.breakpoints.up('sm')]: {
       maxHeight: `calc(100vh - ${
         theme.mixins.toolbar[theme.breakpoints.up('sm')].minHeight
       }px)`
     }
+  },
+  form: {
+    paddingLeft: 16,
+    paddingRight: 16
   },
   submitButton: theme.custom.submitButton,
   buttonRow: theme.custom.buttonRow,
@@ -135,19 +139,21 @@ class TaskForm extends Component {
         <div className={classes.content}>
           <TaskHeader task={task} variables={variables} />
 
-          {createElement(forms[task.taskDefinitionKey], {
-            variables,
-            task,
-            submitForm: this.submitForm,
-            // for use with validation
-            ref: form => {
-              this.form = form
-            },
-            // for use with withStyles
-            innerRef: form => {
-              this.innerForm = form
-            }
-          })}
+          <div className={classes.form}>
+            {createElement(forms[task.taskDefinitionKey], {
+              variables,
+              task,
+              submitForm: this.submitForm,
+              // for use with validation
+              ref: form => {
+                this.form = form
+              },
+              // for use with withStyles
+              innerRef: form => {
+                this.innerForm = form
+              }
+            })}
+          </div>
 
           <div className={classes.buttonRow}>
             <Button
