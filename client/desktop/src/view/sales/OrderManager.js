@@ -116,6 +116,8 @@ Ext.define('Ecop.view.sales.OrderManager', {
                   editable: false,
                   store: 'ordersource',
                   valueField: 'id',
+                  value: 1,
+                  autoLoadOnValue: true,
                   plugins: 'cleartrigger'
                 },
                 {
