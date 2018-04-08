@@ -37,6 +37,10 @@ class PorcessJSON(RpcBase):
             fields=['scheduledMeasurementDate', 'scheduledInstallationDate']
         )
 
+        if not params['isMeasurementRequested']:
+            params.pop('scheduledMeasurementDate', None)
+            params['productionDrawing'] = params['orderFile']
+
         externalOrderId = params.get('externalOrderId')
         if externalOrderId and \
                 self.sess.query(SalesOrder).filter_by(

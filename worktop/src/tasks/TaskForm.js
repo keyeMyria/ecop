@@ -31,7 +31,8 @@ const forms = {
   MakeDrawing,
   CheckDrawing,
   ConfirmInstallationDate,
-  InstallWorktop
+  InstallWorktop,
+  UpdateDrawing: MakeDrawing
 }
 
 const styles = theme => ({

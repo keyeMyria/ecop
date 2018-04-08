@@ -2,6 +2,7 @@
 import React from 'react'
 import validation from 'react-validation-mixin'
 import compose from 'recompose/compose'
+import update from 'immutability-helper'
 
 import { withStyles } from 'material-ui/styles'
 import Button from 'material-ui/Button'
@@ -9,12 +10,15 @@ import TextField from 'material-ui/TextField'
 import DatePicker from 'material-ui-pickers/DatePicker'
 import Grid from 'material-ui/Grid'
 import Paper from 'material-ui/Paper'
+import { FormControlLabel } from 'material-ui/Form'
+import Checkbox from 'material-ui/Checkbox'
 import ArrowLeftIcon from 'material-ui-icons/KeyboardArrowLeft'
 import ArrowRightIcon from 'material-ui-icons/KeyboardArrowRight'
 
 import { jsonrpc, message } from 'homemaster-jslib'
 import RegionPicker from 'homemaster-jslib/region/RegionPicker'
 import PaperPlaneIcon from 'homemaster-jslib/svg-icons/PaperPlane'
+import CloseBox from 'homemaster-jslib/svg-icons/CloseBox'
 
 import { strategy, ValidatedForm, Field } from 'form'
 import FileUploader from 'widget/FileUploader'
@@ -28,7 +32,10 @@ const styles = theme => ({
   orderId: theme.custom.orderId,
   submitButton: theme.custom.submitButton,
   buttonRow: theme.custom.buttonRow,
-  buttonIcon: theme.custom.buttonIcon
+  buttonIcon: theme.custom.buttonIcon,
+  measurementNotRequested: {
+    color: theme.palette.secondary.main
+  }
 })
 
 class StartForm extends ValidatedForm {
@@ -39,6 +46,7 @@ class StartForm extends ValidatedForm {
     customerMobile: '',
     customerRegionCode: null,
     customerStreet: '',
+    isMeasurementRequested: true,
     scheduledMeasurementDate: null,
     scheduledInstallationDate: null,
     orderFile: []
@@ -52,7 +60,9 @@ class StartForm extends ValidatedForm {
       customerMobile: 'required|mobile',
       customerRegionCode: 'required',
       customerStreet: 'required',
-      scheduledMeasurementDate: 'required',
+      scheduledMeasurementDate: [
+        { required_if: ['isMeasurementRequested', true] }
+      ],
       scheduledInstallationDate: 'required',
       orderFile: 'required'
     },
@@ -65,7 +75,7 @@ class StartForm extends ValidatedForm {
       'required.customerMobile': '顾客手机必须输入',
       'required.customerStreet': '详细地址必须输入',
       'required.customerRegionCode': '所在地区必须输入',
-      'required.scheduledMeasurementDate': '预约测量日期必须输入',
+      'required_if.scheduledMeasurementDate': '预约测量日期必须输入',
       'required.scheduledInstallationDate': '预约安装日期必须输入',
       'required.orderFile': '原始订单必须上传'
     }
@@ -78,6 +88,23 @@ class StartForm extends ValidatedForm {
 
   resetForm = () => {
     this.setState({ values: this.defaultValues })
+  }
+
+  /**
+   * Whenever `isMeasurementRequested` is set to false, clear the variable
+   * `scheduledMeasurementDate`
+   */
+  handleChangeMeasurementRequested = e => {
+    this.setState({
+      values: update(this.state.values, {
+        isMeasurementRequested: {
+          $set: !this.state.values.isMeasurementRequested
+        },
+        scheduledMeasurementDate: {
+          $set: null
+        }
+      })
+    })
   }
 
   handleSubmit = () => {
@@ -183,11 +210,33 @@ class StartForm extends ValidatedForm {
           </Grid>
         </Grid>
 
+        <Field
+          component={RegionPicker}
+          name="customerRegionCode"
+          label="所在地区"
+          value={values.customerRegionCode}
+          preSelect={310100}
+          onChange={this.handleChange('customerRegionCode')}
+          error={!!this.getFieldError('customerRegionCode')}
+          helperText={this.getFieldError('customerRegionCode')}
+        />
+
+        <Field
+          component={TextField}
+          name="customerStreet"
+          label="详细地址"
+          value={values.customerStreet}
+          onChange={this.handleChange('customerStreet')}
+          error={!!this.getFieldError('customerStreet')}
+          helperText={this.getFieldError('customerStreet')}
+        />
+
         <Grid container justify="center" spacing={24}>
           <Grid item xs={6}>
             <Field
               component={DatePicker}
               label="预约测量日期"
+              disabled={!values.isMeasurementRequested}
               autoOk
               name="scheduledMeasurementDate"
               disablePast
@@ -202,6 +251,25 @@ class StartForm extends ValidatedForm {
               )}
               error={!!this.getFieldError('scheduledMeasurementDate')}
               helperText={this.getFieldError('scheduledMeasurementDate')}
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={values.isMeasurementRequested}
+                  onChange={this.handleChangeMeasurementRequested}
+                  value="isMeasurementRequested"
+                  icon={<CloseBox color="secondary" />}
+                  color={
+                    values.isMeasurementRequested ? 'primary' : 'secondary'
+                  }
+                />
+              }
+              classes={{
+                label: values.isMeasurementRequested
+                  ? null
+                  : classes.measurementNotRequested
+              }}
+              label={values.isMeasurementRequested ? '需要测量' : '不需要测量!'}
             />
           </Grid>
 
@@ -225,27 +293,6 @@ class StartForm extends ValidatedForm {
             />
           </Grid>
         </Grid>
-
-        <Field
-          component={RegionPicker}
-          name="customerRegionCode"
-          label="所在地区"
-          value={values.customerRegionCode}
-          preSelect={310100}
-          onChange={this.handleChange('customerRegionCode')}
-          error={!!this.getFieldError('customerRegionCode')}
-          helperText={this.getFieldError('customerRegionCode')}
-        />
-
-        <Field
-          component={TextField}
-          name="customerStreet"
-          label="详细地址"
-          value={values.customerStreet}
-          onChange={this.handleChange('customerStreet')}
-          error={!!this.getFieldError('customerStreet')}
-          helperText={this.getFieldError('customerStreet')}
-        />
 
         <Field
           component={FileUploader}

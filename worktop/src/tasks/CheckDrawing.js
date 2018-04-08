@@ -100,17 +100,23 @@ class MakeDrawing extends ValidatedForm {
           value={variables.orderFile}
         />
 
-        <FileUploader
-          label="测量文件"
-          fullWidth
-          margin="normal"
-          allowUpload={false}
-          allowDelete={false}
-          InputLabelProps={{
-            shrink: true
-          }}
-          value={variables.measurementFile}
-        />
+        {variables.isMeasurementRequested ? (
+          <FileUploader
+            label="测量文件"
+            fullWidth
+            margin="normal"
+            allowUpload={false}
+            allowDelete={false}
+            InputLabelProps={{
+              shrink: true
+            }}
+            value={variables.measurementFile}
+          />
+        ) : (
+          <Typography variant="headline" color="error">
+            该订单为无测量订单。
+          </Typography>
+        )}
 
         <FileUploader
           label="生产图纸"
