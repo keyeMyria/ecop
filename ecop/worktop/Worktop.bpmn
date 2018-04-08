@@ -3,7 +3,7 @@
   <bpmn:collaboration id="Collaboration_1mrwdza">
     <bpmn:participant id="Participant_0k1dc17" name="台面安装流程" processRef="worktop" />
   </bpmn:collaboration>
-  <bpmn:process id="worktop" name="Worktop Test" isExecutable="true" camunda:versionTag="1.0">
+  <bpmn:process id="worktop" name="Worktop Installation" isExecutable="true" camunda:versionTag="1.1">
     <bpmn:laneSet>
       <bpmn:lane id="Installer" name="安装队">
         <bpmn:flowNodeRef>TakeMeasurement</bpmn:flowNodeRef>
@@ -47,17 +47,17 @@
       <bpmn:incoming>SequenceFlow_0n6e00p</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_19twd4r</bpmn:outgoing>
     </bpmn:userTask>
-    <bpmn:exclusiveGateway id="IsDrawingOK" name="图纸OK?">
+    <bpmn:exclusiveGateway id="IsDrawingOK" name="图纸OK?" default="SequenceFlow_10b65bl">
       <bpmn:incoming>SequenceFlow_19twd4r</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_10b65bl</bpmn:outgoing>
       <bpmn:outgoing>SequenceFlow_0asw71l</bpmn:outgoing>
       <bpmn:outgoing>SequenceFlow_1t90zg2</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_10b65bl</bpmn:outgoing>
     </bpmn:exclusiveGateway>
     <bpmn:intermediateThrowEvent id="M1" name="M1: 测量完成">
       <bpmn:incoming>SequenceFlow_0h9i4j9</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0su7mxf</bpmn:outgoing>
     </bpmn:intermediateThrowEvent>
-    <bpmn:exclusiveGateway id="IsMeasurementRequested" name="是否需测量？">
+    <bpmn:exclusiveGateway id="IsMeasurementRequested" name="是否需测量？" default="SequenceFlow_06dnmz0">
       <bpmn:incoming>SequenceFlow_10rze2z</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_13f4syr</bpmn:outgoing>
       <bpmn:outgoing>SequenceFlow_06dnmz0</bpmn:outgoing>
@@ -69,16 +69,11 @@
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="SequenceFlow_0su7mxf" sourceRef="M1" targetRef="MakeDrawing" />
     <bpmn:sequenceFlow id="SequenceFlow_0pet5kx" sourceRef="MakeDrawing" targetRef="CheckDrawing" />
-    <bpmn:sequenceFlow id="SequenceFlow_06dnmz0" name="yes" sourceRef="IsMeasurementRequested" targetRef="ConfirmMeasurementDate">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${isMeasurementRequested==true}</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SequenceFlow_06dnmz0" name="yes" sourceRef="IsMeasurementRequested" targetRef="ConfirmMeasurementDate" />
     <bpmn:sequenceFlow id="SequenceFlow_13f4syr" name="no" sourceRef="IsMeasurementRequested" targetRef="CheckDrawing">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${isMeasurementRequested==false}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="SequenceFlow_19twd4r" sourceRef="CheckDrawing" targetRef="IsDrawingOK" />
-    <bpmn:sequenceFlow id="SequenceFlow_10b65bl" name="通过" sourceRef="IsDrawingOK" targetRef="WorktopShipped">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${productionDrawingConfirmed==true}</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
     <bpmn:startEvent id="StartEvent_1" name="发起流程">
       <bpmn:outgoing>SequenceFlow_10rze2z</bpmn:outgoing>
     </bpmn:startEvent>
@@ -110,6 +105,7 @@
       <bpmn:incoming>SequenceFlow_1t90zg2</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0n6e00p</bpmn:outgoing>
     </bpmn:userTask>
+    <bpmn:sequenceFlow id="SequenceFlow_10b65bl" name="通过" sourceRef="IsDrawingOK" targetRef="WorktopShipped" />
   </bpmn:process>
   <bpmn:signal id="Signal_1ngybbx" name="WorktopShipped" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
@@ -204,13 +200,6 @@
           <dc:Bounds x="427" y="497" width="46" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_10b65bl_di" bpmnElement="SequenceFlow_10b65bl">
-        <di:waypoint xsi:type="dc:Point" x="508" y="531" />
-        <di:waypoint xsi:type="dc:Point" x="589" y="531" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="534" y="507" width="24" height="12" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_0asw71l_di" bpmnElement="SequenceFlow_0asw71l">
         <di:waypoint xsi:type="dc:Point" x="483" y="506" />
         <di:waypoint xsi:type="dc:Point" x="483" y="328" />
@@ -290,6 +279,13 @@
       <bpmndi:BPMNShape id="UserTask_1mo0h24_di" bpmnElement="UpdateDrawing">
         <dc:Bounds x="299" y="606" width="100" height="80" />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_10b65bl_di" bpmnElement="SequenceFlow_10b65bl">
+        <di:waypoint xsi:type="dc:Point" x="508" y="531" />
+        <di:waypoint xsi:type="dc:Point" x="589" y="531" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="534" y="507" width="24" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>
