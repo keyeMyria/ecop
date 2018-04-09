@@ -8,11 +8,13 @@ import { withStyles } from 'material-ui/styles'
 import Card, { CardActions, CardContent } from 'material-ui/Card'
 import Typography from 'material-ui/Typography'
 import Button from 'material-ui/Button'
+import AlarmIcon from 'material-ui-icons/Alarm'
 
 import { jsonrpc, message } from 'homemaster-jslib'
 
 import { fetchUserTasks } from 'model/actions'
 import TaskForm from 'tasks/TaskForm'
+import dateFormat from 'utils/date-fns'
 
 const styles = {
   root: {
@@ -25,7 +27,12 @@ const styles = {
     marginBottom: 16
   },
   due: {
-    margin: '6px 0'
+    display: 'flex',
+    alignItems: 'center',
+    marginTop: 3
+  },
+  alarm: {
+    marginRight: 5
   }
 }
 
@@ -34,19 +41,33 @@ const TASK_REFRESH_INTERVAL = 1000 * 60
 const TaskItem = props => {
   const { classes, task, onOpenTask } = props
   const { processVariables: variables } = task
+  const timeToDue = new Date(task.due) - new Date()
+  let iconColor = undefined
+
+  if (timeToDue < 0) {
+    iconColor = 'error'
+  } else if (timeToDue < 24 * 3600 * 1000) {
+    iconColor = 'primary'
+  }
 
   return (
     <Card className={classes.taskItem}>
       <CardContent>
-        <Typography className={classes.due} color="textSecondary">
+        <Typography color="textSecondary">
           {variables.externalOrderId}
         </Typography>
         <Typography variant="headline" component="h2">
           {task.name}
         </Typography>
-        <Typography className={classes.due} color="textSecondary">
+        <Typography color="textSecondary">
           {variables.customerRegionName} {variables.customerName}
         </Typography>
+        <div className={classes.due}>
+          <AlarmIcon color={iconColor} className={classes.alarm} />
+          <Typography color="textSecondary">
+            {dateFormat(task.due, 'YYYY/MM/DD HH:mm:ss')}
+          </Typography>
+        </div>
       </CardContent>
       <CardActions>
         <Button size="small" color="primary" onClick={onOpenTask}>

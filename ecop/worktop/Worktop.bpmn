@@ -3,7 +3,7 @@
   <bpmn:collaboration id="Collaboration_1mrwdza">
     <bpmn:participant id="Participant_0k1dc17" name="台面安装流程" processRef="worktop" />
   </bpmn:collaboration>
-  <bpmn:process id="worktop" name="Worktop Installation" isExecutable="true" camunda:versionTag="1.1.1">
+  <bpmn:process id="worktop" name="Worktop Installation" isExecutable="true" camunda:versionTag="1.1.2">
     <bpmn:laneSet>
       <bpmn:lane id="Installer" name="安装队">
         <bpmn:flowNodeRef>TakeMeasurement</bpmn:flowNodeRef>
@@ -28,7 +28,7 @@
       </bpmn:lane>
     </bpmn:laneSet>
     <bpmn:sequenceFlow id="SequenceFlow_10rze2z" sourceRef="StartEvent_1" targetRef="IsMeasurementRequested" />
-    <bpmn:userTask id="TakeMeasurement" name="测量" camunda:candidateGroups="installer" camunda:dueDate="${confirmedMeasurementDate}">
+    <bpmn:userTask id="TakeMeasurement" name="测量" camunda:candidateGroups="installer" camunda:dueDate="${dateTime().plusMillis(confirmedMeasurementDate.getTime()-now().getTime()+24*3600*1000-100).toDate()}">
       <bpmn:incoming>SequenceFlow_0jti927</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0h9i4j9</bpmn:outgoing>
     </bpmn:userTask>
@@ -37,7 +37,7 @@
       <bpmn:incoming>SequenceFlow_0su7mxf</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0pet5kx</bpmn:outgoing>
     </bpmn:userTask>
-    <bpmn:userTask id="ConfirmMeasurementDate" name="确认测量时间" camunda:candidateGroups="office" camunda:dueDate="${scheduledMeasurementDate}">
+    <bpmn:userTask id="ConfirmMeasurementDate" name="确认测量时间" camunda:candidateGroups="office" camunda:dueDate="${dateTime().plusMillis(scheduledMeasurementDate.getTime()-now().getTime()-100).toDate()}">
       <bpmn:incoming>SequenceFlow_06dnmz0</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0jti927</bpmn:outgoing>
     </bpmn:userTask>
@@ -89,7 +89,7 @@
       <bpmn:incoming>SequenceFlow_1fj7chv</bpmn:incoming>
       <bpmn:terminateEventDefinition />
     </bpmn:endEvent>
-    <bpmn:userTask id="InstallWorktop" name="安装台面" camunda:candidateGroups="installer" camunda:dueDate="${confirmedInstallationDate}">
+    <bpmn:userTask id="InstallWorktop" name="安装台面" camunda:candidateGroups="installer" camunda:dueDate="${dateTime().plusMillis(confirmedInstallationDate.getTime()-now().getTime()+24*3600*1000-100).toDate()}">
       <bpmn:incoming>SequenceFlow_12rfy1l</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1fj7chv</bpmn:outgoing>
     </bpmn:userTask>
@@ -102,7 +102,7 @@
       <bpmn:outgoing>SequenceFlow_0n6e00p</bpmn:outgoing>
     </bpmn:userTask>
     <bpmn:sequenceFlow id="SequenceFlow_10b65bl" name="通过" sourceRef="IsDrawingOK" targetRef="WorktopShipped" />
-    <bpmn:userTask id="ConfirmInstallationDate" name="确认安装时间" camunda:candidateGroups="office" camunda:dueDate="${scheduledInstallationDate}">
+    <bpmn:userTask id="ConfirmInstallationDate" name="确认安装时间" camunda:candidateGroups="office" camunda:dueDate="${dateTime().plusMillis(scheduledInstallationDate.getTime()-now().getTime()-100).toDate()}">
       <bpmn:incoming>SequenceFlow_126m8i0</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_12rfy1l</bpmn:outgoing>
     </bpmn:userTask>

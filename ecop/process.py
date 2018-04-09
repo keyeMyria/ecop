@@ -81,7 +81,11 @@ class PorcessJSON(RpcBase):
         and customerName in a `processVariables` attribute.
         """
         params = {
-            'processDefinitionKey': processKey
+            'processDefinitionKey': processKey,
+            'sorting': [{
+                'sortBy': 'dueDate',
+                'sortOrder': 'asc'
+            }]
         }
         userGroup = self.request.user.extraData[processKey].get('group')
         if userGroup:
