@@ -4,11 +4,7 @@ import { connect } from 'react-redux'
 import compose from 'recompose/compose'
 
 import { withStyles } from 'material-ui/styles'
-import Table, {
-  TableBody,
-  TableCell,
-  TableRow,
-} from 'material-ui/Table'
+import Table, { TableBody, TableCell, TableRow } from 'material-ui/Table'
 
 import { searchProcess } from 'model/actions'
 import dateFormat from 'utils/date-fns'
@@ -41,7 +37,7 @@ class ProcessManageList extends Component {
 
   componentWillReceiveProps = nextProps => {
     // make a copy of the process data
-    if (this.props.processes !== nextProps.processese) {
+    if (this.props.processes !== nextProps.processes) {
       this.setState({ data: nextProps.processes.slice() })
     }
   }
@@ -80,7 +76,7 @@ class ProcessManageList extends Component {
     const { data, order, orderBy } = this.state
 
     return (
-      <Table className={classes.table}>
+      <Table>
         <EnhancedTableHead
           columns={columns}
           order={order}

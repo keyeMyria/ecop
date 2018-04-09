@@ -170,6 +170,29 @@ class PorcessJSON(RpcBase):
                 del t['customerRegionCode']
         return ret
 
+    @jsonrpc_method(endpoint='rpc', method='bpmn.shipment.getOutstandingOrders')
+    def getOutstandingOrders(self, processKey):
+        params = {
+            'processDefinitionKey': processKey,
+            'activityIdIn': ['WorktopShipped']
+        }
+
+        ret = cc.makeRequest(
+            '/process-instance', 'post',
+            params, urlParams={'maxResults': 50},
+            withProcessVariables=(
+                'externalOrderId', 'customerName', 'storeId',
+                'customerRegionCode', 'scheduledInstallationDate'),
+            processInstanceIdField='id', hoistProcessVariables=True
+        )
+
+        for t in ret:
+            if 'customerRegionCode' in t:
+                t['customerRegionName'] = getRegionName(
+                    t['customerRegionCode'])
+                del t['customerRegionCode']
+        return ret
+
     @jsonrpc_method(endpoint='rpc', method='bpmn.worktop.ship')
     def shipWorktop(self, extOrderIds):
         """
