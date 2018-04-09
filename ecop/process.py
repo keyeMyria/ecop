@@ -109,20 +109,14 @@ class PorcessJSON(RpcBase):
         else, return None
         """
         try:
-            task = cc.makeRequest(f'/task/{taskId}', 'get')
+            task = cc.makeRequest(
+                f'/task/{taskId}', 'get', withProcessVariables='*')
         except CamundaRESTError as e:
             if e.status == 404:
                 task = None
             else:
                 raise
         return task
-
-    @jsonrpc_method(endpoint='rpc', method='bpmn.variable.get')
-    def getProcessVariables(self, processId):
-        ret = cc.makeRequest('/variable-instance', 'post', {
-            'processInstanceIdIn': [processId]
-        }, urlParams={'deserializeValues': 'false'})
-        return cc.parseVariables(ret)
 
     @jsonrpc_method(endpoint='rpc', method='bpmn.task.complete')
     def completeTask(self, taskId, variables=None):

@@ -16,7 +16,7 @@ import WorkIcon from 'material-ui-icons/Work'
 import { jsonrpc, screen, message } from 'homemaster-jslib'
 import PaperPlaneIcon from 'homemaster-jslib/svg-icons/PaperPlane'
 
-import { fetchProcessVariables, fetchUserTasks } from 'model/actions'
+import { fetchUserTasks } from 'model/actions'
 import ConfirmMeasurementDate from './ConfirmMeasurementDate'
 import TakeMeasurement from './TakeMeasurement'
 import TaskHeader from './TaskHeader'
@@ -78,10 +78,6 @@ class TaskForm extends Component {
     if (!this.props.open && nextProps.open) {
       this.form = null
       this.innerForm = null
-
-      this.props.dispatch(
-        fetchProcessVariables(nextProps.task.processInstanceId)
-      )
     }
   }
 
@@ -111,9 +107,10 @@ class TaskForm extends Component {
   }
 
   render = () => {
-    const { task, variables, dispatch, classes, ...other } = this.props
-
+    const { task, dispatch, classes, ...other } = this.props
     if (!task) return null
+
+    const variables = task.processVariables
 
     return (
       <Dialog
