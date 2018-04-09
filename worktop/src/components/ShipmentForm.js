@@ -8,6 +8,7 @@ import Button from 'material-ui/Button'
 import TextField from 'material-ui/TextField'
 import Paper from 'material-ui/Paper'
 import Table, { TableBody, TableCell, TableRow } from 'material-ui/Table'
+import AlarmIcon from 'material-ui-icons/Alarm'
 
 import { jsonrpc, message } from 'homemaster-jslib'
 import PaperPlaneIcon from 'homemaster-jslib/svg-icons/PaperPlane'
@@ -47,6 +48,7 @@ const columns = [
   { id: 'storeId', disablePadding: true, label: '商场号' },
   { id: 'customerName', disablePadding: false, label: '顾客姓名' },
   { id: 'customerRegionName', disablePadding: false, label: '顾客地区' },
+  { id: 'startTime', disablePadding: false, label: '开始生产时间' },
   { id: 'scheduledInstallationDate', disablePadding: false, label: '安装日期' }
 ]
 
@@ -165,6 +167,7 @@ class ShipmentForm extends Component {
   render = () => {
     const { classes } = this.props
     const { data, order, orderBy } = this.state
+    const today = new Date()
 
     return (
       <div className={classes.root}>
@@ -176,20 +179,28 @@ class ShipmentForm extends Component {
             onRequestSort={this.handleRequestSort}
           />
           <TableBody>
-            {data.map((p, idx) => (
-              <TableRow hover tabIndex={-1} key={idx}>
-                <TableCell className={classes.rowNumber} padding="none">
-                  {idx + 1}
-                </TableCell>
-                <TableCell padding="none">{p.externalOrderId}</TableCell>
-                <TableCell padding="none">{p.storeId}</TableCell>
-                <TableCell padding="none">{p.customerName}</TableCell>
-                <TableCell padding="none">{p.customerRegionName}</TableCell>
-                <TableCell>
-                  {dateFormat(p.scheduledInstallationDate, 'YYYY/MM/DD')}
-                </TableCell>
-              </TableRow>
-            ))}
+            {data.map((p, idx) => {
+              const overDue =
+                today - new Date(p.startTime) > 7 * 24 * 3600 * 1000
+              return (
+                <TableRow hover tabIndex={-1} key={idx}>
+                  <TableCell className={classes.rowNumber} padding="none">
+                    {overDue && <AlarmIcon color="error" />}
+                    {idx + 1}
+                  </TableCell>
+                  <TableCell padding="none">{p.externalOrderId}</TableCell>
+                  <TableCell padding="none">{p.storeId}</TableCell>
+                  <TableCell padding="none">{p.customerName}</TableCell>
+                  <TableCell padding="none">{p.customerRegionName}</TableCell>
+                  <TableCell>
+                    {dateFormat(p.startTime, 'YYYY/MM/DD HH:mm:ss')}
+                  </TableCell>
+                  <TableCell>
+                    {dateFormat(p.scheduledInstallationDate, 'YYYY/MM/DD')}
+                  </TableCell>
+                </TableRow>
+              )
+            })}
           </TableBody>
         </Table>
 

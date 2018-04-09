@@ -174,16 +174,17 @@ class PorcessJSON(RpcBase):
     def getOutstandingOrders(self, processKey):
         params = {
             'processDefinitionKey': processKey,
-            'activityIdIn': ['WorktopShipped']
+            'activityId': 'WorktopShipped',
+            'unfinished': True
         }
 
         ret = cc.makeRequest(
-            '/process-instance', 'post',
+            '/history/activity-instance', 'post',
             params, urlParams={'maxResults': 50},
             withProcessVariables=(
                 'externalOrderId', 'customerName', 'storeId',
                 'customerRegionCode', 'scheduledInstallationDate'),
-            processInstanceIdField='id', hoistProcessVariables=True
+            hoistProcessVariables=True
         )
 
         for t in ret:
