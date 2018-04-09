@@ -8,6 +8,7 @@ import ArrowRightIcon from 'material-ui-icons/KeyboardArrowRight'
 
 import { strategy, Field, ValidatedForm } from 'form'
 import dateFormat from 'utils/date-fns'
+import FileUploader from 'widget/FileUploader'
 
 class ConfirmMeasurementDate extends ValidatedForm {
   state = { values: {} }
@@ -40,6 +41,19 @@ class ConfirmMeasurementDate extends ValidatedForm {
           component={TextField}
           disabled
           value={dateFormat(variables.scheduledMeasurementDate, 'YYYY/MM/DD')}
+        />
+
+        <FileUploader
+          label="原始订单"
+          fullWidth
+          margin="normal"
+          allowUpload={false}
+          allowDelete={false}
+          initiallyExpanded={false}
+          InputLabelProps={{
+            shrink: true
+          }}
+          value={variables.orderFile}
         />
 
         <Field
