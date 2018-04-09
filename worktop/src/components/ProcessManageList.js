@@ -7,13 +7,12 @@ import { withStyles } from 'material-ui/styles'
 import Table, {
   TableBody,
   TableCell,
-  TableHead,
   TableRow,
-  TableSortLabel
 } from 'material-ui/Table'
 
 import { searchProcess } from 'model/actions'
 import dateFormat from 'utils/date-fns'
+import EnhancedTableHead from 'widget/TableHead'
 
 const styles = {
   rowNumber: {
@@ -32,46 +31,6 @@ const columns = [
   { id: 'confirmedInstallationDate', disablePadding: false, label: '安装日期' },
   { id: 'status', disablePadding: false, label: '状态' }
 ]
-
-class EnhancedTableHead extends Component {
-  createSortHandler = property => event => {
-    this.props.onRequestSort(event, property)
-  }
-
-  render() {
-    const { order, orderBy } = this.props
-
-    return (
-      <TableHead>
-        <TableRow>
-          {columns.map(column => {
-            return (
-              <TableCell
-                key={column.id}
-                padding={column.disablePadding ? 'none' : 'default'}
-                sortDirection={orderBy === column.id ? order : false}
-              >
-                <TableSortLabel
-                  active={orderBy === column.id}
-                  direction={order}
-                  onClick={this.createSortHandler(column.id)}
-                >
-                  {column.label}
-                </TableSortLabel>
-              </TableCell>
-            )
-          }, this)}
-        </TableRow>
-      </TableHead>
-    )
-  }
-}
-
-EnhancedTableHead.propTypes = {
-  onRequestSort: PropTypes.func.isRequired,
-  order: PropTypes.string.isRequired,
-  orderBy: PropTypes.string.isRequired
-}
 
 class ProcessManageList extends Component {
   state = {
@@ -123,6 +82,7 @@ class ProcessManageList extends Component {
     return (
       <Table className={classes.table}>
         <EnhancedTableHead
+          columns={columns}
           order={order}
           orderBy={orderBy}
           onRequestSort={this.handleRequestSort}
