@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
 
 import {
@@ -8,38 +8,34 @@ import {
   TableSortLabel
 } from 'material-ui/Table'
 
-class EnhancedTableHead extends Component {
-  createSortHandler = property => event => {
-    this.props.onRequestSort(event, property)
+const EnhancedTableHead = props => {
+  const createSortHandler = property => event => {
+    props.onRequestSort(event, property)
   }
 
-  render() {
-    const { order, orderBy, columns } = this.props
+  const { order, orderBy, columns } = props
 
-    return (
-      <TableHead>
-        <TableRow>
-          {columns.map(column => {
-            return (
-              <TableCell
-                key={column.id}
-                padding={column.disablePadding ? 'none' : 'default'}
-                sortDirection={orderBy === column.id ? order : false}
-              >
-                <TableSortLabel
-                  active={orderBy === column.id}
-                  direction={order}
-                  onClick={this.createSortHandler(column.id)}
-                >
-                  {column.label}
-                </TableSortLabel>
-              </TableCell>
-            )
-          }, this)}
-        </TableRow>
-      </TableHead>
-    )
-  }
+  return (
+    <TableHead>
+      <TableRow>
+        {columns.map(column => (
+          <TableCell
+            key={column.id}
+            padding={column.disablePadding ? 'none' : 'default'}
+            sortDirection={orderBy === column.id ? order : false}
+          >
+            <TableSortLabel
+              active={orderBy === column.id}
+              direction={order}
+              onClick={createSortHandler(column.id)}
+            >
+              {column.label}
+            </TableSortLabel>
+          </TableCell>
+        ))}
+      </TableRow>
+    </TableHead>
+  )
 }
 
 EnhancedTableHead.propTypes = {
