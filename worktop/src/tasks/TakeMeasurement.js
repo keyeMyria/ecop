@@ -48,7 +48,7 @@ class TakeMeasurement extends ValidatedForm {
           label="确认测量日期"
           component={TextField}
           disabled
-          value={dateFormat(variables.scheduledMeasurementDate, 'YYYY/MM/DD')}
+          value={dateFormat(variables.confirmedMeasurementDate, 'YYYY/MM/DD')}
         />
 
         <FileUploader
