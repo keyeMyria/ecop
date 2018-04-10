@@ -11,7 +11,7 @@ import Button from 'material-ui/Button'
 import TextField from 'material-ui/TextField'
 import Paper from 'material-ui/Paper'
 import Table, { TableBody, TableCell, TableRow } from 'material-ui/Table'
-import AlarmIcon from 'material-ui-icons/Alarm'
+import AlarmIcon from '@material-ui/icons/Alarm'
 
 import { jsonrpc, message } from 'homemaster-jslib'
 import PaperPlaneIcon from 'homemaster-jslib/svg-icons/PaperPlane'
@@ -65,7 +65,7 @@ class ShipmentForm extends Component {
     // below are used by the grid
     data: [],
     order: 'asc',
-    orderBy: 'startTime'
+    orderBy: 'due'
   }
 
   componentDidMount = () => {

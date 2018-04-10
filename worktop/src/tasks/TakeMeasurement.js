@@ -6,7 +6,7 @@ import validation from 'react-validation-mixin'
 import { withStyles } from 'material-ui/styles'
 import TextField from 'material-ui/TextField'
 import Button from 'material-ui/Button'
-import PrintIcon from 'material-ui-icons/Print'
+import PrintIcon from '@material-ui/icons/Print'
 
 import { strategy, ValidatedForm, Field } from 'form'
 import FileUploader from 'widget/FileUploader'

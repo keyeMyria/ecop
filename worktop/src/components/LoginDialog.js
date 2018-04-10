@@ -11,7 +11,7 @@ import Typography from 'material-ui/Typography'
 import { withStyles } from 'material-ui/styles'
 import Button from 'material-ui/Button'
 import TextField from 'material-ui/TextField'
-import ExitToAppIcon from 'material-ui-icons/ExitToApp'
+import ExitToAppIcon from '@material-ui/icons/ExitToApp'
 import { red } from 'material-ui/colors'
 
 import { jsonrpc } from 'homemaster-jslib'

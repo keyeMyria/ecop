@@ -20,12 +20,12 @@ import FormHelperText from 'material-ui/Form/FormHelperText'
 import Button from 'material-ui/Button'
 import IconButton from 'material-ui/IconButton'
 import { InputLabel } from 'material-ui/Input'
-import AddIcon from 'material-ui-icons/Add'
-import DeleteIcon from 'material-ui-icons/Delete'
-import FileDownloadIcon from 'material-ui-icons/FileDownload'
-import PreviewIcon from 'material-ui-icons/RemoveRedEye'
-import ExpandMoreIcon from 'material-ui-icons/ExpandMore'
-import ExpandLessIcon from 'material-ui-icons/ExpandLess'
+import AddIcon from '@material-ui/icons/Add'
+import DeleteIcon from '@material-ui/icons/Delete'
+import FileDownloadIcon from '@material-ui/icons/FileDownload'
+import PreviewIcon from '@material-ui/icons/RemoveRedEye'
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
+import ExpandLessIcon from '@material-ui/icons/ExpandLess'
 
 import {
   jsonrpc,

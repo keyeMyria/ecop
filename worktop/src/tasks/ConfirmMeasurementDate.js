@@ -3,8 +3,8 @@ import validation from 'react-validation-mixin'
 
 import TextField from 'material-ui/TextField'
 import DatePicker from 'material-ui-pickers/DatePicker'
-import ArrowLeftIcon from 'material-ui-icons/KeyboardArrowLeft'
-import ArrowRightIcon from 'material-ui-icons/KeyboardArrowRight'
+import ArrowLeftIcon from '@material-ui/icons/KeyboardArrowLeft'
+import ArrowRightIcon from '@material-ui/icons/KeyboardArrowRight'
 
 import { strategy, Field, ValidatedForm } from 'form'
 import dateFormat from 'utils/date-fns'

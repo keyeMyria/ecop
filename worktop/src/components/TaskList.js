@@ -8,7 +8,7 @@ import { withStyles } from 'material-ui/styles'
 import Card, { CardActions, CardContent } from 'material-ui/Card'
 import Typography from 'material-ui/Typography'
 import Button from 'material-ui/Button'
-import AlarmIcon from 'material-ui-icons/Alarm'
+import AlarmIcon from '@material-ui/icons/Alarm'
 
 import { jsonrpc, message } from 'homemaster-jslib'
 
