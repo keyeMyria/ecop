@@ -7,10 +7,11 @@
     "watch": "webpack --config webpack.config.dev.js --watch"
   },
   "dependencies": {
+    "@material-ui/icons": "^1.0.0-beta.42",
     "classnames": "^2.2.5",
     "core-js": "^2.5.3",
     "date-fns": "^2.0.0-alpha.7",
-    "homemaster-jslib": "^0.5.7",
+    "homemaster-jslib": "^0.5.8",
     "immutability-helper": "^2.6.6",
     "lodash": "^4.17.5",
     "lodash.find": "^4.6.0",
