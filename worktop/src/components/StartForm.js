@@ -63,7 +63,6 @@ class StartForm extends ValidatedForm {
       scheduledMeasurementDate: [
         { required_if: ['isMeasurementRequested', true] }
       ],
-      scheduledInstallationDate: 'required',
       orderFile: 'required'
     },
     {
@@ -76,7 +75,6 @@ class StartForm extends ValidatedForm {
       'required.customerStreet': '详细地址必须输入',
       'required.customerRegionCode': '所在地区必须输入',
       'required_if.scheduledMeasurementDate': '预约测量日期必须输入',
-      'required.scheduledInstallationDate': '预约安装日期必须输入',
       'required.orderFile': '原始订单必须上传'
     }
   )
@@ -278,7 +276,9 @@ class StartForm extends ValidatedForm {
               component={DatePicker}
               name="scheduledInstallationDate"
               label="预约安装日期"
+              required={false}
               autoOk
+              clearable
               leftArrowIcon={<ArrowLeftIcon />}
               rightArrowIcon={<ArrowRightIcon />}
               value={values.scheduledInstallationDate}

@@ -37,6 +37,9 @@ class PorcessJSON(RpcBase):
             fields=['scheduledMeasurementDate', 'scheduledInstallationDate']
         )
 
+        if not params['scheduledInstallationDate']:
+            params.pop('scheduledInstallationDate')
+
         if not params['isMeasurementRequested']:
             params.pop('scheduledMeasurementDate', None)
             params['productionDrawing'] = params['orderFile']
