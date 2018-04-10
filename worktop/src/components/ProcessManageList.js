@@ -50,11 +50,11 @@ class ProcessManageList extends Component {
     this.props.dispatch(searchProcess())
   }
 
-  handleRequestSort = (event, property) => {
-    const orderBy = property
+  handleRequestSort = columnId => {
+    const orderBy = columnId
     let order = 'desc'
 
-    if (this.state.orderBy === property && this.state.order === 'desc') {
+    if (this.state.orderBy === columnId && this.state.order === 'desc') {
       order = 'asc'
     }
 

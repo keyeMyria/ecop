@@ -2,6 +2,9 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import compose from 'recompose/compose'
+import addDays from 'date-fns/addDays'
+import formatDistance from 'date-fns/formatDistance'
+import zh_CN from 'date-fns/esm/locale/zh-CN'
 
 import { withStyles } from 'material-ui/styles'
 import Button from 'material-ui/Button'
@@ -18,23 +21,18 @@ import dateFormat from 'utils/date-fns'
 import EnhancedTableHead from 'widget/TableHead'
 
 const styles = theme => ({
-  root: {
-    display: 'flex',
-    flexDirection: 'column',
-    height: 400
-  },
   orderTable: {
-    flexBasis: '50%',
-    flexGrow: 0
+    marginBottom: 16
   },
   inputForm: {
-    flexBasis: '50%',
     maxWidth: 700,
-    padding: 16,
-    flexGrow: 0
+    padding: 16
   },
   rowNumber: {
     textAlign: 'center'
+  },
+  warning: {
+    width: 20
   },
   orderId: theme.custom.orderId,
   submitButton: theme.custom.submitButton,
@@ -43,13 +41,20 @@ const styles = theme => ({
 })
 
 const columns = [
+  { id: 'warning', disablePadding: true, label: '' },
   { id: 'rowNumber', disablePadding: true, label: '' },
   { id: 'externalOrderId', disablePadding: true, label: '订单号' },
   { id: 'storeId', disablePadding: true, label: '商场号' },
   { id: 'customerName', disablePadding: false, label: '顾客姓名' },
   { id: 'customerRegionName', disablePadding: false, label: '顾客地区' },
-  { id: 'startTime', disablePadding: false, label: '开始生产时间' },
-  { id: 'scheduledInstallationDate', disablePadding: false, label: '安装日期' }
+  { id: 'startDate', disablePadding: false, label: '审核通过日期' },
+  { id: 'due', disablePadding: false, label: '最迟发货日期' },
+  { id: 'overDue', disablePadding: false, label: '逾期时间' },
+  {
+    id: 'scheduledInstallationDate',
+    disablePadding: false,
+    label: '预约安装日期'
+  }
 ]
 
 class ShipmentForm extends Component {
@@ -59,8 +64,8 @@ class ShipmentForm extends Component {
 
     // below are used by the grid
     data: [],
-    order: 'desc',
-    orderBy: 'scheduledInstallationDate'
+    order: 'asc',
+    orderBy: 'startTime'
   }
 
   componentDidMount = () => {
@@ -70,7 +75,10 @@ class ShipmentForm extends Component {
   componentWillReceiveProps = nextProps => {
     // make a copy of the process data
     if (this.props.orders !== nextProps.orders) {
-      this.setState({ data: nextProps.orders.slice() })
+      this.setState(
+        { data: nextProps.orders.slice() },
+        this.handleRequestSort.bind(null, this.state.orderBy)
+      )
     }
   }
 
@@ -113,6 +121,7 @@ class ShipmentForm extends Component {
     }).then(ret => {
       message.success('发货成功')
       this.setState({ orderIds: '' })
+      this.refreshOutstandingOrders()
     })
   }
 
@@ -143,11 +152,11 @@ class ShipmentForm extends Component {
     this.setState({ orderIds: value.replace('\n\n', '\n'), errorMessage: '' })
   }
 
-  handleRequestSort = (event, property) => {
-    const orderBy = property
+  handleRequestSort = columnId => {
+    const orderBy = columnId
     let order = 'desc'
 
-    if (this.state.orderBy === property && this.state.order === 'desc') {
+    if (this.state.orderBy === columnId && this.state.order === 'desc') {
       order = 'asc'
     }
 
@@ -170,7 +179,7 @@ class ShipmentForm extends Component {
     const today = new Date()
 
     return (
-      <div className={classes.root}>
+      <div>
         <Table className={classes.orderTable}>
           <EnhancedTableHead
             columns={columns}
@@ -180,20 +189,24 @@ class ShipmentForm extends Component {
           />
           <TableBody>
             {data.map((p, idx) => {
-              const overDue =
-                today - new Date(p.startTime) > 7 * 24 * 3600 * 1000
+              const due = addDays(new Date(p.startTime), 7)
+              const overDue = today > due
               return (
                 <TableRow hover tabIndex={-1} key={idx}>
-                  <TableCell className={classes.rowNumber} padding="none">
+                  <TableCell className={classes.warning} padding="none">
                     {overDue && <AlarmIcon color="error" />}
+                  </TableCell>
+                  <TableCell className={classes.rowNumber} padding="none">
                     {idx + 1}
                   </TableCell>
                   <TableCell padding="none">{p.externalOrderId}</TableCell>
                   <TableCell padding="none">{p.storeId}</TableCell>
                   <TableCell padding="none">{p.customerName}</TableCell>
                   <TableCell padding="none">{p.customerRegionName}</TableCell>
+                  <TableCell>{dateFormat(p.startTime, 'YYYY/MM/DD')}</TableCell>
+                  <TableCell>{dateFormat(due, 'YYYY/MM/DD')}</TableCell>
                   <TableCell>
-                    {dateFormat(p.startTime, 'YYYY/MM/DD HH:mm:ss')}
+                    {overDue && formatDistance(today, due, { locale: zh_CN })}
                   </TableCell>
                   <TableCell>
                     {dateFormat(p.scheduledInstallationDate, 'YYYY/MM/DD')}

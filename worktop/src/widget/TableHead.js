@@ -9,8 +9,8 @@ import {
 } from 'material-ui/Table'
 
 const EnhancedTableHead = props => {
-  const createSortHandler = property => event => {
-    props.onRequestSort(event, property)
+  const createSortHandler = columnId => event => {
+    props.onRequestSort(columnId)
   }
 
   const { order, orderBy, columns } = props
