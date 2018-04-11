@@ -210,7 +210,7 @@ class PorcessJSON(RpcBase):
             occurs during the signal sending to any order.
         """
         errors = []
-        executionIds = []
+        executions = []
         extOrderIds = set(extOrderIds)  # deduplicate
 
         for externalOrderId in extOrderIds:
@@ -222,25 +222,33 @@ class PorcessJSON(RpcBase):
                     'operator': 'eq',
                     'value': externalOrderId
                 }]
-            })
+            },
+                withProcessVariables=(
+                'externalOrderId', 'scheduledInstallationDate'),
+                hoistProcessVariables=True
+            )
 
             if not ret:
                 errors.append(f'未找到待发货的订单{externalOrderId}')
             elif len(ret) != 1:
                 errors.append(f'订单{externalOrderId}无法发货发货')
             else:
-                executionIds.append(ret[0]['id'])
+                executions.append(ret[0])
 
         if errors:
             raise RPCUserError('\n'.join(errors))
 
-        for (idx, exid) in enumerate(executionIds):
+        for exe in executions:
             try:
                 cc.makeRequest('/signal', 'post', params={
                     'name': 'WorktopShipped',
-                    'executionId': exid})
+                    'executionId': exe['id']})
+                # TODO: this is a temporary fix so that process without
+                # scheduledInstallationDate can continue past into next step
+                #cc.makeRequest('/process-instance/', 'post', params={
+                #})
             except CamundaRESTError:
-                errors.append(f'订单{extOrderIds[idx]}发货错误')
+                errors.append(f"订单{exe['externalOrderId']}发货错误")
 
         if errors:
             raise RPCUserError('\n'.join(errors))
