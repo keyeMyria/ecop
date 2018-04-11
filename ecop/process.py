@@ -1,4 +1,5 @@
 import logging
+from datetime import date, timedelta
 
 from pyramid_rpc.jsonrpc import jsonrpc_method
 from hm.lib.camunda import CamundaRESTError
@@ -240,13 +241,19 @@ class PorcessJSON(RpcBase):
 
         for exe in executions:
             try:
+                # TODO: this is a temporary fix so that process without
+                # scheduledInstallationDate can continue past into next step by
+                # defaulting the date to 3 days from shipment date
+                variables = cc.convertVariables(
+                    {'scheduledInstallationDate': date.today()+timedelta(3)})
+                cc.makeRequest(
+                    f'/process-instance/{exe["processInstanceId"]}'
+                    '/variables/scheduledInstallationDate',
+                    'put', params=variables['scheduledInstallationDate'])
+
                 cc.makeRequest('/signal', 'post', params={
                     'name': 'WorktopShipped',
                     'executionId': exe['id']})
-                # TODO: this is a temporary fix so that process without
-                # scheduledInstallationDate can continue past into next step
-                #cc.makeRequest('/process-instance/', 'post', params={
-                #})
             except CamundaRESTError:
                 errors.append(f"订单{exe['externalOrderId']}发货错误")
 
