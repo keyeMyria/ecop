@@ -23,17 +23,6 @@ class MakeDrawing extends ValidatedForm {
     }
   )
 
-  componentWillReceiveProps = nextProps => {
-    // load previous drawing in case of a rejection
-    if (this.props.variables !== nextProps.variables) {
-      this.setState({
-        values: {
-          productionDrawing: nextProps.variables.productionDrawing
-        }
-      })
-    }
-  }
-
   submitForm = () => {
     this.props.validate(error => {
       if (!error) {
@@ -97,7 +86,7 @@ class MakeDrawing extends ValidatedForm {
           error={!!this.getFieldError('productionDrawing')}
           helperText={this.getFieldError('productionDrawing')}
           onChange={this.handleChange('productionDrawing')}
-          value={values.productionDrawing}
+          value={values.productionDrawing || variables.productionDrawing}
         />
       </Fragment>
     )
