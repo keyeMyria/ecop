@@ -14,7 +14,7 @@ const styles = theme => ({
   }
 })
 
-function TaskHeader(props) {
+function OrderHeader(props) {
   const { classes } = props
   const {
     externalOrderId,
@@ -44,11 +44,11 @@ function TaskHeader(props) {
   )
 }
 
-TaskHeader.propTypes = {
+OrderHeader.propTypes = {
   /**
    * An object containing all the process instance variables
    */
   variables: PropTypes.object.isRequired
 }
 
-export default withStyles(styles)(TaskHeader)
+export default withStyles(styles)(OrderHeader)

@@ -17,9 +17,9 @@ import { jsonrpc, screen, message } from 'homemaster-jslib'
 import PaperPlaneIcon from 'homemaster-jslib/svg-icons/PaperPlane'
 
 import { fetchUserTasks } from 'model/actions'
+import OrderHeader from 'components/OrderHeader'
 import ConfirmMeasurementDate from './ConfirmMeasurementDate'
 import TakeMeasurement from './TakeMeasurement'
-import TaskHeader from './TaskHeader'
 import MakeDrawing from './MakeDrawing'
 import CheckDrawing from './CheckDrawing'
 import ConfirmInstallationDate from './ConfirmInstallationDate'
@@ -135,7 +135,7 @@ class TaskForm extends Component {
         </AppBar>
 
         <div className={classes.content}>
-          <TaskHeader task={task} variables={variables} />
+          <OrderHeader task={task} variables={variables} />
 
           <div className={classes.form}>
             {createElement(forms[task.taskDefinitionKey], {
