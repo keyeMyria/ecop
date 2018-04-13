@@ -47,7 +47,7 @@ const columns = [
   { id: 'storeId', disablePadding: true, label: '商场号' },
   { id: 'customerName', disablePadding: false, label: '顾客姓名' },
   { id: 'customerRegionName', disablePadding: false, label: '顾客地区' },
-  { id: 'startDate', disablePadding: false, label: '审核通过日期' },
+  { id: 'startTime', disablePadding: false, label: '审核通过日期' },
   { id: 'due', disablePadding: false, label: '最迟发货日期' },
   { id: 'overDue', disablePadding: false, label: '逾期时间' },
   {
@@ -64,7 +64,7 @@ class ShipmentForm extends Component {
 
     // below are used by the grid
     data: [],
-    order: 'asc',
+    order: 'desc',
     orderBy: 'due'
   }
 
@@ -73,10 +73,35 @@ class ShipmentForm extends Component {
   }
 
   componentWillReceiveProps = nextProps => {
-    // make a copy of the process data
     if (this.props.orders !== nextProps.orders) {
+      const today = new Date()
+
       this.setState(
-        { data: nextProps.orders.slice() },
+        {
+          data: nextProps.orders.map(activity => {
+            const due = addDays(new Date(activity.startTime), 7)
+            const {
+              externalOrderId,
+              storeId,
+              customerName,
+              customerRegionName,
+              startTime
+            } = activity
+
+            return {
+              externalOrderId,
+              storeId,
+              customerName,
+              customerRegionName,
+              startTime,
+              due: due,
+              overDue:
+                today > due
+                  ? formatDistance(today, due, { locale: zh_CN })
+                  : null
+            }
+          })
+        },
         this.handleRequestSort.bind(null, this.state.orderBy)
       )
     }
@@ -176,7 +201,6 @@ class ShipmentForm extends Component {
   render = () => {
     const { classes } = this.props
     const { data, order, orderBy } = this.state
-    const today = new Date()
 
     return (
       <div>
@@ -189,12 +213,10 @@ class ShipmentForm extends Component {
           />
           <TableBody>
             {data.map((p, idx) => {
-              const due = addDays(new Date(p.startTime), 7)
-              const overDue = today > due
               return (
                 <TableRow hover tabIndex={-1} key={idx}>
                   <TableCell className={classes.warning} padding="none">
-                    {overDue && <AlarmIcon color="error" />}
+                    {p.overDue && <AlarmIcon color="error" />}
                   </TableCell>
                   <TableCell className={classes.rowNumber} padding="none">
                     {idx + 1}
@@ -204,10 +226,8 @@ class ShipmentForm extends Component {
                   <TableCell padding="none">{p.customerName}</TableCell>
                   <TableCell padding="none">{p.customerRegionName}</TableCell>
                   <TableCell>{dateFormat(p.startTime, 'YYYY/MM/DD')}</TableCell>
-                  <TableCell>{dateFormat(due, 'YYYY/MM/DD')}</TableCell>
-                  <TableCell>
-                    {overDue && formatDistance(today, due, { locale: zh_CN })}
-                  </TableCell>
+                  <TableCell>{dateFormat(p.due, 'YYYY/MM/DD')}</TableCell>
+                  <TableCell>{p.overDue}</TableCell>
                   <TableCell>
                     {dateFormat(p.scheduledInstallationDate, 'YYYY/MM/DD')}
                   </TableCell>
