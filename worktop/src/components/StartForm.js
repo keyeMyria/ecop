@@ -46,6 +46,7 @@ class StartForm extends ValidatedForm {
     customerMobile: '',
     customerRegionCode: null,
     customerStreet: '',
+    factoryNumber: '',
     isMeasurementRequested: true,
     scheduledMeasurementDate: null,
     scheduledInstallationDate: null,
@@ -55,6 +56,7 @@ class StartForm extends ValidatedForm {
   validatorTypes = strategy.createInactiveSchema(
     {
       externalOrderId: 'size:9',
+      factoryNumber: 'required',
       storeId: 'required|size:3|in:856,885,247',
       customerName: 'required',
       customerMobile: 'required|mobile',
@@ -68,6 +70,7 @@ class StartForm extends ValidatedForm {
     {
       'size.externalOrderId': '宜家订单号长度为9位',
       'required.storeId': '宜家商场号必须输入',
+      'required.factoryNumber': '工厂编号必须输入',
       'in.storeId': '商场号错误',
       'size.storeId': '宜家商场号长度为3位',
       'required.customerName': '顾客名称必须输入',
@@ -125,8 +128,8 @@ class StartForm extends ValidatedForm {
 
     return (
       <Paper className={classes.root}>
-        <Grid container justify="space-between">
-          <Grid item xs={5}>
+        <Grid container justify="space-between" spacing={24}>
+          <Grid item xs={4}>
             <Field
               component={TextField}
               name="externalOrderId"
@@ -147,6 +150,18 @@ class StartForm extends ValidatedForm {
               }}
               error={!!this.getFieldError('externalOrderId')}
               helperText={this.getFieldError('externalOrderId')}
+            />
+          </Grid>
+
+          <Grid item xs={4}>
+            <Field
+              component={TextField}
+              name="factoryNumber"
+              label="工厂编号"
+              value={values.factoryNumber}
+              onChange={this.handleChange('factoryNumber')}
+              error={!!this.getFieldError('factoryNumber')}
+              helperText={this.getFieldError('factoryNumber')}
             />
           </Grid>
 

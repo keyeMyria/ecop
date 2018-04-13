@@ -18,6 +18,7 @@ function TaskHeader(props) {
   const { classes } = props
   const {
     externalOrderId,
+    factoryNumber,
     customerName,
     customerMobile,
     customerRegionCode,
@@ -26,7 +27,12 @@ function TaskHeader(props) {
 
   return (
     <div className={classes.header}>
-      <div>订单号: {externalOrderId}</div>
+      <div>
+        订单号:&nbsp;
+        {factoryNumber
+          ? `${externalOrderId} / ${factoryNumber}`
+          : externalOrderId}
+      </div>
       <div>顾客姓名: {customerName}</div>
       <div>顾客手机: {customerMobile}</div>
       <div>

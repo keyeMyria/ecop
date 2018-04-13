@@ -33,6 +33,10 @@ const variables = {
     label: '详细地址',
     type: 'String'
   },
+  factoryNumber: {
+    label: '工厂编号',
+    type: 'String'
+  },
   installationFile: {
     label: '安装文件',
     type: 'Json'

@@ -44,7 +44,7 @@ const columns = [
   { id: 'warning', disablePadding: true, label: '' },
   { id: 'rowNumber', disablePadding: true, label: '' },
   { id: 'externalOrderId', disablePadding: true, label: '订单号' },
-  { id: 'storeId', disablePadding: true, label: '商场号' },
+  { id: 'factoryNumber', disablePadding: true, label: '工厂编号' },
   { id: 'customerName', disablePadding: false, label: '顾客姓名' },
   { id: 'customerRegionName', disablePadding: false, label: '顾客地区' },
   { id: 'startTime', disablePadding: false, label: '审核通过日期' },
@@ -82,7 +82,7 @@ class ShipmentForm extends Component {
             const due = addDays(new Date(activity.startTime), 7)
             const {
               externalOrderId,
-              storeId,
+              factoryNumber,
               customerName,
               customerRegionName,
               startTime
@@ -90,7 +90,7 @@ class ShipmentForm extends Component {
 
             return {
               externalOrderId,
-              storeId,
+              factoryNumber,
               customerName,
               customerRegionName,
               startTime,
@@ -222,7 +222,7 @@ class ShipmentForm extends Component {
                     {idx + 1}
                   </TableCell>
                   <TableCell padding="none">{p.externalOrderId}</TableCell>
-                  <TableCell padding="none">{p.storeId}</TableCell>
+                  <TableCell padding="none">{p.factoryNumber}</TableCell>
                   <TableCell padding="none">{p.customerName}</TableCell>
                   <TableCell padding="none">{p.customerRegionName}</TableCell>
                   <TableCell>{dateFormat(p.startTime, 'YYYY/MM/DD')}</TableCell>
