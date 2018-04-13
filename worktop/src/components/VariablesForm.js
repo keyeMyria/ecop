@@ -66,8 +66,17 @@ class VariablesForm extends Component {
     const { classes, processInstanceId, ...other } = this.props
     const { variables } = this.state
 
-    return (
-      variables && (
+    if (!variables) {
+      return null
+    } else {
+      const {
+        measurementFile,
+        orderFile,
+        productionDrawing,
+        installationFile
+      } = variables
+
+      return (
         <Dialog classes={{ paperWidthSm: classes.paperWidthSm }} {...other}>
           <AppBar className={classes.appbar}>
             <Toolbar className={classes.toolbar}>
@@ -94,30 +103,58 @@ class VariablesForm extends Component {
                 margin="normal"
                 allowUpload={false}
                 allowDelete={false}
-                initiallyExpanded={false}
                 InputLabelProps={{
                   shrink: true
                 }}
-                value={variables.orderFile}
+                value={orderFile}
               />
 
-              <FileUploader
-                label="安装文件"
-                fullWidth
-                margin="normal"
-                allowUpload={false}
-                allowDelete={false}
-                initiallyExpanded={false}
-                InputLabelProps={{
-                  shrink: true
-                }}
-                value={variables.installationFile}
-              />
+              {measurementFile && (
+                <FileUploader
+                  label="测量文件"
+                  fullWidth
+                  margin="normal"
+                  allowUpload={false}
+                  allowDelete={false}
+                  InputLabelProps={{
+                    shrink: true
+                  }}
+                  value={variables.measurementFile}
+                />
+              )}
+
+              {productionDrawing && (
+                <FileUploader
+                  label="生产图纸"
+                  fullWidth
+                  margin="normal"
+                  allowUpload={false}
+                  allowDelete={false}
+                  InputLabelProps={{
+                    shrink: true
+                  }}
+                  value={variables.productionDrawing}
+                />
+              )}
+
+              {installationFile && (
+                <FileUploader
+                  label="安装文件"
+                  fullWidth
+                  margin="normal"
+                  allowUpload={false}
+                  allowDelete={false}
+                  InputLabelProps={{
+                    shrink: true
+                  }}
+                  value={installationFile}
+                />
+              )}
             </div>
           </div>
         </Dialog>
       )
-    )
+    }
   }
 }
 

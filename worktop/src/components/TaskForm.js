@@ -135,7 +135,7 @@ class TaskForm extends Component {
         </AppBar>
 
         <div className={classes.content}>
-          <OrderHeader task={task} variables={variables} />
+          <OrderHeader variables={variables} />
 
           <div className={classes.form}>
             {createElement(forms[task.taskDefinitionKey], {
