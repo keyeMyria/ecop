@@ -13,8 +13,8 @@ import AlarmIcon from '@material-ui/icons/Alarm'
 import { jsonrpc, message } from 'homemaster-jslib'
 
 import { fetchUserTasks } from 'model/actions'
-import TaskForm from 'tasks/TaskForm'
 import dateFormat from 'utils/date-fns'
+import TaskForm from './TaskForm'
 
 const styles = {
   root: {

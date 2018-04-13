@@ -18,12 +18,12 @@ import PaperPlaneIcon from 'homemaster-jslib/svg-icons/PaperPlane'
 
 import { fetchUserTasks } from 'model/actions'
 import OrderHeader from 'components/OrderHeader'
-import ConfirmMeasurementDate from './ConfirmMeasurementDate'
-import TakeMeasurement from './TakeMeasurement'
-import MakeDrawing from './MakeDrawing'
-import CheckDrawing from './CheckDrawing'
-import ConfirmInstallationDate from './ConfirmInstallationDate'
-import InstallWorktop from './InstallWorktop'
+import ConfirmMeasurementDate from 'tasks/ConfirmMeasurementDate'
+import TakeMeasurement from 'tasks/TakeMeasurement'
+import MakeDrawing from 'tasks/MakeDrawing'
+import CheckDrawing from 'tasks/CheckDrawing'
+import ConfirmInstallationDate from 'tasks/ConfirmInstallationDate'
+import InstallWorktop from 'tasks/InstallWorktop'
 
 const forms = {
   ConfirmMeasurementDate,
