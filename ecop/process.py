@@ -174,6 +174,13 @@ class PorcessJSON(RpcBase):
                 del t['customerRegionCode']
         return ret
 
+    @jsonrpc_method(endpoint='rpc', method='bpmn.variable.get')
+    def getProcessVariables(self, processInstanceId):
+        ret = cc.makeRequest(f'/history/variable-instance', 'post', {
+            'processInstanceIdIn': [processInstanceId]
+        }, urlParams={'deserializeValues': 'false'})
+        return cc.parseVariables(ret)
+
     @jsonrpc_method(endpoint='rpc', method='bpmn.shipment.getOutstandingOrders')
     def getOutstandingOrders(self, processKey):
         params = {
