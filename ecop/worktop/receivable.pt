@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE document SYSTEM "rml.dtd">
+<?python
+  from hm.lib.numformat import quantityfmt
+  from webmodel.param import getParameterText
+  from ecop.region import getRegionName
+?>
+<document
+  xmlns:doc="http://namespaces.zope.org/rml/doc"
+  xmlns:py="http://genshi.edgewall.org/" title="对账单${view.docKey}">
+  <docinit displayDocTitle="true">
+    <registerTTFont faceName="msyh" fileName="[ecop]/resources/msyh.ttf" />
+    <registerTTFont faceName="msyhbd" fileName="[ecop]/resources/msyhbd.ttf" />
+  </docinit>
+
+  <template pagesize="a4" allowSplitting="0">
+    <pageTemplate id="main">
+      <pageGraphics>
+        setFont name="Helvetica-BoldOblique" size="10"/>
+        <drawRightString x="19.8cm" y="0.6cm"><pageNumber /></drawRightString>
+      </pageGraphics>
+      <frame id="content" x1="1cm" y1="1.5cm" width="19cm" height="26.5cm" showBoundary="0"/>
+    </pageTemplate>
+  </template>
+
+  <stylesheet>
+    <paraStyle name="normal" fontSize="12" leading="15" fontName="msyh" spaceBefore="3" spaceAfter="3" wordWrap="CJK" />
+    <blockTableStyle id="order-items">
+      <blockFont name="msyh" size="11" leading="13" start="0,0" stop="-1,-1" />
+      <blockValign value="middle" />
+      <blockAlignment value="left" start="0,0" stop="1,-1" />
+      <blockAlignment value="right" start="-2,0" stop="-1,-1" />
+      <lineStyle kind="lineabove" colorName="black" thickness="1.5" start="-1,-1" stop="-1,-1"/>
+    </blockTableStyle>
+  </stylesheet>
+
+  <story>
+    <para fontSize="20" fontName="msyhbd">
+      对账单${view.docKey}
+    </para>
+    <para fontSize="12" fontName="msyh" leading="20" alignment="right">
+      ${view.startDate.strftime('%Y/%m/%d')} - ${view.endDate.strftime('%Y/%m/%d')}
+    </para>
+    <para style="normal" spaceBefore="20" spaceAfter="20">
+      本期订单数: <font size="15">${len(view.orders)}</font>，总金额: <font size="15">${view.total}</font>元
+    </para>
+    <py:for each="o in view.orders">
+      <para style="normal" spaceBefore="10">
+        ${o.externalOrderId} ${o.recipientName} ${o.recipientMobile} ${getRegionName(o.regionCode)}${o.streetAddress}
+      </para>
+      <blockTable colWidths="60%, 12%, 13%, 15%" style="order-items" ident="1cm">
+        <tr py:for="oi in o.items">
+          <td>${view.join(oi.itemName, oi.specification, oi.model)}</td>
+          <td>${quantityfmt(oi.quantity)}${getParameterText('unit', oi.unitId)}</td>
+          <td>${'{:,.2f}'.format(oi.sellingPrice)}</td>
+          <td>${'{:,.2f}'.format(oi.amount)}</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>${'{:,.2f}'.format(o.amount)}</td>
+        </tr>
+      </blockTable>
+    </py:for>
+  </story>
+</document>
