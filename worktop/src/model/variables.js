@@ -5,12 +5,12 @@
  */
 
 const variables = {
-  externalOrderId: {
-    label: '订单号',
-    type: 'String'
+  actualMeasurementDate: {
+    label: '实际测量日期',
+    type: 'Date'
   },
-  confirmedInstallationDate: {
-    label: '确认安装日期',
+  actualInstallationDate: {
+    label: '实际安装日期',
     type: 'Date'
   },
   confirmedMeasurementDate: {
@@ -31,6 +31,10 @@ const variables = {
   },
   customerStreet: {
     label: '详细地址',
+    type: 'String'
+  },
+  externalOrderId: {
+    label: '订单号',
     type: 'String'
   },
   factoryNumber: {
@@ -65,12 +69,20 @@ const variables = {
     label: '图纸审核未通过原因',
     type: 'String'
   },
+  receivingDate: {
+    label: '发货日期',
+    type: 'Date'
+  },
   scheduledInstallationDate: {
     label: '预约安装日期',
     type: 'Date'
   },
   scheduledMeasurementDate: {
     label: '预约测量日期',
+    type: 'Date'
+  },
+  shippingDate: {
+    label: '发货日期',
     type: 'Date'
   },
   storeId: {

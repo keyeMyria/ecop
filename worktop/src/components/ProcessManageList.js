@@ -33,13 +33,10 @@ const columns = [
   { id: 'customerName', disablePadding: false, label: '顾客姓名' },
   { id: 'customerRegionName', disablePadding: false, label: '顾客地区' },
   { id: 'startTime', disablePadding: false, label: '发起时间' },
-  {
-    id: 'scheduledMeasurementDate',
-    disablePadding: false,
-    label: '预约测量日'
-  },
-  { id: 'confirmedMeasurementDate', disablePadding: false, label: '测量日期' },
-  { id: 'confirmedInstallationDate', disablePadding: false, label: '安装日期' },
+  { id: 'actualMeasurementDate', disablePadding: false, label: '测量日期' },
+  { id: 'shippingDate', disablePadding: false, label: '发货日期' },
+  { id: 'receivingDate', disablePadding: false, label: '收货日期' },
+  { id: 'actualInstallationDate', disablePadding: false, label: '安装日期' },
   { id: 'status', disablePadding: false, label: '状态' },
   { id: 'action', disablePadding: false }
 ]
@@ -124,17 +121,20 @@ class ProcessManageList extends Component {
                 <TableCell padding="none">{p.storeId}</TableCell>
                 <TableCell padding="none">{p.customerName}</TableCell>
                 <TableCell padding="none">{p.customerRegionName}</TableCell>
-                <TableCell>
+                <TableCell padding="none">
                   {dateFormat(p.startTime, 'YYYY/MM/DD HH:mm:ss')}
                 </TableCell>
                 <TableCell>
-                  {dateFormat(p.scheduledMeasurementDate, 'YYYY/MM/DD')}
+                  {dateFormat(p.actualMeasurementDate, 'YYYY/MM/DD')}
                 </TableCell>
                 <TableCell>
-                  {dateFormat(p.confirmedMeasurementDate, 'YYYY/MM/DD')}
+                  {dateFormat(p.shippingDate, 'YYYY/MM/DD')}
                 </TableCell>
                 <TableCell>
-                  {dateFormat(p.confirmedInstallationDate, 'YYYY/MM/DD')}
+                  {dateFormat(p.receivingDate, 'YYYY/MM/DD')}
+                </TableCell>
+                <TableCell>
+                  {dateFormat(p.actualInstallationDate, 'YYYY/MM/DD')}
                 </TableCell>
                 <TableCell>{statusName[p.state]}</TableCell>
                 <TableCell>
