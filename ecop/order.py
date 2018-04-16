@@ -64,7 +64,8 @@ class OrderJSON(RpcBase):
         header = marshall(order, fields, ignoreNone=False)
 
         oi_fields = ['orderItemId', 'itemId', 'itemName', 'specification',
-            'model', 'quantity', 'unitId', 'sellingPrice', 'unitCost', 'pos']
+                     'model', 'quantity', 'unitId', 'sellingPrice', 'unitCost',
+                     'pos']
 
         order.payments.sort(key=lambda op: op.payment.payTime)
         # a flush won't reload the order, so order item position change will
@@ -79,8 +80,8 @@ class OrderJSON(RpcBase):
                 'amount': op.amount,
                 'paymentMethod': op.payment.paymentMethod,
                 'payTime': op.payment.payTime,
-                'creatorName': op.payment.creator.partyName \
-                    if op.payment.creator else None
+                'creatorName': op.payment.creator.partyName
+                if op.payment.creator else None
             } for op in order.payments]
         }
 
@@ -162,11 +163,6 @@ class OrderJSON(RpcBase):
 
         self.updateOrderChange(order, modifications)
 
-        # validity check
-        if order.orderSource != ORDER_SOURCE.HOMEMASTER \
-            and not order.externalOrderId:
-            raise RPCUserError('外部订单必须有外部订单号!')
-
         # change of order status needs special handling, and the checking shall
         # be done after all other order deb
         if newStatus:
@@ -183,17 +179,18 @@ class OrderJSON(RpcBase):
 
         # completionDate is set the first time an order is set to be completed
         if new == ORDER_STATUS.COMPLETED:
-            if order.amount != order.paidAmount:
-                raise RPCUserError('订单金额和收款金额不一致，不能完成订单！')
+            if order.orderSource == ORDER_SOURCE.HOMEMASTER:
+                if order.amount != order.paidAmount:
+                    raise RPCUserError('订单金额和收款金额不一致，不能完成订单！')
 
-            query = self.sess.query(PurchaseOrder).filter(and_(
-                PurchaseOrder.relatedOrderId == order.orderId,
-                not_(PurchaseOrder.orderStatus.in_(
-                    (ORDER_STATUS.COMPLETED, ORDER_STATUS.CLOSED)))
-            ))
-            orders = query.all()
-            if orders:
-                raise RPCUserError('该订单对应的采购订单未完成！')
+                query = self.sess.query(PurchaseOrder).filter(and_(
+                    PurchaseOrder.relatedOrderId == order.orderId,
+                    not_(PurchaseOrder.orderStatus.in_(
+                        (ORDER_STATUS.COMPLETED, ORDER_STATUS.CLOSED)))
+                ))
+                orders = query.all()
+                if orders:
+                    raise RPCUserError('该订单对应的采购订单未完成！')
 
             if not order.completionDate:
                 order.completionDate = date.today()
@@ -252,14 +249,14 @@ class OrderJSON(RpcBase):
                 query = query.filter(dateField < end_date + timedelta(1))
 
             if 'startDate' in cond and 'endDate' in cond and \
-                start_date > end_date:
+                    start_date > end_date:
                 raise RPCUserError('结束日期必须大于起始日期！')
 
             # By default only show orders of interest, i.e. not closed or
             # completed, except when:
             #  * order stauts is given
             #  * customerId is given, then show all orders of the customer
-            if cond.get('dateType') == 2: # completed
+            if cond.get('dateType') == 2:  # completed
                 query = query.filter_by(orderStatus=ORDER_STATUS.COMPLETED)
             elif cond.get('orderStatus'):
                 query = query.filter_by(orderStatus=cond['orderStatus'])
@@ -392,7 +389,7 @@ class OrderJSON(RpcBase):
 
         header = marshall(order, fields)
         oi_fields = ['orderItemId', 'itemId', 'itemName', 'specification',
-            'model', 'quantity', 'unitId', 'sellingPrice', 'pos']
+                     'model', 'quantity', 'unitId', 'sellingPrice', 'pos']
 
         order.payments.sort(key=lambda op: op.payment.payTime)
         # a flush won't reload the order, so order item position change will
@@ -407,8 +404,8 @@ class OrderJSON(RpcBase):
                 'amount': op.amount,
                 'paymentMethod': op.payment.paymentMethod,
                 'payTime': op.payment.payTime,
-                'creatorName': op.payment.creator.partyName \
-                    if op.payment.creator else None
+                'creatorName': op.payment.creator.partyName
+                if op.payment.creator else None
             } for op in order.payments]
         }
 
