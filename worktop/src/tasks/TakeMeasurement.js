@@ -84,7 +84,7 @@ class TakeMeasurement extends ValidatedForm {
           error={!!this.getFieldError('measurementFile')}
           helperText={this.getFieldError('measurementFile')}
           onChange={this.handleChange('measurementFile')}
-          value={values.measurementFile}
+          value={values.measurementFile || variables.measurementFile}
         />
       </Fragment>
     )
