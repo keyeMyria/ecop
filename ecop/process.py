@@ -64,6 +64,7 @@ class PorcessJSON(RpcBase):
         )
         self.sess.add(order)
         self.sess.flush()
+        params['orderId'] = order.orderId
 
         if externalOrderId:
             order.externalOrderId = externalOrderId

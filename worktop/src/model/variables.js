@@ -57,6 +57,10 @@ const variables = {
     label: '原始订单',
     type: 'Json'
   },
+  orderId: {
+    label: 'ERP订单号',
+    type: 'Integer'
+  },
   productionDrawing: {
     label: '生产图纸',
     type: 'Json'
