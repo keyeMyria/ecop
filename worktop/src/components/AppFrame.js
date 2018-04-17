@@ -183,7 +183,7 @@ class AppFrame extends React.Component {
                 Worktop
               </Typography>
               <Typography variant="subheading" color="inherit" noWrap>
-                v1.0.{App.version}
+                v1.1.2_{App.version}
               </Typography>
             </div>
             <IconButton onClick={this.handleDrawerClose}>
