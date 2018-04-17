@@ -6,6 +6,7 @@ import compose from 'recompose/compose'
 import { withStyles } from 'material-ui/styles'
 import Table, { TableBody, TableCell, TableRow } from 'material-ui/Table'
 import Button from 'material-ui/Button'
+import green from 'material-ui/colors/green'
 import PreviewIcon from '@material-ui/icons/RemoveRedEye'
 
 import { searchProcess } from 'model/actions'
@@ -13,11 +14,20 @@ import dateFormat from 'utils/date-fns'
 import EnhancedTableHead from 'widget/TableHead'
 import VariablesForm from './VariablesForm'
 
-const styles = {
+const styles = theme => ({
   rowNumber: {
     textAlign: 'center'
+  },
+  actual: {
+    color: green[500]
+  },
+  confirmed: {
+    color: theme.palette.primary.main
+  },
+  na: {
+    color: theme.palette.secondary.main
   }
-}
+})
 
 const statusName = {
   ACTIVE: '进行中',
@@ -112,45 +122,71 @@ class ProcessManageList extends Component {
             onRequestSort={this.handleRequestSort}
           />
           <TableBody>
-            {data.map((p, idx) => (
-              <TableRow hover tabIndex={-1} key={idx}>
-                <TableCell className={classes.rowNumber} padding="none">
-                  {idx + 1}
-                </TableCell>
-                <TableCell padding="none">{p.externalOrderId}</TableCell>
-                <TableCell padding="none">{p.storeId}</TableCell>
-                <TableCell padding="none">{p.customerName}</TableCell>
-                <TableCell padding="none">{p.customerRegionName}</TableCell>
-                <TableCell padding="none">
-                  {dateFormat(p.startTime, 'YYYY/MM/DD HH:mm:ss')}
-                </TableCell>
-                <TableCell>
-                  {dateFormat(p.actualMeasurementDate, 'YYYY/MM/DD')}
-                </TableCell>
-                <TableCell>
-                  {dateFormat(p.shippingDate, 'YYYY/MM/DD')}
-                </TableCell>
-                <TableCell>
-                  {dateFormat(p.receivingDate, 'YYYY/MM/DD')}
-                </TableCell>
-                <TableCell>
-                  {dateFormat(p.actualInstallationDate, 'YYYY/MM/DD')}
-                </TableCell>
-                <TableCell>{statusName[p.state]}</TableCell>
-                <TableCell>
-                  <Button
-                    variant="fab"
-                    mini
-                    color="primary"
-                    onClick={() => {
-                      this.openVariableForm(p.id)
-                    }}
+            {data.map((p, idx) => {
+              const measureDate =
+                p.actualMeasurementDate ||
+                p.confirmedMeasurementDate ||
+                p.scheduledMeasurementDate
+
+              return (
+                <TableRow hover tabIndex={-1} key={idx}>
+                  <TableCell className={classes.rowNumber} padding="none">
+                    {idx + 1}
+                  </TableCell>
+                  <TableCell padding="none">{p.externalOrderId}</TableCell>
+                  <TableCell padding="none">{p.storeId}</TableCell>
+                  <TableCell padding="none">{p.customerName}</TableCell>
+                  <TableCell padding="none">{p.customerRegionName}</TableCell>
+                  <TableCell padding="none">
+                    {dateFormat(p.startTime, 'YYYY/MM/DD HH:mm:ss')}
+                  </TableCell>
+                  <TableCell
+                    className={
+                      (p.actualMeasurementDate && classes.actual) ||
+                      (p.confirmedMeasurementDate && classes.confirmed) ||
+                      (!measureDate && classes.na) ||
+                      null
+                    }
                   >
-                    <PreviewIcon />
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
+                    {measureDate
+                      ? dateFormat(measureDate, 'YYYY/MM/DD')
+                      : '无需测量'}
+                  </TableCell>
+                  <TableCell>
+                    {dateFormat(p.shippingDate, 'YYYY/MM/DD')}
+                  </TableCell>
+                  <TableCell>
+                    {dateFormat(p.receivingDate, 'YYYY/MM/DD')}
+                  </TableCell>
+                  <TableCell
+                    className={
+                      (p.actualInstallationDate && classes.actual) ||
+                      (p.confirmedInstallationDate && classes.confirmed)
+                    }
+                  >
+                    {dateFormat(
+                      p.actualInstallationDate ||
+                        p.confirmedInstallationDate ||
+                        p.scheduledInstallationDate,
+                      'YYYY/MM/DD'
+                    )}
+                  </TableCell>
+                  <TableCell>{statusName[p.state]}</TableCell>
+                  <TableCell>
+                    <Button
+                      variant="fab"
+                      mini
+                      color="primary"
+                      onClick={() => {
+                        this.openVariableForm(p.id)
+                      }}
+                    >
+                      <PreviewIcon />
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              )
+            })}
           </TableBody>
         </Table>
         <VariablesForm

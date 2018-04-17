@@ -162,8 +162,14 @@ class PorcessJSON(RpcBase):
             params, urlParams={'maxResults': 50},
             withProcessVariables=(
                 'externalOrderId', 'customerName', 'storeId',
-                'customerRegionCode', 'actualMeasurementDate',
-                'actualInstallationDate', 'shippingDate', 'receivingDate'),
+                'customerRegionCode', 'shippingDate', 'receivingDate',
+                'actualMeasurementDate',
+                'confirmedMeasurementDate',
+                'scheduledMeasurementDate',
+                'actualInstallationDate',
+                'confirmedInstallationDate',
+                'scheduledInstallationDate'
+            ),
             processInstanceIdField='id', hoistProcessVariables=True
         )
 
