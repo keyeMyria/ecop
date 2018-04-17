@@ -30,7 +30,7 @@ const EnhancedTableHead = props => {
           <TableCell padding="none" style={{ width: 40 }}>
             <Checkbox
               indeterminate={numSelected > 0 && numSelected < rowCount}
-              checked={numSelected === rowCount}
+              checked={numSelected > 0 && numSelected === rowCount}
               onChange={onSelectAllClick}
             />
           </TableCell>

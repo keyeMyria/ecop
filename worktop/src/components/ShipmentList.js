@@ -210,10 +210,6 @@ class ShipmentList extends Component {
 
   isSelected = id => this.state.selected.indexOf(id) !== -1
 
-  onPrintLabels = () => {
-    console.log(this.state.selected)
-  }
-
   render = () => {
     const { classes, dispatch, ...other } = this.props
     const { data, selected, order, orderBy } = this.state
