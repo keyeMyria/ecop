@@ -2,12 +2,16 @@ import React, { Component, Fragment } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import compose from 'recompose/compose'
+import classNames from 'classnames'
 
-import { withStyles } from 'material-ui/styles'
 import Table, { TableBody, TableCell, TableRow } from 'material-ui/Table'
 import Button from 'material-ui/Button'
+import Typography from 'material-ui/Typography'
+import { withStyles } from 'material-ui/styles'
 import green from 'material-ui/colors/green'
 import PreviewIcon from '@material-ui/icons/RemoveRedEye'
+
+import CheckboxBlankCircle from 'homemaster-jslib/svg-icons/CheckboxBlankCircle'
 
 import { searchProcess } from 'model/actions'
 import dateFormat from 'utils/date-fns'
@@ -26,6 +30,10 @@ const styles = theme => ({
   },
   na: {
     color: theme.palette.secondary.main
+  },
+  legend: {
+    verticalAlign: 'middle',
+    marginLeft: '1em'
   }
 })
 
@@ -189,6 +197,17 @@ class ProcessManageList extends Component {
             })}
           </TableBody>
         </Table>
+
+        <Typography variant="subheading" style={{ marginTop: '1em' }}>
+          <CheckboxBlankCircle className={classes.legend} /> - 预约日期
+          <CheckboxBlankCircle
+            className={classNames(classes.legend, classes.confirmed)}
+          /> - 确认日期
+          <CheckboxBlankCircle
+            className={classNames(classes.legend, classes.actual)}
+          /> - 实际完成日期
+        </Typography>
+
         <VariablesForm
           {...form}
           onClose={() => {
