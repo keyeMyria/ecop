@@ -200,7 +200,7 @@ class PorcessJSON(RpcBase):
             '/history/activity-instance', 'post',
             params, urlParams={'maxResults': 50},
             withProcessVariables=(
-                'externalOrderId', 'factoryNumber', 'customerName',
+                'orderId', 'externalOrderId', 'factoryNumber', 'customerName',
                 'customerRegionCode', 'scheduledInstallationDate'),
             hoistProcessVariables=True
         )

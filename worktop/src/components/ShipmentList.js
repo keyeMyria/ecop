@@ -162,7 +162,7 @@ class ShipmentList extends Component {
 
   handleSelectAllClick = (evt, checked) => {
     this.setState({
-      selected: checked ? this.state.data.map(e => e.externalOrderId) : []
+      selected: checked ? this.state.data.map(e => e.orderId) : []
     })
   }
 
@@ -239,14 +239,14 @@ class ShipmentList extends Component {
           />
           <TableBody>
             {data.map((p, idx) => {
-              const isSelected = this.isSelected(p.externalOrderId)
+              const isSelected = this.isSelected(p.orderId)
               return (
                 <TableRow
                   hover
                   tabIndex={-1}
-                  key={p.externalOrderId}
+                  key={p.orderId}
                   selected={isSelected}
-                  onClick={e => this.handleClick(e, p.externalOrderId)}
+                  onClick={e => this.handleClick(e, p.orderId)}
                 >
                   <TableCell className={classes.checkbox} padding="none">
                     <Checkbox checked={isSelected} />
