@@ -11,7 +11,7 @@ import PaperPlaneIcon from 'homemaster-jslib/svg-icons/PaperPlane'
 import ShipmentList from './ShipmentList'
 
 const styles = theme => ({
-  orderTable: {
+  orderList: {
     marginBottom: 16
   },
   inputForm: {
@@ -101,7 +101,7 @@ class ShipmentForm extends Component {
 
     return (
       <div>
-        <ShipmentList />
+        <ShipmentList className={classes.orderList} />
 
         <Paper className={classes.inputForm}>
           <TextField

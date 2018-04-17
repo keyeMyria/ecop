@@ -65,7 +65,8 @@ class ShipmentList extends Component {
               factoryNumber,
               customerName,
               customerRegionName,
-              startTime
+              startTime,
+              scheduledInstallationDate
             } = activity
 
             return {
@@ -78,7 +79,8 @@ class ShipmentList extends Component {
               overDue:
                 today > due
                   ? formatDistance(today, due, { locale: zh_CN })
-                  : null
+                  : null,
+              scheduledInstallationDate
             }
           })
         },
@@ -113,11 +115,11 @@ class ShipmentList extends Component {
   }
 
   render = () => {
-    const { classes } = this.props
+    const { classes, dispatch, ...other } = this.props
     const { data, order, orderBy } = this.state
 
     return (
-      <Table className={classes.orderTable}>
+      <Table {...other}>
         <EnhancedTableHead
           columns={columns}
           order={order}
