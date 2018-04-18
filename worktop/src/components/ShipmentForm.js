@@ -12,9 +12,7 @@ import PaperPlaneIcon from 'homemaster-jslib/svg-icons/PaperPlane'
 
 import ShipmentList from './ShipmentList'
 import { fetchOutstandingOrders } from 'model/actions'
-
-const re_inputLine = /^(\d{0,9}|(S|$)(A|$)(M|$)(S|$)\d{0,8})$/i
-const re_orderId = /^(\d{8,9}|SAMS\d{8})$/
+import { isValidOrderId } from 'utils/validators'
 
 const styles = theme => ({
   orderList: {
@@ -66,7 +64,7 @@ class ShipmentForm extends Component {
       lastline = line
 
       // any non-empty line must be valid
-      if (line.length > 0 && !re_orderId.test(line)) {
+      if (line.length > 0 && !isValidOrderId(line)) {
         this.setState({ errorMessage: '订单号格式错误' })
         return
       }
@@ -89,7 +87,7 @@ class ShipmentForm extends Component {
 
     // if any line is in the wrong format do not update
     for (let i = 0; i < lines.length; i++) {
-      if (!re_inputLine.test(lines[i])) {
+      if (!isValidOrderId(lines[i], true)) {
         return
       }
     }

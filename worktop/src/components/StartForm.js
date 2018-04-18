@@ -3,7 +3,6 @@ import React from 'react'
 import validation from 'react-validation-mixin'
 import compose from 'recompose/compose'
 import update from 'immutability-helper'
-import Validator from 'validatorjs'
 
 import { withStyles } from 'material-ui/styles'
 import Button from 'material-ui/Button'
@@ -24,14 +23,7 @@ import CloseBox from 'homemaster-jslib/svg-icons/CloseBox'
 import { strategy, ValidatedForm, Field } from 'form'
 import FileUploader from 'widget/FileUploader'
 import dateFormat from 'utils/date-fns'
-
-Validator.register(
-  'IKEAOrderId',
-  value => /^(\d{9}|SAMS\d{8})$/.test(value),
-  '订单号为9位数字或SAMS加8位数字'
-)
-
-const re_externalOrderId = /^(\d{0,9}|(S|$)(A|$)(M|$)(S|$)\d{0,8})$/i
+import { isValidOrderId } from 'utils/validators'
 
 const styles = theme => ({
   root: {
@@ -137,7 +129,7 @@ class StartForm extends ValidatedForm {
     return (
       <Paper className={classes.root}>
         <Grid container justify="space-between" spacing={24}>
-          <Grid item xs={4}>
+          <Grid item xs={5}>
             <Field
               component={TextField}
               name="externalOrderId"
@@ -149,7 +141,7 @@ class StartForm extends ValidatedForm {
               onBlur={this.activateValidation('externalOrderId')}
               onChange={e => {
                 var { value } = e.target
-                if (re_externalOrderId.test(value) || !value) {
+                if (!value || isValidOrderId(value, true)) {
                   this.setState(
                     {
                       values: update(values, {
@@ -167,7 +159,7 @@ class StartForm extends ValidatedForm {
             />
           </Grid>
 
-          <Grid item xs={4}>
+          <Grid item xs={5}>
             <Field
               component={TextField}
               name="factoryNumber"
@@ -179,7 +171,7 @@ class StartForm extends ValidatedForm {
             />
           </Grid>
 
-          <Grid item xs={4}>
+          <Grid item xs={2}>
             <Field
               component={TextField}
               name="storeId"
