@@ -3,8 +3,6 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import classNames from 'classnames'
 import update from 'immutability-helper'
-import { connect } from 'react-redux'
-import compose from 'recompose/compose'
 import addDays from 'date-fns/addDays'
 import formatDistance from 'date-fns/formatDistance'
 import zh_CN from 'date-fns/esm/locale/zh-CN'
@@ -22,7 +20,6 @@ import { lighten } from 'material-ui/styles/colorManipulator'
 import PrintIcon from '@material-ui/icons/Print'
 
 import dateFormat from 'utils/date-fns'
-import { fetchOutstandingOrders } from 'model/actions'
 import EnhancedTableHead from 'widget/TableHead'
 
 const toolbarStyles = theme => ({
@@ -127,16 +124,13 @@ class ShipmentList extends Component {
     orderBy: 'due'
   }
 
-  componentDidMount = () => {
-    this.refreshOutstandingOrders()
-  }
-
   componentWillReceiveProps = nextProps => {
     if (this.props.orders !== nextProps.orders) {
       const today = new Date()
 
       this.setState(
         {
+          selected: [],
           data: nextProps.orders.map(activity => {
             const due = addDays(new Date(activity.startTime), 7)
 
@@ -154,10 +148,6 @@ class ShipmentList extends Component {
         this.handleRequestSort.bind(null, this.state.orderBy)
       )
     }
-  }
-
-  refreshOutstandingOrders = () => {
-    this.props.dispatch(fetchOutstandingOrders())
   }
 
   handleSelectAllClick = (evt, checked) => {
@@ -280,10 +270,4 @@ ShipmentList.propTypes = {
   orders: PropTypes.arrayOf(PropTypes.object)
 }
 
-const mapStateToProps = state => ({
-  orders: state.shipment.outstandingOrders
-})
-
-export default compose(connect(mapStateToProps), withStyles(styles))(
-  ShipmentList
-)
+export default withStyles(styles)(ShipmentList)

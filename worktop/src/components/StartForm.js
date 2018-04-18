@@ -3,6 +3,7 @@ import React from 'react'
 import validation from 'react-validation-mixin'
 import compose from 'recompose/compose'
 import update from 'immutability-helper'
+import Validator from 'validatorjs'
 
 import { withStyles } from 'material-ui/styles'
 import Button from 'material-ui/Button'
@@ -23,6 +24,14 @@ import CloseBox from 'homemaster-jslib/svg-icons/CloseBox'
 import { strategy, ValidatedForm, Field } from 'form'
 import FileUploader from 'widget/FileUploader'
 import dateFormat from 'utils/date-fns'
+
+Validator.register(
+  'IKEAOrderId',
+  value => /^(\d{9}|SAMS\d{8})$/.test(value),
+  '订单号为9位数字或SAMS加8位数字'
+)
+
+const re_externalOrderId = /^(\d{0,9}|(S|$)(A|$)(M|$)(S|$)\d{0,8})$/i
 
 const styles = theme => ({
   root: {
@@ -55,7 +64,7 @@ class StartForm extends ValidatedForm {
 
   validatorTypes = strategy.createInactiveSchema(
     {
-      externalOrderId: 'size:9',
+      externalOrderId: 'IKEAOrderId',
       factoryNumber: 'required',
       storeId: 'required|size:3|in:856,885,247',
       customerName: 'required',
@@ -68,7 +77,6 @@ class StartForm extends ValidatedForm {
       orderFile: 'required'
     },
     {
-      'size.externalOrderId': '宜家订单号长度为9位',
       'required.storeId': '宜家商场号必须输入',
       'required.factoryNumber': '工厂编号必须输入',
       'in.storeId': '商场号错误',
@@ -141,9 +149,15 @@ class StartForm extends ValidatedForm {
               onBlur={this.activateValidation('externalOrderId')}
               onChange={e => {
                 var { value } = e.target
-                if (/^\d{0,9}$/.test(value) || !value) {
+                if (re_externalOrderId.test(value) || !value) {
                   this.setState(
-                    { values: { ...values, externalOrderId: value } },
+                    {
+                      values: update(values, {
+                        externalOrderId: {
+                          $set: value.toUpperCase()
+                        }
+                      })
+                    },
                     this.props.handleValidation('externalOrderId')
                   )
                 }

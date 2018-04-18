@@ -1,4 +1,6 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
+import compose from 'recompose/compose'
 
 import { withStyles } from 'material-ui/styles'
 import Button from 'material-ui/Button'
@@ -9,6 +11,10 @@ import { jsonrpc, message } from 'homemaster-jslib'
 import PaperPlaneIcon from 'homemaster-jslib/svg-icons/PaperPlane'
 
 import ShipmentList from './ShipmentList'
+import { fetchOutstandingOrders } from 'model/actions'
+
+const re_inputLine = /^(\d{0,9}|(S|$)(A|$)(M|$)(S|$)\d{0,8})$/i
+const re_orderId = /^(\d{8,9}|SAMS\d{8})$/
 
 const styles = theme => ({
   orderList: {
@@ -28,6 +34,14 @@ class ShipmentForm extends Component {
   state = {
     orderIds: '',
     errorMessage: ''
+  }
+
+  componentDidMount = () => {
+    this.refreshOutstandingOrders()
+  }
+
+  refreshOutstandingOrders = () => {
+    this.props.dispatch(fetchOutstandingOrders())
   }
 
   handleSubmit = () => {
@@ -51,9 +65,9 @@ class ShipmentForm extends Component {
       }
       lastline = line
 
-      // any non-empty line must be 8 or 9 characters
-      if (line.length > 0 && line.length < 8) {
-        this.setState({ errorMessage: '订单号长度错误' })
+      // any non-empty line must be valid
+      if (line.length > 0 && !re_orderId.test(line)) {
+        this.setState({ errorMessage: '订单号格式错误' })
         return
       }
     }
@@ -70,38 +84,25 @@ class ShipmentForm extends Component {
   }
 
   handleChange = e => {
-    const { value } = e.target
-    const char = value.charAt(value.length - 1)
-
-    // only number and enter
-    if (char && char !== '\n' && (char < '0' || char > '9')) return
-
+    const value = e.target.value.replace('\n\n', '\n').toUpperCase()
     const lines = value.split('\n')
 
-    // Do not allow any line to exceed 9 characters and disallow non numbers
+    // if any line is in the wrong format do not update
     for (let i = 0; i < lines.length; i++) {
-      if (!/^\d{0,9}$/.test(lines[i])) return
-    }
-
-    /**
-     * When enter is pressed at the end, check that any **previous** line must
-     * be at least 8 long
-     */
-    if (char === '\n') {
-      for (let i = 0; i < lines.length - 1; i++) {
-        if (lines[i].length < 8) return
+      if (!re_inputLine.test(lines[i])) {
+        return
       }
     }
 
-    this.setState({ orderIds: value.replace('\n\n', '\n'), errorMessage: '' })
+    this.setState({ orderIds: value, errorMessage: '' })
   }
 
   render = () => {
-    const { classes } = this.props
+    const { orders, classes } = this.props
 
     return (
       <div>
-        <ShipmentList className={classes.orderList} />
+        <ShipmentList className={classes.orderList} orders={orders} />
 
         <Paper className={classes.inputForm}>
           <TextField
@@ -138,4 +139,10 @@ class ShipmentForm extends Component {
   }
 }
 
-export default withStyles(styles)(ShipmentForm)
+const mapStateToProps = state => ({
+  orders: state.shipment.outstandingOrders
+})
+
+export default compose(connect(mapStateToProps), withStyles(styles))(
+  ShipmentForm
+)
