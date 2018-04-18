@@ -16,6 +16,7 @@ requires = [
     'pillow', # PIL
     'psd-tools',
     'psycopg2',
+    'shortuuid',
     'sqlalchemy',
     'transaction',
     'z3c.rml',

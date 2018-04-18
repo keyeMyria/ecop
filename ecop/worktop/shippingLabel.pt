@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE document SYSTEM "rml.dtd">
+<?python
+  from ecop.region import getRegionName
+  from datetime import datetime
+?>
+<document
+  xmlns:doc="http://namespaces.zope.org/rml/doc"
+  xmlns:py="http://genshi.edgewall.org/" title="发货标签">
+
+  <docinit displayDocTitle="true">
+    <registerTTFont faceName="msyh" fileName="[ecop]/resources/msyh.ttf" />
+    <registerTTFont faceName="msyhbd" fileName="[ecop]/resources/msyhbd.ttf" />
+  </docinit>
+
+  <pageInfo pageSize="(10cm, 10cm)" />
+
+  <py:for each="l in labels">
+    <pageDrawing>
+      <setFont name="msyhbd" size="20" />
+      <drawString x="0.5cm" y="9cm">
+        ${getRegionName(l.customerRegionCode)}
+      </drawString>
+      <drawString x="0.5cm" y="8cm">
+        ${l.customerName} ${l.customerMobile}
+      </drawString>
+      <setFont name="Helvetica" size="8" />
+      <barCode x="3cm" y="3cm" code="qr" height="4cm" width="4cm">${l.labelUrl}</barCode>
+      <drawCentredString x="5cm" y="6.8cm">
+        ${l.pkgId}
+      </drawCentredString>
+      <setFont name="Helvetica-Bold" size="20" />
+      <drawString x="0.5cm" y="1.5cm">${l.externalOrderId}</drawString>
+      <py:if test="'factoryNumber' in l">
+        <setFont name="Helvetica-Bold" size="15" />
+        <drawRightString x="9.5cm" y="1.5cm">${l.factoryNumber}</drawRightString>
+      </py:if>
+      <setFont name="Helvetica" size="8" />
+      <drawString x="0.5cm" y="0.3cm">${datetime.now().strftime('%Y/%m/%d %H:%M:%S')}</drawString>
+      <image file="[ecop]/resources/Ikea-logo.png" x="7.8cm" y="0.3cm" width="2.1cm" height="0.8cm" />
+    </pageDrawing>
+  </py:for>
+</document>
