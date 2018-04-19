@@ -8,7 +8,7 @@ from webmodel.base import DBSession
 from webmodel.category import (Category, CategoryNode, CategoryRollup,
     loadCategory)
 
-from .base import RpcBase
+from ecop.base import RpcBase
 
 
 def categoryFactory():

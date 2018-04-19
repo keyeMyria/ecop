@@ -21,8 +21,8 @@ from webmodel.payment import Payment, OrderPayment
 from webmodel.sms import SMSGateway
 from weblibs.jsonrpc import marshall, RPCUserError
 
-from .base import RpcBase, DocBase
-from .region import getRegionName
+from ecop.base import RpcBase, DocBase
+from ecop.region import getRegionName
 
 
 def findItemById(o, oiid):

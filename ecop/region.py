@@ -3,7 +3,7 @@ from pyramid_rpc.jsonrpc import jsonrpc_method
 from webmodel.base import DBSession
 from webmodel.region import loadRegion
 
-from .base import RpcBase
+from ecop.base import RpcBase
 
 __cached_region__ = None
 

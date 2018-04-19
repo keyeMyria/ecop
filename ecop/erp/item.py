@@ -12,8 +12,8 @@ from webmodel.item import Item, ItemGroup, ItemImage, BomItem, ModuleSorter
 from webmodel.resource import Image, Resource
 from webmodel.param import getParameterText
 
+from ecop.base import RpcBase
 from .category import categoryFactory
-from .base import RpcBase
 
 
 class ItemJSON(RpcBase):

@@ -19,7 +19,7 @@ from webmodel.esweb import FileObject
 from weblibs.jsonrpc import RPCUserError
 from weblibs.oss import getBucket
 
-from .base import RpcBase
+from ecop.base import RpcBase
 
 
 def extractTextFromPSD(psd):

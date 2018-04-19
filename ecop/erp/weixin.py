@@ -7,7 +7,7 @@ import logging
 from pyramid_rpc.jsonrpc import jsonrpc_method
 from weblibs.weixin import client as wc
 
-from .base import RpcBase
+from ecop.base import RpcBase
 
 logger = logging.getLogger('weixin')
 

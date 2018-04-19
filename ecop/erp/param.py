@@ -3,7 +3,7 @@ from pyramid_rpc.jsonrpc import jsonrpc_method
 from webmodel.param import getParameter
 from webmodel.brand import Brand
 
-from .base import RpcBase
+from ecop.base import RpcBase
 
 
 class ParamJSON(RpcBase):

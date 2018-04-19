@@ -5,7 +5,7 @@ from pyramid_rpc.jsonrpc import jsonrpc_method
 from webmodel.party import Party
 from weblibs.jsonrpc import marshall, RPCUserError
 
-from .base import RpcBase
+from ecop.base import RpcBase
 
 
 class PartyJSON(RpcBase):

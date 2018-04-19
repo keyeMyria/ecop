@@ -3,7 +3,7 @@ from pyramid_rpc.jsonrpc import jsonrpc_method
 from webmodel.seo import Seo
 from weblibs.jsonrpc import marshall
 
-from .base import RpcBase
+from ecop.base import RpcBase
 
 
 class SeoJSON(RpcBase):

@@ -10,7 +10,7 @@ from pyramid_rpc.jsonrpc import jsonrpc_method
 from webmodel.esweb import Article
 from weblibs.jsonrpc import RPCUserError
 
-from .base import RpcBase
+from ecop.base import RpcBase
 
 
 class ArticleJSON(RpcBase):
