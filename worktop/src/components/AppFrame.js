@@ -23,7 +23,7 @@ import TaskListIcon from 'homemaster-jslib/svg-icons/TaskList'
 import StartForm from './StartForm'
 import TaskList from './TaskList'
 import ShipmentForm from './ShipmentForm'
-import ProcessManageList from './ProcessManageList'
+import ProcessManager from './ProcessManager'
 
 const drawerWidth = 180
 
@@ -225,7 +225,7 @@ class AppFrame extends React.Component {
             {currentFrame === 'start' && <StartForm />}
             {currentFrame === 'tasks' && <TaskList />}
             {currentFrame === 'shipping' && <ShipmentForm />}
-            {currentFrame === 'manage' && <ProcessManageList />}
+            {currentFrame === 'manage' && <ProcessManager />}
           </div>
         </div>
       </div>

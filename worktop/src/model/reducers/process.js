@@ -6,7 +6,7 @@ const initialState = {
   /**
    * A list of process
    */
-  processList: []
+  processList: undefined
 }
 
 export default function(state = initialState, action) {

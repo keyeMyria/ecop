@@ -156,8 +156,24 @@ class PorcessJSON(RpcBase):
         return True
 
     @jsonrpc_method(endpoint='rpc', method='bpmn.process.list')
-    def getProcessList(self, processKey, params):
-        params['processDefinitionKey'] = processKey
+    def getProcessList(self, processKey, kwargs):
+        params = {
+            'processDefinitionKey': processKey,
+            'sorting': kwargs['sorting']
+        }
+
+        if 'cond' in kwargs:
+            orderId = kwargs['cond'].get('orderId')
+            if orderId:
+                if len(orderId) == 8:
+                    params['processInstanceBusinessKey'] = orderId
+                else:
+                    params['variables'] = [{
+                        'name': 'externalOrderId',
+                        'operator': 'eq',
+                        'value': orderId
+                    }]
+
         ret = cc.makeRequest(
             '/history/process-instance', 'post',
             params, urlParams={'maxResults': 50},
@@ -273,3 +289,19 @@ class PorcessJSON(RpcBase):
 
         if errors:
             raise RPCUserError('\n'.join(errors))
+
+    @jsonrpc_method(endpoint='rpc', method='bpmn.worktop.receive')
+    def receiveWorktop(self, orderId):
+        ret = cc.makeRequest('/execution', 'post', params={
+            'signalEventSubscriptionName': 'WorktopReceived',
+            'processDefinitionKey': 'worktop',
+            'businessKey': orderId
+        })
+
+        if len(ret) != 1:
+            raise RPCUserError('Wrong')
+
+        cc.makeRequest('/signal', 'post', params={
+            'name': 'WorktopReceived',
+            'executionId': ret[0]['id']
+        })
