@@ -213,7 +213,7 @@ class ProcessList extends Component {
                         mini
                         color="primary"
                         onClick={() => {
-                          this.openVariableForm(p.id)
+                          this.props.onProcessAction(p.id, 'view')
                         }}
                       >
                         <PreviewIcon />
@@ -243,7 +243,12 @@ class ProcessList extends Component {
 }
 
 ProcessList.propTypes = {
-  data: PropTypes.arrayOf(PropTypes.object)
+  data: PropTypes.arrayOf(PropTypes.object),
+  /**
+   * When user initiates an action for a process in the list, call this func
+   * with the processInstanceId and the action name
+   */
+  onProcessAction: PropTypes.func.isRequired
 }
 
 ProcessList = compose(withStyles(styles))(ProcessList)
@@ -279,7 +284,11 @@ class ProcessManager extends Component {
     return (
       <Fragment>
         <SearchToolbar onSearch={cond => this.doSearch(cond)} />
-        <ProcessList data={this.props.processes} />
+        <ProcessList
+          data={this.props.processes}
+          onProcessAction={this.openVariableForm}
+        />
+
         <VariablesForm
           {...form}
           onClose={() => {
