@@ -89,9 +89,9 @@ class TaskForm extends Component {
       params: [this.props.task.id, values]
     }).then(success => {
       if (success) {
-        message.success('当前任务提交成功')
+        message.success('当前任务提交成功', { autoHide: 5000 })
       } else {
-        message.error('该任务可能已被其他用户完成!')
+        message.error('该任务可能已被其他用户完成!', { autoHide: 5000 })
       }
       this.props.onClose()
       this.props.dispatch(fetchUserTasks())

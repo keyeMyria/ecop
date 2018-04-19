@@ -10,13 +10,8 @@ import { InputLabel } from 'material-ui/Input'
 import { FormControl, FormControlLabel } from 'material-ui/Form'
 import green from 'material-ui/colors/green'
 import Typography from 'material-ui/Typography'
-import Dialog, {
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle
-} from 'material-ui/Dialog'
-import Button from 'material-ui/Button'
+
+import { message } from 'homemaster-jslib'
 
 import { strategy, ValidatedForm, Field } from 'form'
 import FileUploader from 'widget/FileUploader'
@@ -38,8 +33,7 @@ class MakeDrawing extends ValidatedForm {
   state = {
     values: {
       productionDrawingConfirmed: false
-    },
-    dialogOpen: false
+    }
   }
 
   validatorTypes = strategy.createSchema(
@@ -56,7 +50,17 @@ class MakeDrawing extends ValidatedForm {
       if (!error) {
         const { values } = this.state
         if (values.productionDrawingConfirmed) {
-          this.setState({ dialogOpen: true })
+          message.prompt(
+            '审核通过后，将无法再下载生产图纸。请确认生产图纸已事先下载。',
+            {
+              title: '生产图纸是否已下载',
+              noLabel: '还未下载',
+              yesLabel: '已下载，通过审核',
+              onYesButton: () => {
+                this.props.submitForm(values)
+              }
+            }
+          )
         } else {
           this.props.submitForm(values)
         }
@@ -170,30 +174,6 @@ class MakeDrawing extends ValidatedForm {
           error={!!this.getFieldError('reasonDrawingRejected')}
           helperText={this.getFieldError('reasonDrawingRejected')}
         />
-
-        <Dialog open={this.state.dialogOpen}>
-          <DialogTitle>生产图纸是否已下载?</DialogTitle>
-          <DialogContent>
-            <DialogContentText>
-              审核通过后，将无法再下载生产图纸。请确认生产图纸已事先下载。
-            </DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button
-              onClick={() => this.setState({ dialogOpen: false })}
-              color="secondary"
-              autoFocus
-            >
-              还未下载
-            </Button>
-            <Button
-              onClick={() => this.props.submitForm(values)}
-              color="primary"
-            >
-              已下载，通过审核
-            </Button>
-          </DialogActions>
-        </Dialog>
       </Fragment>
     )
   }
