@@ -8,11 +8,11 @@ class ERPView(BaseEcopView):
     resourceConfig = {
         'debug': {
             'head': [
-                'ecop/client/build/development/resources/Ecop-all.css',
-                'ecop/client/ext/build/ext.js',
-                'ecop/client/desktop/lib/spark-md5.min.js',
-                'ecop/client/desktop/lib/ckeditor/ckeditor.js',
-                'ecop/client/desktop/app.js'
+                'ecop/erp/build/development/resources/Ecop-all.css',
+                'ecop/erp/ext/build/ext.js',
+                'ecop/erp/desktop/lib/spark-md5.min.js',
+                'ecop/erp/desktop/lib/ckeditor/ckeditor.js',
+                'ecop/erp/desktop/app.js'
             ]
         },
         'deploy': {

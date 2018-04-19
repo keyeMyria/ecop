@@ -2,15 +2,15 @@
 Ext.Loader.setConfig({
   disableCaching: false,
   paths: {
-    Ecop: 'http://' + window.location.hostname + ':8080/ecop/client/desktop/src',
+    Ecop: 'http://' + window.location.hostname + ':8080/ecop/erp/desktop/src',
     'Web.ux':
       'http://' +
       window.location.hostname +
-      ':8080/ecop/client/packages/local/web-ux/src',
+      ':8080/ecop/erp/packages/local/web-ux/src',
     Web:
       'http://' +
       window.location.hostname +
-      ':8080/ecop/client/packages/local/web-data/src'
+      ':8080/ecop/erp/packages/local/web-data/src'
   }
 })
 Ext.ariaWarn = Ext.emptyFn

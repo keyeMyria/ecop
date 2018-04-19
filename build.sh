@@ -29,13 +29,13 @@ rsync -rv --filter '. rsync.rule' . build/ecop/ecop
 # Now we start to build Sencha products
 
 echo "##################   Building ERP Client   ##########################"
-rm -fr client/build/production
-cd client/desktop
+rm -fr erp/build/production
+cd erp/desktop
 sencha app build production
 cd ../..
-cp client/build/production/app.js build/asset/erp
-cp -r client/build/production/resources build/asset/erp
-cp -r client/desktop/lib build/asset/erp
+cp erp/build/production/app.js build/asset/erp
+cp -r erp/build/production/resources build/asset/erp
+cp -r erp/desktop/lib build/asset/erp
 
 
 # build worktop

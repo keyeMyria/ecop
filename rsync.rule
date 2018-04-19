@@ -10,7 +10,7 @@
 - *egg*/
 - *.log
 - build/
-- client/
+- erp/
 - worktop/
 - bpmn/
 - dist/
