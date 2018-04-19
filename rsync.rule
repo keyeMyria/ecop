@@ -9,10 +9,10 @@
 - *.rst
 - *egg*/
 - *.log
-- *.bpmn
 - build/
 - client/
 - worktop/
+- bpmn/
 - dist/
 - build.sh
 - rsync.rule
