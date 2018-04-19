@@ -1,18 +1,22 @@
 import React, { Component, Fragment } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-import compose from 'recompose/compose'
 import classNames from 'classnames'
 import update from 'immutability-helper'
 
 import Table, { TableBody, TableCell, TableRow } from 'material-ui/Table'
 import Button from 'material-ui/Button'
+import Paper from 'material-ui/Paper'
 import Toolbar from 'material-ui/Toolbar'
-import TextField from 'material-ui/TextField'
 import Typography from 'material-ui/Typography'
+import IconButton from 'material-ui/IconButton'
+import Input, { InputLabel, InputAdornment } from 'material-ui/Input'
+import { FormControl } from 'material-ui/Form'
 import { withStyles } from 'material-ui/styles'
 import green from 'material-ui/colors/green'
 import PreviewIcon from '@material-ui/icons/RemoveRedEye'
+import CancelIcon from '@material-ui/icons/Cancel'
+import SearchIcon from '@material-ui/icons/Search'
 
 import CheckboxBlankCircle from 'homemaster-jslib/svg-icons/CheckboxBlankCircle'
 
@@ -21,6 +25,15 @@ import dateFormat from 'utils/date-fns'
 import EnhancedTableHead from 'widget/TableHead'
 import VariablesForm from './VariablesForm'
 import { isValidOrderId } from 'utils/validators'
+
+const toolbarStyles = theme => ({
+  margin: {
+    margin: theme.spacing.unit
+  },
+  textField: {
+    flexBasis: 200
+  }
+})
 
 class SearchToolbar extends Component {
   state = {
@@ -35,29 +48,48 @@ class SearchToolbar extends Component {
 
   render() {
     const { values } = this.state
+    const { classes } = this.props
 
     return (
       <Toolbar onKeyDown={e => e.keyCode === 13 && this.handleSearch()}>
-        <TextField
-          label="订单号"
-          required={false}
-          InputLabelProps={{
-            shrink: true
-          }}
-          value={values.orderId}
-          onChange={e => {
-            var { value } = e.target
-            if (!value || isValidOrderId(value, true)) {
-              this.setState({
-                values: update(values, {
-                  orderId: {
-                    $set: value.toUpperCase()
-                  }
+        <FormControl className={classNames(classes.margin, classes.textField)}>
+          <InputLabel>订单号</InputLabel>
+          <Input
+            value={values.orderId}
+            onChange={e => {
+              var { value } = e.target
+              if (!value || isValidOrderId(value, true)) {
+                this.setState({
+                  values: update(values, {
+                    orderId: {
+                      $set: value.toUpperCase()
+                    }
+                  })
                 })
-              })
+              }
+            }}
+            endAdornment={
+              <InputAdornment position="end">
+                <IconButton
+                  onClick={() => {
+                    this.setState({
+                      values: update(values, {
+                        orderId: {
+                          $set: ''
+                        }
+                      })
+                    })
+                  }}
+                >
+                  <CancelIcon />
+                </IconButton>
+              </InputAdornment>
             }
-          }}
-        />
+          />
+        </FormControl>
+        <Button variant="raised" color="primary" onClick={this.handleSearch}>
+          <SearchIcon /> &nbsp;搜&nbsp;索
+        </Button>
       </Toolbar>
     )
   }
@@ -66,8 +98,9 @@ class SearchToolbar extends Component {
 SearchToolbar.propTypes = {
   onSearch: PropTypes.func.isRequired
 }
+SearchToolbar = withStyles(toolbarStyles)(SearchToolbar)
 
-const styles = theme => ({
+const listStyles = theme => ({
   rowNumber: {
     textAlign: 'center'
   },
@@ -81,8 +114,15 @@ const styles = theme => ({
     color: theme.palette.secondary.main
   },
   legend: {
+    paddingTop: theme.spacing.unit * 2,
+    paddingBottom: theme.spacing.unit * 2
+  },
+  legendLabel: {
     verticalAlign: 'middle',
     marginLeft: '1em'
+  },
+  notfound: {
+    padding: theme.spacing.unit * 2
   }
 })
 
@@ -142,7 +182,7 @@ class ProcessList extends Component {
 
     if (data.length === 0) {
       return (
-        <Typography variant="subheading" style={{ marginTop: '1em' }}>
+        <Typography variant="subheading" className={classes.notfound}>
           没有符合条件的订单
         </Typography>
       )
@@ -225,14 +265,14 @@ class ProcessList extends Component {
             </TableBody>
           </Table>
 
-          <Typography variant="subheading" style={{ marginTop: '1em' }}>
-            <CheckboxBlankCircle className={classes.legend} /> - 预约日期
+          <Typography variant="subheading" className={classes.legend}>
+            <CheckboxBlankCircle className={classes.legendLabel} /> - 预约日期
             <CheckboxBlankCircle
-              className={classNames(classes.legend, classes.confirmed)}
+              className={classNames(classes.legendLabel, classes.confirmed)}
             />{' '}
             - 确认日期
             <CheckboxBlankCircle
-              className={classNames(classes.legend, classes.actual)}
+              className={classNames(classes.legendLabel, classes.actual)}
             />{' '}
             - 实际完成日期
           </Typography>
@@ -251,7 +291,7 @@ ProcessList.propTypes = {
   onProcessAction: PropTypes.func.isRequired
 }
 
-ProcessList = compose(withStyles(styles))(ProcessList)
+ProcessList = withStyles(listStyles)(ProcessList)
 
 class ProcessManager extends Component {
   state = {
@@ -283,11 +323,15 @@ class ProcessManager extends Component {
 
     return (
       <Fragment>
-        <SearchToolbar onSearch={cond => this.doSearch(cond)} />
-        <ProcessList
-          data={this.props.processes}
-          onProcessAction={this.openVariableForm}
-        />
+        <Paper style={{ marginBottom: 16 }}>
+          <SearchToolbar onSearch={cond => this.doSearch(cond)} />
+        </Paper>
+        <Paper>
+          <ProcessList
+            data={this.props.processes}
+            onProcessAction={this.openVariableForm}
+          />
+        </Paper>
 
         <VariablesForm
           {...form}
