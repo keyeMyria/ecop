@@ -1,0 +1,17 @@
+1.0 (2018-3-30)
+
+ * Initial process
+
+
+1.1.2 (2018-4-9)
+
+ * Add start variable IsMeasurementRequested to allow for processes without
+   the measurement step
+ * Add task UpdateDrawing
+
+
+1.2 (2018-4-)
+
+ * Add task CompleteERPTask
+ * Add signal event WorktopReceived
+ * Set due date of task ConfirmInstallationDate as 1 day after receive signal

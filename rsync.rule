@@ -1,4 +1,5 @@
 + ecop/worktop/
++ ecop/erp/
 - __pycache__/
 - *.pyc
 - *.ini

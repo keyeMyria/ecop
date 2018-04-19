@@ -24,14 +24,16 @@ import MakeDrawing from 'tasks/MakeDrawing'
 import CheckDrawing from 'tasks/CheckDrawing'
 import ConfirmInstallationDate from 'tasks/ConfirmInstallationDate'
 import InstallWorktop from 'tasks/InstallWorktop'
+import CompleteERPOrder from 'tasks/CompleteERPOrder'
 
 const forms = {
-  ConfirmMeasurementDate,
-  TakeMeasurement,
-  MakeDrawing,
   CheckDrawing,
+  CompleteERPOrder,
   ConfirmInstallationDate,
+  ConfirmMeasurementDate,
   InstallWorktop,
+  MakeDrawing,
+  TakeMeasurement,
   UpdateDrawing: MakeDrawing
 }
 

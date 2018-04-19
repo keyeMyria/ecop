@@ -16,7 +16,7 @@
   <template pagesize="a4" allowSplitting="0">
     <pageTemplate id="main">
       <pageGraphics>
-        setFont name="Helvetica-BoldOblique" size="10"/>
+        <setFont name="Helvetica-BoldOblique" size="10"/>
         <drawRightString x="19.8cm" y="0.6cm"><pageNumber /></drawRightString>
       </pageGraphics>
       <frame id="content" x1="1cm" y1="1.5cm" width="19cm" height="26.5cm" showBoundary="0"/>
