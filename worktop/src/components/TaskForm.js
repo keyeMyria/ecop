@@ -86,7 +86,7 @@ class TaskForm extends Component {
   submitForm = values => {
     jsonrpc({
       method: 'bpmn.task.complete',
-      params: [this.props.task.id, values]
+      params: [this.props.task.id, this.props.task.taskDefinitionKey, values]
     }).then(success => {
       if (success) {
         message.success('当前任务提交成功', { autoHide: 5000 })
