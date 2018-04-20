@@ -9,15 +9,12 @@ from weblibs.weixin import client as wc
 
 from ecop.base import RpcBase
 
-logger = logging.getLogger('weixin')
+logger = logging.getLogger(__name__)
 
 
 class WeixinJSON(RpcBase):
-
     @jsonrpc_method(endpoint='rpc', method='wechat.jssdk.config')
     def getConfigParam(self, url):
-        """ Currently not used """
-
         od = OrderedDict()
         od['jsapi_ticket'] = wc.jsapiTicket
         od['noncestr'] = uuid4().hex
