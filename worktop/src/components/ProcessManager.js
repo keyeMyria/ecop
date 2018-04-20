@@ -27,11 +27,19 @@ import VariablesForm from './VariablesForm'
 import { isValidOrderId } from 'utils/validators'
 
 const toolbarStyles = theme => ({
+  root: {
+    paddingLeft: 0,
+    paddingRight: 0
+  },
   margin: {
     margin: theme.spacing.unit
   },
   textField: {
-    flexBasis: 200
+    flexBasis: 170
+  },
+  cancelIcon: {
+    width: 36,
+    height: 36
   }
 })
 
@@ -51,7 +59,10 @@ class SearchToolbar extends Component {
     const { classes } = this.props
 
     return (
-      <Toolbar onKeyDown={e => e.keyCode === 13 && this.handleSearch()}>
+      <Toolbar
+        classes={{ root: classes.root }}
+        onKeyDown={e => e.keyCode === 13 && this.handleSearch()}
+      >
         <FormControl className={classNames(classes.margin, classes.textField)}>
           <InputLabel>订单号</InputLabel>
           <Input
@@ -71,6 +82,7 @@ class SearchToolbar extends Component {
             endAdornment={
               <InputAdornment position="end">
                 <IconButton
+                  classes={{ root: classes.cancelIcon }}
                   onClick={() => {
                     this.setState({
                       values: update(values, {
@@ -248,16 +260,14 @@ class ProcessList extends Component {
                     </TableCell>
                     <TableCell>{statusName[p.state]}</TableCell>
                     <TableCell>
-                      <Button
-                        variant="fab"
-                        mini
+                      <IconButton
                         color="primary"
                         onClick={() => {
                           this.props.onProcessAction(p.id, 'view')
                         }}
                       >
                         <PreviewIcon />
-                      </Button>
+                      </IconButton>
                     </TableCell>
                   </TableRow>
                 )

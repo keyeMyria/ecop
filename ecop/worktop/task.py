@@ -1,6 +1,8 @@
 from pyramid_rpc.jsonrpc import jsonrpc_method
 from hm.lib.camunda import CamundaRESTError
 
+from webmodel.order import SalesOrder, PurchaseOrder
+from webmodel.consts import ORDER_STATUS
 from weblibs.camunda import camundaClient as cc
 from weblibs.jsonrpc import RPCUserError, parseDate
 
@@ -91,5 +93,20 @@ class TaskJSON(RpcBase):
                 raise RPCUserError('无法完成该任务，请联系技术支持')
         return True
 
-    def handleCompleteERPOrder(self, taskId, variables):
-        raise RPCUserError('当前ERP订单尚未完成')
+    def handleCompleteERPOrder(self, taskId, variables):  # pylint: disable=W0613
+        orderId = variables['orderId']
+        so = self.sess.query(SalesOrder).get(orderId)
+
+        if not so:
+            raise RPCUserError(f'未找到ERP订单{orderId}')
+
+        if so.orderStatus != ORDER_STATUS.COMPLETED:
+            raise RPCUserError(f'销售订单{orderId}未完成')
+
+        query = self.sess.query(PurchaseOrder).\
+            filter_by(relatedOrderId=orderId)
+        orders = query.all()
+
+        if not orders or \
+                [o for o in orders if o.orderStatus != ORDER_STATUS.COMPLETED]:
+            raise RPCUserError(f'未找到该订单对应的采购订单或采购订单未完成')
