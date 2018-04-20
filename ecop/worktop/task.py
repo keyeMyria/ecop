@@ -22,6 +22,9 @@ class TaskJSON(RpcBase):
         params = {
             'processDefinitionKey': processKey,
             'sorting': [{
+                'sortBy': 'name',
+                'sortOrder': 'asc'
+            }, {
                 'sortBy': 'dueDate',
                 'sortOrder': 'asc'
             }]
