@@ -82,7 +82,7 @@ class TaskJSON(RpcBase):
                     fname for fname in variables if fname.endswith('Date')]
             )
 
-        handler = getattr(self, 'handle' + taskKey)
+        handler = getattr(self, 'handle' + taskKey, None)
         if handler:
             handler(taskId, variables)
 
