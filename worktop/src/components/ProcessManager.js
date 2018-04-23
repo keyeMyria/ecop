@@ -239,10 +239,10 @@ class ProcessList extends Component {
                         ? dateFormat(measureDate, 'YYYY/MM/DD')
                         : '无需测量'}
                     </TableCell>
-                    <TableCell>
+                    <TableCell className={classes.actual}>
                       {dateFormat(p.shippingDate, 'YYYY/MM/DD')}
                     </TableCell>
-                    <TableCell>
+                    <TableCell className={classes.actual}>
                       {dateFormat(p.receivingDate, 'YYYY/MM/DD')}
                     </TableCell>
                     <TableCell

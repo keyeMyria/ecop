@@ -28,7 +28,7 @@ App.processKey = 'worktop'
 Object.assign(jsonrpc, {
   onerror: error => {
     const level = (error.data && error.data.level) || 'error'
-    message[level](error.message, { autoHide: 5000 })
+    message[level](error.message)
   },
   csrfToken: App.csrfToken,
   extraHeader: { 'X-Client-Version': App.version }

@@ -1,6 +1,5 @@
 /* global App */
 import React from 'react'
-import PropTypes from 'prop-types'
 import { withStyles } from 'material-ui/styles'
 import classNames from 'classnames'
 import Drawer from 'material-ui/Drawer'
@@ -231,10 +230,6 @@ class AppFrame extends React.Component {
       </div>
     )
   }
-}
-
-AppFrame.propTypes = {
-  classes: PropTypes.object.isRequired
 }
 
 export default withStyles(styles)(AppFrame)
