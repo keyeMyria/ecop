@@ -1,3 +1,5 @@
+import json
+
 from pyramid.httpexceptions import HTTPForbidden
 from pyramid.csrf import check_csrf_token
 
@@ -7,20 +9,29 @@ from weblibs.jsonrpc import RPCUserError
 
 
 class RpcBase(object):
-    """ Implements request authentication """
+    """
+    Implements request authentication for all RPC methods except for
+    'wechat.jssdk.config'
+    """
+
     def __init__(self, request):
         # common class variables
         self.request = request
         self.sess = DBSession()
 
+        body = request.body.decode('utf8')
+        method = json.loads(body)['method']
+
+        if request.is_weixin and method == 'wechat.jssdk.config':
+            return
+
         # Step 1: check for valid session
         #
         # For any rpc request from a client which does not declare itself
-        # as bot, a proper session must be present. Otherwise we treat it
-        # as an attack and will block the ip address
+        # as bot, a proper session must be present. Otherwise we block it
         if not request.is_bot and (
-            not request.session or request.session.new):
-            #request.log(action='REJECT_RPC', title='RPC no valid session',
+                not request.session or request.session.new):
+            # request.log(action='REJECT_RPC', title='RPC no valid session',
             #    payload=body[:300])
             raise HTTPForbidden()
 
@@ -30,7 +41,7 @@ class RpcBase(object):
         # provided by pyramid since it does not allow us to block the
         # malicious IP and log the event.
         if not check_csrf_token(request, raises=False):
-            #request.log(action='REJECT_RPC', title='RPC bad csrf token',
+            # request.log(action='REJECT_RPC', title='RPC bad csrf token',
             #    payload=body[:300])
             raise HTTPForbidden()
 
@@ -45,7 +56,7 @@ class DocBase(object):
     files like order or shipment documents.
     """
 
-    def __init__(self, context, request): #pylint: disable=W0613
+    def __init__(self, context, request):  # pylint: disable=W0613
         self.sess = DBSession()
         self.request = request
 

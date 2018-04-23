@@ -1,4 +1,4 @@
-/* global App */
+/* global App, wx */
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { Provider } from 'react-redux'
@@ -33,6 +33,17 @@ Object.assign(jsonrpc, {
   csrfToken: App.csrfToken,
   extraHeader: { 'X-Client-Version': App.version }
 })
+
+if (App.isWeixin) {
+  jsonrpc({
+    method: 'wechat.jssdk.config',
+    params: [window.location.href],
+    success: function(ret) {
+      ret.jsApiList = ['scanQRCode']
+      wx.config(ret)
+    }
+  })
+}
 
 ReactDOM.render(
   <Provider store={store}>

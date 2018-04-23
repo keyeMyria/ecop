@@ -13,13 +13,17 @@
     var App = {
         version: ${view.version},
         imageUrl: '${view.imageUrl}',
-        isMobile: ${str(request.is_mobile).lower()}
+        isMobile: ${str(request.is_mobile).lower()},
+        isWeixin: ${str(request.is_weixin).lower()}
     };
   </script>
   <script tal:condition="request.authenticated">
     App.csrfToken = '${view.csrfToken}';
     App.userInfo = ${view.userInfo('worktop')}
-</script>
+  </script>
+
+  <script tal:repeat="script view.resources.headjs" src="${script}"></script>
+
 </head>
 
 <body>

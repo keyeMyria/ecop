@@ -2,6 +2,7 @@ from pyramid.config import Configurator
 
 from hm.lib.config import siteConfig
 from weblibs.jsonrpc import jsonRenderer
+from weblibs.weixin import parseConfig as configWeixin
 
 
 def main(global_config, **settings):
@@ -27,9 +28,8 @@ def main(global_config, **settings):
     config.include('weblibs.wepay')
     config.include('weblibs.sms')
     config.include('weblibs.camunda')
-
-    # This tween can only be added after session is also enabled for ecop
-    # config.include('weblibs.weixin')
+    # configure the wexin client without setting up oauth redirection
+    configWeixin(settings)
 
     # tweens are registered below
     # note that tweens toward the bottom are executed first

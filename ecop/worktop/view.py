@@ -35,6 +35,12 @@ class WorktopView(BaseEcopView):
 class ShipView(WorktopView):
     title = '物流管理'
 
+    def __init__(self, context, request):
+        super(ShipView, self).__init__(context, request)
+        if request.is_weixin:
+            self.resourceConfig['debug' if self.debug else 'deploy']['head']\
+                .append('http://res.wx.qq.com/open/js/jweixin-1.2.0.js')
+
     def __call__(self):
         params = self.request.params
 
