@@ -19,6 +19,12 @@ const theme = createMuiTheme({
   typography: {
     fontFamily: '"roboto", "Helvetica", "Arial", "微软雅黑"'
   },
+  viewport: {
+    width: '100%',
+    height: '100vh',
+    display: 'flex',
+    flexDirection: 'column'
+  },
   custom: {
     orderId: {
       fontSize: 24,

@@ -1,4 +1,7 @@
 from pyramid.view import view_config
+from pyramid.httpexceptions import HTTPNotFound
+
+from webmodel.validator import isOrderId
 
 from ecop.view import BaseEcopView
 
@@ -25,3 +28,19 @@ class WorktopView(BaseEcopView):
             ]
         }
     }
+
+
+@view_config(route_name='ship', device_type='mobile', renderer='worktop.pt',
+             xhr=False)
+class ShipView(WorktopView):
+    title = '物流管理'
+
+    def __call__(self):
+        params = self.request.params
+
+        if 'orderId' not in params or 'pkgId' not in params or \
+                not isOrderId(params['orderId']) or \
+                len(params['pkgId']) != 22:
+            raise HTTPNotFound()
+
+        return {}

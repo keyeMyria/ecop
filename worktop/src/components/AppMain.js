@@ -1,10 +1,11 @@
 /* global App */
-import React, { Component, Fragment } from 'react'
+import React, { Component } from 'react'
 
 import { withStyles } from 'material-ui/styles'
 import { jsonrpc } from 'homemaster-jslib'
 
 import AppFrame from 'components/AppFrame'
+import ShipFrame from 'components/ShipFrame'
 import LoginDialog from 'components/LoginDialog'
 
 const styles = theme => ({
@@ -35,15 +36,13 @@ class AppMain extends Component {
   }
 
   render() {
-    return (
-      <Fragment>
-        {this.state.loggedIn ? (
-          <AppFrame />
-        ) : (
-          <LoginDialog onLoginSuccess={this.onLoginSuccess} />
-        )}
-      </Fragment>
-    )
+    if (!this.state.loggedIn) {
+      return <LoginDialog onLoginSuccess={this.onLoginSuccess} />
+    } else if (window.location.pathname === '/ikea/shipOrder') {
+      return <ShipFrame />
+    } else {
+      return <AppFrame />
+    }
   }
 }
 
