@@ -40,7 +40,6 @@ class InstallWorktop extends ValidatedForm {
   }
 
   render = () => {
-    const { values } = this.state
     const { classes, task, variables } = this.props
 
     return (
@@ -82,10 +81,7 @@ class InstallWorktop extends ValidatedForm {
           component={FileUploader}
           name="installationFile"
           label="安装文件"
-          error={!!this.getFieldError('installationFile')}
-          helperText={this.getFieldError('installationFile')}
-          onChange={this.handleChange('installationFile')}
-          value={values.installationFile}
+          form={this}
         />
       </Fragment>
     )

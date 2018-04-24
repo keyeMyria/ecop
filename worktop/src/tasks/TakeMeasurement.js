@@ -81,9 +81,7 @@ class TakeMeasurement extends ValidatedForm {
           component={FileUploader}
           name="measurementFile"
           label="测量文件"
-          error={!!this.getFieldError('measurementFile')}
-          helperText={this.getFieldError('measurementFile')}
-          onChange={this.handleChange('measurementFile')}
+          form={this}
           value={values.measurementFile || variables.measurementFile}
         />
       </Fragment>

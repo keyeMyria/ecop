@@ -83,9 +83,7 @@ class MakeDrawing extends ValidatedForm {
           component={FileUploader}
           name="productionDrawing"
           label="生产图纸"
-          error={!!this.getFieldError('productionDrawing')}
-          helperText={this.getFieldError('productionDrawing')}
-          onChange={this.handleChange('productionDrawing')}
+          form={this}
           value={values.productionDrawing || variables.productionDrawing}
         />
       </Fragment>

@@ -169,10 +169,7 @@ class MakeDrawing extends ValidatedForm {
           label="拒绝原因"
           disabled={values.productionDrawingConfirmed}
           multiline
-          value={values.reasonDrawingRejected}
-          onChange={this.handleChange('reasonDrawingRejected')}
-          error={!!this.getFieldError('reasonDrawingRejected')}
-          helperText={this.getFieldError('reasonDrawingRejected')}
+          form={this}
         />
       </Fragment>
     )

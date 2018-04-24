@@ -64,10 +64,8 @@ class ConfirmMeasurementDate extends ValidatedForm {
           disablePast
           leftArrowIcon={<ArrowLeftIcon />}
           rightArrowIcon={<ArrowRightIcon />}
-          value={confirmedMeasurementDate}
+          form={this}
           labelFunc={() => dateFormat(confirmedMeasurementDate, 'YYYY/MM/DD')}
-          error={!!this.getFieldError('confirmedMeasurementDate')}
-          helperText={this.getFieldError('confirmedMeasurementDate')}
           onChange={this.handleChange('confirmedMeasurementDate', 'datepicker')}
         />
       </Fragment>

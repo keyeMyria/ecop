@@ -136,8 +136,8 @@ class StartForm extends ValidatedForm {
               label="订单号"
               required={false}
               autoFocus
+              form={this}
               InputProps={{ classes: { input: classes.orderId } }}
-              value={values.externalOrderId}
               onBlur={this.activateValidation('externalOrderId')}
               onChange={e => {
                 var { value } = e.target
@@ -154,8 +154,6 @@ class StartForm extends ValidatedForm {
                   )
                 }
               }}
-              error={!!this.getFieldError('externalOrderId')}
-              helperText={this.getFieldError('externalOrderId')}
             />
           </Grid>
 
@@ -164,10 +162,7 @@ class StartForm extends ValidatedForm {
               component={TextField}
               name="factoryNumber"
               label="工厂编号"
-              value={values.factoryNumber}
-              onChange={this.handleChange('factoryNumber')}
-              error={!!this.getFieldError('factoryNumber')}
-              helperText={this.getFieldError('factoryNumber')}
+              form={this}
             />
           </Grid>
 
@@ -176,7 +171,7 @@ class StartForm extends ValidatedForm {
               component={TextField}
               name="storeId"
               label="宜家商场号"
-              value={values.storeId}
+              form={this}
               onBlur={this.activateValidation('storeId')}
               onChange={e => {
                 var { value } = e.target
@@ -187,8 +182,6 @@ class StartForm extends ValidatedForm {
                   )
                 }
               }}
-              error={!!this.getFieldError('storeId')}
-              helperText={this.getFieldError('storeId')}
             />
           </Grid>
         </Grid>
@@ -199,10 +192,7 @@ class StartForm extends ValidatedForm {
               component={TextField}
               name="customerName"
               label="顾客名称"
-              value={values.customerName}
-              onChange={this.handleChange('customerName')}
-              error={!!this.getFieldError('customerName')}
-              helperText={this.getFieldError('customerName')}
+              form={this}
             />
           </Grid>
 
@@ -211,7 +201,7 @@ class StartForm extends ValidatedForm {
               component={TextField}
               name="customerMobile"
               label="顾客手机"
-              value={values.customerMobile}
+              form={this}
               onBlur={this.activateValidation('customerMobile')}
               onChange={e => {
                 var { value } = e.target
@@ -223,8 +213,6 @@ class StartForm extends ValidatedForm {
                   )
                 }
               }}
-              error={!!this.getFieldError('customerMobile')}
-              helperText={this.getFieldError('customerMobile')}
             />
           </Grid>
         </Grid>
@@ -233,21 +221,15 @@ class StartForm extends ValidatedForm {
           component={RegionPicker}
           name="customerRegionCode"
           label="所在地区"
-          value={values.customerRegionCode}
+          form={this}
           preSelect={310100}
-          onChange={this.handleChange('customerRegionCode')}
-          error={!!this.getFieldError('customerRegionCode')}
-          helperText={this.getFieldError('customerRegionCode')}
         />
 
         <Field
           component={TextField}
           name="customerStreet"
           label="详细地址"
-          value={values.customerStreet}
-          onChange={this.handleChange('customerStreet')}
-          error={!!this.getFieldError('customerStreet')}
-          helperText={this.getFieldError('customerStreet')}
+          form={this}
         />
 
         <Grid container justify="center" spacing={24}>
@@ -262,14 +244,12 @@ class StartForm extends ValidatedForm {
               maxDate={values.scheduledInstallationDate || undefined}
               leftArrowIcon={<ArrowLeftIcon />}
               rightArrowIcon={<ArrowRightIcon />}
-              value={values.scheduledMeasurementDate}
               labelFunc={date => dateFormat(date, 'YYYY/MM/DD')}
+              form={this}
               onChange={this.handleChange(
                 'scheduledMeasurementDate',
                 'datepicker'
               )}
-              error={!!this.getFieldError('scheduledMeasurementDate')}
-              helperText={this.getFieldError('scheduledMeasurementDate')}
             />
             <FormControlLabel
               control={
@@ -302,15 +282,13 @@ class StartForm extends ValidatedForm {
               clearable
               leftArrowIcon={<ArrowLeftIcon />}
               rightArrowIcon={<ArrowRightIcon />}
-              value={values.scheduledInstallationDate}
               minDate={values.scheduledMeasurementDate || new Date()}
               labelFunc={date => dateFormat(date, 'YYYY/MM/DD')}
+              form={this}
               onChange={this.handleChange(
                 'scheduledInstallationDate',
                 'datepicker'
               )}
-              error={!!this.getFieldError('scheduledInstallationDate')}
-              helperText={this.getFieldError('scheduledInstallationDate')}
             />
           </Grid>
         </Grid>
@@ -320,10 +298,7 @@ class StartForm extends ValidatedForm {
           name="orderFile"
           label="原始订单"
           compressImage={false}
-          error={!!this.getFieldError('orderFile')}
-          helperText={this.getFieldError('orderFile')}
-          onChange={this.handleChange('orderFile')}
-          value={values.orderFile}
+          form={this}
         />
 
         <div className={classes.buttonRow}>

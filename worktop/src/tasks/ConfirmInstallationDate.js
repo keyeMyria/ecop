@@ -64,10 +64,8 @@ class ConfirmInstallationDate extends ValidatedForm {
           disablePast
           leftArrowIcon={<ArrowLeftIcon />}
           rightArrowIcon={<ArrowRightIcon />}
-          value={confirmedInstallationDate}
+          form={this}
           labelFunc={() => dateFormat(confirmedInstallationDate, 'YYYY/MM/DD')}
-          error={!!this.getFieldError('confirmedInstallationDate')}
-          helperText={this.getFieldError('confirmedInstallationDate')}
           onChange={this.handleChange(
             'confirmedInstallationDate',
             'datepicker'
