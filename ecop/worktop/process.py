@@ -3,7 +3,8 @@ from pyramid_rpc.jsonrpc import jsonrpc_method
 from weblibs.camunda import camundaClient as cc
 from weblibs.jsonrpc import RPCUserError, parseDate
 from webmodel.consts import ORDER_SOURCE, SPECIAL_PARTY
-from webmodel.order import SalesOrder
+from webmodel.order import SalesOrder, PurchaseOrder
+from webmodel.item import Item
 
 from ecop.base import RpcBase
 from ecop.region import getRegionName
@@ -22,6 +23,7 @@ POST /process-instance/abe0b544-33f3-11e8-8a21-0242ac110005/modification
   }]
 }
 """
+
 
 class ProcessJSON(RpcBase):
     @jsonrpc_method(endpoint='rpc', method='bpmn.process.start')
@@ -55,14 +57,38 @@ class ProcessJSON(RpcBase):
             recipientMobile=params['customerMobile'],
             orderSource=ORDER_SOURCE.IKEA
         )
+
+        if params['isMeasurementRequested']:
+            itemMeasure = self.sess.query(Item).get(10023928)
+            order.addItem(item=itemMeasure, quantity=1)
+        itemInstall = self.sess.query(Item).get(10023929)
+        order.addItem(item=itemInstall, quantity=1)
+
         self.sess.add(order)
         self.sess.flush()
-        params['orderId'] = order.orderId
+
+        po = PurchaseOrder(
+            supplierId=10025188,
+            customerId=int(SPECIAL_PARTY.BE),
+            creatorId=self.request.user.partyId,
+            regionCode=params['customerRegionCode'],
+            streetAddress=params['customerStreet'],
+            recipientName=params['customerName'],
+            recipientMobile=params['customerMobile'],
+            relatedOrderId=order.orderId
+        )
+        if params['isMeasurementRequested']:
+            po.addItem(item=itemMeasure, quantity=1)
+        po.addItem(item=itemInstall, quantity=1)
+        self.sess.add(po)
 
         if externalOrderId:
             order.externalOrderId = externalOrderId
         else:
             params['externalOrderId'] = str(order.orderId)
+
+        # add orderId also as a process instance variable
+        params['orderId'] = order.orderId
 
         cc.makeRequest(
             f'/process-definition/key/{processKey}/start', 'post',
