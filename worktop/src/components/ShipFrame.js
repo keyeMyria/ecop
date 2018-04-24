@@ -107,19 +107,15 @@ class ShipFrame extends React.Component {
             <Typography variant="headline" component="h2">
               订单{variables.externalOrderId}收货完成
             </Typography>
-
-            {App.isWeixin && (
-              <Toolbar className={classes.buttons}>
-                <Button
-                  variant="raised"
-                  color="primary"
-                  onClick={this.handleScan}
-                >
-                  <QrcodeIcon />&nbsp; 继续扫描
-                </Button>
-              </Toolbar>
-            )}
           </div>
+        )}
+
+        {App.isWeixin && (
+          <Toolbar className={classes.buttons}>
+            <Button variant="raised" color="primary" onClick={this.handleScan}>
+              <QrcodeIcon />&nbsp; 继续扫描
+            </Button>
+          </Toolbar>
         )}
       </div>
     )
