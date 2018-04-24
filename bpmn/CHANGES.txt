@@ -10,15 +10,15 @@
  * Add task UpdateDrawing
 
 
-1.2 (2018-4-)
+1.2 (2018-4-24)
 
  * Add task CompleteERPOrder
  * Add signal event WorktopReceived
  * Set due date of task ConfirmInstallationDate as 1 day after the
    WorktopReceived signal
- * Use task listeners on the measurement and installation tasks to automatically
+ * Add task listeners on the measurement and installation tasks to automatically
    set actualMeasurementDate and actualInstallationDate
- * Use execution listerners on signal events WorktopShipped and WorktopReceived
+ * Add execution listerners on signal events WorktopShipped and WorktopReceived
    to record variables shippingDate and receivingDate
  * Remove the milestone event M1
 
