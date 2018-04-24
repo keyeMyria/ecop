@@ -13,6 +13,7 @@ import DateFnsUtils from 'utils/date-fns-utils'
 import AppMain from 'components/AppMain'
 import theme from './theme'
 import store from './model/store'
+import cnLocale from 'date-fns/locale/zh-CN'
 
 // polyfill ie for symbol
 require('core-js/fn/symbol')
@@ -49,7 +50,7 @@ ReactDOM.render(
   <Provider store={store}>
     <MuiThemeProvider theme={theme}>
       <CssBaseline />
-      <MuiPickersUtilsProvider utils={DateFnsUtils}>
+      <MuiPickersUtilsProvider utils={DateFnsUtils} locale={cnLocale}>
         <AppMain />
       </MuiPickersUtilsProvider>
     </MuiThemeProvider>

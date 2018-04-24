@@ -2,13 +2,10 @@
  * For date locale customization of material-ui-pickers
  *
  * Due to insufficient localization support of DateFnsUtils we have to
- * customize the code ourselves
+ * customize the getDatePickerHeaderText and getCalendarHeaderText methods
  */
 
-import { default as _format } from 'date-fns/format'
-import zh_CN from 'date-fns/esm/locale/zh-CN'
-
-import parse from 'date-fns/parse'
+import dateFnsParse from 'date-fns/parse'
 import addDays from 'date-fns/addDays'
 import addMonths from 'date-fns/addMonths'
 import addYears from 'date-fns/addYears'
@@ -16,6 +13,7 @@ import endOfDay from 'date-fns/endOfDay'
 import endOfMonth from 'date-fns/endOfMonth'
 import endOfWeek from 'date-fns/endOfWeek'
 import endOfYear from 'date-fns/endOfYear'
+import format from 'date-fns/format'
 import isAfter from 'date-fns/isAfter'
 import isBefore from 'date-fns/isBefore'
 import isSameDay from 'date-fns/isSameDay'
@@ -32,13 +30,12 @@ import getHours from 'date-fns/getHours'
 import getYear from 'date-fns/getYear'
 import isEqual from 'date-fns/isEqual'
 
-// default to use zh_CN as locale
-const format = (date, string) => {
-  return _format(date, string, { locale: zh_CN })
-}
-
 export default class DateFnsUtils {
-  static date(value) {
+  constructor({ locale } = {}) {
+    this.locale = locale
+  }
+
+  date(value) {
     if (typeof value === 'undefined') {
       return new Date()
     }
@@ -46,89 +43,97 @@ export default class DateFnsUtils {
     return new Date(value)
   }
 
-  static parse = (value, formatString) => parse(value, formatString, new Date())
+  parse(value, formatString) {
+    if (value === '') {
+      return null
+    }
 
-  static addDays = addDays
-
-  static isValid = isValid
-
-  static isEqual = isEqual
-
-  static isNull(date) {
-    return date == null
+    return dateFnsParse(value, formatString, new Date())
   }
 
-  static isAfter = isAfter
-
-  static isBefore = isBefore
-
-  static isAfterDay(date, value) {
-    return isAfter(endOfDay(date), value)
+  format(date, formatString) {
+    return format(date, formatString, { locale: this.locale })
   }
 
-  static isBeforeDay(date, value) {
+  addDays = addDays
+
+  isValid = isValid
+
+  isEqual = isEqual
+
+  isNull(date) {
+    return date === null
+  }
+
+  isAfter = isAfter
+
+  isBefore = isBefore
+
+  isAfterDay(date, value) {
+    return isAfter(date, endOfDay(value))
+  }
+
+  isBeforeDay(date, value) {
     return isBefore(date, startOfDay(value))
   }
 
-  static isBeforeYear(date, value) {
+  isBeforeYear(date, value) {
     return isBefore(date, startOfYear(value))
   }
 
-  static isAfterYear(date, value) {
-    return isAfter(endOfYear(date), value)
+  isAfterYear(date, value) {
+    return isAfter(date, endOfYear(value))
   }
 
-  static startOfDay = startOfDay
+  startOfDay = startOfDay
 
-  static endOfDay = endOfDay
+  endOfDay = endOfDay
 
-  static format = format
-
-  static formatNumber(num) {
+  formatNumber(num) {
     return num
   }
 
-  static getHours = getHours
+  getHours = getHours
 
-  static setHours = setHours
+  setHours = setHours
 
-  static getMinutes(date) {
+  getMinutes(date) {
     return date.getMinutes()
   }
 
-  static setMinutes = setMinutes
+  setMinutes = setMinutes
 
-  static getMonth(date) {
+  getMonth(date) {
     return date.getMonth()
   }
 
-  static isSameDay = isSameDay
+  isSameDay = isSameDay
 
-  static getMeridiemText(ampm) {
+  getMeridiemText(ampm) {
     return ampm === 'am' ? 'AM' : 'PM'
   }
 
-  static getStartOfMonth = startOfMonth
+  getStartOfMonth = startOfMonth
 
-  static getNextMonth(date) {
+  getNextMonth(date) {
     return addMonths(date, 1)
   }
 
-  static getPreviousMonth(date) {
+  getPreviousMonth(date) {
     return addMonths(date, -1)
   }
 
-  static getYear = getYear
+  getYear = getYear
 
-  static setYear = setYear
+  setYear = setYear
 
-  static getWeekdays() {
+  getWeekdays() {
     return [0, 1, 2, 3, 4, 5, 6].map(dayOfWeek =>
-      format(setDay(new Date(), dayOfWeek), 'dd')
+      format(setDay(new Date(), dayOfWeek), 'dd', { locale: this.locale })
     )
   }
 
-  static getWeekArray(date) {
+  getWeekArray(date) {
     const start = startOfWeek(startOfMonth(date))
     const end = endOfWeek(endOfMonth(date))
 
@@ -146,7 +151,7 @@ export default class DateFnsUtils {
     return nestedWeeks
   }
 
-  static getYearRange(start, end) {
+  getYearRange(start, end) {
     const startDate = new Date(start)
     const endDate = new Date(end)
     const years = []
@@ -159,31 +164,31 @@ export default class DateFnsUtils {
   }
 
   // displaying methpds
-  static getCalendarHeaderText(date) {
-    return format(date, 'YYYY年MMMM')
+  getCalendarHeaderText(date) {
+    return format(date, 'YYYY年MMM', { locale: this.locale })
   }
 
-  static getYearText(date) {
-    return format(date, 'YYYY')
+  getYearText(date) {
+    return format(date, 'YYYY', { locale: this.locale })
   }
 
-  static getDatePickerHeaderText(date) {
-    return format(date, 'M月D日, ddd')
+  getDatePickerHeaderText(date) {
+    return format(date, 'MMMD日, ddd', { locale: this.locale })
   }
 
-  static getDateTimePickerHeaderText(date) {
-    return format(date, 'MMM D')
+  getDateTimePickerHeaderText(date) {
+    return format(date, 'MMM D', { locale: this.locale })
   }
 
-  static getDayText(date) {
-    return format(date, 'D')
+  getDayText(date) {
+    return format(date, 'D', { locale: this.locale })
   }
 
-  static getHourText(date, ampm) {
-    return format(date, ampm ? 'hh' : 'HH')
+  getHourText(date, ampm) {
+    return format(date, ampm ? 'hh' : 'HH', { locale: this.locale })
   }
 
-  static getMinuteText(date) {
-    return format(date, 'mm')
+  getMinuteText(date) {
+    return format(date, 'mm', { locale: this.locale })
   }
 }
