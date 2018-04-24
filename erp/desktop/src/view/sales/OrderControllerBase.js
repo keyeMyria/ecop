@@ -282,6 +282,8 @@ Ext.define('Ecop.view.sales.OrderControllerBase', {
         oi.quantity = 1
         if (me.orderType === 'S') {
           oi.unitCost = item.get('purchasePrice')
+        } else {
+          oi.sellingPrice = item.get('purchasePrice')
         }
         me.itemStore.add(new Web.model.OrderItem(oi))
       }
