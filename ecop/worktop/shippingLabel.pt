@@ -22,7 +22,7 @@
         ${getRegionName(l.customerRegionCode)}
       </drawString>
       <drawString x="0.5cm" y="8cm">
-        ${l.customerName} ${l.customerMobile}
+        ${l.customerName}
       </drawString>
       <setFont name="Helvetica" size="8" />
       <barCode x="3cm" y="3cm" code="qr" height="4cm" width="4cm">${l.labelUrl}</barCode>

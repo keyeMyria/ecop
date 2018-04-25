@@ -39,7 +39,7 @@ class LabelView(DocBase):
                 '/process-instance', 'post', {'businessKey': oid},
                 withProcessVariables=(
                     'orderId', 'externalOrderId', 'factoryNumber',
-                    'customerName', 'customerMobile', 'customerRegionCode',
+                    'customerName', 'customerRegionCode',
                 ),
                 processInstanceIdField='id',
                 hoistProcessVariables=True
