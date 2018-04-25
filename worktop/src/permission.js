@@ -2,5 +2,7 @@
 
 export default function hasPermission(permission) {
   const { permission: userPermissions, group } = App.userInfo
-  return userPermissions === 'all' && group === undefined
+
+  if (userPermissions === 'all' && group === undefined) return true
+  if (permission === 'shipment.receive' && group === 'installer') return true
 }

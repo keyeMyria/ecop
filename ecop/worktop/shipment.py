@@ -122,7 +122,7 @@ class ShipmentJSON(RpcBase):
         # this could be the scanning of an old label for a process already
         # completed
         if len(process) != 1:
-            raise RPCUserError(f'订单{orderId}不在待收货状态，请联系控制中心')
+            raise RPCUserError(f'订单{orderId}不在待收货状态')
 
         process = process[0]
         # the already received packages
@@ -140,11 +140,11 @@ class ShipmentJSON(RpcBase):
         })
 
         if not exe and not pkgs:
-            raise RPCUserError(f'订单{orderId}不在待收货状态，请联系控制中心')
+            raise RPCUserError(f'订单{orderId}不在待收货状态')
 
         # this should not be valid combination
         if exe and pkgs:
-            raise RPCUserError(f'系统错误，请联系控制中心')
+            raise RPCUserError(f'系统错误')
 
         if len(exe) == 1:
             cc.makeRequest('/signal', 'post', params={
