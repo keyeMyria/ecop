@@ -21,7 +21,7 @@ class ProcessForm(DocBase):
         formName = request.matchdict['form']
         loader = TemplateLoader([os.path.dirname(__file__)])
         try:
-            self.template = loader.load(formName + '.pt')
+            self.template = loader.load(formName + '.rml')
         except TemplateNotFound:
             raise HTTPNotFound()
 

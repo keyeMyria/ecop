@@ -30,6 +30,7 @@
 
   <stylesheet>
     <paraStyle name="normal" fontSize="12" leading="17" fontName="msyh" spaceBefore="3" spaceAfter="3" wordWrap="CJK" />
+    <paraStyle name="yesno" parent="normal" leading="20" leftIndent="16" />
 
     <blockTableStyle id="header">
       <blockFont name="msyhbd" size="12" leading="13" start="0,0" stop="-1,0" />
@@ -119,87 +120,80 @@
         <td align="center" topPadding="10" bottomPadding="10">顾客检查并填写内容</td>
       </tr>
       <tr>
-        <td>安装人员是否在约定的时间到</td>
-        <td><para style="normal" leading="20">
-          <font fontName="simsun" size="18"><sub rise="2">□</sub></font> 有
+        <td>安装人员是否在预定时间到</td>
+        <td><para style="yesno">
+          <font fontName="simsun" size="18"><sub rise="2">□</sub></font> 是
         </para></td>
-        <td><para style="normal" leading="20">
-          <font fontName="simsun" size="18"><sub rise="2">□</sub></font> 没有
-        </para></td>
-      </tr>
-      <tr>
-        <td>宜家橱柜安装是否存在问题</td>
-        <td><para style="normal" leading="20">
-          <font fontName="simsun" size="18"><sub rise="2">□</sub></font> 有
-        </para></td>
-        <td><para style="normal" leading="20">
-          <font fontName="simsun" size="18"><sub rise="2">□</sub></font> 没有
+        <td><para style="yesno">
+          <font fontName="simsun" size="18"><sub rise="2">□</sub></font> 否
         </para></td>
       </tr>
       <tr>
-        <td>台面的安装是否满意</td>
-        <td><para style="normal" leading="20">
-          <font fontName="simsun" size="18"><sub rise="2">□</sub></font> 满意
+        <td>是否在安装前做了现场保护工作</td>
+        <td><para style="yesno">
+          <font fontName="simsun" size="18"><sub rise="2">□</sub></font> 是
         </para></td>
-        <td><para style="normal" leading="20">
-          <font fontName="simsun" size="18"><sub rise="2">□</sub></font> 不满意
-        </para></td>
-      </tr>
-      <tr>
-        <td>顾客的水槽，煤气灶，水龙头及下水装置是否在现场</td>
-        <td><para style="normal" leading="20">
-          <font fontName="simsun" size="18"><sub rise="2">□</sub></font> 在
-        </para></td>
-        <td><para style="normal" leading="20">
-          <font fontName="simsun" size="18"><sub rise="2">□</sub></font> 不在
+        <td><para style="yesno">
+          <font fontName="simsun" size="18"><sub rise="2">□</sub></font> 否
         </para></td>
       </tr>
       <tr>
-        <td><para style="normal">水槽，煤气灶，水龙头，下水是否安装到位
-        <br /><font color="red">(注意，非宜家水龙头，下水不予安装)</font></para></td>
-        <td><para style="normal" leading="20">
-          <font fontName="simsun" size="18"><sub rise="2">□</sub></font> 到位
+        <td><para style="normal">是否把灶具或水槽等相应产品放置或安装到位
+        <br /><font color="red">(宜家的龙头和水槽应该安装下水)</font></para>
+        </td>
+        <td><para style="yesno">
+          <font fontName="simsun" size="18"><sub rise="2">□</sub></font> 是
         </para></td>
-        <td><para style="normal" leading="20">
-          <font fontName="simsun" size="18"><sub rise="2">□</sub></font> 不到位
-        </para></td>
-      </tr>
-      <tr>
-        <td>安装人员的服务态度是否满意</td>
-        <td><para style="normal" leading="20">
-          <font fontName="simsun" size="18"><sub rise="2">□</sub></font> 满意
-        </para></td>
-        <td><para style="normal" leading="20">
-          <font fontName="simsun" size="18"><sub rise="2">□</sub></font> 不满意
+        <td><para style="yesno">
+          <font fontName="simsun" size="18"><sub rise="2">□</sub></font> 否
         </para></td>
       </tr>
       <tr>
-        <td>台面安装之后，是否有做清洁工作</td>
-        <td><para style="normal" leading="20">
-          <font fontName="simsun" size="18"><sub rise="2">□</sub></font> 有
+        <td>是否确保橱柜等其他家具不受损伤</td>
+        <td><para style="yesno">
+          <font fontName="simsun" size="18"><sub rise="2">□</sub></font> 是
         </para></td>
-        <td><para style="normal" leading="20">
-          <font fontName="simsun" size="18"><sub rise="2">□</sub></font> 没有
-        </para></td>
-      </tr>
-      <tr>
-        <td>顾客检查台面安装完成后橱柜是否有任何损伤</td>
-        <td><para style="normal" leading="20">
-          <font fontName="simsun" size="18"><sub rise="2">□</sub></font> 有
-        </para></td>
-        <td><para style="normal" leading="20">
-          <font fontName="simsun" size="18"><sub rise="2">□</sub></font> 没有
+        <td><para style="yesno">
+          <font fontName="simsun" size="18"><sub rise="2">□</sub></font> 否
         </para></td>
       </tr>
       <tr>
-        <td>安装人员是否有交待后续台面的使用和维护的注意事项</td>
-        <td><para style="normal" leading="20">
-          <font fontName="simsun" size="18"><sub rise="2">□</sub></font> 有
+        <td>台面安装后是否做清洁工作</td>
+        <td><para style="yesno">
+          <font fontName="simsun" size="18"><sub rise="2">□</sub></font> 是
         </para></td>
-        <td><para style="normal" leading="20">
-          <font fontName="simsun" size="18"><sub rise="2">□</sub></font> 没有
+        <td><para style="yesno">
+          <font fontName="simsun" size="18"><sub rise="2">□</sub></font> 否
         </para></td>
       </tr>
+      <tr>
+        <td>安装完成后是否交代台面使用和维护的注意事项</td>
+        <td><para style="yesno">
+          <font fontName="simsun" size="18"><sub rise="2">□</sub></font> 是
+        </para></td>
+        <td><para style="yesno">
+          <font fontName="simsun" size="18"><sub rise="2">□</sub></font> 否
+        </para></td>
+      </tr>
+      <tr>
+        <td>顾客对台面安装是否满意</td>
+        <td><para style="yesno">
+          <font fontName="simsun" size="18"><sub rise="2">□</sub></font> 是
+        </para></td>
+        <td><para style="yesno">
+          <font fontName="simsun" size="18"><sub rise="2">□</sub></font> 否
+        </para></td>
+      </tr>
+      <tr>
+        <td>顾客对安装人员的服务态度是否满意</td>
+        <td><para style="yesno">
+          <font fontName="simsun" size="18"><sub rise="2">□</sub></font> 是
+        </para></td>
+        <td><para style="yesno">
+          <font fontName="simsun" size="18"><sub rise="2">□</sub></font> 否
+        </para></td>
+      </tr>
+
       <tr>
         <td><para style="normal">
 尊敬的客户：

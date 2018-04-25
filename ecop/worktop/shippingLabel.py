@@ -50,7 +50,7 @@ class LabelView(DocBase):
             labels.append(ret[0])
 
         loader = TemplateLoader([os.path.dirname(__file__)])
-        template = loader.load('shippingLabel.pt')
+        template = loader.load('shippingLabel.rml')
         stream = template.generate(labels=labels, view=self)
         body = rml2pdf.parseString(stream.render()).read()
 
