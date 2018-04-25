@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import compose from 'recompose/compose'
 import find from 'lodash.find'
+import toDate from 'date-fns/toDate'
 
 import { withStyles } from 'material-ui/styles'
 import Card, { CardActions, CardContent } from 'material-ui/Card'
@@ -41,7 +42,8 @@ const TASK_REFRESH_INTERVAL = 1000 * 60
 const TaskItem = props => {
   const { classes, task, onOpenTask } = props
   const { processVariables: variables } = task
-  const timeToDue = new Date(task.due) - new Date()
+  // toDate is necessary for IE as it will not parse task.due correctly
+  const timeToDue = toDate(task.due) - new Date()
   let iconColor = undefined
 
   if (timeToDue < 0) {
@@ -71,7 +73,7 @@ const TaskItem = props => {
       </CardContent>
       <CardActions>
         <Button size="small" color="primary" onClick={onOpenTask}>
-          处理任务
+          查看任务
         </Button>
       </CardActions>
     </Card>
