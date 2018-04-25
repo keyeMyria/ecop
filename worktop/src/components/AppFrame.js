@@ -25,6 +25,7 @@ import ShipmentForm from './ShipmentForm'
 import ProcessManager from './ProcessManager'
 
 const drawerWidth = 180
+const drawerWidthClose = 72
 
 const styles = theme => ({
   root: {
@@ -70,7 +71,7 @@ const styles = theme => ({
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen
     }),
-    width: theme.spacing.unit * 9,
+    width: drawerWidthClose,
     [theme.breakpoints.down('sm')]: {
       width: 0
     }
@@ -83,18 +84,22 @@ const styles = theme => ({
   },
   main: {
     flexGrow: 1,
-    display: 'flex',
-    flexDirection: 'column',
-    backgroundColor: theme.palette.background.default
+    backgroundColor: theme.palette.background.default,
+    // below is required for IE11 due to is bug of flexbox model
+    '&.open': {
+      width: `calc(100% - ${drawerWidth}px)`
+    },
+    '&.close': {
+      width: `calc(100% - ${drawerWidthClose}px)`
+    }
   },
   content: {
-    flexGrow: 1,
     overflowY: 'auto',
     padding: theme.spacing.unit,
-    maxHeight: `calc(100vh - ${theme.mixins.toolbar.minHeight}px)`,
+    height: `calc(100vh - ${theme.mixins.toolbar.minHeight}px)`,
     [theme.breakpoints.up('sm')]: {
       padding: theme.spacing.unit * 2,
-      maxHeight: `calc(100vh - ${
+      height: `calc(100vh - ${
         theme.mixins.toolbar[theme.breakpoints.up('sm')].minHeight
       }px)`
     }
@@ -161,7 +166,7 @@ class AppFrame extends React.Component {
             >
               <MenuIcon />
             </IconButton>
-            <Typography variant="title" color="inherit" noWrap>
+            <Typography variant="title" color="inherit">
               台面安装流程
             </Typography>
           </Toolbar>
@@ -178,11 +183,11 @@ class AppFrame extends React.Component {
         >
           <div className={classes.toolbar}>
             <div className={classes.appName}>
-              <Typography variant="title" color="inherit" noWrap>
+              <Typography variant="title" color="inherit">
                 Worktop
               </Typography>
-              <Typography variant="subheading" color="inherit" noWrap>
-                v1.1.2_{App.version}
+              <Typography variant="subheading" color="inherit">
+                v1.2_{App.version}
               </Typography>
             </div>
             <IconButton onClick={this.handleDrawerClose}>
@@ -218,7 +223,9 @@ class AppFrame extends React.Component {
             />
           </List>
         </Drawer>
-        <div className={classes.main}>
+        <div
+          className={classNames([classes.main, drawerOpen ? 'open' : 'close'])}
+        >
           <div className={classes.toolbar} />
           <div className={classes.content}>
             {currentFrame === 'start' && <StartForm />}
