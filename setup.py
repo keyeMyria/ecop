@@ -7,6 +7,7 @@ requires = [
     'pyramid_session_redis',
 
     'beautifulsoup4',
+    'dateutil',
     'elasticsearch-dsl>=5.0.0,<6.0.0',
     'genshi',
     'hiredis',

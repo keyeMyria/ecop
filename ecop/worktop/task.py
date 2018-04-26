@@ -1,3 +1,5 @@
+from dateutil import tz, parser
+
 from pyramid_rpc.jsonrpc import jsonrpc_method
 from hm.lib.camunda import CamundaRESTError
 
@@ -51,8 +53,9 @@ class TaskJSON(RpcBase):
         else, return None
         """
         try:
-            task = cc.makeRequest(
-                f'/task/{taskId}', 'get', withProcessVariables='*')
+            task = cc.makeRequest(f'/task/{taskId}', 'get',
+                withProcessVariables='*')
+            task['comments'] = cc.makeRequest(f'/task/{taskId}/comment', 'get')
         except CamundaRESTError as e:
             if e.status == 404:
                 task = None
@@ -113,3 +116,29 @@ class TaskJSON(RpcBase):
         if not orders or \
                 [o for o in orders if o.orderStatus != ORDER_STATUS.COMPLETED]:
             raise RPCUserError(f'未找到该订单对应的采购订单或采购订单未完成')
+
+    @jsonrpc_method(endpoint='rpc', method='bpmn.task.changeDue')
+    def changeTaskDueDate(self, taskId, dueDate, justification):
+        """
+        :param dueDate:
+            a javascript object string, normally in the local time zone
+        """
+
+        # to change the task due, we have to get the full task object and
+        # modify the due, since the PUT method replace the task object as a
+        # whole, not just one field
+        task = cc.makeRequest(f'/task/{taskId}', 'get')
+        newDue = parser.parse(dueDate).replace(hour=23, minute=59, second=59)
+        task['due'] = newDue.strftime('%Y-%m-%dT%H:%M:%S.0+0800')
+        cc.makeRequest(f'/task/{taskId}', 'put', task)
+
+        message = '\n'.join((
+            '任务到期时间从{old}修改为{new}'.format(
+                old=parser.parse(task['due']).astimezone(
+                    tz.tzlocal()).isoformat()[:19],
+                new=newDue.isoformat()[:19]),
+            justification
+        ))
+        cc.makeRequest(f'/task/{taskId}/comment/create', 'post', {
+            'message': message
+        })
