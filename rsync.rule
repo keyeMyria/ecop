@@ -1,6 +1,8 @@
 + ecop/worktop/
 + ecop/erp/
 - __pycache__/
+- build/
+- dist/
 - *.pyc
 - *.ini
 - *.sample
@@ -10,10 +12,8 @@
 - *.rst
 - *egg*/
 - *.log
-- build/
 - erp/
 - worktop/
 - bpmn/
-- dist/
 - build.sh
 - rsync.rule

@@ -1,7 +1,8 @@
 /* global App */
 import React from 'react'
-import { withStyles } from 'material-ui/styles'
 import classNames from 'classnames'
+
+import { withStyles } from 'material-ui/styles'
 import Drawer from 'material-ui/Drawer'
 import AppBar from 'material-ui/AppBar'
 import Toolbar from 'material-ui/Toolbar'
