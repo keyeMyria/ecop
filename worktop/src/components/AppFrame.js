@@ -1,6 +1,7 @@
 /* global App */
-import React from 'react'
+import React, { Fragment } from 'react'
 import classNames from 'classnames'
+import screenfull from 'screenfull'
 
 import { withStyles } from 'material-ui/styles'
 import Drawer from 'material-ui/Drawer'
@@ -10,6 +11,7 @@ import List from 'material-ui/List'
 import { ListItem, ListItemIcon, ListItemText } from 'material-ui/List'
 import Typography from 'material-ui/Typography'
 import Divider from 'material-ui/Divider'
+import Tooltip from 'material-ui/Tooltip'
 import IconButton from 'material-ui/IconButton'
 import MenuIcon from '@material-ui/icons/Menu'
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft'
@@ -17,6 +19,8 @@ import ExitToAppIcon from '@material-ui/icons/ExitToApp'
 import AddCircleIcon from '@material-ui/icons/AddCircle'
 import LocalShipping from '@material-ui/icons/LocalShipping'
 import WorkIcon from '@material-ui/icons/Work'
+import FullScreenIcon from '@material-ui/icons/Fullscreen'
+import FullScreenExitIcon from '@material-ui/icons/FullscreenExit'
 
 import { jsonrpc, screen } from 'homemaster-jslib'
 import TaskListIcon from 'homemaster-jslib/svg-icons/TaskList'
@@ -83,6 +87,9 @@ const styles = theme => ({
     justifyContent: 'flex-end',
     ...theme.mixins.toolbar
   },
+  spacer: {
+    flex: 1
+  },
   main: {
     flexGrow: 1,
     backgroundColor: theme.palette.background.default,
@@ -113,7 +120,8 @@ const styles = theme => ({
 class AppFrame extends React.Component {
   state = {
     drawerOpen: !screen.isMobile(),
-    currentFrame: 'tasks'
+    currentFrame: 'tasks',
+    isFullscreen: false
   }
 
   handleDrawerOpen = () => {
@@ -147,6 +155,27 @@ class AppFrame extends React.Component {
       )
     }
 
+    const FullscreenToggle = () =>
+      screenfull.enabled && (
+        <IconButton
+          color="inherit"
+          onClick={() => {
+            this.setState({ isFullscreen: !this.state.isFullscreen })
+            screenfull.toggle()
+          }}
+        >
+          {this.state.isFullscreen ? (
+            <Tooltip title="退出全屏">
+              <FullScreenExitIcon />
+            </Tooltip>
+          ) : (
+            <Tooltip title="全屏显示">
+              <FullScreenIcon />
+            </Tooltip>
+          )}
+        </IconButton>
+      )
+
     return (
       <div className={classes.root}>
         <AppBar
@@ -170,6 +199,8 @@ class AppFrame extends React.Component {
             <Typography variant="title" color="inherit">
               台面安装流程
             </Typography>
+            <div className={classes.spacer} />
+            <FullscreenToggle />
           </Toolbar>
         </AppBar>
         <Drawer
@@ -214,7 +245,7 @@ class AppFrame extends React.Component {
             />
             <MenuItem
               icon={<TaskListIcon />}
-              text="订单管理"
+              text="订单查询"
               onClick={() => this.setState({ currentFrame: 'manage' })}
             />
             <MenuItem
