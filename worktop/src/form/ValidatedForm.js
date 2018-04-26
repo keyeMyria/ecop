@@ -23,6 +23,18 @@ export default class ValidatedForm extends Component {
 
   getFieldError = field => this.props.getValidationMessages(field)[0]
 
+  clearField = field => () => {
+    this.setState(
+      {
+        values: {
+          ...this.state.values,
+          [field]: ''
+        }
+      },
+      this.props.handleValidation(field)
+    )
+  }
+
   handleChange = (field, type) => e => {
     var value
 
