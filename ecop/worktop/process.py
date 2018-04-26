@@ -105,6 +105,8 @@ class ProcessJSON(RpcBase):
 
         if 'cond' in kwargs:
             orderId = kwargs['cond'].get('orderId')
+            customerMobile = kwargs['cond'].get('customerMobile')
+
             if orderId:
                 if len(orderId) == 8:
                     params['processInstanceBusinessKey'] = orderId
@@ -114,6 +116,12 @@ class ProcessJSON(RpcBase):
                         'operator': 'eq',
                         'value': orderId
                     }]
+            elif customerMobile:
+                params['variables'] = [{
+                    'name': 'customerMobile',
+                    'operator': 'eq',
+                    'value': customerMobile
+                }]
 
         ret = cc.makeRequest(
             '/history/process-instance', 'post',

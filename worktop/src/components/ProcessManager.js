@@ -3,6 +3,8 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import classNames from 'classnames'
 import update from 'immutability-helper'
+import validation from 'react-validation-mixin'
+import compose from 'recompose/compose'
 
 import Table, { TableBody, TableCell, TableRow } from 'material-ui/Table'
 import Button from 'material-ui/Button'
@@ -10,48 +12,55 @@ import Paper from 'material-ui/Paper'
 import Toolbar from 'material-ui/Toolbar'
 import Typography from 'material-ui/Typography'
 import IconButton from 'material-ui/IconButton'
-import Input, { InputLabel, InputAdornment } from 'material-ui/Input'
-import { FormControl } from 'material-ui/Form'
 import { withStyles } from 'material-ui/styles'
 import green from 'material-ui/colors/green'
 import PreviewIcon from '@material-ui/icons/RemoveRedEye'
-import CancelIcon from '@material-ui/icons/Cancel'
 import SearchIcon from '@material-ui/icons/Search'
 
+import { strategy, ValidatedForm } from 'form'
 import CheckboxBlankCircle from 'homemaster-jslib/svg-icons/CheckboxBlankCircle'
 
 import { searchProcess } from 'model/actions'
 import dateFormat from 'utils/date-fns'
 import EnhancedTableHead from 'widget/TableHead'
+import InputField from 'widget/InputField'
 import VariablesForm from './VariablesForm'
 import { isValidOrderId } from 'utils/validators'
+import { Field } from '../form'
 
 const toolbarStyles = theme => ({
   root: {
     paddingLeft: 0,
     paddingRight: 0
   },
-  margin: {
+  searchField: {
+    flexBasis: 170,
     margin: theme.spacing.unit
-  },
-  textField: {
-    flexBasis: 170
-  },
-  cancelIcon: {
-    width: 36,
-    height: 36
   }
 })
 
-class SearchToolbar extends Component {
+class SearchToolbar extends ValidatedForm {
   state = {
     values: {
-      orderId: ''
+      orderId: '',
+      customerMobile: ''
     }
   }
 
+  validatorTypes = strategy.createInactiveSchema(
+    {
+      orderId: 'IKEAOrderId',
+      customerMobile: 'mobile'
+    },
+    {
+      'IKEAOrderId.orderId': '订单号格式不对'
+    }
+  )
+
   handleSearch = () => {
-    this.props.onSearch(this.state.values)
+    this.props.validate(error => {
+      !error && this.props.onSearch(this.state.values)
+    })
   }
 
   render() {
@@ -63,42 +72,48 @@ class SearchToolbar extends Component {
         classes={{ root: classes.root }}
         onKeyDown={e => e.keyCode === 13 && this.handleSearch()}
       >
-        <FormControl className={classNames(classes.margin, classes.textField)}>
-          <InputLabel>订单号</InputLabel>
-          <Input
-            value={values.orderId}
-            onChange={e => {
-              var { value } = e.target
-              if (!value || isValidOrderId(value, true)) {
-                this.setState({
-                  values: update(values, {
-                    orderId: {
-                      $set: value.toUpperCase()
-                    }
-                  })
+        <Field
+          component={InputField}
+          className={classes.searchField}
+          name="orderId"
+          label="订单号"
+          required={false}
+          form={this}
+          onChange={e => {
+            var { value } = e.target
+            if (!value || isValidOrderId(value, true)) {
+              this.setState({
+                values: update(values, {
+                  orderId: {
+                    $set: value.toUpperCase()
+                  }
                 })
-              }
-            }}
-            endAdornment={
-              <InputAdornment position="end">
-                <IconButton
-                  classes={{ root: classes.cancelIcon }}
-                  onClick={() => {
-                    this.setState({
-                      values: update(values, {
-                        orderId: {
-                          $set: ''
-                        }
-                      })
-                    })
-                  }}
-                >
-                  <CancelIcon />
-                </IconButton>
-              </InputAdornment>
+              })
             }
-          />
-        </FormControl>
+          }}
+          onClear={this.clearField('orderId')}
+        />
+
+        <Field
+          component={InputField}
+          className={classes.searchField}
+          name="customerMobile"
+          label="顾客手机号"
+          required={false}
+          form={this}
+          onChange={e => {
+            var { value } = e.target
+            // allow only numbers and max 11
+            if (/^1\d{0,10}$/.test(value) || !value) {
+              this.setState(
+                { values: { ...values, customerMobile: value } },
+                this.props.handleValidation('customerMobile')
+              )
+            }
+          }}
+          onClear={this.clearField('customerMobile')}
+        />
+
         <Button variant="raised" color="primary" onClick={this.handleSearch}>
           <SearchIcon /> &nbsp;搜&nbsp;索
         </Button>
@@ -110,7 +125,9 @@ class SearchToolbar extends Component {
 SearchToolbar.propTypes = {
   onSearch: PropTypes.func.isRequired
 }
-SearchToolbar = withStyles(toolbarStyles)(SearchToolbar)
+SearchToolbar = compose(withStyles(toolbarStyles), validation(strategy))(
+  SearchToolbar
+)
 
 const listStyles = theme => ({
   rowNumber: {
