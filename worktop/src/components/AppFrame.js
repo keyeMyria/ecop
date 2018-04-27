@@ -1,5 +1,5 @@
 /* global App */
-import React, { Fragment } from 'react'
+import React from 'react'
 import classNames from 'classnames'
 import screenfull from 'screenfull'
 
@@ -21,9 +21,12 @@ import LocalShipping from '@material-ui/icons/LocalShipping'
 import WorkIcon from '@material-ui/icons/Work'
 import FullScreenIcon from '@material-ui/icons/Fullscreen'
 import FullScreenExitIcon from '@material-ui/icons/FullscreenExit'
+import MoneyIcon from '@material-ui/icons/MonetizationOn'
 
 import { jsonrpc, screen } from 'homemaster-jslib'
 import TaskListIcon from 'homemaster-jslib/svg-icons/TaskList'
+
+import hasPermission from 'permission'
 import StartForm from './StartForm'
 import TaskList from './TaskList'
 import ShipmentForm from './ShipmentForm'
@@ -248,6 +251,22 @@ class AppFrame extends React.Component {
               text="订单查询"
               onClick={() => this.setState({ currentFrame: 'manage' })}
             />
+            {hasPermission('receivable.view') && (
+              <ListItem
+                button
+                component="a"
+                target="_blank"
+                href={`/ikea/receivable/current.pdf?token=${App.csrfToken}`}
+              >
+                <ListItemIcon>
+                  <MoneyIcon />
+                </ListItemIcon>
+                <ListItemText
+                  className={classes.listItemText}
+                  primary="倍宜对账"
+                />
+              </ListItem>
+            )}
             <MenuItem
               icon={<ExitToAppIcon />}
               onClick={this.handleLogout}
