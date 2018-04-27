@@ -2,6 +2,7 @@ import React, { Component, createElement } from 'react'
 import PropTypes from 'prop-types'
 import compose from 'recompose/compose'
 import { connect } from 'react-redux'
+import classNames from 'classnames'
 
 import { withStyles } from 'material-ui/styles'
 import AppBar from 'material-ui/AppBar'
@@ -9,9 +10,13 @@ import Dialog from 'material-ui/Dialog'
 import Toolbar from 'material-ui/Toolbar'
 import Typography from 'material-ui/Typography'
 import IconButton from 'material-ui/IconButton'
+import Tooltip from 'material-ui/Tooltip'
+import Badge from 'material-ui/Badge'
 import Button from 'material-ui/Button'
 import CloseIcon from '@material-ui/icons/Close'
 import WorkIcon from '@material-ui/icons/Work'
+import AlarmIcon from '@material-ui/icons/Alarm'
+import InsertCommentIcon from '@material-ui/icons/InsertComment'
 
 import { jsonrpc, screen, message } from 'homemaster-jslib'
 import PaperPlaneIcon from 'homemaster-jslib/svg-icons/PaperPlane'
@@ -63,6 +68,11 @@ const styles = theme => ({
       }px)`
     }
   },
+  badgePlus: {
+    backgroundColor: 'transparent',
+    fontSize: '100%',
+    right: -18
+  },
   form: {
     paddingLeft: 16,
     paddingRight: 16
@@ -81,6 +91,17 @@ class TaskForm extends Component {
       this.form = null
       this.innerForm = null
     }
+  }
+
+  changeDueDate = () => {
+    jsonrpc({
+      method: 'bpmn.task.changeDue',
+      params: [this.props.task.id, new Date(), 'For some reason']
+    }).then(() => {
+      message.success('任务期限修改成功', { autoHide: 5000 })
+      this.props.onClose()
+      this.props.dispatch(fetchUserTasks())
+    })
   }
 
   submitForm = values => {
@@ -110,8 +131,8 @@ class TaskForm extends Component {
 
   render = () => {
     const { task, dispatch, classes, ...other } = this.props
-    if (!task) return null
 
+    if (!task) return null
     const variables = task.processVariables
 
     return (
@@ -130,6 +151,26 @@ class TaskForm extends Component {
             >
               {task.name}
             </Typography>
+            <Tooltip title="修改到期日">
+              <IconButton color="inherit" onClick={this.changeDueDate}>
+                <AlarmIcon />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="任务备注">
+              <IconButton color="inherit" onClick={this.showComment}>
+                <Badge
+                  color="secondary"
+                  badgeContent={task.comments.length || '+'}
+                  classes={{
+                    badge: classNames({
+                      [classes.badgePlus]: task.comments.length === 0
+                    })
+                  }}
+                >
+                  <InsertCommentIcon />
+                </Badge>
+              </IconButton>
+            </Tooltip>
             <IconButton color="inherit" onClick={other.onClose}>
               <CloseIcon />
             </IconButton>
