@@ -133,13 +133,17 @@ class TaskJSON(RpcBase):
         task['due'] = newDue.strftime('%Y-%m-%dT%H:%M:%S.0+0800')
         cc.makeRequest(f'/task/{taskId}', 'put', task)
 
-        message = '\n'.join((
+        comment = '\n'.join((
             '任务到期时间从{old}修改为{new}'.format(
                 old=parser.parse(task['due']).astimezone(
                     tz.tzlocal()).isoformat()[:19],
                 new=newDue.isoformat()[:19]),
             '修改原因: ' + justification
         ))
+        self.addTaskComment(taskId, comment)
+
+    @jsonrpc_method(endpoint='rpc', method='bpmn.task.comment.add')
+    def addTaskComment(self, taskId, comment):
         cc.makeRequest(f'/task/{taskId}/comment/create', 'post', {
-            'message': message
+            'message': comment
         })

@@ -24,7 +24,7 @@ import PaperPlaneIcon from 'homemaster-jslib/svg-icons/PaperPlane'
 
 import { fetchUserTasks } from 'model/actions'
 import OrderHeader from 'components/OrderHeader'
-import { TaskDueDialog } from './TaskModifyDialogs'
+import { TaskDueDialog, CommentDialog } from './TaskModifyDialogs'
 
 import ConfirmMeasurementDate from 'tasks/ConfirmMeasurementDate'
 import TakeMeasurement from 'tasks/TakeMeasurement'
@@ -88,12 +88,9 @@ const styles = theme => ({
 class TaskForm extends Component {
   state = {
     dueOpen: false,
-    commentOpne: false
+    commentOpen: false
   }
 
-  /**
-   * Whenever the taks form is opened, we load the process variables
-   */
   componentWillReceiveProps = nextProps => {
     if (!this.props.open && nextProps.open) {
       this.form = null
@@ -110,6 +107,17 @@ class TaskForm extends Component {
       message.success('任务期限修改成功', { autoHide: 5000 })
       this.props.onClose()
       this.props.dispatch(fetchUserTasks())
+    })
+  }
+
+  submitComment = comment => {
+    this.setState({ commentOpen: false })
+    jsonrpc({
+      method: 'bpmn.task.comment.add',
+      params: [this.props.task.id, comment]
+    }).then(() => {
+      message.success('备注添加成功', { autoHide: 5000 })
+      this.props.onClose()
     })
   }
 
@@ -169,7 +177,10 @@ class TaskForm extends Component {
               </IconButton>
             </Tooltip>
             <Tooltip title="任务备注">
-              <IconButton color="inherit" onClick={this.showComment}>
+              <IconButton
+                color="inherit"
+                onClick={() => this.setState({ commentOpen: true })}
+              >
                 <Badge
                   color="secondary"
                   badgeContent={task.comments.length || '+'}
@@ -223,6 +234,12 @@ class TaskForm extends Component {
             due={toDate(task.due)}
             onChange={this.changeDueDate}
             onCancel={() => this.setState({ dueOpen: false })}
+          />
+          <CommentDialog
+            open={this.state.commentOpen}
+            comments={task.comments}
+            onSubmitComment={this.submitComment}
+            onCancel={() => this.setState({ commentOpen: false })}
           />
         </div>
       </Dialog>
