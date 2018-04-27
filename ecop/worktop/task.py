@@ -54,7 +54,7 @@ class TaskJSON(RpcBase):
         """
         try:
             task = cc.makeRequest(f'/task/{taskId}', 'get',
-                withProcessVariables='*')
+                                  withProcessVariables='*')
             task['comments'] = cc.makeRequest(f'/task/{taskId}/comment', 'get')
         except CamundaRESTError as e:
             if e.status == 404:
@@ -121,14 +121,15 @@ class TaskJSON(RpcBase):
     def changeTaskDueDate(self, taskId, dueDate, justification):
         """
         :param dueDate:
-            a javascript object string, normally in the local time zone
+            a javascript object string, could be in UTC so careful
         """
 
         # to change the task due, we have to get the full task object and
         # modify the due, since the PUT method replace the task object as a
         # whole, not just one field
         task = cc.makeRequest(f'/task/{taskId}', 'get')
-        newDue = parser.parse(dueDate).replace(hour=23, minute=59, second=59)
+        newDue = parser.parse(dueDate).astimezone(
+            tz.tzlocal()).replace(hour=23, minute=59, second=59)
         task['due'] = newDue.strftime('%Y-%m-%dT%H:%M:%S.0+0800')
         cc.makeRequest(f'/task/{taskId}', 'put', task)
 
@@ -137,7 +138,7 @@ class TaskJSON(RpcBase):
                 old=parser.parse(task['due']).astimezone(
                     tz.tzlocal()).isoformat()[:19],
                 new=newDue.isoformat()[:19]),
-            justification
+            '修改原因: ' + justification
         ))
         cc.makeRequest(f'/task/{taskId}/comment/create', 'post', {
             'message': message

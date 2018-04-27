@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import compose from 'recompose/compose'
 import { connect } from 'react-redux'
 import classNames from 'classnames'
+import toDate from 'date-fns/toDate'
 
 import { withStyles } from 'material-ui/styles'
 import AppBar from 'material-ui/AppBar'
@@ -23,6 +24,8 @@ import PaperPlaneIcon from 'homemaster-jslib/svg-icons/PaperPlane'
 
 import { fetchUserTasks } from 'model/actions'
 import OrderHeader from 'components/OrderHeader'
+import { TaskDueDialog } from './TaskModifyDialogs'
+
 import ConfirmMeasurementDate from 'tasks/ConfirmMeasurementDate'
 import TakeMeasurement from 'tasks/TakeMeasurement'
 import MakeDrawing from 'tasks/MakeDrawing'
@@ -83,6 +86,11 @@ const styles = theme => ({
 })
 
 class TaskForm extends Component {
+  state = {
+    dueOpen: false,
+    commentOpne: false
+  }
+
   /**
    * Whenever the taks form is opened, we load the process variables
    */
@@ -93,10 +101,11 @@ class TaskForm extends Component {
     }
   }
 
-  changeDueDate = () => {
+  changeDueDate = (newDue, reason) => {
+    this.setState({ dueOpen: false })
     jsonrpc({
       method: 'bpmn.task.changeDue',
-      params: [this.props.task.id, new Date(), 'For some reason']
+      params: [this.props.task.id, newDue, reason]
     }).then(() => {
       message.success('任务期限修改成功', { autoHide: 5000 })
       this.props.onClose()
@@ -151,8 +160,11 @@ class TaskForm extends Component {
             >
               {task.name}
             </Typography>
-            <Tooltip title="修改到期日">
-              <IconButton color="inherit" onClick={this.changeDueDate}>
+            <Tooltip title="修改期限">
+              <IconButton
+                color="inherit"
+                onClick={() => this.setState({ dueOpen: true })}
+              >
                 <AlarmIcon />
               </IconButton>
             </Tooltip>
@@ -206,6 +218,12 @@ class TaskForm extends Component {
               <PaperPlaneIcon className={classes.buttonIcon} />提交任务
             </Button>
           </div>
+          <TaskDueDialog
+            open={this.state.dueOpen}
+            due={toDate(task.due)}
+            onChange={this.changeDueDate}
+            onCancel={() => this.setState({ dueOpen: false })}
+          />
         </div>
       </Dialog>
     )
