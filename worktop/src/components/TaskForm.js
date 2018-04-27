@@ -24,7 +24,8 @@ import PaperPlaneIcon from 'homemaster-jslib/svg-icons/PaperPlane'
 
 import { fetchUserTasks } from 'model/actions'
 import OrderHeader from 'components/OrderHeader'
-import { TaskDueDialog, CommentDialog } from './TaskModifyDialogs'
+import TaskDueDialog from './TaskDue'
+import CommentDialog from './TaskComment'
 
 import ConfirmMeasurementDate from 'tasks/ConfirmMeasurementDate'
 import TakeMeasurement from 'tasks/TakeMeasurement'
