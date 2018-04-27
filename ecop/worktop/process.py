@@ -15,11 +15,11 @@ In case a process instance needs manual correction, use:
 POST /process-instance/abe0b544-33f3-11e8-8a21-0242ac110005/modification
 {
   "instructions": [{
-    "type": "startAfterActivity",
+    "type": "startBeforeActivity",
     "activityId": "ConfirmMeasurementDate"
   },{
     "type": "cancel",
-    "activityId": "MakeDrawing"
+    "activityId": "TakeMeasurement"
   }]
 }
 """
