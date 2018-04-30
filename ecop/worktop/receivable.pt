@@ -13,7 +13,7 @@
     <registerTTFont faceName="msyhbd" fileName="[ecop]/resources/msyhbd.ttf" />
   </docinit>
 
-  <template pagesize="a4" allowSplitting="0">
+  <template pagesize="a4" allowSplitting="1">
     <pageTemplate id="main">
       <pageGraphics>
         <setFont name="Helvetica-BoldOblique" size="10"/>
@@ -45,7 +45,7 @@
       本期订单数: <font size="15">${len(view.orders)}</font>，总金额: <font size="15">${view.total}</font>元
     </para>
     <py:for each="o in view.orders">
-      <para style="normal" spaceBefore="10">
+      <para style="normal" spaceBefore="10" keepWithNext="1">
         ${o.externalOrderId} ${o.recipientName} ${o.recipientMobile} ${getRegionName(o.regionCode)}${o.streetAddress}
       </para>
       <blockTable colWidths="60%, 12%, 13%, 15%" style="order-items" ident="1cm">
