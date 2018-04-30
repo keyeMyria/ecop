@@ -21,6 +21,7 @@ class ReceivableList(DocBase):
     payment period, which is given in the param `key` as either 'current' or
     'YYYYWww'
     """
+
     def join(self, *args):
         return ','.join([arg for arg in args if arg])
 
@@ -48,6 +49,7 @@ class ReceivableList(DocBase):
             filter_by(orderStatus=ORDER_STATUS.COMPLETED).\
             filter(SalesOrder.completionDate >= self.startDate).\
             filter(SalesOrder.completionDate < self.endDate + timedelta(1)).\
+            order_by(SalesOrder.completionDate, SalesOrder.orderId).\
             all()
 
         loader = TemplateLoader([os.path.dirname(__file__)])
