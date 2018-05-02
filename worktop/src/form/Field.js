@@ -2,7 +2,7 @@ import { createElement } from 'react'
 import PropTypes from 'prop-types'
 
 const Field = props => {
-  const { component, name, form, ...others } = props
+  const { clearable, component, name, form, ...others } = props
 
   const defaultProps = {
     required: !others.disabled,
@@ -11,6 +11,10 @@ const Field = props => {
     InputLabelProps: {
       shrink: true
     }
+  }
+
+  if (clearable) {
+    defaultProps.onClear = form.clearField(name)
   }
 
   if (form) {
@@ -26,6 +30,11 @@ const Field = props => {
 }
 
 Field.propTypes = {
+  /**
+   * If true, a clearField function will be automatically added. Used on
+   * component of type `widget.InputField`
+   */
+  clearable: PropTypes.bool,
   /**
    * The UI component used for this field
    */

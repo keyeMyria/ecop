@@ -98,6 +98,15 @@ class ProcessJSON(RpcBase):
 
     @jsonrpc_method(endpoint='rpc', method='bpmn.process.list')
     def getProcessList(self, processKey, kwargs):
+        """
+        Search process history with the given conditions.
+
+        :param kwargs: a dictionary with possible keywords: orderId,
+            customerMobile, customerName. Note those 3 are mutally exclusive.
+            There is no sense in supplying all 3.
+
+        """
+
         params = {
             'processDefinitionKey': processKey,
             'sorting': kwargs['sorting']
@@ -106,6 +115,7 @@ class ProcessJSON(RpcBase):
         if 'cond' in kwargs:
             orderId = kwargs['cond'].get('orderId')
             customerMobile = kwargs['cond'].get('customerMobile')
+            customerName = kwargs['cond'].get('customerName')
 
             if orderId:
                 if len(orderId) == 8:
@@ -121,6 +131,12 @@ class ProcessJSON(RpcBase):
                     'name': 'customerMobile',
                     'operator': 'eq',
                     'value': customerMobile
+                }]
+            elif customerName:
+                params['variables'] = [{
+                    'name': 'customerName',
+                    'operator': 'eq',
+                    'value': customerName
                 }]
 
         ret = cc.makeRequest(

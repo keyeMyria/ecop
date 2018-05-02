@@ -2,7 +2,6 @@ import React, { Component, Fragment } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import classNames from 'classnames'
-import update from 'immutability-helper'
 import validation from 'react-validation-mixin'
 import compose from 'recompose/compose'
 
@@ -43,17 +42,20 @@ class SearchToolbar extends ValidatedForm {
   state = {
     values: {
       orderId: '',
-      customerMobile: ''
+      customerMobile: '',
+      customerName: ''
     }
   }
 
   validatorTypes = strategy.createInactiveSchema(
     {
       orderId: 'IKEAOrderId',
-      customerMobile: 'mobile'
+      customerMobile: 'mobile',
+      customerName: 'min:2'
     },
     {
-      'IKEAOrderId.orderId': '订单号格式不对'
+      'IKEAOrderId.orderId': '订单号格式不对',
+      'min.customerName': '顾客名称长度至少为2个字符'
     }
   )
 
@@ -64,7 +66,6 @@ class SearchToolbar extends ValidatedForm {
   }
 
   render() {
-    const { values } = this.state
     const { classes } = this.props
 
     return (
@@ -79,19 +80,22 @@ class SearchToolbar extends ValidatedForm {
           label="订单号"
           required={false}
           form={this}
+          clearable
           onChange={e => {
             var { value } = e.target
             if (!value || isValidOrderId(value, true)) {
-              this.setState({
-                values: update(values, {
-                  orderId: {
-                    $set: value.toUpperCase()
+              this.setState(
+                {
+                  values: {
+                    orderId: value.toUpperCase(),
+                    customerMobile: '',
+                    customerName: ''
                   }
-                })
-              })
+                },
+                this.props.validate
+              )
             }
           }}
-          onClear={this.clearField('orderId')}
         />
 
         <Field
@@ -101,17 +105,45 @@ class SearchToolbar extends ValidatedForm {
           label="顾客手机号"
           required={false}
           form={this}
+          clearable
           onChange={e => {
             var { value } = e.target
             // allow only numbers and max 11
             if (/^1\d{0,10}$/.test(value) || !value) {
               this.setState(
-                { values: { ...values, customerMobile: value } },
-                this.props.handleValidation('customerMobile')
+                {
+                  values: {
+                    customerMobile: value,
+                    customerName: '',
+                    orderId: ''
+                  }
+                },
+                this.props.validate
               )
             }
           }}
-          onClear={this.clearField('customerMobile')}
+        />
+
+        <Field
+          component={InputField}
+          className={classes.searchField}
+          name="customerName"
+          label="顾客名称"
+          required={false}
+          form={this}
+          onChange={e => {
+            this.setState(
+              {
+                values: {
+                  customerName: e.target.value.trim(),
+                  customerMobile: '',
+                  orderId: ''
+                }
+              },
+              this.props.validate
+            )
+          }}
+          clearable
         />
 
         <Button variant="raised" color="primary" onClick={this.handleSearch}>
