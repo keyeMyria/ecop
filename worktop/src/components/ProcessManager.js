@@ -9,6 +9,7 @@ import Table, { TableBody, TableCell, TableRow } from 'material-ui/Table'
 import Button from 'material-ui/Button'
 import Paper from 'material-ui/Paper'
 import Toolbar from 'material-ui/Toolbar'
+import TextField from 'material-ui/TextField'
 import Typography from 'material-ui/Typography'
 import IconButton from 'material-ui/IconButton'
 import { withStyles } from 'material-ui/styles'
@@ -22,7 +23,11 @@ import CheckboxBlankCircle from 'homemaster-jslib/svg-icons/CheckboxBlankCircle'
 import { searchProcess } from 'model/actions'
 import dateFormat from 'utils/date-fns'
 import EnhancedTableHead from 'widget/TableHead'
-import InputField from 'widget/InputField'
+/**
+ * TODO: Due to IE InputAdornment positioning problem, we are temporarily
+ * disabling the usage of InputField
+ */
+//import InputField from 'widget/InputField'
 import VariablesForm from './VariablesForm'
 import { isValidOrderId } from 'utils/validators'
 import { Field } from '../form'
@@ -32,8 +37,13 @@ const toolbarStyles = theme => ({
     paddingLeft: 0,
     paddingRight: 0
   },
+  /**
+   * TODO: Due to a bug the placement of clear icon in IE 11, we have to set
+   * the flexBasis to at least 200. Otherwise the clear icon will be placed
+   * outside of the TextField
+   */
   searchField: {
-    flexBasis: 170,
+    flexBasis: 200,
     margin: theme.spacing.unit
   }
 })
@@ -74,7 +84,7 @@ class SearchToolbar extends ValidatedForm {
         onKeyDown={e => e.keyCode === 13 && this.handleSearch()}
       >
         <Field
-          component={InputField}
+          component={TextField}
           className={classes.searchField}
           name="orderId"
           label="订单号"
@@ -99,7 +109,7 @@ class SearchToolbar extends ValidatedForm {
         />
 
         <Field
-          component={InputField}
+          component={TextField}
           className={classes.searchField}
           name="customerMobile"
           label="顾客手机号"
@@ -125,7 +135,7 @@ class SearchToolbar extends ValidatedForm {
         />
 
         <Field
-          component={InputField}
+          component={TextField}
           className={classes.searchField}
           name="customerName"
           label="顾客名称"
