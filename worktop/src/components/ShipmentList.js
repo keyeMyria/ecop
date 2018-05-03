@@ -4,6 +4,7 @@ import PropTypes from 'prop-types'
 import classNames from 'classnames'
 import update from 'immutability-helper'
 import addDays from 'date-fns/addDays'
+import toDate from 'date-fns/toDate'
 import formatDistance from 'date-fns/formatDistance'
 import zh_CN from 'date-fns/esm/locale/zh-CN'
 
@@ -132,7 +133,7 @@ class ShipmentList extends Component {
         {
           selected: [],
           data: nextProps.orders.map(activity => {
-            const due = addDays(new Date(activity.startTime), 7)
+            const due = addDays(toDate(activity.startTime), 7)
 
             return update(activity, {
               due: { $set: due },
