@@ -15,7 +15,7 @@
     "immutability-helper": "^2.6.6",
     "lodash": "^4.17.5",
     "lodash.find": "^4.6.0",
-    "material-ui": "^1.0.0-beta.43",
+    "material-ui": "^1.0.0-beta.44",
     "material-ui-pickers": "^1.0.0-rc.6",
     "query-string": "^5.0.0",
     "react": "^16.2.0",
