@@ -23,7 +23,7 @@ import FullScreenIcon from '@material-ui/icons/Fullscreen'
 import FullScreenExitIcon from '@material-ui/icons/FullscreenExit'
 import MoneyIcon from '@material-ui/icons/MonetizationOn'
 
-import { jsonrpc, screen } from 'homemaster-jslib'
+import { jsonrpc } from 'homemaster-jslib'
 import TaskListIcon from 'homemaster-jslib/svg-icons/TaskList'
 
 import hasPermission from 'permission'
@@ -122,7 +122,7 @@ const styles = theme => ({
 
 class AppFrame extends React.Component {
   state = {
-    drawerOpen: !screen.isMobile(),
+    drawerOpen: false,
     currentFrame: 'tasks',
     isFullscreen: false
   }
@@ -149,9 +149,9 @@ class AppFrame extends React.Component {
     const { currentFrame, drawerOpen } = this.state
 
     let MenuItem = props => {
-      const { icon, text, onClick } = props
+      const { icon, text, onClick, ...other } = props
       return (
-        <ListItem button onClick={onClick}>
+        <ListItem button onClick={onClick} {...other}>
           <ListItemIcon>{icon}</ListItemIcon>
           <ListItemText className={classes.listItemText} primary={text} />
         </ListItem>
@@ -234,21 +234,25 @@ class AppFrame extends React.Component {
             <MenuItem
               icon={<AddCircleIcon />}
               text="新增订单"
+              title="新增订单"
               onClick={() => this.setState({ currentFrame: 'start' })}
             />
             <MenuItem
               icon={<WorkIcon />}
               text="我的任务"
+              title="我的任务"
               onClick={() => this.setState({ currentFrame: 'tasks' })}
             />
             <MenuItem
               icon={<LocalShipping />}
               text="工厂发货"
+              title="工厂发货"
               onClick={() => this.setState({ currentFrame: 'shipping' })}
             />
             <MenuItem
               icon={<TaskListIcon />}
               text="订单查询"
+              title="订单查询"
               onClick={() => this.setState({ currentFrame: 'manage' })}
             />
             {hasPermission('receivable.view') && (
@@ -271,6 +275,7 @@ class AppFrame extends React.Component {
               icon={<ExitToAppIcon />}
               onClick={this.handleLogout}
               text="退出登录"
+              title="退出登录"
             />
           </List>
         </Drawer>
