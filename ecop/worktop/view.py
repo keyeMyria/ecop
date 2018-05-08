@@ -10,24 +10,26 @@ from ecop.view import BaseEcopView
 class WorktopView(BaseEcopView):
     title = '台面安装流程'
 
-    resourceConfig = {
-        'debug': {
-            'head': [
-                'ecop/worktop/build/app.css'
-            ],
-            'body': [
-                'ecop/worktop/build/app.js'
-            ]
-        },
-        'deploy': {
-            'head': [
-                'worktop/app.css'
-            ],
-            'body': [
-                'worktop/app.js'
-            ]
+    def __init__(self, context, request):
+        super(WorktopView, self).__init__(context, request)
+        self.resourceConfig = {
+            'debug': {
+                'head': [
+                    'ecop/worktop/build/app.css'
+                ],
+                'body': [
+                    'ecop/worktop/build/app.js'
+                ]
+            },
+            'deploy': {
+                'head': [
+                    'worktop/app.css'
+                ],
+                'body': [
+                    'worktop/app.js'
+                ]
+            }
         }
-    }
 
 
 @view_config(route_name='ship', device_type='mobile', renderer='worktop.pt',
