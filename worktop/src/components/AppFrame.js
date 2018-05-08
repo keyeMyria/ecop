@@ -123,7 +123,7 @@ const styles = theme => ({
 class AppFrame extends React.Component {
   state = {
     drawerOpen: false,
-    currentFrame: 'tasks',
+    currentFrame: hasPermission('task.view') ? 'tasks' : 'process',
     isFullscreen: false
   }
 
@@ -239,12 +239,14 @@ class AppFrame extends React.Component {
                 onClick={() => this.setState({ currentFrame: 'start' })}
               />
             )}
-            <MenuItem
-              icon={<WorkIcon />}
-              text="我的任务"
-              title="我的任务"
-              onClick={() => this.setState({ currentFrame: 'tasks' })}
-            />
+            {hasPermission('task.view') && (
+              <MenuItem
+                icon={<WorkIcon />}
+                text="我的任务"
+                title="我的任务"
+                onClick={() => this.setState({ currentFrame: 'tasks' })}
+              />
+            )}
             {hasPermission('shipment.send') && (
               <MenuItem
                 icon={<LocalShipping />}
@@ -257,7 +259,7 @@ class AppFrame extends React.Component {
               icon={<TaskListIcon />}
               text="订单查询"
               title="订单查询"
-              onClick={() => this.setState({ currentFrame: 'manage' })}
+              onClick={() => this.setState({ currentFrame: 'process' })}
             />
             {hasPermission('receivable.view') && (
               <ListItem
@@ -291,7 +293,7 @@ class AppFrame extends React.Component {
             {currentFrame === 'start' && <StartForm />}
             {currentFrame === 'tasks' && <TaskList />}
             {currentFrame === 'shipping' && <ShipmentForm />}
-            {currentFrame === 'manage' && <ProcessManager />}
+            {currentFrame === 'process' && <ProcessManager />}
           </div>
         </div>
       </div>
