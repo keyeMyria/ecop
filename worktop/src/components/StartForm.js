@@ -59,7 +59,7 @@ class StartForm extends ValidatedForm {
       externalOrderId: 'IKEAOrderId',
       factoryNumber: 'required',
       storeId: 'required|size:3|in:856,885,247',
-      customerName: 'required',
+      customerName: 'required|min:2',
       customerMobile: 'required|mobile',
       customerRegionCode: 'required',
       customerStreet: 'required',
@@ -69,11 +69,12 @@ class StartForm extends ValidatedForm {
       orderFile: 'required'
     },
     {
-      'required.storeId': '宜家商场号必须输入',
+      'required.storeId': '商场号必须输入',
       'required.factoryNumber': '工厂编号必须输入',
       'in.storeId': '商场号错误',
       'size.storeId': '宜家商场号长度为3位',
       'required.customerName': '顾客名称必须输入',
+      'min.customerName': '顾客名称长度至少为2个字符',
       'required.customerMobile': '顾客手机必须输入',
       'required.customerStreet': '详细地址必须输入',
       'required.customerRegionCode': '所在地区必须输入',

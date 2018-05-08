@@ -53,7 +53,7 @@ class RpcBase(object):
 class DocBase(object):
     """
     Base class for request authentication for downloading generated PDF
-    files like order or shipment documents.
+    files like order.
     """
 
     def __init__(self, context, request):  # pylint: disable=W0613
