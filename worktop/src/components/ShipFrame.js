@@ -19,7 +19,7 @@ import CheckCircleIcon from '@material-ui/icons/CheckCircle'
 import { jsonrpc } from 'homemaster-jslib'
 import QrcodeIcon from 'homemaster-jslib/svg-icons/Qrcode'
 
-import hasPermission from 'permission'
+import { hasPermission } from 'permission'
 import RegionName from 'widget/RegionName'
 
 const styles = theme => ({

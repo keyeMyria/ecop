@@ -26,7 +26,7 @@ import MoneyIcon from '@material-ui/icons/MonetizationOn'
 import { jsonrpc } from 'homemaster-jslib'
 import TaskListIcon from 'homemaster-jslib/svg-icons/TaskList'
 
-import hasPermission from 'permission'
+import { hasPermission } from 'permission'
 import StartForm from './StartForm'
 import TaskList from './TaskList'
 import ShipmentForm from './ShipmentForm'
@@ -231,12 +231,14 @@ class AppFrame extends React.Component {
           </div>
           <Divider />
           <List>
-            <MenuItem
-              icon={<AddCircleIcon />}
-              text="新增订单"
-              title="新增订单"
-              onClick={() => this.setState({ currentFrame: 'start' })}
-            />
+            {hasPermission('order.start') && (
+              <MenuItem
+                icon={<AddCircleIcon />}
+                text="新增订单"
+                title="新增订单"
+                onClick={() => this.setState({ currentFrame: 'start' })}
+              />
+            )}
             <MenuItem
               icon={<WorkIcon />}
               text="我的任务"

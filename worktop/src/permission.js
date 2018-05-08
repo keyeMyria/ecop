@@ -1,8 +1,20 @@
 /* global App */
 
-export default function hasPermission(permission) {
-  const { permission: userPermissions, group } = App.userInfo
+export function hasPermission(permission) {
+  const { role } = App.userInfo
 
-  if (userPermissions === 'all' && group === undefined) return true
-  if (permission === 'shipment.receive' && group === 'installer') return true
+  if (role === 'admin') return true
+
+  switch (permission) {
+    case 'shipment.receive':
+      return role === 'installer'
+    case 'order.start':
+      return role === 'factory'
+    default:
+      return false
+  }
+}
+
+export function hasRole(role) {
+  return role === App.userInfo.role
 }

@@ -31,9 +31,9 @@ class TaskJSON(RpcBase):
                 'sortOrder': 'asc'
             }]
         }
-        userGroup = self.request.user.extraData[processKey].get('group')
-        if userGroup:
-            params['candidateGroup'] = userGroup
+        userRole = self.request.user.extraData[processKey]['role']
+        if userRole != 'admin':
+            params['candidateGroup'] = userRole
         tasks = cc.makeRequest(
             '/task', 'post', params,
             withProcessVariables=('externalOrderId', 'customerName',
