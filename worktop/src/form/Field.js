@@ -13,9 +13,11 @@ const Field = props => {
     }
   }
 
+  /*
   if (clearable) {
     defaultProps.onClear = form.clearField(name)
   }
+  */
 
   if (form) {
     Object.assign(defaultProps, {
@@ -34,7 +36,7 @@ Field.propTypes = {
    * If true, a clearField function will be automatically added. Used on
    * component of type `widget.InputField`
    */
-  clearable: PropTypes.bool,
+  //　clearable: PropTypes.bool,
   /**
    * The UI component used for this field
    */

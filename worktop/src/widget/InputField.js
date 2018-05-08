@@ -4,6 +4,12 @@
  *
  * The code is almost entirely copied from original mui TextField. The only
  * added prop is the 'onClear' handler when the clear icon is clicked.
+ *
+ * TODO: this component is not used now due to :
+ *
+ *  1. its UI is not compatible with IE 11
+ *  2. the clearable properby on Field conflicts with DatePicker.clearable and
+ *     we do not know how to detect component type if Field
  */
 
 import React from 'react'
