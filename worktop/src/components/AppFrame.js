@@ -245,12 +245,14 @@ class AppFrame extends React.Component {
               title="我的任务"
               onClick={() => this.setState({ currentFrame: 'tasks' })}
             />
-            <MenuItem
-              icon={<LocalShipping />}
-              text="工厂发货"
-              title="工厂发货"
-              onClick={() => this.setState({ currentFrame: 'shipping' })}
-            />
+            {hasPermission('shipment.send') && (
+              <MenuItem
+                icon={<LocalShipping />}
+                text="工厂发货"
+                title="工厂发货"
+                onClick={() => this.setState({ currentFrame: 'shipping' })}
+              />
+            )}
             <MenuItem
               icon={<TaskListIcon />}
               text="订单查询"

@@ -139,6 +139,15 @@ class ProcessJSON(RpcBase):
                     'value': customerName
                 }]
 
+        storeId = self.request.user.extraData[processKey].get('storeId')
+        if storeId:
+            variables = params.setdefault('variables', [])
+            variables.append({
+                'name': 'storeId',
+                'operator': 'eq',
+                'value': storeId
+            })
+
         ret = cc.makeRequest(
             '/history/process-instance', 'post',
             params, urlParams={'maxResults': 50},

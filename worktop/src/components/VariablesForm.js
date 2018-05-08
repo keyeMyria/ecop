@@ -110,19 +110,20 @@ class VariablesForm extends Component {
                 value={orderFile}
               />
 
-              {measurementFile && (
-                <FileUploader
-                  label="测量文件"
-                  fullWidth
-                  margin="normal"
-                  allowUpload={false}
-                  allowDelete={false}
-                  InputLabelProps={{
-                    shrink: true
-                  }}
-                  value={variables.measurementFile}
-                />
-              )}
+              {hasRole('admin') &&
+                measurementFile && (
+                  <FileUploader
+                    label="测量文件"
+                    fullWidth
+                    margin="normal"
+                    allowUpload={false}
+                    allowDelete={false}
+                    InputLabelProps={{
+                      shrink: true
+                    }}
+                    value={variables.measurementFile}
+                  />
+                )}
 
               {hasRole('admin') &&
                 productionDrawing && (

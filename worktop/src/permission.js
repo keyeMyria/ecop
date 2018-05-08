@@ -8,6 +8,7 @@ export function hasPermission(permission) {
   switch (permission) {
     case 'shipment.receive':
       return role === 'installer'
+    case 'shipment.send':
     case 'order.start':
       return role === 'factory'
     default:
