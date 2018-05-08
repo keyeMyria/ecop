@@ -212,7 +212,6 @@ const columns = [
   { id: 'customerRegionName', disablePadding: false, label: '顾客地区' },
   { id: 'startTime', disablePadding: false, label: '发起时间' },
   { id: 'actualMeasurementDate', disablePadding: false, label: '测量日期' },
-  { id: 'shippingDate', disablePadding: false, label: '发货日期' },
   { id: 'receivingDate', disablePadding: false, label: '收货日期' },
   { id: 'actualInstallationDate', disablePadding: false, label: '安装日期' },
   { id: 'status', disablePadding: false, label: '状态' },
@@ -297,9 +296,6 @@ class ProcessList extends Component {
                       {measureDate
                         ? dateFormat(measureDate, 'YYYY/MM/DD')
                         : '无需测量'}
-                    </TableCell>
-                    <TableCell className={classes.actual}>
-                      {dateFormat(p.shippingDate, 'YYYY/MM/DD')}
                     </TableCell>
                     <TableCell className={classes.actual}>
                       {dateFormat(p.receivingDate, 'YYYY/MM/DD')}

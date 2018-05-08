@@ -13,6 +13,7 @@ import WorkIcon from '@material-ui/icons/Work'
 import { jsonrpc } from 'homemaster-jslib'
 import OrderHeader from 'components/OrderHeader'
 import FileUploader from 'widget/FileUploader'
+import { hasRole } from 'permission'
 
 const styles = theme => ({
   paperWidthSm: {
@@ -123,19 +124,20 @@ class VariablesForm extends Component {
                 />
               )}
 
-              {productionDrawing && (
-                <FileUploader
-                  label="生产图纸"
-                  fullWidth
-                  margin="normal"
-                  allowUpload={false}
-                  allowDelete={false}
-                  InputLabelProps={{
-                    shrink: true
-                  }}
-                  value={variables.productionDrawing}
-                />
-              )}
+              {hasRole('admin') &&
+                productionDrawing && (
+                  <FileUploader
+                    label="生产图纸"
+                    fullWidth
+                    margin="normal"
+                    allowUpload={false}
+                    allowDelete={false}
+                    InputLabelProps={{
+                      shrink: true
+                    }}
+                    value={variables.productionDrawing}
+                  />
+                )}
 
               {installationFile && (
                 <FileUploader
