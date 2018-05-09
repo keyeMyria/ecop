@@ -128,7 +128,17 @@ Ext.define('Web.data.JsonRPC', {
         })
       }
     } else if (ret.error) {
-      if (opts.originalFailure) {
+      if (ret.error.code === -300) {
+        Ext.Msg.show({
+          title: '系统升级',
+          message: '系统已升级，请刷新浏览器',
+          buttons: Ext.Msg.OK,
+          icon: Ext.Msg.ERROR,
+          fn: function() {
+            window.location.reload()
+          }
+        })
+      } else if (opts.originalFailure) {
         Ext.callback(opts.originalFailure, opts.originalScope, [
           ret.error,
           opts

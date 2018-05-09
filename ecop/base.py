@@ -2,10 +2,16 @@ import json
 
 from pyramid.httpexceptions import HTTPForbidden
 from pyramid.csrf import check_csrf_token
+from pyramid_rpc.jsonrpc import JsonRpcError
 
 from hm.lib.config import siteConfig
 from webmodel.base import DBSession
-from weblibs.jsonrpc import RPCUserError
+
+
+class RPCClientVersionError(JsonRpcError):
+    """ Client version is lower than the api version """
+    code = -300
+    message = 'Client version mismatch'
 
 
 class RpcBase(object):
@@ -47,7 +53,7 @@ class RpcBase(object):
 
         version = request.headers.get('X-Client-Version')
         if version and version != siteConfig.version:
-            raise RPCUserError('ERP版本已更新，请重新登录。')
+            raise RPCClientVersionError()
 
 
 class DocBase(object):

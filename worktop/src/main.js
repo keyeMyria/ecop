@@ -28,8 +28,21 @@ App.processKey = 'worktop'
 
 Object.assign(jsonrpc, {
   onerror: error => {
-    const level = (error.data && error.data.level) || 'error'
-    message[level](error.message)
+    switch (error.code) {
+      case -200:
+        const level = (error.data && error.data.level) || 'error'
+        message[level](error.message)
+        break
+      case -300:
+        message.warn('系统已升级，请刷新浏览器', {
+          callback: () => {
+            window.location.reload()
+          }
+        })
+        break
+      default:
+        message.error('系统错误，请联系系统维护人员')
+    }
   },
   csrfToken: App.csrfToken,
   extraHeader: { 'X-Client-Version': App.version }
