@@ -7,7 +7,6 @@ from webmodel.order import SalesOrder, PurchaseOrder
 from webmodel.item import Item
 
 from ecop.base import RpcBase
-from ecop.region import getRegionName
 
 """
 In case a process instance needs manual correction, use:
@@ -152,23 +151,14 @@ class ProcessJSON(RpcBase):
             '/history/process-instance', 'post',
             params, urlParams={'maxResults': 50},
             withProcessVariables=(
-                'externalOrderId', 'customerName', 'storeId',
-                'customerRegionCode', 'shippingDate', 'receivingDate',
-                'actualMeasurementDate',
-                'confirmedMeasurementDate',
-                'scheduledMeasurementDate',
-                'actualInstallationDate',
-                'confirmedInstallationDate',
-                'scheduledInstallationDate'
+                'externalOrderId', 'customerName', 'storeId', 'receivingDate',
+                'actualMeasurementDate', 'confirmedMeasurementDate',
+                'scheduledMeasurementDate', 'actualInstallationDate',
+                'confirmedInstallationDate', 'scheduledInstallationDate'
             ),
             processInstanceIdField='id', hoistProcessVariables=True
         )
 
-        for t in ret:
-            if 'customerRegionCode' in t:
-                t['customerRegionName'] = getRegionName(
-                    t['customerRegionCode'])
-                del t['customerRegionCode']
         return ret
 
     @jsonrpc_method(endpoint='rpc', method='bpmn.variable.get')

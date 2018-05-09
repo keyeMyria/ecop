@@ -208,14 +208,33 @@ const columns = [
   { id: 'rowNumber', disablePadding: true, label: '' },
   { id: 'externalOrderId', disablePadding: true, label: '订单号' },
   { id: 'storeId', disablePadding: true, label: '商场号' },
-  { id: 'customerName', disablePadding: false, label: '顾客姓名' },
-  { id: 'customerRegionName', disablePadding: false, label: '顾客地区' },
-  { id: 'startTime', disablePadding: false, label: '发起时间' },
-  { id: 'actualMeasurementDate', disablePadding: false, label: '测量日期' },
-  { id: 'receivingDate', disablePadding: false, label: '收货日期' },
-  { id: 'actualInstallationDate', disablePadding: false, label: '安装日期' },
-  { id: 'status', disablePadding: false, label: '状态' },
-  { id: 'action', disablePadding: false }
+  { id: 'customerName', disablePadding: true, label: '顾客姓名' },
+  { id: 'startTime', disablePadding: true, label: '发起时间' },
+  {
+    id: 'scheduledMeasurementDate',
+    disablePadding: true,
+    label: '预约测量日'
+  },
+  {
+    id: 'confirmedMeasurementDate',
+    disablePadding: true,
+    label: '确认测量日'
+  },
+  { id: 'actualMeasurementDate', disablePadding: true, label: '实际测量日' },
+  { id: 'receivingDate', disablePadding: true, label: '收货日期' },
+  {
+    id: 'scheduledInstallationDate',
+    disablePadding: true,
+    label: '预约安装日'
+  },
+  {
+    id: 'confirmedInstallationDate',
+    disablePadding: true,
+    label: '确认安装日'
+  },
+  { id: 'actualInstallationDate', disablePadding: true, label: '实际安装日' },
+  { id: 'status', disablePadding: true, label: '状态' },
+  { id: 'action', disablePadding: true }
 ]
 
 class ProcessList extends Component {
@@ -268,11 +287,6 @@ class ProcessList extends Component {
             />
             <TableBody>
               {data.map((p, idx) => {
-                const measureDate =
-                  p.actualMeasurementDate ||
-                  p.confirmedMeasurementDate ||
-                  p.scheduledMeasurementDate
-
                 return (
                   <TableRow hover tabIndex={-1} key={idx}>
                     <TableCell className={classes.rowNumber} padding="none">
@@ -281,40 +295,39 @@ class ProcessList extends Component {
                     <TableCell padding="none">{p.externalOrderId}</TableCell>
                     <TableCell padding="none">{p.storeId}</TableCell>
                     <TableCell padding="none">{p.customerName}</TableCell>
-                    <TableCell padding="none">{p.customerRegionName}</TableCell>
                     <TableCell padding="none">
                       {dateFormat(p.startTime, 'YYYY/MM/DD HH:mm:ss')}
                     </TableCell>
                     <TableCell
+                      padding="none"
                       className={
-                        (p.actualMeasurementDate && classes.actual) ||
-                        (p.confirmedMeasurementDate && classes.confirmed) ||
-                        (!measureDate && classes.na) ||
-                        null
+                        (!p.scheduledMeasurementDate && classes.na) || null
                       }
                     >
-                      {measureDate
-                        ? dateFormat(measureDate, 'YYYY/MM/DD')
+                      {p.scheduledMeasurementDate
+                        ? dateFormat(p.scheduledMeasurementDate, 'YYYY/MM/DD')
                         : '无需测量'}
                     </TableCell>
-                    <TableCell className={classes.actual}>
+                    <TableCell padding="none" className={classes.confirmed}>
+                      {dateFormat(p.confirmedMeasurementDate, 'YYYY/MM/DD')}
+                    </TableCell>
+                    <TableCell padding="none" className={classes.actual}>
+                      {dateFormat(p.actualMeasurementDate, 'YYYY/MM/DD')}
+                    </TableCell>
+                    <TableCell padding="none" className={classes.actual}>
                       {dateFormat(p.receivingDate, 'YYYY/MM/DD')}
                     </TableCell>
-                    <TableCell
-                      className={
-                        (p.actualInstallationDate && classes.actual) ||
-                        (p.confirmedInstallationDate && classes.confirmed)
-                      }
-                    >
-                      {dateFormat(
-                        p.actualInstallationDate ||
-                          p.confirmedInstallationDate ||
-                          p.scheduledInstallationDate,
-                        'YYYY/MM/DD'
-                      )}
+                    <TableCell padding="none">
+                      {dateFormat(p.scheduledInstallationDate, 'YYYY/MM/DD')}
                     </TableCell>
-                    <TableCell>{statusName[p.state]}</TableCell>
-                    <TableCell>
+                    <TableCell padding="none" className={classes.confirmed}>
+                      {dateFormat(p.confirmedInstallationDate, 'YYYY/MM/DD')}
+                    </TableCell>
+                    <TableCell padding="none" className={classes.actual}>
+                      {dateFormat(p.actualInstallationDate, 'YYYY/MM/DD')}
+                    </TableCell>
+                    <TableCell padding="none">{statusName[p.state]}</TableCell>
+                    <TableCell padding="none">
                       <IconButton
                         color="primary"
                         onClick={() => {
