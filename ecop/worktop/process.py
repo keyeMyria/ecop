@@ -5,8 +5,10 @@ from weblibs.jsonrpc import RPCUserError, parseDate
 from webmodel.consts import ORDER_SOURCE, SPECIAL_PARTY
 from webmodel.order import SalesOrder, PurchaseOrder
 from webmodel.item import Item
+from webmodel.validator import isOrderId, isMobile
 
 from ecop.base import RpcBase
+from ecop.worktop.validator import isIkeaOrderId
 
 """
 In case a process instance needs manual correction, use:
@@ -96,7 +98,7 @@ class ProcessJSON(RpcBase):
         )
 
     @jsonrpc_method(endpoint='rpc', method='bpmn.process.list')
-    def getProcessList(self, processKey, kwargs):
+    def getProcessList(self, cond):
         """
         Search process history with the given conditions.
 
@@ -107,38 +109,38 @@ class ProcessJSON(RpcBase):
         """
 
         params = {
-            'processDefinitionKey': processKey,
-            'sorting': kwargs['sorting']
+            'processDefinitionKey': 'worktop',
+            'sorting': [{
+                'sortBy': 'startTime',
+                'sortOrder': 'desc'
+            }]
         }
 
-        if 'cond' in kwargs:
-            orderId = kwargs['cond'].get('orderId')
-            customerMobile = kwargs['cond'].get('customerMobile')
-            customerName = kwargs['cond'].get('customerName')
+        searchText = cond and cond.get('searchText') or None
 
-            if orderId:
-                if len(orderId) == 8:
-                    params['processInstanceBusinessKey'] = orderId
-                else:
-                    params['variables'] = [{
-                        'name': 'externalOrderId',
-                        'operator': 'eq',
-                        'value': orderId
-                    }]
-            elif customerMobile:
+        if searchText:
+            if isOrderId(searchText):
+                params['processInstanceBusinessKey'] = searchText
+            elif isIkeaOrderId(searchText):
+                params['variables'] = [{
+                    'name': 'externalOrderId',
+                    'operator': 'eq',
+                    'value': searchText.upper()
+                }]
+            elif isMobile(searchText):
                 params['variables'] = [{
                     'name': 'customerMobile',
                     'operator': 'eq',
-                    'value': customerMobile
+                    'value': searchText
                 }]
-            elif customerName:
+            else:
                 params['variables'] = [{
                     'name': 'customerName',
                     'operator': 'eq',
-                    'value': customerName
+                    'value': searchText
                 }]
 
-        storeId = self.request.user.extraData[processKey].get('storeId')
+        storeId = self.request.user.extraData['worktop'].get('storeId')
         if storeId:
             variables = params.setdefault('variables', [])
             variables.append({
@@ -149,7 +151,8 @@ class ProcessJSON(RpcBase):
 
         ret = cc.makeRequest(
             '/history/process-instance', 'post',
-            params, urlParams={'maxResults': 50},
+            params,
+            urlParams={'maxResults': 50},
             withProcessVariables=(
                 'externalOrderId', 'customerName', 'storeId', 'receivingDate',
                 'actualMeasurementDate', 'confirmedMeasurementDate',

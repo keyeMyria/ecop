@@ -29,7 +29,6 @@ import EnhancedTableHead from 'widget/TableHead'
  */
 //import InputField from 'widget/InputField'
 import VariablesForm from './VariablesForm'
-import { isValidOrderId } from 'utils/validators'
 import { Field } from '../form'
 
 const toolbarStyles = theme => ({
@@ -51,21 +50,16 @@ const toolbarStyles = theme => ({
 class SearchToolbar extends ValidatedForm {
   state = {
     values: {
-      orderId: '',
-      customerMobile: '',
-      customerName: ''
+      searchText: ''
     }
   }
 
   validatorTypes = strategy.createInactiveSchema(
     {
-      orderId: 'IKEAOrderId',
-      customerMobile: 'mobile',
-      customerName: 'min:2'
+      searchText: 'min:2'
     },
     {
-      'IKEAOrderId.orderId': '订单号格式不对',
-      'min.customerName': '顾客名称长度至少为2个字符'
+      'min.searchText': '搜索内容长度至少为2个字符'
     }
   )
 
@@ -86,74 +80,22 @@ class SearchToolbar extends ValidatedForm {
         <Field
           component={TextField}
           className={classes.searchField}
-          name="orderId"
-          label="订单号"
+          name="searchText"
+          label="订单号/手机号/顾客姓名"
           required={false}
           form={this}
           clearable
           onChange={e => {
             var { value } = e.target
-            if (!value || isValidOrderId(value, true)) {
-              this.setState(
-                {
-                  values: {
-                    orderId: value.toUpperCase(),
-                    customerMobile: '',
-                    customerName: ''
-                  }
-                },
-                this.props.validate
-              )
-            }
-          }}
-        />
-
-        <Field
-          component={TextField}
-          className={classes.searchField}
-          name="customerMobile"
-          label="顾客手机号"
-          required={false}
-          form={this}
-          clearable
-          onChange={e => {
-            var { value } = e.target
-            // allow only numbers and max 11
-            if (/^1\d{0,10}$/.test(value) || !value) {
-              this.setState(
-                {
-                  values: {
-                    customerMobile: value,
-                    customerName: '',
-                    orderId: ''
-                  }
-                },
-                this.props.validate
-              )
-            }
-          }}
-        />
-
-        <Field
-          component={TextField}
-          className={classes.searchField}
-          name="customerName"
-          label="顾客名称"
-          required={false}
-          form={this}
-          onChange={e => {
             this.setState(
               {
                 values: {
-                  customerName: e.target.value.trim(),
-                  customerMobile: '',
-                  orderId: ''
+                  searchText: value.trim()
                 }
               },
               this.props.validate
             )
           }}
-          clearable
         />
 
         <Button variant="raised" color="primary" onClick={this.handleSearch}>
