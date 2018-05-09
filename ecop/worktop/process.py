@@ -117,6 +117,7 @@ class ProcessJSON(RpcBase):
         }
 
         searchText = cond and cond.get('searchText') or None
+        showCompleted = cond and 'completed' in cond
 
         if searchText:
             if isOrderId(searchText):
@@ -139,6 +140,8 @@ class ProcessJSON(RpcBase):
                     'operator': 'eq',
                     'value': searchText
                 }]
+        elif showCompleted:
+            params['finished'] = 'true'
 
         storeId = self.request.user.extraData['worktop'].get('storeId')
         if storeId:
@@ -152,7 +155,7 @@ class ProcessJSON(RpcBase):
         ret = cc.makeRequest(
             '/history/process-instance', 'post',
             params,
-            urlParams={'maxResults': 50},
+            urlParams={'maxResults': 50} if not showCompleted else None,
             withProcessVariables=(
                 'externalOrderId', 'customerName', 'storeId', 'receivingDate',
                 'actualMeasurementDate', 'confirmedMeasurementDate',
@@ -162,7 +165,8 @@ class ProcessJSON(RpcBase):
             processInstanceIdField='id', hoistProcessVariables=True
         )
 
-        return ret
+        return [p for p in ret if p['state'] == 'COMPLETED'] \
+            if showCompleted else ret
 
     @jsonrpc_method(endpoint='rpc', method='bpmn.variable.get')
     def getProcessVariables(self, processInstanceId):

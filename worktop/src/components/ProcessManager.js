@@ -44,6 +44,9 @@ const toolbarStyles = theme => ({
   searchField: {
     flexBasis: 200,
     margin: theme.spacing.unit
+  },
+  button: {
+    marginRight: theme.spacing.unit
   }
 })
 
@@ -98,8 +101,23 @@ class SearchToolbar extends ValidatedForm {
           }}
         />
 
-        <Button variant="raised" color="primary" onClick={this.handleSearch}>
+        <Button
+          className={classes.button}
+          variant="raised"
+          color="primary"
+          onClick={this.handleSearch}
+        >
           <SearchIcon /> &nbsp;搜&nbsp;索
+        </Button>
+
+        <Button
+          variant="raised"
+          color="primary"
+          onClick={() => {
+            this.props.onSearch({ completed: true })
+          }}
+        >
+          已完成订单
         </Button>
       </Toolbar>
     )
