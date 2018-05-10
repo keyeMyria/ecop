@@ -28,7 +28,7 @@ POST /process-instance/abe0b544-33f3-11e8-8a21-0242ac110005/modification
 
 class ProcessJSON(RpcBase):
     @jsonrpc_method(endpoint='rpc', method='bpmn.process.start')
-    def startProcess(self, processKey, params):
+    def startProcess(self, params):
         params = parseDate(
             params,
             fields=['scheduledMeasurementDate', 'scheduledInstallationDate']
@@ -92,7 +92,7 @@ class ProcessJSON(RpcBase):
         params['orderId'] = order.orderId
 
         cc.makeRequest(
-            f'/process-definition/key/{processKey}/start', 'post',
+            f'/process-definition/key/worktop/start', 'post',
             {'businessKey': order.orderId},
             variables=params
         )

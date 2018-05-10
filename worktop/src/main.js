@@ -24,8 +24,6 @@ require('core-js/fn/string/virtual/starts-with')
 // polyfill for Array.findIndex
 require('core-js/fn/array/find-index')
 
-App.processKey = 'worktop'
-
 Object.assign(jsonrpc, {
   onerror: error => {
     switch (error.code) {

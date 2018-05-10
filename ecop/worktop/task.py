@@ -14,7 +14,7 @@ from ecop.region import getRegionName
 
 class TaskJSON(RpcBase):
     @jsonrpc_method(endpoint='rpc', method='bpmn.task.list')
-    def getTaskList(self, processKey):
+    def getTaskList(self):
         """
         Return all active tasks of a process key. In additional to the
         properties of the Camunda task object, we also return serveral
@@ -22,7 +22,7 @@ class TaskJSON(RpcBase):
         and customerName in a `processVariables` attribute.
         """
         params = {
-            'processDefinitionKey': processKey,
+            'processDefinitionKey': 'worktop',
             'sorting': [{
                 'sortBy': 'name',
                 'sortOrder': 'asc'
@@ -31,7 +31,7 @@ class TaskJSON(RpcBase):
                 'sortOrder': 'asc'
             }]
         }
-        userRole = self.request.user.extraData[processKey]['role']
+        userRole = self.request.user.extraData['worktop']['role']
         if userRole != 'admin':
             params['candidateGroup'] = userRole
         tasks = cc.makeRequest(

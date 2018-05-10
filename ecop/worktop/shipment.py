@@ -12,9 +12,9 @@ from ecop.region import getRegionName
 
 class ShipmentJSON(RpcBase):
     @jsonrpc_method(endpoint='rpc', method='bpmn.shipment.getOutstandingOrders')
-    def getOutstandingOrders(self, processKey):
+    def getOutstandingOrders(self):
         params = {
-            'processDefinitionKey': processKey,
+            'processDefinitionKey': 'worktop',
             'activityId': 'WorktopShipped',
             'unfinished': True
         }
