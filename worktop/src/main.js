@@ -8,7 +8,7 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 import CssBaseline from 'material-ui/CssBaseline'
 import 'typeface-roboto'
 
-import { message, jsonrpc } from 'homemaster-jslib'
+import { message, jsonrpc, addJSExceptionLogging } from 'homemaster-jslib'
 import DateFnsUtils from 'utils/date-fns-utils'
 import AppMain from 'components/AppMain'
 import theme from './theme'
@@ -58,6 +58,8 @@ if (App.isWeixin) {
     }
   })
 }
+
+addJSExceptionLogging()
 
 ReactDOM.render(
   <Provider store={store}>
