@@ -8,6 +8,7 @@ from z3c.rml import rml2pdf
 from pyramid.view import view_config
 from pyramid.response import Response
 
+from weblibs.camunda import camundaClient as cc
 from webmodel.consts import ORDER_STATUS, ORDER_SOURCE
 from webmodel.order import SalesOrder
 
@@ -24,10 +25,6 @@ class ReceivableList(DocBase):
 
     def join(self, *args):
         return ','.join([arg for arg in args if arg])
-
-    @property
-    def total(self):
-        return sum([o.amount for o in self.orders])
 
     def __call__(self):
         key = self.request.matchdict['key']
@@ -49,8 +46,19 @@ class ReceivableList(DocBase):
             filter_by(orderStatus=ORDER_STATUS.COMPLETED).\
             filter(SalesOrder.completionDate >= self.startDate).\
             filter(SalesOrder.completionDate < self.endDate + timedelta(1)).\
-            order_by(SalesOrder.completionDate, SalesOrder.orderId).\
             all()
+        self.total = sum([o.amount for o in self.orders])
+
+        for o in self.orders:
+            ret = cc.makeRequest(
+                '/history/process-instance', 'post',
+                {'processInstanceBusinessKey': o.orderId},
+                withProcessVariables=('storeId', ),
+                processInstanceIdField='id', hoistProcessVariables=True
+            )[0]
+            o.storeId = ret['storeId']
+
+        self.orders.sort(key=lambda o: (o.storeId, o.orderId))
 
         loader = TemplateLoader([os.path.dirname(__file__)])
         template = loader.load('receivable.pt')
