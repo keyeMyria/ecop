@@ -1,9 +1,9 @@
 import React, { Component, Fragment } from 'react'
 
-import { withStyles } from 'material-ui/styles'
-import Typography from 'material-ui/Typography'
-import Paper from 'material-ui/Paper'
-import indigo from 'material-ui/colors/indigo'
+import { withStyles } from '@material-ui/core/styles'
+import Typography from '@material-ui/core/Typography'
+import Paper from '@material-ui/core/Paper'
+import indigo from '@material-ui/core/colors/indigo'
 
 import FileUploader from 'widget/FileUploader'
 

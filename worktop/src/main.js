@@ -4,8 +4,8 @@ import ReactDOM from 'react-dom'
 import { Provider } from 'react-redux'
 
 import MuiPickersUtilsProvider from 'material-ui-pickers/utils/MuiPickersUtilsProvider'
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
-import CssBaseline from 'material-ui/CssBaseline'
+import MuiThemeProvider from '@material-ui/core/styles/MuiThemeProvider'
+import CssBaseline from '@material-ui/core/CssBaseline'
 import 'typeface-roboto'
 
 import { message, jsonrpc, addJSExceptionLogging } from 'homemaster-jslib'

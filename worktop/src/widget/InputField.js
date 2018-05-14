@@ -16,14 +16,15 @@ import React from 'react'
 import warning from 'warning'
 import PropTypes from 'prop-types'
 
-import FormHelperText from 'material-ui/Form/FormHelperText'
-import { FormControl } from 'material-ui/Form'
-import Input, { InputLabel, InputAdornment } from 'material-ui/Input'
-import Select from 'material-ui/Select/Select'
-import IconButton from 'material-ui/IconButton'
+import FormHelperText from '@material-ui/core/FormHelperText'
+import FormControl from '@material-ui/core/FormControl'
+import Input from '@material-ui/core/Input'
+import InputLabel from '@material-ui/core/InputLabel'
+import InputAdornment from '@material-ui/core/InputAdornment'
+import Select from '@material-ui/core/Select/Select'
+import IconButton from '@material-ui/core/IconButton'
 import CancelIcon from '@material-ui/icons/Cancel'
-import { withStyles } from 'material-ui/styles'
-
+import { withStyles } from '@material-ui/core/styles'
 
 const styles = {
   cancelIcon: {
@@ -97,7 +98,7 @@ function InputField(props) {
       endAdornment={
         <InputAdornment position="end">
           <IconButton classes={{ root: classes.cancelIcon }}>
-            <CancelIcon  onClick={onClear} />
+            <CancelIcon onClick={onClear} />
           </IconButton>
         </InputAdornment>
       }

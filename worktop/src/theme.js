@@ -1,6 +1,6 @@
-import createMuiTheme from 'material-ui/styles/createMuiTheme'
-import blue from 'material-ui/colors/blue'
-import pink from 'material-ui/colors/pink'
+import createMuiTheme from '@material-ui/core/styles/createMuiTheme'
+import blue from '@material-ui/core/colors/blue'
+import pink from '@material-ui/core/colors/pink'
 
 const theme = createMuiTheme({
   palette: {

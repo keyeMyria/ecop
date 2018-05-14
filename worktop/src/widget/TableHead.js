@@ -6,8 +6,8 @@ import {
   TableHead,
   TableRow,
   TableSortLabel
-} from 'material-ui/Table'
-import Checkbox from 'material-ui/Checkbox'
+} from '@material-ui/core/Table'
+import Checkbox from '@material-ui/core/Checkbox'
 
 const EnhancedTableHead = props => {
   const createSortHandler = columnId => event => {
