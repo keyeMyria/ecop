@@ -18,6 +18,8 @@ class BaseEcopView(object):
     @reify
     def resources(self):
         def getUrl(url):
+            if url.startsWith('http://') or url.startsWith('https://'):
+                return url
             if not self.debug:
                 url = 'v%s/%s' % (siteConfig.version, url)
             return urljoin(siteConfig.asset_url, url)
