@@ -1,9 +1,10 @@
  * Automatically reload browser when RPC version mismatch detected
 
+ * Log all rpc calls in a call log
  * Add storeId to account receivable
-
  * Use ButtonBase to display TaskItem as a button
  * Allow user to change password
  * Require the input of overdue reason if a task is overdue when completed
  * Use async request to load user information and permissions instead of embed
    the information in HTML source
+ * Improve FileUploader for rotation support

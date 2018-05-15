@@ -261,7 +261,8 @@ class AppFrame extends React.Component {
               title="订单查询"
               onClick={() => this.setState({ currentFrame: 'process' })}
             />
-            {hasPermission('receivable.view') && (
+            {// this is a temporarily link and only accessible by admin
+            hasPermission('receivable.view') && (
               <ListItem
                 button
                 component="a"

@@ -239,7 +239,7 @@ const getStatusText = p => {
       return '已收货'
     } else if (p.shippingDate) {
       return '已发货'
-    } else if (p.actualMeasurementDate) {
+    } else if (p.actualMeasurementDate || !p.scheduledMeasurementDate) {
       return '生产中'
     } else if (p.confirmedMeasurementDate || p.scheduledMeasurementDate) {
       return '待测量'

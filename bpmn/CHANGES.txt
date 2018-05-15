@@ -22,6 +22,12 @@
    to record variables shippingDate and receivingDate
  * Remove the milestone event M1
 
+
+1.2.1 (2018-5
+
+ * Move the task ConfirmInstallationDate to lane 'installer'
+
+
 1.3
 
  *
