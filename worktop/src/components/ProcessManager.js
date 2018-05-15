@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import classNames from 'classnames'
 import validation from 'react-validation-mixin'
+import update from 'immutability-helper'
 import compose from 'recompose/compose'
 import subMonths from 'date-fns/subMonths'
 import startOfDay from 'date-fns/startOfDay'
@@ -16,6 +17,8 @@ import TextField from 'material-ui/TextField'
 import DatePicker from 'material-ui-pickers/DatePicker'
 import Typography from 'material-ui/Typography'
 import IconButton from 'material-ui/IconButton'
+import { FormControlLabel } from 'material-ui/Form'
+import Checkbox from 'material-ui/Checkbox'
 import green from 'material-ui/colors/green'
 import PreviewIcon from '@material-ui/icons/RemoveRedEye'
 import SearchIcon from '@material-ui/icons/Search'
@@ -96,7 +99,6 @@ class SearchToolbar extends ValidatedForm {
   render() {
     const { classes } = this.props
     const { values } = this.state
-    console.log(values)
 
     return (
       <Toolbar
@@ -115,9 +117,9 @@ class SearchToolbar extends ValidatedForm {
             var { value } = e.target
             this.setState(
               {
-                values: {
-                  searchText: value.trim()
-                }
+                values: update(values, {
+                  searchText: { $set: value.trim() }
+                })
               },
               this.props.validate
             )
@@ -158,6 +160,23 @@ class SearchToolbar extends ValidatedForm {
           onChange={this.handleChange('endDate', 'datepicker')}
         />
 
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={values.completed}
+              onChange={e => {
+                this.setState({
+                  values: update(values, {
+                    completed: { $set: e.target.checked }
+                  })
+                })
+              }}
+              value="completed"
+            />
+          }
+          label="已完成订单"
+        />
+
         <Button
           className={classes.button}
           variant="raised"
@@ -165,16 +184,6 @@ class SearchToolbar extends ValidatedForm {
           onClick={this.handleSearch}
         >
           <SearchIcon /> &nbsp;搜&nbsp;索
-        </Button>
-
-        <Button
-          variant="raised"
-          color="primary"
-          onClick={() => {
-            this.props.onSearch({ completed: true })
-          }}
-        >
-          已完成订单
         </Button>
       </Toolbar>
     )
