@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from pyramid_rpc.jsonrpc import jsonrpc_method
 
 from weblibs.camunda import camundaClient as cc
@@ -102,12 +104,14 @@ class ProcessJSON(RpcBase):
         """
         Search process history with the given conditions.
 
-        :param kwargs: a dictionary with possible keywords: orderId,
-            customerMobile, customerName. Note those 3 are mutally exclusive.
-            There is no sense in supplying all 3.
-
+        :param kwargs: a dictionary with keywords `searchText`, `startDate`,
+            `endDate` or `completed`.
+            `searchText` could mean orderId, customerMobile or customerName.
+            The `startDate` and `endDate` refer to the process start date.
+            If `completed` is set to true, only completed orders will be
+            returned.
+            Note if `searchText` is non-empty, the other fields are ignored.
         """
-
         params = {
             'processDefinitionKey': 'worktop',
             'sorting': [{
@@ -116,8 +120,8 @@ class ProcessJSON(RpcBase):
             }]
         }
 
-        searchText = cond and cond.get('searchText') or None
-        showCompleted = cond and 'completed' in cond
+        searchText = cond.get('searchText')
+        showCompleted = cond.get('completed')
 
         if searchText:
             if isOrderId(searchText):
@@ -140,8 +144,16 @@ class ProcessJSON(RpcBase):
                     'operator': 'eq',
                     'value': searchText
                 }]
-        elif showCompleted:
-            params['finished'] = 'true'
+        else:
+            parseDate(cond, fields=['startDate', 'endDate'])
+            startDate, endDate = cond['startDate'], cond['endDate']
+            if (endDate - startDate) > timedelta(31):
+                raise RPCUserError('订单查询时间跨度不能大于１个月。')
+
+            params['startedBefore'] = endDate + timedelta(1)
+            params['startedAfter'] = startDate
+            if showCompleted:
+                params['finished'] = 'true'
 
         storeId = self.request.user.extraData['worktop'].get('storeId')
         if storeId:
@@ -165,6 +177,7 @@ class ProcessJSON(RpcBase):
             processInstanceIdField='id', hoistProcessVariables=True
         )
 
+        # this filters out CANCELED processes
         return [p for p in ret if p['state'] == 'COMPLETED'] \
             if showCompleted else ret
 

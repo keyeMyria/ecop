@@ -16,7 +16,7 @@
     "lodash": "^4.17.5",
     "lodash.find": "^4.6.0",
     "material-ui": "^1.0.0-beta.45",
-    "material-ui-pickers": "^1.0.0-rc.6",
+    "material-ui-pickers": "^1.0.0-rc.8",
     "query-string": "^5.0.0",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",

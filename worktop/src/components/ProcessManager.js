@@ -4,18 +4,23 @@ import { connect } from 'react-redux'
 import classNames from 'classnames'
 import validation from 'react-validation-mixin'
 import compose from 'recompose/compose'
+import subMonths from 'date-fns/subMonths'
+import startOfDay from 'date-fns/startOfDay'
 
+import { withStyles } from 'material-ui/styles'
 import Table, { TableBody, TableCell, TableRow } from 'material-ui/Table'
 import Button from 'material-ui/Button'
 import Paper from 'material-ui/Paper'
 import Toolbar from 'material-ui/Toolbar'
 import TextField from 'material-ui/TextField'
+import DatePicker from 'material-ui-pickers/DatePicker'
 import Typography from 'material-ui/Typography'
 import IconButton from 'material-ui/IconButton'
-import { withStyles } from 'material-ui/styles'
 import green from 'material-ui/colors/green'
 import PreviewIcon from '@material-ui/icons/RemoveRedEye'
 import SearchIcon from '@material-ui/icons/Search'
+import ArrowLeftIcon from '@material-ui/icons/KeyboardArrowLeft'
+import ArrowRightIcon from '@material-ui/icons/KeyboardArrowRight'
 
 import { strategy, ValidatedForm } from 'form'
 import CheckboxBlankCircle from 'homemaster-jslib/svg-icons/CheckboxBlankCircle'
@@ -41,9 +46,14 @@ const toolbarStyles = theme => ({
    * the flexBasis to at least 200. Otherwise the clear icon will be placed
    * outside of the TextField
    */
+  textField: {
+    flexBasis: 200
+  },
   searchField: {
-    flexBasis: 200,
     margin: theme.spacing.unit
+  },
+  dateField: {
+    flexBasis: 100
   },
   button: {
     marginRight: theme.spacing.unit
@@ -53,7 +63,10 @@ const toolbarStyles = theme => ({
 class SearchToolbar extends ValidatedForm {
   state = {
     values: {
-      searchText: ''
+      searchText: '',
+      startDate: subMonths(startOfDay(new Date()), 1),
+      endDate: startOfDay(new Date()),
+      completed: false
     }
   }
 
@@ -66,14 +79,24 @@ class SearchToolbar extends ValidatedForm {
     }
   )
 
+  componentDidMount = () => {
+    this.doSearch()
+  }
+
+  doSearch = () => {
+    this.props.dispatch(searchProcess(this.state.values))
+  }
+
   handleSearch = () => {
     this.props.validate(error => {
-      !error && this.props.onSearch(this.state.values)
+      !error && this.doSearch()
     })
   }
 
   render() {
     const { classes } = this.props
+    const { values } = this.state
+    console.log(values)
 
     return (
       <Toolbar
@@ -82,7 +105,7 @@ class SearchToolbar extends ValidatedForm {
       >
         <Field
           component={TextField}
-          className={classes.searchField}
+          className={classNames(classes.searchField, classes.textField)}
           name="searchText"
           label="订单号/手机号/顾客姓名"
           required={false}
@@ -99,6 +122,40 @@ class SearchToolbar extends ValidatedForm {
               this.props.validate
             )
           }}
+        />
+
+        <Field
+          component={DatePicker}
+          name="startDate"
+          className={classNames(classes.searchField, classes.dateField)}
+          label="起始日期"
+          required={false}
+          clearable
+          autoOk
+          disableFuture
+          leftArrowIcon={<ArrowLeftIcon />}
+          rightArrowIcon={<ArrowRightIcon />}
+          maxDate={values.endDate || undefined}
+          labelFunc={date => dateFormat(date, 'YYYY/MM/DD')}
+          form={this}
+          onChange={this.handleChange('startDate', 'datepicker')}
+        />
+
+        <Field
+          component={DatePicker}
+          name="endDate"
+          className={classNames(classes.searchField, classes.dateField)}
+          label="结束日期"
+          required={false}
+          clearable
+          autoOk
+          disableFuture
+          minDate={values.startDate || undefined}
+          leftArrowIcon={<ArrowLeftIcon />}
+          rightArrowIcon={<ArrowRightIcon />}
+          labelFunc={date => dateFormat(date, 'YYYY/MM/DD')}
+          form={this}
+          onChange={this.handleChange('endDate', 'datepicker')}
         />
 
         <Button
@@ -125,7 +182,7 @@ class SearchToolbar extends ValidatedForm {
 }
 
 SearchToolbar.propTypes = {
-  onSearch: PropTypes.func.isRequired
+  dispatch: PropTypes.func.isRequired
 }
 SearchToolbar = compose(withStyles(toolbarStyles), validation(strategy))(
   SearchToolbar
@@ -339,14 +396,6 @@ class ProcessManager extends Component {
     }
   }
 
-  componentDidMount = () => {
-    this.doSearch()
-  }
-
-  doSearch = cond => {
-    this.props.dispatch(searchProcess(cond))
-  }
-
   openVariableForm = processInstanceId => {
     this.setState({
       form: {
@@ -362,7 +411,7 @@ class ProcessManager extends Component {
     return (
       <Fragment>
         <Paper style={{ marginBottom: 16 }}>
-          <SearchToolbar onSearch={cond => this.doSearch(cond)} />
+          <SearchToolbar dispatch={this.props.dispatch} />
         </Paper>
         <Paper>
           <ProcessList
