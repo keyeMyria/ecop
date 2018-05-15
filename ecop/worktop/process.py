@@ -147,10 +147,12 @@ class ProcessJSON(RpcBase):
         else:
             parseDate(cond, fields=['startDate', 'endDate'])
             startDate, endDate = cond['startDate'], cond['endDate']
+            endDate = endDate + timedelta(1)
+
             if (endDate - startDate) > timedelta(31):
                 raise RPCUserError('订单查询时间跨度不能大于１个月。')
 
-            params['startedBefore'] = endDate + timedelta(1)
+            params['startedBefore'] = endDate
             params['startedAfter'] = startDate
             if showCompleted:
                 params['finished'] = 'true'
