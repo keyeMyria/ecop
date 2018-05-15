@@ -171,7 +171,8 @@ class ProcessJSON(RpcBase):
             params,
             urlParams={'maxResults': 50} if not showCompleted else None,
             withProcessVariables=(
-                'externalOrderId', 'customerName', 'storeId', 'receivingDate',
+                'externalOrderId', 'customerName', 'storeId',
+                'shippingDate', 'receivingDate',
                 'actualMeasurementDate', 'confirmedMeasurementDate',
                 'scheduledMeasurementDate', 'actualInstallationDate',
                 'confirmedInstallationDate', 'scheduledInstallationDate'

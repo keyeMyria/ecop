@@ -224,10 +224,31 @@ const listStyles = theme => ({
 })
 
 const statusName = {
-  ACTIVE: '进行中',
   EXTERNALLY_TERMINATED: '已取消',
   COMPLETED: '已完成',
   INTERNALLY_TERMINATED: '已取消'
+}
+
+const getStatusText = p => {
+  if (p.state === 'ACTIVE') {
+    if (p.actualInstallationDate) {
+      return '已安装'
+    } else if (p.confirmedInstallationDate) {
+      return '待安装'
+    } else if (p.receivingDate) {
+      return '已收货'
+    } else if (p.shippingDate) {
+      return '已发货'
+    } else if (p.actualMeasurementDate) {
+      return '生产中'
+    } else if (p.confirmedMeasurementDate || p.scheduledMeasurementDate) {
+      return '待测量'
+    } else {
+      return '进行中'
+    }
+  } else {
+    return statusName[p.state]
+  }
 }
 
 const columns = [
@@ -352,7 +373,7 @@ class ProcessList extends Component {
                     <TableCell padding="none" className={classes.actual}>
                       {dateFormat(p.actualInstallationDate, 'YYYY/MM/DD')}
                     </TableCell>
-                    <TableCell padding="none">{statusName[p.state]}</TableCell>
+                    <TableCell padding="none">{getStatusText(p)}</TableCell>
                     <TableCell padding="none">
                       <IconButton
                         color="primary"
