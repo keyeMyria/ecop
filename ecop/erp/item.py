@@ -51,43 +51,48 @@ class ItemJSON(RpcBase):
         if not (catId or text or brandId):
             raise RPCUserError('请指定搜索条件!')
 
-        if text and Item.IsItemNumber(text):
-            query = query.filter(Item.itemId.in_((int(text),)))
+        if catId:
+            cs = categoryFactory()
+            node = cs.get(int(catId))
+            query = query.filter(Item.primaryCategoryId.in_(
+                [n.key for n in node.leafNodes]))
+
+        if text:
+            or_clause = [
+                Item.itemName.op('ilike')('%%%s%%' % text),
+                Item.specification.op('ilike')('%%%s%%' % text),
+                Item.model.op('ilike')('%%%s%%' % text)
+            ]
+            query = query.filter(or_(*or_clause))
+
+        if brandId:
+            query = query.filter_by(brandId=brandId)
+
+        if isSku:
+            query = query.filter_by(isSku=isSku)
+
+        if assortmentOnly:
+            cs = categoryFactory()
+            query = query.filter(not_(Item.primaryCategoryId.in_(
+                [n.key for n in cs.get(1800).leafNodes])))
+
+        if status is None:
+            query = query.filter(Item.itemStatus != ITEM_STATUS.INACTIVE)
+        elif isinstance(status, int):
+            query = query.filter_by(itemStatus=status)
+        elif status == 'all':
+            pass
         else:
-            if catId:
-                cs = categoryFactory()
-                node = cs.get(int(catId))
-                query = query.filter(Item.primaryCategoryId.in_(
-                    [n.key for n in node.leafNodes]))
-            if text:
-                or_clause = [
-                    Item.itemName.op('ilike')('%%%s%%' % text),
-                    Item.specification.op('ilike')('%%%s%%' % text),
-                    Item.model.op('ilike')('%%%s%%' % text)
-                ]
-                query = query.filter(or_(*or_clause))
-
-            if brandId:
-                query = query.filter_by(brandId=brandId)
-
-            if isSku:
-                query = query.filter_by(isSku=isSku)
-
-            if assortmentOnly:
-                cs = categoryFactory()
-                query = query.filter(not_(Item.primaryCategoryId.in_(
-                    [n.key for n in cs.get(1800).leafNodes])))
-
-            if status is None:
-                query = query.filter(Item.itemStatus != ITEM_STATUS.INACTIVE)
-            elif isinstance(status, int):
-                query = query.filter_by(itemStatus=status)
-            elif status == 'all':
-                pass
-            else:
-                raise ValueError('Invalid status parameter')
+            raise ValueError('Invalid status parameter')
 
         items = query.all()
+
+        # if the search text could be an item number, we append it to the
+        # search result.
+        if text and Item.IsItemNumber(text):
+            item = self.sess.query(Item).get(int(text))
+            if item:
+                items.append(item)
 
         fields = ['itemId', 'itemName', 'specification', 'model',
                   'sellingPrice', 'sellingPriceB', 'purchasePrice',
@@ -406,7 +411,8 @@ class ItemGroupJSON(RpcBase):
 
         ret = {
             'header': marshall(ig, ['itemGroupId', 'groupItemName',
-                'groupImageId', 'groupBy', 'shareDescription', 'shareImage'])
+                                    'groupImageId', 'groupBy',
+                                    'shareDescription', 'shareImage'])
         }
 
         if ig.groupBy == 'L':
