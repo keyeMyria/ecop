@@ -346,7 +346,7 @@ class ProcessList extends Component {
                     <TableCell padding="none">{p.storeId}</TableCell>
                     <TableCell padding="none">{p.customerName}</TableCell>
                     <TableCell padding="none">
-                      {dateFormat(p.startTime, 'YYYY/MM/DD HH:mm:ss')}
+                      {dateFormat(p.startTime, 'YYYY/MM/DD HH:mm')}
                     </TableCell>
                     <TableCell
                       padding="none"
