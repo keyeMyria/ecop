@@ -1,10 +1,8 @@
  * Automatically reload browser when RPC version mismatch detected
  * Add storeId to account receivable document
-
  * Log all rpc calls in a call log
 
  * Fix FileUploader image orientation when iPhone photos are uploaded from PC
- * Use ButtonBase to display TaskItem as a button
  * Allow user to change password
  * Require the input of overdue reason if a task is overdue when completed
  * Use async request to load user information and permissions instead of embed

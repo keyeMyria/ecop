@@ -6,11 +6,9 @@ import find from 'lodash.find'
 import toDate from 'date-fns/toDate'
 
 import { withStyles } from '@material-ui/core/styles'
-import Card from '@material-ui/core/Card'
-import CardActions from '@material-ui/core/CardActions'
-import CardContent from '@material-ui/core/CardContent'
+import Paper from '@material-ui/core/Paper'
 import Typography from '@material-ui/core/Typography'
-import Button from '@material-ui/core/Button'
+import ButtonBase from '@material-ui/core/ButtonBase'
 import AlarmIcon from '@material-ui/icons/Alarm'
 
 import { jsonrpc, message } from 'homemaster-jslib'
@@ -25,9 +23,14 @@ const styles = {
     flexWrap: 'wrap'
   },
   taskItem: {
-    flexBasis: 250,
+    flexBasis: 230,
     marginRight: 16,
     marginBottom: 16
+  },
+  taskPaper: {
+    padding: 16,
+    width: '100%',
+    textAlign: 'left'
   },
   due: {
     display: 'flex',
@@ -55,8 +58,8 @@ const TaskItem = props => {
   }
 
   return (
-    <Card className={classes.taskItem}>
-      <CardContent>
+    <ButtonBase focusRipple className={classes.taskItem} onClick={onOpenTask}>
+      <Paper className={classes.taskPaper}>
         <Typography color="textSecondary">
           {variables.externalOrderId}
         </Typography>
@@ -72,13 +75,8 @@ const TaskItem = props => {
             {dateFormat(task.due, 'YYYY/MM/DD HH:mm:ss')}
           </Typography>
         </div>
-      </CardContent>
-      <CardActions>
-        <Button size="small" color="primary" onClick={onOpenTask}>
-          查看任务
-        </Button>
-      </CardActions>
-    </Card>
+      </Paper>
+    </ButtonBase>
   )
 }
 
