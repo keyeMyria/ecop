@@ -16,6 +16,7 @@ import React from 'react'
 import warning from 'warning'
 import PropTypes from 'prop-types'
 
+import { withStyles } from '@material-ui/core/styles'
 import FormHelperText from '@material-ui/core/FormHelperText'
 import FormControl from '@material-ui/core/FormControl'
 import Input from '@material-ui/core/Input'
@@ -24,7 +25,6 @@ import InputAdornment from '@material-ui/core/InputAdornment'
 import Select from '@material-ui/core/Select/Select'
 import IconButton from '@material-ui/core/IconButton'
 import CancelIcon from '@material-ui/icons/Cancel'
-import { withStyles } from '@material-ui/core/styles'
 
 const styles = {
   cancelIcon: {
