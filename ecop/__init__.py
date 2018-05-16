@@ -33,6 +33,7 @@ def main(global_config, **settings):
 
     # tweens are registered below
     # note that tweens toward the bottom are executed first
+    config.include('ecop.logging')  # for logging rpc calls
     config.include('weblibs.devicetype')  # we need this for checking weixin
     config.include('weblibs.clienttype')  # for bot detection
     config.include('weblibs.httpsredirect')
