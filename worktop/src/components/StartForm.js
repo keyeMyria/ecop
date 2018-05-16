@@ -21,6 +21,7 @@ import CloseBox from 'homemaster-jslib/svg-icons/CloseBox'
 
 import { strategy, ValidatedForm, Field } from 'form'
 import FileUploader from 'widget/FileUploader'
+import OrderItem from 'widget/OrderItem'
 import dateFormat from 'utils/date-fns'
 import { isValidOrderId } from 'utils/validators'
 
@@ -50,8 +51,11 @@ class StartForm extends ValidatedForm {
     isMeasurementRequested: true,
     scheduledMeasurementDate: null,
     scheduledInstallationDate: null,
-    orderFile: []
+    orderFile: [],
+    orderItems: []
   }
+
+  state = { values: this.defaultValues }
 
   validatorTypes = strategy.createInactiveSchema(
     {
@@ -81,11 +85,6 @@ class StartForm extends ValidatedForm {
       'required.orderFile': '原始订单必须上传'
     }
   )
-
-  constructor(props) {
-    super(props)
-    this.state = { values: this.defaultValues }
-  }
 
   resetForm = () => {
     this.setState({ values: this.defaultValues })
@@ -292,6 +291,20 @@ class StartForm extends ValidatedForm {
             />
           </Grid>
         </Grid>
+
+        <OrderItem
+          onChange={value => {
+            this.setState(
+              update(this.state, {
+                values: {
+                  orderItems: {
+                    $set: value ? [value] : []
+                  }
+                }
+              })
+            )
+          }}
+        />
 
         <Field
           component={FileUploader}
