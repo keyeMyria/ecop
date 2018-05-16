@@ -1,8 +1,8 @@
 import React, { Fragment } from 'react'
 import validation from 'react-validation-mixin'
 
-import { FormControl } from 'material-ui/Form'
-import Typography from 'material-ui/Typography'
+import FormControl from '@material-ui/core/FormControl'
+import Typography from '@material-ui/core/Typography'
 
 import { strategy, ValidatedForm, Field } from 'form'
 import FileUploader from 'widget/FileUploader'
