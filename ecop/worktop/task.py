@@ -10,6 +10,7 @@ from weblibs.jsonrpc import RPCUserError, parseDate
 
 from ecop.base import RpcBase
 from ecop.region import getRegionName
+from ecop.worktop.utils import addItemInfo
 
 
 class TaskJSON(RpcBase):
@@ -61,6 +62,9 @@ class TaskJSON(RpcBase):
                 task = None
             else:
                 raise
+        ois = task['processVariables'].get('orderItems')
+        if ois:
+            addItemInfo(ois)
         return task
 
     @jsonrpc_method(endpoint='rpc', method='bpmn.task.complete')

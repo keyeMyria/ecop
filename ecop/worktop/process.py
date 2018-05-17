@@ -11,6 +11,7 @@ from webmodel.validator import isOrderId, isMobile
 
 from ecop.base import RpcBase
 from ecop.worktop.validator import isIkeaOrderId
+from ecop.worktop.utils import addItemInfo
 
 """
 In case a process instance needs manual correction, use:
@@ -186,7 +187,13 @@ class ProcessJSON(RpcBase):
 
     @jsonrpc_method(endpoint='rpc', method='bpmn.variable.get')
     def getProcessVariables(self, processInstanceId):
-        ret = cc.makeRequest(f'/history/variable-instance', 'post', {
-            'processInstanceIdIn': [processInstanceId]
-        }, urlParams={'deserializeValues': 'false'})
-        return cc.parseVariables(ret)
+        variables = cc.parseVariables(
+            cc.makeRequest(f'/history/variable-instance', 'post', {
+                'processInstanceIdIn': [processInstanceId]
+            }, urlParams={'deserializeValues': 'false'}))
+
+        ois = variables.get('orderItems')
+        if ois:
+            addItemInfo(ois)
+
+        return variables
