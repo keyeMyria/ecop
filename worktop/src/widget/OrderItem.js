@@ -49,6 +49,38 @@ class OrderItem extends Component {
 
   state = { ...this.defaultState }
 
+  constructor(props) {
+    super(props)
+    if (props.value) {
+      this.setValue(props.value)
+    }
+  }
+
+  setValue = value => {
+    jsonrpc({
+      method: 'item.get',
+      params: [value.itemId]
+    }).then(item => {
+      item &&
+        this.setState({
+          itemText: `${item.itemName},${item.specification}`,
+          itemId: item.itemId,
+          model: item.model,
+          quantity: value.quantity
+        })
+    })
+  }
+
+  componentWillReceiveProps = nextProps => {
+    if (!isEqual(this.props.value, nextProps.value)) {
+      if (this.props.value.itemId !== nextProps.value.itemId) {
+        this.setValue(nextProps.value)
+      } else {
+        this.setState({ quantity: nextProps.quantity })
+      }
+    }
+  }
+
   handleModelChange = e => {
     var { value } = e.target
     if (/^\d{0,8}$/.test(value) || !value) {
@@ -165,6 +197,11 @@ OrderItem.propTypes = {
    * be called with {itemId, quantity} or null, depending on whether the value
    * is valid. Note the itemId is the ERP itemId, not supplier item model.
    */
-  onChange: PropTypes.func.isRequired
+  onChange: PropTypes.func.isRequired,
+  /**
+   * To make the component a controlled one, pass `value` attribute in the
+   * shape of {itemId:xxx, quantity:xxx}
+   */
+  value: PropTypes.object
 }
 export default withStyles(styles)(OrderItem)

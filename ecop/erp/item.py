@@ -20,6 +20,19 @@ class ItemJSON(RpcBase):
     def __init__(self, request):
         RpcBase.__init__(self, request)
 
+    @staticmethod
+    def marshall(items):
+        fields = ['itemId', 'itemName', 'specification', 'model',
+                  'sellingPrice', 'sellingPriceB', 'purchasePrice',
+                  'itemStatus', 'isSku', 'unitName', 'primaryCategoryId',
+                  'unitId', 'brandId', 'countryId', 'weight']
+        if isinstance(items, list):
+            return [marshall(i, fields) for i in items]
+        elif items:
+            return marshall(items, fields)
+        else:
+            return None
+
     def replaceLinks(self, html):
         """ replace image link with cdn image and reference to item_id with
         corresponding item url """
@@ -35,6 +48,10 @@ class ItemJSON(RpcBase):
             del img['image_id']
 
         return str(soup)
+
+    @jsonrpc_method(endpoint='rpc', method='item.get')
+    def getItemData(self, itemId):
+        return self.marshall(self.sess.query(Item).get(itemId))
 
     @jsonrpc_method(endpoint='rpc', method='item.search')
     def searchItem(self, text=None, brandId=None, catId=None, status=None,
@@ -94,11 +111,7 @@ class ItemJSON(RpcBase):
             if item:
                 items.append(item)
 
-        fields = ['itemId', 'itemName', 'specification', 'model',
-                  'sellingPrice', 'sellingPriceB', 'purchasePrice',
-                  'itemStatus', 'isSku', 'unitName', 'primaryCategoryId',
-                  'unitId', 'brandId', 'countryId', 'weight']
-        return [marshall(i, fields) for i in items]
+        return self.marshall(items)
 
     def setItemStatus(self, item, status):
         # check existence of available image
