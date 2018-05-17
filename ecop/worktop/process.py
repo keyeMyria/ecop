@@ -182,8 +182,11 @@ class ProcessJSON(RpcBase):
         )
 
         # this filters out CANCELED processes
-        return [p for p in ret if p['state'] == 'COMPLETED'] \
-            if showCompleted else ret
+        if not searchText and showCompleted:
+            ret = [p for p in ret if p['state'] == 'COMPLETED']
+
+        return ret
+
 
     @jsonrpc_method(endpoint='rpc', method='bpmn.variable.get')
     def getProcessVariables(self, processInstanceId):
