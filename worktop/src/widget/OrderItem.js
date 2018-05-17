@@ -21,7 +21,7 @@ const styles = theme => ({
     flexDirection: 'row',
     alignItems: 'flex-end'
   },
-  itemId: {
+  model: {
     flexBasis: 140
   },
   boldInput: theme.custom.orderId,
@@ -31,13 +31,17 @@ const styles = theme => ({
     flexGrow: 1
   },
   quantity: {
-    flexBasis: 100
+    flexBasis: 90
+  },
+  quantityInput: {
+    width: '100%'
   }
 })
 
 class OrderItem extends Component {
   defaultState = {
-    itemId: '',
+    itemId: null,
+    model: '',
     quantity: '',
     itemText: '',
     errmsg: ''
@@ -45,13 +49,13 @@ class OrderItem extends Component {
 
   state = { ...this.defaultState }
 
-  handleItemIdChange = e => {
+  handleModelChange = e => {
     var { value } = e.target
     if (/^\d{0,8}$/.test(value) || !value) {
       this.setState(
         {
           ...this.defaultState,
-          itemId: value
+          model: value
         },
         this.handleChange
       )
@@ -73,7 +77,8 @@ class OrderItem extends Component {
           const item = ret[0]
           this.setState(
             {
-              itemText: `${item.itemName},${item.specification}`
+              itemText: `${item.itemName},${item.specification}`,
+              itemId: item.itemId
             },
             this.handleChange
           )
@@ -118,14 +123,14 @@ class OrderItem extends Component {
     return (
       <div className={classes.root}>
         <TextField
-          className={classes.itemId}
+          className={classes.model}
           label="货号"
           required={false}
-          value={this.state.itemId}
+          value={this.state.model}
           InputProps={{ classes: { input: classes.boldInput } }}
           error={!!this.state.errmsg}
           helperText={this.state.errmsg}
-          onChange={this.handleItemIdChange}
+          onChange={this.handleModelChange}
         />
 
         <Typography variant="title" className={classes.itemText}>
@@ -140,6 +145,7 @@ class OrderItem extends Component {
           <Input
             value={this.state.quantity}
             className={classes.boldInput}
+            classes={{ input: classes.quantityInput }}
             onChange={this.handleQuantityChange}
             endAdornment={<InputAdornment position="end">米</InputAdornment>}
             inputRef={input => {
@@ -157,7 +163,7 @@ OrderItem.propTypes = {
   /**
    * The function to invoke when order item data is changed. The funciton will
    * be called with {itemId, quantity} or null, depending on whether the value
-   * is valid.
+   * is valid. Note the itemId is the ERP itemId, not supplier item model.
    */
   onChange: PropTypes.func.isRequired
 }
