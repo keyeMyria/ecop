@@ -10,6 +10,7 @@ import LoginDialog from 'components/LoginDialog'
 
 const styles = theme => ({
   '@global': {
+    'input[type=text]::-ms-clear': { display: 'none' },
     body: {
       fontFamily: theme.typography.fontFamily
     }
