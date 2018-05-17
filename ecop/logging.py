@@ -22,7 +22,8 @@ class LoggingRPC(RpcBase):
 # Following methods are log logged since they are not interesting
 __omit_methods__ = (
     'auth.login', # for security reasons, do not log login request
-    'regions.get'
+    'regions.get',
+    'category.get'
 )
 
 class rpclog_tween_factory(object):

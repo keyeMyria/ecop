@@ -9,3 +9,8 @@
    the information in HTML source
  * Improve FileUploader for rotation support
  * Add Excel export of ProcessManager with openpyxl
+
+???
+
+ * After order is assigned to another factory, another pair of purchase and
+   sales order will be created in ERP

@@ -10,6 +10,10 @@ import LoginDialog from 'components/LoginDialog'
 
 const styles = theme => ({
   '@global': {
+    /**
+     * TODO: Before MUI fix IE text input adornment problem, we will use this
+     * temp fix
+     */
     'input[type=text]::-ms-clear': { display: 'none' },
     body: {
       fontFamily: theme.typography.fontFamily
