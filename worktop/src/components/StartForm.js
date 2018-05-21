@@ -2,6 +2,7 @@ import React from 'react'
 import validation from 'react-validation-mixin'
 import compose from 'recompose/compose'
 import update from 'immutability-helper'
+import isEmpty from 'lodash/isEmpty'
 
 import { withStyles } from '@material-ui/core/styles'
 import Button from '@material-ui/core/Button'
@@ -9,10 +10,12 @@ import TextField from '@material-ui/core/TextField'
 import DatePicker from 'material-ui-pickers/DatePicker'
 import Grid from '@material-ui/core/Grid'
 import Paper from '@material-ui/core/Paper'
+import InputLabel from '@material-ui/core/InputLabel'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
 import Checkbox from '@material-ui/core/Checkbox'
 import ArrowLeftIcon from '@material-ui/icons/KeyboardArrowLeft'
 import ArrowRightIcon from '@material-ui/icons/KeyboardArrowRight'
+import DeleteIcon from '@material-ui/icons/Delete'
 
 import { jsonrpc, message } from 'homemaster-jslib'
 import RegionPicker from 'homemaster-jslib/region/RegionPicker'
@@ -31,6 +34,15 @@ const styles = theme => ({
     padding: 16
   },
   orderId: theme.custom.orderId,
+  itemRow: {
+    marginTop: theme.spacing.unit,
+    display: 'flex',
+    alignItems: 'center'
+  },
+  itemRowButton: {
+    flexShrink: 0,
+    marginLeft: theme.spacing.unit
+  },
   submitButton: theme.custom.submitButton,
   buttonRow: theme.custom.buttonRow,
   buttonIcon: theme.custom.buttonIcon,
@@ -108,11 +120,33 @@ class StartForm extends ValidatedForm {
   }
 
   handleSubmit = () => {
+    const { values } = this.state
+    const itemIds = []
+
     this.props.validate(error => {
       if (!error) {
+        if (isEmpty(values.orderItems)) {
+          message.error('订单项目必须输入')
+          return
+        }
+
+        for (var i = 0; i < values.orderItems.length; i++) {
+          const oi = values.orderItems[i]
+          if (oi === null) {
+            message.error('货号数量输入不正确')
+            return
+          }
+          if (itemIds.indexOf(oi.itemId) !== -1) {
+            message.error('不允许出现重复货号')
+            return
+          } else {
+            itemIds.push(oi.itemId)
+          }
+        }
+
         jsonrpc({
           method: 'bpmn.process.start',
-          params: [this.state.values]
+          params: [values]
         }).then(() => {
           message.success('订单提交成功')
           this.resetForm()
@@ -124,6 +158,11 @@ class StartForm extends ValidatedForm {
   render = () => {
     const { classes } = this.props
     const { values } = this.state
+    const ois = [...values.orderItems]
+
+    if (ois.length === 0 || ois.slice(-1)[0]) {
+      ois.push(undefined)
+    }
 
     return (
       <Paper className={classes.root}>
@@ -292,19 +331,52 @@ class StartForm extends ValidatedForm {
           </Grid>
         </Grid>
 
-        <OrderItem
-          onChange={value => {
-            this.setState(
-              update(this.state, {
-                values: {
-                  orderItems: {
-                    $set: value ? [value] : []
-                  }
-                }
-              })
-            )
-          }}
-        />
+        <InputLabel shrink={true} required={true}>
+          订单项目
+        </InputLabel>
+        {ois.map((oi, idx) => (
+          <div key={idx} className={classes.itemRow}>
+            <OrderItem
+              value={oi}
+              onChange={value => {
+                this.setState(
+                  update(this.state, {
+                    values: {
+                      orderItems:
+                        value === undefined
+                          ? {
+                              $splice: [[idx, 1]]
+                            }
+                          : {
+                              [idx]: { $set: value }
+                            }
+                    }
+                  })
+                )
+              }}
+            />
+            <Button
+              className={classes.itemRowButton}
+              variant="fab"
+              mini
+              color="primary"
+              disabled={oi === undefined}
+              onClick={() => {
+                this.setState(
+                  update(this.state, {
+                    values: {
+                      orderItems: {
+                        $splice: [[idx, 1]]
+                      }
+                    }
+                  })
+                )
+              }}
+            >
+              <DeleteIcon />
+            </Button>
+          </div>
+        ))}
 
         <Field
           component={FileUploader}

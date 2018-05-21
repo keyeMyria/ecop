@@ -49,35 +49,35 @@ class OrderItem extends Component {
 
   state = { ...this.defaultState }
 
-  constructor(props) {
-    super(props)
-    if (props.value) {
-      this.setValue(props.value)
-    }
-  }
-
   setValue = value => {
-    jsonrpc({
-      method: 'item.get',
-      params: [value.itemId]
-    }).then(item => {
-      item &&
-        this.setState({
-          itemText: `${item.itemName},${item.specification}`,
-          itemId: item.itemId,
-          model: item.model,
-          quantity: value.quantity
-        })
-    })
+    if (value === null) {
+      // the controll is being edited
+      return
+    } else if (value === undefined) {
+      // the control shall be cleared
+      this.setState({ ...this.defaultState })
+    } else if (this.state.itemId !== value.itemId) {
+      jsonrpc({
+        method: 'item.get',
+        params: [value.itemId]
+      }).then(item => {
+        item &&
+          this.setState({
+            itemText: `${item.itemName},${item.specification}`,
+            itemId: item.itemId,
+            model: item.model,
+            quantity: value.quantity
+          })
+      })
+    } else {
+      this.setState({ quantity: value.quantity })
+    }
   }
 
   componentWillReceiveProps = nextProps => {
     if (!isEqual(this.props.value, nextProps.value)) {
-      if (this.props.value.itemId !== nextProps.value.itemId) {
-        this.setValue(nextProps.value)
-      } else {
-        this.setState({ quantity: nextProps.quantity })
-      }
+      this.prevValue = nextProps.value
+      this.setValue(nextProps.value)
     }
   }
 
@@ -86,8 +86,10 @@ class OrderItem extends Component {
     if (/^\d{0,8}$/.test(value) || !value) {
       this.setState(
         {
-          ...this.defaultState,
-          model: value
+          itemId: null,
+          model: value,
+          itemText: '',
+          errmsg: ''
         },
         this.handleChange
       )
@@ -140,7 +142,11 @@ class OrderItem extends Component {
         itemId: this.state.itemId,
         quantity
       }
+    } else if (!this.state.model && !this.state.quantity) {
+      // empty
+      currentValue = undefined
     } else {
+      // invalid value
       currentValue = null
     }
     // the value has changed
@@ -194,8 +200,9 @@ OrderItem.propTypes = {
   classes: PropTypes.object,
   /**
    * The function to invoke when order item data is changed. The funciton will
-   * be called with {itemId, quantity} or null, depending on whether the value
-   * is valid. Note the itemId is the ERP itemId, not supplier item model.
+   * be called with {itemId, quantity}, null or undefined, depending on whether
+   * the value is valid, not completely valid or empty.
+   * Note the itemId is the ERP itemId, not supplier item model.
    */
   onChange: PropTypes.func.isRequired,
   /**

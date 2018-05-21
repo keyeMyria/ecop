@@ -61,6 +61,13 @@ const variables = {
     label: 'ERP订单号',
     type: 'Integer'
   },
+  /**
+   * [{itemId: 10023991, quantity: 2}, {itemId: 10024018, quantity: 3.2}]
+   */
+  orderItems: {
+    label: '订单商品',
+    type: 'Json'
+  },
   productionDrawing: {
     label: '生产图纸',
     type: 'Json'
