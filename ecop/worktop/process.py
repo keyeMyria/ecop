@@ -172,7 +172,7 @@ class ProcessJSON(RpcBase):
             params,
             urlParams={'maxResults': 50} if not showCompleted else None,
             withProcessVariables=(
-                'externalOrderId', 'customerName', 'storeId',
+                'externalOrderId', 'customerName', 'storeId', 'orderItems',
                 'shippingDate', 'receivingDate',
                 'actualMeasurementDate', 'confirmedMeasurementDate',
                 'scheduledMeasurementDate', 'actualInstallationDate',
@@ -184,6 +184,11 @@ class ProcessJSON(RpcBase):
         # this filters out CANCELED processes
         if not searchText and showCompleted:
             ret = [p for p in ret if p['state'] == 'COMPLETED']
+
+        for p in ret:
+            ois = p.get('orderItems')
+            if ois:
+                addItemInfo(ois)
 
         return ret
 

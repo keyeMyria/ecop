@@ -259,6 +259,7 @@ const columns = [
   { id: 'externalOrderId', disablePadding: true, label: '订单号' },
   { id: 'storeId', disablePadding: true, label: '商场号' },
   { id: 'customerName', disablePadding: true, label: '顾客姓名' },
+  { id: 'orderItem', disablePadding: true, label: '台面' },
   { id: 'startTime', disablePadding: true, label: '发起时间' },
   {
     id: 'scheduledMeasurementDate',
@@ -336,60 +337,67 @@ class ProcessList extends Component {
               onRequestSort={this.handleRequestSort}
             />
             <TableBody>
-              {data.map((p, idx) => {
-                return (
-                  <TableRow hover tabIndex={-1} key={idx}>
-                    <TableCell className={classes.rowNumber} padding="none">
-                      {idx + 1}
-                    </TableCell>
-                    <TableCell padding="none">{p.externalOrderId}</TableCell>
-                    <TableCell padding="none">{p.storeId}</TableCell>
-                    <TableCell padding="none">{p.customerName}</TableCell>
-                    <TableCell padding="none">
-                      {dateFormat(p.startTime, 'YYYY/MM/DD HH:mm')}
-                    </TableCell>
-                    <TableCell
-                      padding="none"
-                      className={
-                        (!p.scheduledMeasurementDate && classes.na) || null
-                      }
+              {data.map((p, idx) => (
+                <TableRow hover tabIndex={-1} key={idx}>
+                  <TableCell className={classes.rowNumber} padding="none">
+                    {idx + 1}
+                  </TableCell>
+                  <TableCell padding="none">{p.externalOrderId}</TableCell>
+                  <TableCell padding="none">{p.storeId}</TableCell>
+                  <TableCell padding="none">{p.customerName}</TableCell>
+                  <TableCell padding="none">
+                    {p.orderItems &&
+                      p.orderItems.map((oi, idx) => (
+                        <div key={idx}>
+                          {oi.model}*{oi.quantity}
+                        </div>
+                      ))}
+                  </TableCell>
+
+                  <TableCell padding="none">
+                    {dateFormat(p.startTime, 'YYYY/MM/DD HH:mm')}
+                  </TableCell>
+                  <TableCell
+                    padding="none"
+                    className={
+                      (!p.scheduledMeasurementDate && classes.na) || null
+                    }
+                  >
+                    {p.scheduledMeasurementDate
+                      ? dateFormat(p.scheduledMeasurementDate, 'YYYY/MM/DD')
+                      : '无需测量'}
+                  </TableCell>
+                  <TableCell padding="none" className={classes.confirmed}>
+                    {dateFormat(p.confirmedMeasurementDate, 'YYYY/MM/DD')}
+                  </TableCell>
+                  <TableCell padding="none" className={classes.actual}>
+                    {dateFormat(p.actualMeasurementDate, 'YYYY/MM/DD')}
+                  </TableCell>
+                  <TableCell padding="none" className={classes.actual}>
+                    {dateFormat(p.receivingDate, 'YYYY/MM/DD')}
+                  </TableCell>
+                  <TableCell padding="none">
+                    {dateFormat(p.scheduledInstallationDate, 'YYYY/MM/DD')}
+                  </TableCell>
+                  <TableCell padding="none" className={classes.confirmed}>
+                    {dateFormat(p.confirmedInstallationDate, 'YYYY/MM/DD')}
+                  </TableCell>
+                  <TableCell padding="none" className={classes.actual}>
+                    {dateFormat(p.actualInstallationDate, 'YYYY/MM/DD')}
+                  </TableCell>
+                  <TableCell padding="none">{getStatusText(p)}</TableCell>
+                  <TableCell padding="none">
+                    <IconButton
+                      color="primary"
+                      onClick={() => {
+                        this.props.onProcessAction(p.id, 'view')
+                      }}
                     >
-                      {p.scheduledMeasurementDate
-                        ? dateFormat(p.scheduledMeasurementDate, 'YYYY/MM/DD')
-                        : '无需测量'}
-                    </TableCell>
-                    <TableCell padding="none" className={classes.confirmed}>
-                      {dateFormat(p.confirmedMeasurementDate, 'YYYY/MM/DD')}
-                    </TableCell>
-                    <TableCell padding="none" className={classes.actual}>
-                      {dateFormat(p.actualMeasurementDate, 'YYYY/MM/DD')}
-                    </TableCell>
-                    <TableCell padding="none" className={classes.actual}>
-                      {dateFormat(p.receivingDate, 'YYYY/MM/DD')}
-                    </TableCell>
-                    <TableCell padding="none">
-                      {dateFormat(p.scheduledInstallationDate, 'YYYY/MM/DD')}
-                    </TableCell>
-                    <TableCell padding="none" className={classes.confirmed}>
-                      {dateFormat(p.confirmedInstallationDate, 'YYYY/MM/DD')}
-                    </TableCell>
-                    <TableCell padding="none" className={classes.actual}>
-                      {dateFormat(p.actualInstallationDate, 'YYYY/MM/DD')}
-                    </TableCell>
-                    <TableCell padding="none">{getStatusText(p)}</TableCell>
-                    <TableCell padding="none">
-                      <IconButton
-                        color="primary"
-                        onClick={() => {
-                          this.props.onProcessAction(p.id, 'view')
-                        }}
-                      >
-                        <PreviewIcon />
-                      </IconButton>
-                    </TableCell>
-                  </TableRow>
-                )
-              })}
+                      <PreviewIcon />
+                    </IconButton>
+                  </TableCell>
+                </TableRow>
+              ))}
             </TableBody>
           </Table>
 
