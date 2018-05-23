@@ -52,6 +52,7 @@ def main(global_config, **settings):
     config.add_route('forms', '/ikea/forms/{processId}/{form}.pdf', xhr=False)
     config.add_route('receivable', '/ikea/receivable/{key}.pdf', xhr=False)
     config.add_route('label', '/ikea/shippingLabel', xhr=False)
+    config.add_route('processlist', '/ikea/processlist', xhr=False)
     config.add_route('ship', '/ikea/shipOrder', xhr=False)
     config.add_route('worktop', '/ikea', xhr=False)
 

@@ -1,3 +1,4 @@
+/* global App */
 import React, { Component, Fragment } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
@@ -7,6 +8,7 @@ import update from 'immutability-helper'
 import compose from 'recompose/compose'
 import subMonths from 'date-fns/subMonths'
 import startOfDay from 'date-fns/startOfDay'
+import queryString from 'query-string'
 
 import { withStyles } from '@material-ui/core/styles'
 import Table from '@material-ui/core/Table'
@@ -29,7 +31,9 @@ import ArrowRightIcon from '@material-ui/icons/KeyboardArrowRight'
 import DatePicker from 'material-ui-pickers/DatePicker'
 
 import { strategy, ValidatedForm } from 'form'
+import { downloadFile } from 'homemaster-jslib'
 import CheckboxBlankCircle from 'homemaster-jslib/svg-icons/CheckboxBlankCircle'
+import ExcelIcon from 'homemaster-jslib/svg-icons/Excel'
 
 import { searchProcess } from 'model/actions'
 import dateFormat from 'utils/date-fns'
@@ -96,6 +100,18 @@ class SearchToolbar extends ValidatedForm {
   handleSearch = () => {
     this.props.validate(error => {
       !error && this.doSearch()
+    })
+  }
+
+  handleExport = () => {
+    this.props.validate(error => {
+      if (!error) {
+        const params = {
+          ...this.state.values,
+          token: App.csrfToken
+        }
+        downloadFile(`/ikea/processlist?${queryString.stringify(params)}`)
+      }
     })
   }
 
@@ -188,6 +204,15 @@ class SearchToolbar extends ValidatedForm {
         >
           <SearchIcon /> &nbsp;搜&nbsp;索
         </Button>
+
+        <Button
+          className={classes.button}
+          variant="raised"
+          color="primary"
+          onClick={this.handleExport}
+        >
+          <ExcelIcon /> &nbsp;导出Excel
+        </Button>
       </Toolbar>
     )
   }
@@ -225,34 +250,6 @@ const listStyles = theme => ({
     padding: theme.spacing.unit * 2
   }
 })
-
-const statusName = {
-  EXTERNALLY_TERMINATED: '已取消',
-  COMPLETED: '已完成',
-  INTERNALLY_TERMINATED: '已取消'
-}
-
-const getStatusText = p => {
-  if (p.state === 'ACTIVE') {
-    if (p.actualInstallationDate) {
-      return '已安装'
-    } else if (p.confirmedInstallationDate) {
-      return '待安装'
-    } else if (p.receivingDate) {
-      return '已收货'
-    } else if (p.shippingDate) {
-      return '已发货'
-    } else if (p.actualMeasurementDate || !p.scheduledMeasurementDate) {
-      return '生产中'
-    } else if (p.confirmedMeasurementDate || p.scheduledMeasurementDate) {
-      return '待测量'
-    } else {
-      return '进行中'
-    }
-  } else {
-    return statusName[p.state]
-  }
-}
 
 const columns = [
   { id: 'rowNumber', disablePadding: true, label: '' },
@@ -385,7 +382,7 @@ class ProcessList extends Component {
                   <TableCell padding="none" className={classes.actual}>
                     {dateFormat(p.actualInstallationDate, 'YYYY/MM/DD')}
                   </TableCell>
-                  <TableCell padding="none">{getStatusText(p)}</TableCell>
+                  <TableCell padding="none">{p.statusText}</TableCell>
                   <TableCell padding="none">
                     <IconButton
                       color="primary"
@@ -402,15 +399,15 @@ class ProcessList extends Component {
           </Table>
 
           <Typography variant="subheading" className={classes.legend}>
-            <CheckboxBlankCircle className={classes.legendLabel} /> - 预约日期
+            <CheckboxBlankCircle className={classes.legendLabel} /> 预约日期
             <CheckboxBlankCircle
               className={classNames(classes.legendLabel, classes.confirmed)}
             />{' '}
-            - 确认日期
+            确认日期
             <CheckboxBlankCircle
               className={classNames(classes.legendLabel, classes.actual)}
             />{' '}
-            - 实际完成日期
+            实际完成日期
           </Typography>
         </Fragment>
       )
