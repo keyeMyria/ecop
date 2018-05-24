@@ -2,6 +2,7 @@ __roles__ = {
     'installer': {
         'tasks': [
             'TakeMeasurement',
+            'ConfirmInstallationDate',
             'InstallWorktop']
     },
     'factory': {
@@ -19,7 +20,6 @@ __roles__ = {
         'tasks': [
             'ConfirmMeasurementDate',
             'MakeDrawing',
-            'ConfirmInstallationDate',
             'CompleteERPOrder']
     }
 }
