@@ -11,6 +11,7 @@ from weblibs.jsonrpc import RPCUserError, parseDate
 from ecop.base import RpcBase
 from ecop.region import getRegionName
 from ecop.worktop.utils import addItemInfo
+from ecop.worktop.permission import hasRole, getUserTasks
 
 
 class TaskJSON(RpcBase):
@@ -32,9 +33,8 @@ class TaskJSON(RpcBase):
                 'sortOrder': 'asc'
             }]
         }
-        userRole = self.request.user.extraData['worktop']['role']
-        if userRole != 'admin':
-            params['candidateGroup'] = userRole
+        if not hasRole(self.request.user, 'admin'):
+            params['taskDefinitionKeyIn'] = getUserTasks(self.request.user)
         tasks = cc.makeRequest(
             '/task', 'post', params,
             withProcessVariables=('externalOrderId', 'customerName',
