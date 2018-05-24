@@ -294,6 +294,7 @@ const columns = [
     label: '确认安装日'
   },
   { id: 'actualInstallationDate', disablePadding: true, label: '实际安装日' },
+  { id: 'duration', disablePadding: true, label: '耗时' },
   { id: 'status', disablePadding: true, label: '状态' },
   { id: 'action', disablePadding: true }
 ]
@@ -395,6 +396,7 @@ class ProcessList extends Component {
                   <TableCell padding="none" className={classes.actual}>
                     {dateFormat(p.actualInstallationDate, 'YYYY/MM/DD')}
                   </TableCell>
+                  <TableCell padding="none">{p.duration}</TableCell>
                   <TableCell padding="none">{p.statusText}</TableCell>
                   <TableCell padding="none">
                     <IconButton

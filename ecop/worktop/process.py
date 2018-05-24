@@ -1,6 +1,7 @@
 import base64
 import json
-from datetime import timedelta
+from decimal import Decimal
+from datetime import datetime, timedelta
 from dateutil import tz
 
 from openpyxl import Workbook
@@ -10,6 +11,7 @@ from pyramid_rpc.jsonrpc import jsonrpc_method
 from pyramid.view import view_config
 from pyramid.response import Response
 
+from hm.lib.number import decimal_round
 from weblibs.camunda import camundaClient as cc
 from weblibs.jsonrpc import RPCUserError, parseDate
 from webmodel.consts import ORDER_SOURCE, SPECIAL_PARTY
@@ -135,7 +137,24 @@ def searchProcess(cond, request, countOnly=False, maxRows=50):
         #  * add model to orderItems as only itemId is stored
         #  * add human readable status text
         #
+        currentTime = datetime.now()
         for p in ret:
+            # The instance variables of Date type are parsed correctly, but the
+            # process property is not. We will do the parse here.
+            parseDate(p, fields=['startTime'])
+            p['startTime'] = p['startTime'].astimezone(
+                tzLocal).replace(tzinfo=None)
+
+            # calculate the duration of the process.
+            if 'TERMINATED' not in p['state']:
+                start = p.get('actualMeasurementDate') or \
+                    p.get('scheduledMeasurementDate') or p['startTime']
+                end = p.get('actualInstallationDate') or currentTime
+                delta = end - start
+                if delta.total_seconds() > 0:
+                    p['duration'] = delta.days + decimal_round(
+                        Decimal(delta.seconds / 86400), Decimal('0.1'))
+
             state = p.pop('state')
             if state == 'ACTIVE':
                 if p.get('actualInstallationDate'):
@@ -287,10 +306,6 @@ class ProcessList(DocBase):
         cond['download'] = True
 
         processes = searchProcess(cond, self.request, maxRows=500)
-        # The instance variables of Date type are parsed correctly, but the
-        # process property is not. We will do the parse here.
-        for p in processes:
-            parseDate(p, fields=['startTime'])
 
         alCenter = Alignment(horizontal='center')
         alLeft = Alignment(horizontal='left')
@@ -302,7 +317,7 @@ class ProcessList(DocBase):
         for (idx, t) in enumerate((
             '订单号', '商场号', '顾客姓名', '台面', '发起时间', '预约测量日',
             '确认测量日', '实际测量日', '收货日期', '预约安装日', '确认安装日',
-                '实际安装日', '状态')):
+                '实际安装日', '耗时', '状态')):
             cell = ws[f'{chr(ord("A")+idx)}1']
             cell.value = t
             cell.alignment = alCenter
@@ -318,8 +333,7 @@ class ProcessList(DocBase):
                     [f'{oi["model"]}*{oi["quantity"]}' for oi in ois])
 
             # openpyxl can not handle timezone properly
-            ws[f'E{row+2}'] = p['startTime'].\
-                astimezone(tzLocal).replace(tzinfo=None)
+            ws[f'E{row+2}'] = p['startTime']
             ws[f'F{row+2}'] = p.get('scheduledMeasurementDate')
             ws[f'G{row+2}'] = p.get('confirmedMeasurementDate')
             ws[f'H{row+2}'] = p.get('actualMeasurementDate')
@@ -327,7 +341,8 @@ class ProcessList(DocBase):
             ws[f'J{row+2}'] = p.get('scheduledInstallationDate')
             ws[f'K{row+2}'] = p.get('confirmedInstallationDate')
             ws[f'L{row+2}'] = p.get('actualInstallationDate')
-            ws[f'M{row+2}'] = p['statusText']
+            ws[f'M{row+2}'] = p.get('duration')
+            ws[f'N{row+2}'] = p['statusText']
 
             ws[f'D{row+2}'].alignment = alWrap
             ws[f'E{row+2}'].alignment = alLeft
