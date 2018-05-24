@@ -120,7 +120,7 @@ def searchProcess(cond, request, countOnly=False, maxRows=50):
             urlParams={'maxResults': maxRows},
             withProcessVariables=(
                 'externalOrderId', 'customerName', 'storeId', 'orderItems',
-                'shippingDate', 'receivingDate',
+                'receivingDate', 'isInstallationRequested',
                 'actualMeasurementDate', 'confirmedMeasurementDate',
                 'scheduledMeasurementDate', 'actualInstallationDate',
                 'confirmedInstallationDate', 'scheduledInstallationDate'
@@ -163,8 +163,6 @@ def searchProcess(cond, request, countOnly=False, maxRows=50):
                     text = '待安装'
                 elif p.get('receivingDate'):
                     text = '已收货'
-                elif p.get('shippingDate'):
-                    text = '已发货'
                 elif p.get('actualMeasurementDate') or \
                         not p.get('scheduledMeasurementDate'):
                     text = '生产中'
@@ -334,11 +332,13 @@ class ProcessList(DocBase):
 
             # openpyxl can not handle timezone properly
             ws[f'E{row+2}'] = p['startTime']
-            ws[f'F{row+2}'] = p.get('scheduledMeasurementDate')
+            ws[f'F{row+2}'] = p.get('scheduledMeasurementDate', '无需测量')
             ws[f'G{row+2}'] = p.get('confirmedMeasurementDate')
             ws[f'H{row+2}'] = p.get('actualMeasurementDate')
             ws[f'I{row+2}'] = p.get('receivingDate')
-            ws[f'J{row+2}'] = p.get('scheduledInstallationDate')
+            ws[f'J{row+2}'] = '无需安装' \
+                if not p.get('isInstallationRequested', True) \
+                else p.get('scheduledInstallationDate')
             ws[f'K{row+2}'] = p.get('confirmedInstallationDate')
             ws[f'L{row+2}'] = p.get('actualInstallationDate')
             ws[f'M{row+2}'] = p.get('duration')

@@ -46,7 +46,7 @@ const styles = theme => ({
   submitButton: theme.custom.submitButton,
   buttonRow: theme.custom.buttonRow,
   buttonIcon: theme.custom.buttonIcon,
-  measurementNotRequested: {
+  serviceNotRequested: {
     color: theme.palette.secondary.main
   }
 })
@@ -60,6 +60,7 @@ class StartForm extends ValidatedForm {
     customerRegionCode: null,
     customerStreet: '',
     factoryNumber: '',
+    isInstallationRequested: true,
     isMeasurementRequested: true,
     scheduledMeasurementDate: null,
     scheduledInstallationDate: null,
@@ -103,16 +104,38 @@ class StartForm extends ValidatedForm {
   }
 
   /**
-   * Whenever `isMeasurementRequested` is set to false, clear the variable
-   * `scheduledMeasurementDate`
+   * 1. Whenever `isMeasurementRequested` is changed, clear
+   *    `scheduledMeasurementDate`.
+   * 2. Whenever it is set to True, also set `isInstallationRequested` to True
    */
   handleChangeMeasurementRequested = e => {
+    const requested = !this.state.values.isMeasurementRequested
     this.setState({
       values: update(this.state.values, {
         isMeasurementRequested: {
-          $set: !this.state.values.isMeasurementRequested
+          $set: requested
+        },
+        isInstallationRequested: {
+          $set: requested ? true : this.state.values.isInstallationRequested
         },
         scheduledMeasurementDate: {
+          $set: null
+        }
+      })
+    })
+  }
+
+  /**
+   * Whenever `isInstallationRequested` is set to false, clear the variable
+   * `scheduledInstallationDate`
+   */
+  handleChangeInstallationRequested = e => {
+    this.setState({
+      values: update(this.state.values, {
+        isInstallationRequested: {
+          $set: !this.state.values.isInstallationRequested
+        },
+        scheduledInstallationDate: {
           $set: null
         }
       })
@@ -304,7 +327,7 @@ class StartForm extends ValidatedForm {
               classes={{
                 label: values.isMeasurementRequested
                   ? null
-                  : classes.measurementNotRequested
+                  : classes.serviceNotRequested
               }}
               label={values.isMeasurementRequested ? '需要测量' : '不需要测量!'}
             />
@@ -315,6 +338,7 @@ class StartForm extends ValidatedForm {
               component={DatePicker}
               name="scheduledInstallationDate"
               label="预约安装日期"
+              disabled={!values.isInstallationRequested}
               required={false}
               autoOk
               clearable
@@ -327,6 +351,28 @@ class StartForm extends ValidatedForm {
                 'scheduledInstallationDate',
                 'datepicker'
               )}
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={values.isInstallationRequested}
+                  disabled={values.isMeasurementRequested}
+                  onChange={this.handleChangeInstallationRequested}
+                  value="isInstallationRequested"
+                  icon={<CloseBox color="secondary" />}
+                  color={
+                    values.isInstallationRequested ? 'primary' : 'secondary'
+                  }
+                />
+              }
+              classes={{
+                label: values.isInstallationRequested
+                  ? null
+                  : classes.serviceNotRequested
+              }}
+              label={
+                values.isInstallationRequested ? '需要安装' : '不需要安装!'
+              }
             />
           </Grid>
         </Grid>

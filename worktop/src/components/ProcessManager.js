@@ -378,8 +378,15 @@ class ProcessList extends Component {
                 <TableCell padding="none">
                   {dateFormat(p.receivingDate, 'YYYY/MM/DD')}
                 </TableCell>
-                <TableCell padding="none">
-                  {dateFormat(p.scheduledInstallationDate, 'YYYY/MM/DD')}
+                <TableCell
+                  padding="none"
+                  className={
+                    (p.isInstallationRequested === false && classes.na) || null
+                  }
+                >
+                  {p.isInstallationRequested === false
+                    ? '无需安装'
+                    : dateFormat(p.scheduledInstallationDate, 'YYYY/MM/DD')}
                 </TableCell>
                 <TableCell padding="none">
                   {dateFormat(p.confirmedInstallationDate, 'YYYY/MM/DD')}

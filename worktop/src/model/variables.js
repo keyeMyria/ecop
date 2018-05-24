@@ -45,6 +45,10 @@ const variables = {
     label: '安装文件',
     type: 'Json'
   },
+  isInstallationRequested: {
+    label: '是否需安装',
+    type: 'Boolean'
+  },
   isMeasurementRequested: {
     label: '是否需测量',
     type: 'Boolean'
