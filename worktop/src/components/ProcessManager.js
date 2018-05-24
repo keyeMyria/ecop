@@ -118,7 +118,11 @@ class SearchToolbar extends ValidatedForm {
             c: btoa(JSON.stringify(this.state.values)),
             token: App.csrfToken
           }
-          downloadFile(`/ikea/processlist?${queryString.stringify(params)}`)
+          downloadFile(
+            `/ikea/processlist?${queryString.stringify(params)}`,
+            undefined,
+            false
+          )
         })
       }
     })

@@ -42,8 +42,11 @@ __StatusNames__ = {
     'INTERNALLY_TERMINATED': '已取消'
 }
 
+tzLocal = tz.tzlocal()
+
 
 def searchProcess(cond, request, countOnly=False, maxRows=50):
+    """ Note the startDate and endDate will be passed in UTC """
     cond['storeId'] = request.user.extraData['worktop'].get('storeId')
 
     params = {
@@ -284,6 +287,8 @@ class ProcessList(DocBase):
         cond['download'] = True
 
         processes = searchProcess(cond, self.request, maxRows=500)
+        # The instance variables of Date type are parsed correctly, but the
+        # process property is not. We will do the parse here.
         for p in processes:
             parseDate(p, fields=['startTime'])
 
@@ -302,7 +307,6 @@ class ProcessList(DocBase):
             cell.value = t
             cell.alignment = alCenter
 
-        tzLocal = tz.tzlocal()
         for (row, p) in enumerate(processes):
             ws[f'A{row+2}'] = p['externalOrderId']
             ws[f'B{row+2}'] = p['storeId']
@@ -338,10 +342,11 @@ class ProcessList(DocBase):
             ws.column_dimensions[col].width = 12
 
         body = save_virtual_workbook(wb)
-
+        fileName = cond['startDate'].astimezone(tzLocal).strftime('%Y%m%d') \
+            + '_' + cond['endDate'].astimezone(tzLocal).strftime('%Y%m%d')
         response = Response(
             content_type='application/octet-stream',
-            content_disposition=f'attachment; filename="plist.xlsx"',
+            content_disposition=f'attachment; filename="{fileName}.xlsx"',
             content_length=len(body),
             body=body)
         return response
