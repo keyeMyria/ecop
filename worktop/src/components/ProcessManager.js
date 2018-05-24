@@ -31,7 +31,7 @@ import ArrowRightIcon from '@material-ui/icons/KeyboardArrowRight'
 import DatePicker from 'material-ui-pickers/DatePicker'
 
 import { strategy, ValidatedForm } from 'form'
-import { downloadFile } from 'homemaster-jslib'
+import { downloadFile, jsonrpc } from 'homemaster-jslib'
 import CheckboxBlankCircle from 'homemaster-jslib/svg-icons/CheckboxBlankCircle'
 import ExcelIcon from 'homemaster-jslib/svg-icons/Excel'
 
@@ -106,11 +106,20 @@ class SearchToolbar extends ValidatedForm {
   handleExport = () => {
     this.props.validate(error => {
       if (!error) {
-        const params = {
-          ...this.state.values,
-          token: App.csrfToken
-        }
-        downloadFile(`/ikea/processlist?${queryString.stringify(params)}`)
+        jsonrpc({
+          method: 'bpmn.process.list.checkCount',
+          params: [this.state.values]
+        }).then(() => {
+          const params = {
+            /**
+             * To correctly convert javascript Date object to string, we shall
+             * use JSON.stringify, not Date.toString
+             */
+            c: btoa(JSON.stringify(this.state.values)),
+            token: App.csrfToken
+          }
+          downloadFile(`/ikea/processlist?${queryString.stringify(params)}`)
+        })
       }
     })
   }

@@ -1,6 +1,7 @@
  * Automatically reload browser when RPC version mismatch detected
  * Add storeId to account receivable document
  * Log all rpc calls in a call log
+ * Add Excel export of ProcessManager with openpyxl
 
  * Fix FileUploader image orientation when iPhone photos are uploaded from PC
  * Allow user to change password
@@ -8,7 +9,9 @@
  * Use async request to load user information and permissions instead of embed
    the information in HTML source
  * Improve FileUploader for rotation support
- * Add Excel export of ProcessManager with openpyxl
+ * Show a proper session timeout error when session timed out
+ * Merge task due change and task comment
+ * Require input of delay reason when task is overdue
 
 ???
 

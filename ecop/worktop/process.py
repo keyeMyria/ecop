@@ -1,7 +1,11 @@
+import base64
+import json
 from datetime import timedelta
+from dateutil import tz
+
 from openpyxl import Workbook
 from openpyxl.writer.excel import save_virtual_workbook
-
+from openpyxl.styles import Alignment
 from pyramid_rpc.jsonrpc import jsonrpc_method
 from pyramid.view import view_config
 from pyramid.response import Response
@@ -39,7 +43,7 @@ __StatusNames__ = {
 }
 
 
-def searchProcess(cond, request):
+def searchProcess(cond, request, countOnly=False, maxRows=50):
     cond['storeId'] = request.user.extraData['worktop'].get('storeId')
 
     params = {
@@ -79,8 +83,8 @@ def searchProcess(cond, request):
         startDate, endDate = cond['startDate'], cond['endDate']
         endDate = endDate + timedelta(1)
 
-        if (endDate - startDate) > timedelta(31):
-            raise RPCUserError('订单查询时间跨度不能大于１个月。')
+        if (endDate - startDate) > timedelta(365):
+            raise RPCUserError('订单查询时间跨度不能大于１年。')
 
         params['startedBefore'] = endDate
         params['startedAfter'] = startDate
@@ -96,57 +100,66 @@ def searchProcess(cond, request):
             'value': storeId
         })
 
-    ret = cc.makeRequest(
-        '/history/process-instance', 'post',
-        params,
-        urlParams={'maxResults': 50} if not showCompleted else None,
-        withProcessVariables=(
-            'externalOrderId', 'customerName', 'storeId', 'orderItems',
-            'shippingDate', 'receivingDate',
-            'actualMeasurementDate', 'confirmedMeasurementDate',
-            'scheduledMeasurementDate', 'actualInstallationDate',
-            'confirmedInstallationDate', 'scheduledInstallationDate'
-        ),
-        processInstanceIdField='id', hoistProcessVariables=True
-    )
+    if countOnly:
+        ret = cc.makeRequest(
+            '/history/process-instance/count', 'post',
+            params,
+        )
+        if ret['count'] > 500:
+            raise RPCUserError('单次导出结果大于500条，请搜索条件再')
+        return ret['count']
+    else:
+        ret = cc.makeRequest(
+            '/history/process-instance', 'post',
+            params,
+            urlParams={'maxResults': maxRows},
+            withProcessVariables=(
+                'externalOrderId', 'customerName', 'storeId', 'orderItems',
+                'shippingDate', 'receivingDate',
+                'actualMeasurementDate', 'confirmedMeasurementDate',
+                'scheduledMeasurementDate', 'actualInstallationDate',
+                'confirmedInstallationDate', 'scheduledInstallationDate'
+            ),
+            processInstanceIdField='id', hoistProcessVariables=True
+        )
 
-    # this filters out CANCELED processes
-    if not searchText and showCompleted:
-        ret = [p for p in ret if p['state'] == 'COMPLETED']
+        # this filters out CANCELED processes
+        if not searchText and showCompleted:
+            ret = [p for p in ret if p['state'] == 'COMPLETED']
 
-    #
-    # Prepare for display by adding additional infos:
-    #  * add model to orderItems as only itemId is stored
-    #  * add human readable status text
-    #
-    for p in ret:
-        state = p.pop('state')
-        if state == 'ACTIVE':
-            if p.get('actualInstallationDate'):
-                text = '已安装'
-            elif p.get('confirmedInstallationDate'):
-                text = '待安装'
-            elif p.get('receivingDate'):
-                text = '已收货'
-            elif p.get('shippingDate'):
-                text = '已发货'
-            elif p.get('actualMeasurementDate') or \
-                not p.get('scheduledMeasurementDate'):
-                text = '生产中'
-            elif p.get('confirmedMeasurementDate') or \
-                p.get('scheduledMeasurementDate'):
-                text = '待测量'
+        #
+        # Prepare for display by adding additional infos:
+        #  * add model to orderItems as only itemId is stored
+        #  * add human readable status text
+        #
+        for p in ret:
+            state = p.pop('state')
+            if state == 'ACTIVE':
+                if p.get('actualInstallationDate'):
+                    text = '已安装'
+                elif p.get('confirmedInstallationDate'):
+                    text = '待安装'
+                elif p.get('receivingDate'):
+                    text = '已收货'
+                elif p.get('shippingDate'):
+                    text = '已发货'
+                elif p.get('actualMeasurementDate') or \
+                        not p.get('scheduledMeasurementDate'):
+                    text = '生产中'
+                elif p.get('confirmedMeasurementDate') or \
+                        p.get('scheduledMeasurementDate'):
+                    text = '待测量'
+                else:
+                    text = '进行中'
+                p['statusText'] = text
             else:
-                text = '进行中'
-            p['statusText'] = text
-        else:
-            p['statusText'] = __StatusNames__[state]
+                p['statusText'] = __StatusNames__[state]
 
-        ois = p.get('orderItems')
-        if ois:
-            addItemInfo(ois)
+            ois = p.get('orderItems')
+            if ois:
+                addItemInfo(ois)
 
-    return ret
+        return ret
 
 
 class ProcessJSON(RpcBase):
@@ -235,6 +248,17 @@ class ProcessJSON(RpcBase):
         """
         return searchProcess(cond, self.request)
 
+    @jsonrpc_method(endpoint='rpc', method='bpmn.process.list.checkCount')
+    def getProcessListCount(self, cond):
+        """
+        For process list export to Excel we don't limit the returned number of
+        rows to 50, but to 500.
+
+        This is a pre-check on the would-be number of returns. It throws
+        RPCUserError if the above condition is not satisfied.
+        """
+        return searchProcess(cond, self.request, countOnly=True)
+
     @jsonrpc_method(endpoint='rpc', method='bpmn.variable.get')
     def getProcessVariables(self, processInstanceId):
         variables = cc.parseVariables(
@@ -252,24 +276,72 @@ class ProcessJSON(RpcBase):
 @view_config(route_name='processlist')
 class ProcessList(DocBase):
     """
-    Export to Excel
+    Export a process list to Excel
     """
 
     def __call__(self):
-        cond = dict(self.request.params)
-        cond.pop('token')
+        cond = json.loads(base64.b64decode(self.request.params['c']))
         cond['download'] = True
 
-        processes = searchProcess(cond, self.request)
+        processes = searchProcess(cond, self.request, maxRows=500)
+        for p in processes:
+            parseDate(p, fields=['startTime'])
+
+        alCenter = Alignment(horizontal='center')
+        alLeft = Alignment(horizontal='left')
+        alWrap = Alignment(wrapText=True)
 
         wb = Workbook()
         ws = wb.active
-        ws['A1'] = 42
+
+        for (idx, t) in enumerate((
+            '订单号', '商场号', '顾客姓名', '台面', '发起时间', '预约测量日',
+            '确认测量日', '实际测量日', '收货日期', '预约安装日', '确认安装日',
+                '实际安装日', '状态')):
+            cell = ws[f'{chr(ord("A")+idx)}1']
+            cell.value = t
+            cell.alignment = alCenter
+
+        tzLocal = tz.tzlocal()
+        for (row, p) in enumerate(processes):
+            ws[f'A{row+2}'] = p['externalOrderId']
+            ws[f'B{row+2}'] = p['storeId']
+            ws[f'C{row+2}'] = p['customerName']
+
+            ois = p.get('orderItems')
+            if ois:
+                ws[f'D{row+2}'] = '\n'.join(
+                    [f'{oi["model"]}*{oi["quantity"]}' for oi in ois])
+
+            # openpyxl can not handle timezone properly
+            ws[f'E{row+2}'] = p['startTime'].\
+                astimezone(tzLocal).replace(tzinfo=None)
+            ws[f'F{row+2}'] = p.get('scheduledMeasurementDate')
+            ws[f'G{row+2}'] = p.get('confirmedMeasurementDate')
+            ws[f'H{row+2}'] = p.get('actualMeasurementDate')
+            ws[f'I{row+2}'] = p.get('receivingDate')
+            ws[f'J{row+2}'] = p.get('scheduledInstallationDate')
+            ws[f'K{row+2}'] = p.get('confirmedInstallationDate')
+            ws[f'L{row+2}'] = p.get('actualInstallationDate')
+            ws[f'M{row+2}'] = p['statusText']
+
+            ws[f'D{row+2}'].alignment = alWrap
+            ws[f'E{row+2}'].alignment = alLeft
+            for col in 'FGHIJKL':
+                ws[f'{col}{row+2}'].number_format = 'yyyy-mm-dd'
+                ws[f'{col}{row+2}'].alignment = alLeft
+
+        ws.column_dimensions['A'].width = 15
+        ws.column_dimensions['D'].width = 15
+        ws.column_dimensions['E'].width = 20
+        for col in 'FGHIJKL':
+            ws.column_dimensions[col].width = 12
+
         body = save_virtual_workbook(wb)
 
         response = Response(
             content_type='application/octet-stream',
-            content_disposition=f'filename="plist.xlsx"',
+            content_disposition=f'attachment; filename="plist.xlsx"',
             content_length=len(body),
             body=body)
         return response
