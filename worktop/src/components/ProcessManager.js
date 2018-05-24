@@ -21,7 +21,6 @@ import Toolbar from '@material-ui/core/Toolbar'
 import TextField from '@material-ui/core/TextField'
 import Typography from '@material-ui/core/Typography'
 import IconButton from '@material-ui/core/IconButton'
-import green from '@material-ui/core/colors/green'
 import Checkbox from '@material-ui/core/Checkbox'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
 import PreviewIcon from '@material-ui/icons/RemoveRedEye'
@@ -32,7 +31,6 @@ import DatePicker from 'material-ui-pickers/DatePicker'
 
 import { strategy, ValidatedForm } from 'form'
 import { downloadFile, jsonrpc } from 'homemaster-jslib'
-import CheckboxBlankCircle from 'homemaster-jslib/svg-icons/CheckboxBlankCircle'
 import ExcelIcon from 'homemaster-jslib/svg-icons/Excel'
 
 import { searchProcess } from 'model/actions'
@@ -242,12 +240,6 @@ const listStyles = theme => ({
   rowNumber: {
     textAlign: 'center'
   },
-  actual: {
-    color: green[500]
-  },
-  confirmed: {
-    color: theme.palette.primary.main
-  },
   na: {
     color: theme.palette.secondary.main
   },
@@ -339,92 +331,78 @@ class ProcessList extends Component {
       )
     } else {
       return (
-        <Fragment>
-          <Table>
-            <EnhancedTableHead
-              columns={columns}
-              order={order}
-              orderBy={orderBy}
-              onRequestSort={this.handleRequestSort}
-            />
-            <TableBody>
-              {data.map((p, idx) => (
-                <TableRow hover tabIndex={-1} key={idx}>
-                  <TableCell className={classes.rowNumber} padding="none">
-                    {idx + 1}
-                  </TableCell>
-                  <TableCell padding="none">{p.externalOrderId}</TableCell>
-                  <TableCell padding="none">{p.storeId}</TableCell>
-                  <TableCell padding="none">{p.customerName}</TableCell>
-                  <TableCell padding="none">
-                    {p.orderItems &&
-                      p.orderItems.map((oi, idx) => (
-                        <div key={idx}>
-                          {oi.model}*{oi.quantity}
-                        </div>
-                      ))}
-                  </TableCell>
+        <Table>
+          <EnhancedTableHead
+            columns={columns}
+            order={order}
+            orderBy={orderBy}
+            onRequestSort={this.handleRequestSort}
+          />
+          <TableBody>
+            {data.map((p, idx) => (
+              <TableRow hover tabIndex={-1} key={idx}>
+                <TableCell className={classes.rowNumber} padding="none">
+                  {idx + 1}
+                </TableCell>
+                <TableCell padding="none">{p.externalOrderId}</TableCell>
+                <TableCell padding="none">{p.storeId}</TableCell>
+                <TableCell padding="none">{p.customerName}</TableCell>
+                <TableCell padding="none">
+                  {p.orderItems &&
+                    p.orderItems.map((oi, idx) => (
+                      <div key={idx}>
+                        {oi.model}*{oi.quantity}
+                      </div>
+                    ))}
+                </TableCell>
 
-                  <TableCell padding="none">
-                    {dateFormat(p.startTime, 'YYYY/MM/DD HH:mm')}
-                  </TableCell>
-                  <TableCell
-                    padding="none"
-                    className={
-                      (!p.scheduledMeasurementDate && classes.na) || null
-                    }
+                <TableCell padding="none">
+                  {dateFormat(p.startTime, 'YYYY/MM/DD HH:mm')}
+                </TableCell>
+                <TableCell
+                  padding="none"
+                  className={
+                    (!p.scheduledMeasurementDate && classes.na) || null
+                  }
+                >
+                  {p.scheduledMeasurementDate
+                    ? dateFormat(p.scheduledMeasurementDate, 'YYYY/MM/DD')
+                    : '无需测量'}
+                </TableCell>
+                <TableCell padding="none">
+                  {dateFormat(p.confirmedMeasurementDate, 'YYYY/MM/DD')}
+                </TableCell>
+                <TableCell padding="none">
+                  {dateFormat(p.actualMeasurementDate, 'YYYY/MM/DD')}
+                </TableCell>
+                <TableCell padding="none">
+                  {dateFormat(p.receivingDate, 'YYYY/MM/DD')}
+                </TableCell>
+                <TableCell padding="none">
+                  {dateFormat(p.scheduledInstallationDate, 'YYYY/MM/DD')}
+                </TableCell>
+                <TableCell padding="none">
+                  {dateFormat(p.confirmedInstallationDate, 'YYYY/MM/DD')}
+                </TableCell>
+                <TableCell padding="none">
+                  {dateFormat(p.actualInstallationDate, 'YYYY/MM/DD')}
+                </TableCell>
+                <TableCell padding="none">{p.duration}</TableCell>
+                <TableCell padding="none">{p.statusText}</TableCell>
+                <TableCell padding="none">
+                  <IconButton
+                    color="primary"
+                    onClick={() => {
+                      this.props.onProcessAction(p.id, 'view')
+                    }}
                   >
-                    {p.scheduledMeasurementDate
-                      ? dateFormat(p.scheduledMeasurementDate, 'YYYY/MM/DD')
-                      : '无需测量'}
-                  </TableCell>
-                  <TableCell padding="none" className={classes.confirmed}>
-                    {dateFormat(p.confirmedMeasurementDate, 'YYYY/MM/DD')}
-                  </TableCell>
-                  <TableCell padding="none" className={classes.actual}>
-                    {dateFormat(p.actualMeasurementDate, 'YYYY/MM/DD')}
-                  </TableCell>
-                  <TableCell padding="none" className={classes.actual}>
-                    {dateFormat(p.receivingDate, 'YYYY/MM/DD')}
-                  </TableCell>
-                  <TableCell padding="none">
-                    {dateFormat(p.scheduledInstallationDate, 'YYYY/MM/DD')}
-                  </TableCell>
-                  <TableCell padding="none" className={classes.confirmed}>
-                    {dateFormat(p.confirmedInstallationDate, 'YYYY/MM/DD')}
-                  </TableCell>
-                  <TableCell padding="none" className={classes.actual}>
-                    {dateFormat(p.actualInstallationDate, 'YYYY/MM/DD')}
-                  </TableCell>
-                  <TableCell padding="none">{p.duration}</TableCell>
-                  <TableCell padding="none">{p.statusText}</TableCell>
-                  <TableCell padding="none">
-                    <IconButton
-                      color="primary"
-                      onClick={() => {
-                        this.props.onProcessAction(p.id, 'view')
-                      }}
-                    >
-                      <PreviewIcon />
-                    </IconButton>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-
-          <Typography variant="subheading" className={classes.legend}>
-            <CheckboxBlankCircle className={classes.legendLabel} /> 预约日期
-            <CheckboxBlankCircle
-              className={classNames(classes.legendLabel, classes.confirmed)}
-            />{' '}
-            确认日期
-            <CheckboxBlankCircle
-              className={classNames(classes.legendLabel, classes.actual)}
-            />{' '}
-            实际完成日期
-          </Typography>
-        </Fragment>
+                    <PreviewIcon />
+                  </IconButton>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
       )
     }
   }
