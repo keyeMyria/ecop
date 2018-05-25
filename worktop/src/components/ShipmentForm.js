@@ -12,7 +12,7 @@ import PaperPlaneIcon from 'homemaster-jslib/svg-icons/PaperPlane'
 
 import ShipmentList from './ShipmentList'
 import { fetchOutstandingOrders } from 'model/actions'
-import { isValidOrderId } from 'utils/validators'
+import { isValidIKEAOrderId, isValidERPOrderId } from 'utils/validators'
 
 const styles = theme => ({
   orderList: {
@@ -63,8 +63,12 @@ class ShipmentForm extends Component {
       }
       lastline = line
 
-      // any non-empty line must be valid
-      if (line.length > 0 && !isValidOrderId(line)) {
+      // any non-empty line must be either an IKEA orderId or ERP orderId
+      if (
+        line.length > 0 &&
+        !isValidIKEAOrderId(line) &&
+        !isValidERPOrderId(line)
+      ) {
         this.setState({ errorMessage: '订单号格式错误' })
         return
       }
@@ -87,7 +91,7 @@ class ShipmentForm extends Component {
 
     // if any line is in the wrong format do not update
     for (let i = 0; i < lines.length; i++) {
-      if (!isValidOrderId(lines[i], true)) {
+      if (!isValidIKEAOrderId(lines[i], true)) {
         return
       }
     }

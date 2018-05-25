@@ -26,7 +26,7 @@ import { strategy, ValidatedForm, Field } from 'form'
 import FileUploader from 'widget/FileUploader'
 import OrderItem from 'widget/OrderItem'
 import dateFormat from 'utils/date-fns'
-import { isValidOrderId } from 'utils/validators'
+import { isValidIKEAOrderId } from 'utils/validators'
 
 const styles = theme => ({
   root: {
@@ -202,7 +202,7 @@ class StartForm extends ValidatedForm {
               onBlur={this.activateValidation('externalOrderId')}
               onChange={e => {
                 var { value } = e.target
-                if (!value || isValidOrderId(value, true)) {
+                if (!value || isValidIKEAOrderId(value, true)) {
                   this.setState(
                     {
                       values: update(values, {
