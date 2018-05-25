@@ -11,6 +11,7 @@ from weblibs.camunda import camundaClient as cc
 
 from ecop.base import DocBase
 from ecop.region import getRegionName
+from ecop.worktop.utils import addItemInfo
 
 
 @view_config(route_name='forms')
@@ -40,6 +41,9 @@ class ProcessForm(DocBase):
             raise HTTPNotFound()
 
         self.variables = cc.parseVariables(ret)
+        ois = self.variables.get('orderItems')
+        if ois:
+            addItemInfo(ois)
 
         stream = self.template.generate(variables=self.variables, view=self)
         body = rml2pdf.parseString(stream.render()).read()

@@ -70,9 +70,11 @@ class InstallWorktop extends ValidatedForm {
             color="primary"
             className={classes.submitButton}
             target="_blank"
-            href={`/ikea/forms/${
-              task.processInstanceId
-            }/install_form.pdf?token=${App.csrfToken}`}
+            href={`/ikea/forms/${task.processInstanceId}/${
+              variables.isInstallationRequested
+                ? 'install_form'
+                : 'delivery_note'
+            }.pdf?token=${App.csrfToken}`}
           >
             <PrintIcon className={classes.buttonIcon} />打印签收单
           </Button>

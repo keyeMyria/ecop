@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE document SYSTEM "rml.dtd">
+<document
+  xmlns:doc="http://namespaces.zope.org/rml/doc"
+  xmlns:py="http://genshi.edgewall.org/" title="台面送货验收单${variables['externalOrderId']}">
+  <docinit displayDocTitle="true">
+    <registerTTFont faceName="VeraBold" fileName="[reportlab]/fonts/VeraBd.ttf"/>
+    <registerTTFont faceName="simsun" fileName="[ecop]/resources/simsun.ttc" />
+    <registerTTFont faceName="msyh" fileName="[ecop]/resources/msyh.ttf" />
+    <registerTTFont faceName="msyhbd" fileName="[ecop]/resources/msyhbd.ttf" />
+  </docinit>
+  <template pagesize="a4" allowSplitting="0">
+    <pageTemplate id="first">
+      <pageGraphics>
+        <setFont name="msyhbd" size="14"/>
+        <drawRightString x="20cm" y="28cm">咨询服务电话: 4008002345</drawRightString>
+        <image file="[ecop]/resources/Ikea-logo.png" x="17.3cm" y="1.1cm" width="3cm" height="1.14cm" />
+        <setFont name="msyh" size="11"/>
+        <drawCenteredString x="18.7cm" y="0.7cm">宜家家居</drawCenteredString>
+        <translate dx="1cm" dy="1cm"/>
+        <rotate degrees="90" />
+        <setFont name="Helvetica" size="6"/>
+        <drawString x="0" y="0">© Inter IKEA Systems B.V. 2018</drawString>
+      </pageGraphics>
+      <frame id="main" x1="1.5cm" y1="1cm" width="18.5cm" height="27.5cm" showBoundary="0"/>
+    </pageTemplate>
+  </template>
+  <stylesheet>
+    <paraStyle name="normal" fontSize="12" leading="17" fontName="msyh" spaceBefore="3" spaceAfter="3" wordWrap="CJK" />
+    <paraStyle name="orderitem" parent="normal" leftIndent="1cm" spaceAfter="0" spaceBefore="0"/>
+    <blockTableStyle id="main">
+      <blockFont name="msyhbd" size="12" leading="13" start="0,0" stop="-1,0" />
+      <blockFont name="msyh" size="12" leading="13" start="0,1" stop="-1,-1" />
+      <blockTextColor colorName="white" start="0,0" stop="-1,0" />
+      <blockBackground colorName="#0063A8" start="0,0" stop="-1,0" />
+      <blockTopPadding length="5" />
+      <blockBottomPadding length="5" />
+
+      <blockValign value="middle" />
+      <blockValign value="top" start="0,3" stop="1,3"/>
+
+      <blockSpan start="0,0" stop="1,0" />
+      <blockSpan start="0,3" stop="1,3" />
+      <blockSpan start="0,4" stop="1,4" />
+
+      <lineStyle kind="grid" colorName="black" thickness="1" start="0,0" stop="-1,-1"/>
+      <lineStyle kind="outline" colorName="black" thickness="1" />
+    </blockTableStyle>
+    <blockTableStyle id="cell-split">
+      <blockFont name="msyh" size="12" leading="13" start="0,0" stop="-1,-1" />
+      <blockValign value="middle" />
+      <blockTopPadding length="0" />
+      <blockBottomPadding length="0" />
+    </blockTableStyle>
+  </stylesheet>
+  <story>
+    <para fontSize="20" fontName="msyhbd">IKEA厨房台面送货验收单</para>
+    <spacer length="30" />
+    <blockTable colWidths="65%, 35%" rowHeights="None,None,None,17cm,None" style="main">
+      <tr>
+        <td topPadding="7" bottomPadding="7">客户信息</td>
+      </tr>
+      <tr>
+        <td>
+          <blockTable colWidths="60%, 40%" style="cell-split">
+            <tr>
+              <td leftPadding="0">姓名: ${variables.customerName}</td>
+              <td>电话: ${variables.customerMobile}</td>
+            </tr>
+          </blockTable>
+        </td>
+        <td>
+          <para style="normal" leading="20">订单编号:
+            <font fontName="VeraBold" size="18">
+              <sub rise="1">${variables.externalOrderId}</sub>
+            </font>
+          </para>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <para style="normal">地址: ${view.customerAddress}</para>
+        </td>
+        <td>服务日期: ${variables['confirmedInstallationDate'].strftime('%Y/%m/%d')}</td>
+      </tr>
+      <tr>
+        <td>
+          <spacer length="10" />
+          <para style="normal" spaceAfter="10">
+          尊敬的客户：
+          </para>
+          <para style="normal" leading="20" spaceAfter="10">
+            非常感谢您选用我们的台面。请您对以下台面进行认真检查验收，确保台面颜色、总米数和您的订单一致，台面板没有破损，表面无划痕和其他瑕疵。
+          </para>
+
+          <para style="orderitem" py:for="oi in variables.orderItems">
+            ${oi.model} ${oi.itemName} * ${oi.quantity} 米
+          </para>
+
+          <para style="normal" leading="20" spaceBefore="20">
+            如有任何疑问或不满意，可拨打宜家客服热线400 800 2345告诉我们，并希望您提出宝贵的建议和意见。我们将不胜感谢！
+          </para>
+
+          <para style="normal">
+            <br />并请您在本送货验收单上签字确认！
+            <br /><br />
+            <br />日期：_______年____月_____日
+          </para>
+        </td>
+      </tr>
+      <tr><td bottomPadding="2.9cm">用户其他意见或宝贵建议：</td></tr>
+    </blockTable>
+  </story>
+</document>
