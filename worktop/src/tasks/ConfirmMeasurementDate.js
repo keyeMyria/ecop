@@ -1,6 +1,7 @@
 import React, { Fragment } from 'react'
 import validation from 'react-validation-mixin'
 
+import Grid from '@material-ui/core/Grid'
 import TextField from '@material-ui/core/TextField'
 import DatePicker from 'material-ui-pickers/DatePicker'
 import ArrowLeftIcon from '@material-ui/icons/KeyboardArrowLeft'
@@ -36,12 +37,32 @@ class ConfirmMeasurementDate extends ValidatedForm {
 
     return (
       <Fragment>
-        <Field
-          label="预约测量日期"
-          component={TextField}
-          disabled
-          value={dateFormat(variables.scheduledMeasurementDate, 'YYYY/MM/DD')}
-        />
+        <Grid container justify="space-between" spacing={24}>
+          <Grid item xs={6}>
+            <Field
+              label="预约测量日期"
+              component={TextField}
+              disabled
+              value={dateFormat(
+                variables.scheduledMeasurementDate,
+                'YYYY/MM/DD'
+              )}
+            />
+          </Grid>
+          <Grid item xs={6}>
+            {variables.scheduledInstallationDate && (
+              <Field
+                label="预约安装日期"
+                component={TextField}
+                disabled
+                value={dateFormat(
+                  variables.scheduledInstallationDate,
+                  'YYYY/MM/DD'
+                )}
+              />
+            )}
+          </Grid>
+        </Grid>
 
         <FileUploader
           label="原始订单"
