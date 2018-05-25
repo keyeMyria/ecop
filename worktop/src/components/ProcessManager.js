@@ -274,7 +274,6 @@ const columns = [
     label: '确认测量日'
   },
   { id: 'actualMeasurementDate', disablePadding: true, label: '实际测量日' },
-  { id: 'receivingDate', disablePadding: true, label: '收货日期' },
   {
     id: 'scheduledInstallationDate',
     disablePadding: true,
@@ -374,9 +373,6 @@ class ProcessList extends Component {
                 </TableCell>
                 <TableCell padding="none">
                   {dateFormat(p.actualMeasurementDate, 'YYYY/MM/DD')}
-                </TableCell>
-                <TableCell padding="none">
-                  {dateFormat(p.receivingDate, 'YYYY/MM/DD')}
                 </TableCell>
                 <TableCell
                   padding="none"

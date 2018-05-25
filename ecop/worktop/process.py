@@ -314,8 +314,8 @@ class ProcessList(DocBase):
 
         for (idx, t) in enumerate((
             '订单号', '商场号', '顾客姓名', '台面', '发起时间', '预约测量日',
-            '确认测量日', '实际测量日', '收货日期', '预约安装日', '确认安装日',
-                '实际安装日', '耗时', '状态')):
+            '确认测量日', '实际测量日', '预约安装日', '确认安装日', '实际安装日',
+            '耗时', '状态')):
             cell = ws[f'{chr(ord("A")+idx)}1']
             cell.value = t
             cell.alignment = alCenter
@@ -335,25 +335,24 @@ class ProcessList(DocBase):
             ws[f'F{row+2}'] = p.get('scheduledMeasurementDate', '无需测量')
             ws[f'G{row+2}'] = p.get('confirmedMeasurementDate')
             ws[f'H{row+2}'] = p.get('actualMeasurementDate')
-            ws[f'I{row+2}'] = p.get('receivingDate')
-            ws[f'J{row+2}'] = '无需安装' \
+            ws[f'I{row+2}'] = '无需安装' \
                 if not p.get('isInstallationRequested', True) \
                 else p.get('scheduledInstallationDate')
-            ws[f'K{row+2}'] = p.get('confirmedInstallationDate')
-            ws[f'L{row+2}'] = p.get('actualInstallationDate')
-            ws[f'M{row+2}'] = p.get('duration')
-            ws[f'N{row+2}'] = p['statusText']
+            ws[f'J{row+2}'] = p.get('confirmedInstallationDate')
+            ws[f'K{row+2}'] = p.get('actualInstallationDate')
+            ws[f'L{row+2}'] = p.get('duration')
+            ws[f'M{row+2}'] = p['statusText']
 
             ws[f'D{row+2}'].alignment = alWrap
             ws[f'E{row+2}'].alignment = alLeft
-            for col in 'FGHIJKL':
+            for col in 'FGHIJK':
                 ws[f'{col}{row+2}'].number_format = 'yyyy-mm-dd'
                 ws[f'{col}{row+2}'].alignment = alLeft
 
         ws.column_dimensions['A'].width = 15
         ws.column_dimensions['D'].width = 15
         ws.column_dimensions['E'].width = 20
-        for col in 'FGHIJKL':
+        for col in 'FGHIJK':
             ws.column_dimensions[col].width = 12
 
         body = save_virtual_workbook(wb)
