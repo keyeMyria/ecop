@@ -106,7 +106,7 @@ class MakeDrawing extends ValidatedForm {
           value={variables.orderFile}
         />
 
-        {variables.isMeasurementRequested ? (
+        {variables.isMeasurementRequested && (
           <FileUploader
             label="测量文件"
             fullWidth
@@ -118,10 +118,6 @@ class MakeDrawing extends ValidatedForm {
             }}
             value={variables.measurementFile}
           />
-        ) : (
-          <Typography variant="headline" color="error">
-            该订单为无测量订单。
-          </Typography>
         )}
 
         <FileUploader

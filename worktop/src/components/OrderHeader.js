@@ -11,6 +11,11 @@ import Table from '@material-ui/core/Table'
 import TableBody from '@material-ui/core/TableBody'
 import TableCell from '@material-ui/core/TableCell'
 import TableRow from '@material-ui/core/TableRow'
+import Grid from '@material-ui/core/Grid'
+import FormControlLabel from '@material-ui/core/FormControlLabel'
+import Checkbox from '@material-ui/core/Checkbox'
+
+import CloseBox from 'homemaster-jslib/svg-icons/CloseBox'
 
 import RegionName from 'widget/RegionName'
 
@@ -36,6 +41,9 @@ const styles = theme => ({
     padding: '2px 0',
     color: green[900],
     fontSize: 'inherit'
+  },
+  serviceNotRequested: {
+    color: theme.palette.secondary.main
   }
 })
 
@@ -48,7 +56,9 @@ function OrderHeader(props) {
     customerMobile,
     customerRegionCode,
     customerStreet,
-    orderItems
+    orderItems,
+    isMeasurementRequested,
+    isInstallationRequested = true
   } = props.variables
 
   return (
@@ -82,6 +92,43 @@ function OrderHeader(props) {
           </TableBody>
         </Table>
       )}
+
+      <Grid container justify="center" spacing={24}>
+        <Grid item xs={6}>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={isMeasurementRequested}
+                value="isMeasurementRequested"
+                icon={<CloseBox color="secondary" />}
+                color={isMeasurementRequested ? 'primary' : 'secondary'}
+              />
+            }
+            classes={{
+              label: isMeasurementRequested ? null : classes.serviceNotRequested
+            }}
+            label={isMeasurementRequested ? '需要测量' : '不需要测量!'}
+          />
+        </Grid>
+        <Grid item xs={6}>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={isInstallationRequested}
+                value="isInstallationRequested"
+                icon={<CloseBox color="secondary" />}
+                color={isInstallationRequested ? 'primary' : 'secondary'}
+              />
+            }
+            classes={{
+              label: isInstallationRequested
+                ? null
+                : classes.serviceNotRequested
+            }}
+            label={isInstallationRequested ? '需要安装' : '不需要安装!'}
+          />
+        </Grid>
+      </Grid>
     </div>
   )
 }
