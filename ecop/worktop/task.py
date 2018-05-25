@@ -49,22 +49,34 @@ class TaskJSON(RpcBase):
     @jsonrpc_method(endpoint='rpc', method='bpmn.task.get')
     def getTask(self, taskId):
         """
-        Return a single task by task id. Used to check if a task is still
-        active. If the task can no longer be found, maybe completed by someone
-        else, return None
+        Return a single task by task id together with all process variables of
+        the process to which the task belongs.
+
+        If the task can no longer be found, maybe completed by someone else,
+        return None.
         """
         try:
             task = cc.makeRequest(f'/task/{taskId}', 'get',
                                   withProcessVariables='*')
-            task['comments'] = cc.makeRequest(f'/task/{taskId}/comment', 'get')
         except CamundaRESTError as e:
             if e.status == 404:
                 task = None
             else:
                 raise
-        ois = task['processVariables'].get('orderItems')
-        if ois:
-            addItemInfo(ois)
+
+        if task:
+            task['comments'] = cc.makeRequest(f'/task/{taskId}/comment', 'get')
+            if task['taskDefinitionKey'] == 'ConfirmInstallationDate':
+                task['name'] = '确认安装时间' if task['processVariables'].get(
+                    'isInstallationRequested', True) else '确认送货时间'
+            elif task['taskDefinitionKey'] == 'InstallWorktop':
+                task['name'] = '安装' if task['processVariables'].get(
+                    'isInstallationRequested', True) else '送货'
+
+            ois = task['processVariables'].get('orderItems')
+            if ois:
+                addItemInfo(ois)
+
         return task
 
     @jsonrpc_method(endpoint='rpc', method='bpmn.task.complete')

@@ -33,11 +33,12 @@ class ConfirmInstallationDate extends ValidatedForm {
   render = () => {
     const { variables } = this.props
     const { confirmedInstallationDate } = this.state.values
+    const taskName = variables.isInstallationRequested ? '安装' : '送货'
 
     return (
       <Fragment>
         <Field
-          label="预约安装日期"
+          label={`预约${taskName}日期`}
           component={TextField}
           disabled
           value={dateFormat(variables.scheduledInstallationDate, 'YYYY/MM/DD')}
@@ -58,7 +59,7 @@ class ConfirmInstallationDate extends ValidatedForm {
 
         <Field
           component={DatePicker}
-          label="确认安装日期"
+          label={`确认${taskName}日期`}
           autoOk
           name="confirmedInstallationDate"
           disablePast

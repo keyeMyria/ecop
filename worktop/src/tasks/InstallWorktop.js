@@ -41,11 +41,12 @@ class InstallWorktop extends ValidatedForm {
 
   render = () => {
     const { classes, task, variables } = this.props
+    const taskName = variables.isInstallationRequested ? '安装' : '送货'
 
     return (
       <Fragment>
         <Field
-          label="确认安装日期"
+          label={`确认${taskName}日期`}
           component={TextField}
           disabled
           value={dateFormat(variables.confirmedInstallationDate, 'YYYY/MM/DD')}
