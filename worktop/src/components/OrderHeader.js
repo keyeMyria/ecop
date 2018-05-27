@@ -51,7 +51,6 @@ function OrderHeader(props) {
   const { classes } = props
   const {
     externalOrderId,
-    factoryNumber,
     customerName,
     customerMobile,
     customerRegionCode,
@@ -63,12 +62,7 @@ function OrderHeader(props) {
 
   return (
     <div className={classes.header}>
-      <div>
-        订单号:&nbsp;
-        {factoryNumber
-          ? `${externalOrderId} / ${factoryNumber}`
-          : externalOrderId}
-      </div>
+      <div>订单号:&nbsp;{externalOrderId}</div>
       <div>
         <PersonIcon className={classes.icon} /> {customerName}
         <PhoneIphoneIcon className={classes.icon} /> {customerMobile}
