@@ -1,6 +1,5 @@
 /* global App */
-import React, { Fragment } from 'react'
-import validation from 'react-validation-mixin'
+import React, { Component, Fragment } from 'react'
 import compose from 'recompose/compose'
 
 import { withStyles } from '@material-ui/core/styles'
@@ -8,7 +7,7 @@ import TextField from '@material-ui/core/TextField'
 import Button from '@material-ui/core/Button'
 import PrintIcon from '@material-ui/icons/Print'
 
-import { strategy, ValidatedForm, Field } from 'form'
+import { Field } from 'form'
 import FileUploader from 'widget/FileUploader'
 import dateFormat from 'utils/date-fns'
 
@@ -18,25 +17,46 @@ const styles = theme => ({
   buttonIcon: theme.custom.buttonIcon
 })
 
-class InstallWorktop extends ValidatedForm {
-  state = { values: {} }
-
-  validatorTypes = strategy.createInactiveSchema(
-    {
-      installationFile: 'required|min:2'
-    },
-    {
-      'required.installationFile': '安装文件必须上传',
-      'min.installationFile': '必须上传顾客签收以及现场照片至少2个文件'
-    }
-  )
+class InstallWorktop extends Component {
+  state = { installationFile: null, errorText: '' }
 
   submitForm = () => {
-    this.props.validate(error => {
-      if (!error) {
-        this.props.submitForm(this.state.values)
-      }
+    if (this.validate()) {
+      this.props.submitForm({ installationFile: this.state.installationFile })
+    }
+  }
+
+  getErrorText = () => this.state.errorText
+
+  validate = () => {
+    const value = this.state.installationFile
+
+    if (!value || value.length === 0) {
+      this.setState({ errorText: '安装文件必须上传' })
+      return false
+    } else if (
+      this.props.variables.isInstallationRequested &&
+      value.length < 2
+    ) {
+      this.setState({
+        errorText: '必须上传顾客签收以及现场照片至少2个文件'
+      })
+      return false
+    }
+
+    this.setState({
+      errorText: ''
     })
+    return true
+  }
+
+  handleChangeInstallationFile = e => {
+    this.setState(
+      {
+        installationFile: e.target.value
+      },
+      this.validate
+    )
   }
 
   render = () => {
@@ -51,7 +71,6 @@ class InstallWorktop extends ValidatedForm {
           disabled
           value={dateFormat(variables.confirmedInstallationDate, 'YYYY/MM/DD')}
         />
-
         <FileUploader
           label="生产图纸"
           fullWidth
@@ -63,7 +82,6 @@ class InstallWorktop extends ValidatedForm {
           }}
           value={variables.productionDrawing}
         />
-
         <div className={classes.buttonRow}>
           <Button
             variant="raised"
@@ -79,16 +97,22 @@ class InstallWorktop extends ValidatedForm {
             <PrintIcon className={classes.buttonIcon} />打印签收单
           </Button>
         </div>
-
-        <Field
-          component={FileUploader}
-          name="installationFile"
+        <FileUploader
           label="安装文件"
-          form={this}
+          required
+          fullWidth
+          margin="normal"
+          InputLabelProps={{
+            shrink: true
+          }}
+          value={this.state.installationFile}
+          onChange={this.handleChangeInstallationFile}
+          error={!!this.getErrorText()}
+          helperText={this.getErrorText()}
         />
       </Fragment>
     )
   }
 }
 
-export default compose(withStyles(styles), validation(strategy))(InstallWorktop)
+export default compose(withStyles(styles))(InstallWorktop)
