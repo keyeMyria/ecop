@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!DOCTYPE document SYSTEM "rml.dtd">
+<?python
+  from datetime import datetime
+  serviceDate = variables['confirmedInstallationDate']
+  if serviceDate < datetime.now():
+    serviceDate = datetime.now()
+?>
+
 <document
   xmlns:doc="http://namespaces.zope.org/rml/doc"
   xmlns:py="http://genshi.edgewall.org/" title="台面安装签收单${variables['externalOrderId']}">
@@ -109,7 +116,7 @@
             </tr>
           </blockTable>
         </td>
-        <td>服务日期: ${variables['confirmedInstallationDate'].strftime('%Y/%m/%d')}</td>
+        <td>服务日期: ${serviceDate.strftime('%Y/%m/%d')}</td>
       </tr>
     </blockTable>
 

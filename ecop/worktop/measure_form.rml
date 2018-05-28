@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!DOCTYPE document SYSTEM "rml.dtd">
+<?python
+  from datetime import datetime
+  serviceDate = variables['confirmedMeasurementDate']
+  if serviceDate < datetime.now():
+    serviceDate = datetime.now()
+?>
+
 <document
   xmlns:doc="http://namespaces.zope.org/rml/doc"
   xmlns:py="http://genshi.edgewall.org/" title="台面测量单${variables['externalOrderId']}">
@@ -46,7 +53,7 @@
       </tr>
       <tr>
         <td>联系电话：${variables['customerMobile']}</td>
-        <td>测量日期：${variables['confirmedMeasurementDate'].strftime('%Y/%m/%d')}</td>
+        <td>测量日期：${serviceDate.strftime('%Y/%m/%d')}</td>
       </tr>
       <tr>
         <td>顾客地址：${view.customerAddress}</td>
