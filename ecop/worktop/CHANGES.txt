@@ -2,16 +2,30 @@
  * Add storeId to account receivable document
  * Log all rpc calls in a call log
  * Add Excel export of ProcessManager with openpyxl
+ * Support orders without installation
 
- * Fix FileUploader image orientation when iPhone photos are uploaded from PC
+
+ * Order allocation to other factory for fabrication
+
+ * Move task comment, process comment out of camunda
+ * Show task comments in process list
+ * Allow modification to ConfirmedMeasurementDate and ConfirmedInstallationDate
+
+ * Merge task due change and task comment
  * Allow user to change password
+ * Cancel process with a reason
+ * Confirem the worker name and mobile for measurement and installation tasks
+ * Add process comment
+ * Fix iOS compatibility
+ * Support order factory assignment
+ * Fix FileUploader image orientation when iPhone photos are uploaded from PC
  * Require the input of overdue reason if a task is overdue when completed
  * Use async request to load user information and permissions instead of embed
    the information in HTML source
  * Improve FileUploader for rotation support
  * Show a proper session timeout error when session timed out
- * Merge task due change and task comment
- * Require input of delay reason when task is overdue
+ * Use a separate process definition for payment reconciliation and start with
+   task ConfirmPurchaseOrder to process
 
 ???
 

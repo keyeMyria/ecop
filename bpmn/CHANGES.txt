@@ -23,12 +23,12 @@
  * Remove the milestone event M1
 
 
-1.2.1 (2018-5
+1.2.1 (2018-5-28)
 
- * Move the task ConfirmInstallationDate to lane 'installer'
-
-
-1.3
-
- *
-
+ * Remove Candidate Groups attribute from all tasks since we no longer depend
+   on this task property for assigning tasks
+ * Move task ConfirmInstallationDate to lane installer
+ * Add process variable isInstallationRequested
+ * Dynamically change the task name for tasks ConfirmInstallationDate and
+   InstallWorktop according to the value of isInstallationRequested with
+   javascript task listeners
