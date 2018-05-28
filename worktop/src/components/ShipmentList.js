@@ -22,6 +22,9 @@ import IconButton from '@material-ui/core/IconButton'
 import Checkbox from '@material-ui/core/Checkbox'
 import { lighten } from '@material-ui/core/styles/colorManipulator'
 import PrintIcon from '@material-ui/icons/Print'
+import FileDownloadIcon from '@material-ui/icons/FileDownload'
+
+import { downloadFile } from 'homemaster-jslib'
 
 import dateFormat from 'utils/date-fns'
 import EnhancedTableHead from 'widget/TableHead'
@@ -117,7 +120,8 @@ const columns = [
     id: 'scheduledInstallationDate',
     disablePadding: false,
     label: '预约安装日期'
-  }
+  },
+  { id: 'action', disablePadding: true, label: '图纸' }
 ]
 
 class ShipmentList extends Component {
@@ -256,6 +260,18 @@ class ShipmentList extends Component {
                   <TableCell>{p.overDue}</TableCell>
                   <TableCell>
                     {dateFormat(p.scheduledInstallationDate, 'YYYY/MM/DD')}
+                  </TableCell>
+                  <TableCell padding="none">
+                    <IconButton
+                      color="primary"
+                      onClick={e => {
+                        e.stopPropagation()
+                        const fileName = p.productionDrawing[0]
+                        downloadFile(`${App.imageUrl}/${fileName}`, fileName)
+                      }}
+                    >
+                      <FileDownloadIcon />
+                    </IconButton>
                   </TableCell>
                 </TableRow>
               )

@@ -13,8 +13,6 @@ import FormControl from '@material-ui/core/FormControl'
 import green from '@material-ui/core/colors/green'
 import Typography from '@material-ui/core/Typography'
 
-import { message } from 'homemaster-jslib'
-
 import { strategy, ValidatedForm, Field } from 'form'
 import FileUploader from 'widget/FileUploader'
 
@@ -50,22 +48,7 @@ class MakeDrawing extends ValidatedForm {
   submitForm = () => {
     this.props.validate(error => {
       if (!error) {
-        const { values } = this.state
-        if (values.productionDrawingConfirmed) {
-          message.prompt(
-            '审核通过后，将无法再下载生产图纸。请确认生产图纸已事先下载。',
-            {
-              title: '生产图纸是否已下载',
-              noLabel: '还未下载',
-              yesLabel: '已下载，通过审核',
-              onYesButton: () => {
-                this.props.submitForm(values)
-              }
-            }
-          )
-        } else {
-          this.props.submitForm(values)
-        }
+        this.props.submitForm(this.state.values)
       }
     })
   }
