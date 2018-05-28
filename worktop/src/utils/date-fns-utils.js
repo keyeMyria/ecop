@@ -2,13 +2,14 @@
  * For date locale customization of material-ui-pickers
  *
  * Due to insufficient localization support of DateFnsUtils we have to
- * customize the getDatePickerHeaderText and getCalendarHeaderText methods
+ * customize the `getDatePickerHeaderText` and `getCalendarHeaderText` methods
  */
 
 import dateFnsParse from 'date-fns/parse'
 import addDays from 'date-fns/addDays'
 import addMonths from 'date-fns/addMonths'
 import addYears from 'date-fns/addYears'
+import differenceInMilliseconds from 'date-fns/differenceInMilliseconds'
 import endOfDay from 'date-fns/endOfDay'
 import endOfMonth from 'date-fns/endOfMonth'
 import endOfWeek from 'date-fns/endOfWeek'
@@ -60,6 +61,8 @@ export default class DateFnsUtils {
   isValid = isValid
 
   isEqual = isEqual
+
+  getDiff = differenceInMilliseconds
 
   isNull(date) {
     return date === null

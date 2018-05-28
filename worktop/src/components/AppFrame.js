@@ -224,7 +224,7 @@ class AppFrame extends React.Component {
                 Worktop
               </Typography>
               <Typography variant="subheading" color="inherit">
-                v1.2_{App.version}
+                v1.2.1_{App.version}
               </Typography>
             </div>
             <IconButton onClick={this.handleDrawerClose}>

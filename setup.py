@@ -7,7 +7,6 @@ requires = [
     'pyramid_session_redis',
 
     'beautifulsoup4',
-    'dateutil',
     'elasticsearch-dsl>=5.0.0,<6.0.0',
     'genshi',
     'hiredis',
@@ -18,6 +17,7 @@ requires = [
     'pillow', # PIL
     'psd-tools',
     'psycopg2',
+    'python-dateutil',
     'shortuuid',
     'sqlalchemy',
     'transaction',

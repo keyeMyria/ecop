@@ -158,7 +158,8 @@ def searchProcess(cond, request, countOnly=False, maxRows=50):
             state = p.pop('state')
             if state == 'ACTIVE':
                 if p.get('actualInstallationDate'):
-                    text = '已安装'
+                    text = '已安装' \
+                        if p.get('isInstallationRequested', True) else '已送货'
                 elif p.get('confirmedInstallationDate'):
                     text = '待安装'
                 elif p.get('receivingDate'):
@@ -218,8 +219,10 @@ class ProcessJSON(RpcBase):
         if params['isMeasurementRequested']:
             itemMeasure = self.sess.query(Item).get(10023928)
             order.addItem(item=itemMeasure, quantity=1)
-        itemInstall = self.sess.query(Item).get(10023929)
-        order.addItem(item=itemInstall, quantity=1)
+
+        serviceItem = self.sess.query(Item).get(
+            10023929 if params['isInstallationRequested'] else 10024028)
+        order.addItem(item=serviceItem, quantity=1)
 
         self.sess.add(order)
         self.sess.flush()
@@ -236,7 +239,7 @@ class ProcessJSON(RpcBase):
         )
         if params['isMeasurementRequested']:
             po.addItem(item=itemMeasure, quantity=1)
-        po.addItem(item=itemInstall, quantity=1)
+        po.addItem(item=serviceItem, quantity=1)
         self.sess.add(po)
 
         if externalOrderId:

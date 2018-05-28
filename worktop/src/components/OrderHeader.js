@@ -101,7 +101,7 @@ function OrderHeader(props) {
             classes={{
               label: isMeasurementRequested ? null : classes.serviceNotRequested
             }}
-            label={isMeasurementRequested ? '需要测量' : '不需要测量!'}
+            label={isMeasurementRequested ? '需要测量' : '无需测量'}
           />
         </Grid>
         <Grid item xs={6}>
@@ -119,7 +119,7 @@ function OrderHeader(props) {
                 ? null
                 : classes.serviceNotRequested
             }}
-            label={isInstallationRequested ? '需要安装' : '不需要安装!'}
+            label={isInstallationRequested ? '需要安装' : '无需安装'}
           />
         </Grid>
       </Grid>
