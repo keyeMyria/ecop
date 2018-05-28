@@ -113,6 +113,7 @@ const columns = [
   { id: 'factoryNumber', disablePadding: true, label: '工厂编号' },
   { id: 'customerName', disablePadding: true, label: '顾客姓名' },
   { id: 'customerRegionName', disablePadding: true, label: '顾客地区' },
+  { id: 'orderItem', disablePadding: true, label: '台面' },
   { id: 'startTime', disablePadding: false, label: '审核通过日期' },
   { id: 'due', disablePadding: false, label: '最迟发货日期' },
   { id: 'overDue', disablePadding: false, label: '逾期时间' },
@@ -255,6 +256,14 @@ class ShipmentList extends Component {
                   <TableCell padding="none">{p.factoryNumber}</TableCell>
                   <TableCell padding="none">{p.customerName}</TableCell>
                   <TableCell padding="none">{p.customerRegionName}</TableCell>
+                  <TableCell padding="none">
+                    {p.orderItems &&
+                      p.orderItems.map((oi, idx) => (
+                        <div key={idx}>
+                          {oi.model}*{oi.quantity}
+                        </div>
+                      ))}
+                  </TableCell>
                   <TableCell>{dateFormat(p.startTime, 'YYYY/MM/DD')}</TableCell>
                   <TableCell>{dateFormat(p.due, 'YYYY/MM/DD')}</TableCell>
                   <TableCell>{p.overDue}</TableCell>

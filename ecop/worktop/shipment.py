@@ -8,6 +8,7 @@ from weblibs.jsonrpc import RPCUserError
 
 from ecop.base import RpcBase
 from ecop.region import getRegionName
+from ecop.worktop.utils import addItemInfo
 
 
 class ShipmentJSON(RpcBase):
@@ -24,15 +25,20 @@ class ShipmentJSON(RpcBase):
             params, urlParams={'maxResults': 50},
             withProcessVariables=(
                 'orderId', 'externalOrderId', 'factoryNumber', 'customerName',
-                'customerRegionCode', 'scheduledInstallationDate'),
+                'customerRegionCode', 'scheduledInstallationDate',
+                'productionDrawing', 'orderItems'),
             hoistProcessVariables=True
         )
 
-        for t in ret:
-            if 'customerRegionCode' in t:
-                t['customerRegionName'] = getRegionName(
-                    t['customerRegionCode'])
-                del t['customerRegionCode']
+        for p in ret:
+            ois = p.get('orderItems')
+            if ois:
+                addItemInfo(ois)
+
+            if 'customerRegionCode' in p:
+                p['customerRegionName'] = getRegionName(
+                    p['customerRegionCode'])
+                del p['customerRegionCode']
         return ret
 
     @jsonrpc_method(endpoint='rpc', method='bpmn.worktop.ship')
@@ -113,9 +119,10 @@ class ShipmentJSON(RpcBase):
         process = cc.makeRequest('/process-instance', 'post', params={
             'businessKey': orderId
         },
-            withProcessVariables=('receivedPackages', 'externalOrderId',
-                'customerName', 'customerMobile', 'customerRegionCode'
-            ),
+            withProcessVariables=(
+                'receivedPackages', 'externalOrderId',
+            'customerName', 'customerMobile', 'customerRegionCode'
+        ),
             processInstanceIdField='id'
         )
 
