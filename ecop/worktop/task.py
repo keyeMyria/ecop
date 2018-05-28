@@ -66,13 +66,6 @@ class TaskJSON(RpcBase):
 
         if task:
             task['comments'] = cc.makeRequest(f'/task/{taskId}/comment', 'get')
-            if task['taskDefinitionKey'] == 'ConfirmInstallationDate':
-                task['name'] = '确认安装时间' if task['processVariables'].get(
-                    'isInstallationRequested', True) else '确认送货时间'
-            elif task['taskDefinitionKey'] == 'InstallWorktop':
-                task['name'] = '安装' if task['processVariables'].get(
-                    'isInstallationRequested', True) else '送货'
-
             ois = task['processVariables'].get('orderItems')
             if ois:
                 addItemInfo(ois)
