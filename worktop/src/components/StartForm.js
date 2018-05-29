@@ -82,6 +82,9 @@ class StartForm extends ValidatedForm {
       scheduledMeasurementDate: [
         { required_if: ['isMeasurementRequested', true] }
       ],
+      scheduledInstallationDate: [
+        { required_if: ['isInstallationRequested', true] }
+      ],
       orderFile: 'required'
     },
     {
@@ -95,6 +98,7 @@ class StartForm extends ValidatedForm {
       'required.customerStreet': '详细地址必须输入',
       'required.customerRegionCode': '所在地区必须输入',
       'required_if.scheduledMeasurementDate': '预约测量日期必须输入',
+      'required_if.scheduledInstallationDate': '预约安装日期必须输入',
       'required.orderFile': '原始订单必须上传'
     }
   )
@@ -301,7 +305,6 @@ class StartForm extends ValidatedForm {
               disabled={!values.isMeasurementRequested}
               autoOk
               name="scheduledMeasurementDate"
-              disablePast
               maxDate={values.scheduledInstallationDate || undefined}
               leftArrowIcon={<ArrowLeftIcon />}
               rightArrowIcon={<ArrowRightIcon />}
@@ -339,12 +342,11 @@ class StartForm extends ValidatedForm {
               name="scheduledInstallationDate"
               label="预约安装日期"
               disabled={!values.isInstallationRequested}
-              required={false}
               autoOk
               clearable
               leftArrowIcon={<ArrowLeftIcon />}
               rightArrowIcon={<ArrowRightIcon />}
-              minDate={values.scheduledMeasurementDate || new Date()}
+              minDate={values.scheduledMeasurementDate || undefined}
               labelFunc={date => dateFormat(date, 'YYYY/MM/DD')}
               form={this}
               onChange={this.handleChange(
