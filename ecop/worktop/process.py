@@ -91,10 +91,19 @@ def searchProcess(cond, request, countOnly=False, maxRows=50):
         if (endDate - startDate) > timedelta(365):
             raise RPCUserError('订单查询时间跨度不能大于１年。')
 
-        params['startedBefore'] = endDate
-        params['startedAfter'] = startDate
         if showCompleted:
-            params['finished'] = 'true'
+            params['variables'] = [{
+                'name': 'actualInstallationDate',
+                'operator': 'gteq',
+                'value': startDate
+            }, {
+                'name': 'actualInstallationDate',
+                'operator': 'lt',
+                'value': endDate
+            }]
+        else:
+            params['startedBefore'] = endDate
+            params['startedAfter'] = startDate
 
     storeId = cond['storeId']
     if storeId:
@@ -127,10 +136,6 @@ def searchProcess(cond, request, countOnly=False, maxRows=50):
             ),
             processInstanceIdField='id', hoistProcessVariables=True
         )
-
-        # this filters out CANCELED processes
-        if not searchText and showCompleted:
-            ret = [p for p in ret if p['state'] == 'COMPLETED']
 
         #
         # Prepare for display by adding additional infos:
