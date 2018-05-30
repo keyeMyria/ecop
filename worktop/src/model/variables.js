@@ -37,6 +37,10 @@ const variables = {
     label: '订单号',
     type: 'String'
   },
+  assignedFactoryId: {
+    label: '生产工厂',
+    type: 'String'
+  },
   factoryNumber: {
     label: '工厂编号',
     type: 'String'
@@ -105,5 +109,3 @@ const variables = {
     type: 'String'
   }
 }
-
-export default variables

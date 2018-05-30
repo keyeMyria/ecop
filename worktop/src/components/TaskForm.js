@@ -34,8 +34,10 @@ import CheckDrawing from 'tasks/CheckDrawing'
 import ConfirmInstallationDate from 'tasks/ConfirmInstallationDate'
 import InstallWorktop from 'tasks/InstallWorktop'
 import CompleteERPOrder from 'tasks/CompleteERPOrder'
+import AssignFactory from 'tasks/AssignFactory'
 
 const forms = {
+  AssignFactory,
   CheckDrawing,
   CompleteERPOrder,
   ConfirmInstallationDate,

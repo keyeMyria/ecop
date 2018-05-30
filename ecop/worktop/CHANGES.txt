@@ -5,19 +5,19 @@
  * Support orders without installation
 
 
- * Order allocation to other factory for fabrication
+ * Assignment of tabletop production factory
+
 
  * Move task comment, process comment out of camunda
  * Show task comments in process list
  * Allow modification to ConfirmedMeasurementDate and ConfirmedInstallationDate
-
+ * Support CMMN for abnormal cases
  * Merge task due change and task comment
  * Allow user to change password
  * Cancel process with a reason
  * Confirem the worker name and mobile for measurement and installation tasks
  * Add process comment
  * Fix iOS compatibility
- * Support order factory assignment
  * Fix FileUploader image orientation when iPhone photos are uploaded from PC
  * Require the input of overdue reason if a task is overdue when completed
  * Use async request to load user information and permissions instead of embed
