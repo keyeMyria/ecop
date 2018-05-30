@@ -82,9 +82,6 @@ class StartForm extends ValidatedForm {
       scheduledMeasurementDate: [
         { required_if: ['isMeasurementRequested', true] }
       ],
-      scheduledInstallationDate: [
-        { required_if: ['isInstallationRequested', true] }
-      ],
       orderFile: 'required'
     },
     {
@@ -343,6 +340,7 @@ class StartForm extends ValidatedForm {
               label="预约安装日期"
               disabled={!values.isInstallationRequested}
               autoOk
+              required={false}
               clearable
               leftArrowIcon={<ArrowLeftIcon />}
               rightArrowIcon={<ArrowRightIcon />}

@@ -32,3 +32,10 @@
  * Dynamically change the task name for tasks ConfirmInstallationDate and
    InstallWorktop according to the value of isInstallationRequested with
    javascript task listeners
+
+
+1.2.2 (2018-5-30)
+
+ * Use groovy task listerners on tasks ConfirmMeasurementDate and InstallWorktop
+   for setting the task due. This is to support scheduledMeasurementDate in
+   the past
