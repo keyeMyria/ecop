@@ -22,7 +22,7 @@ class ShipmentJSON(RpcBase):
 
         ret = cc.makeRequest(
             '/history/activity-instance', 'post',
-            params, urlParams={'maxResults': 50},
+            params, urlParams={'maxResults': 100},
             withProcessVariables=(
                 'orderId', 'externalOrderId', 'factoryNumber', 'customerName',
                 'customerRegionCode', 'scheduledInstallationDate',

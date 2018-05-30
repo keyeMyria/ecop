@@ -37,12 +37,17 @@ class ConfirmInstallationDate extends ValidatedForm {
 
     return (
       <Fragment>
-        <Field
-          label={`预约${taskName}日期`}
-          component={TextField}
-          disabled
-          value={dateFormat(variables.scheduledInstallationDate, 'YYYY/MM/DD')}
-        />
+        {variables.scheduledInstallationDate && (
+          <Field
+            label={`预约${taskName}日期`}
+            component={TextField}
+            disabled
+            value={dateFormat(
+              variables.scheduledInstallationDate,
+              'YYYY/MM/DD'
+            )}
+          />
+        )}
 
         <FileUploader
           label="生产图纸"

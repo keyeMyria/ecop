@@ -13,7 +13,6 @@ requires = [
     'isoweek',
     'openpyxl',
     'oss2',  # for Aliyun oss bucket management
-    'pika>=0.9,<0.11', # as required by pika-pool
     'pillow', # PIL
     'psd-tools',
     'psycopg2',
